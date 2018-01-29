@@ -1,7 +1,7 @@
 <template lang="html">
     <div v-if="showComponent" class="form-group">
         <text class="form-label">{{definition.componentParams.title}}</text>
-        <input @input="input" class="form-input" type="text" :value="value" :placeholder="definition.componentParams.placeholder"/>
+        <textarea @input="input" class="form-input" :value="value" :placeholder="definition.componentParams.placeholder" rows="3"/>
     </div>
 </template>
 
@@ -10,7 +10,7 @@ import mixin from './component-mixin.js'
 import EventBus from '../js/bus.js'
 
 export default {
-    componentType: 'SingleLineText',
+    componentType: 'MultiLineText',
     extends: mixin,
     data() {
         return {

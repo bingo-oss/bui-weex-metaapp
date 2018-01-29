@@ -1,7 +1,7 @@
 <template lang="html">
     <div v-if="showComponent" class="form-group">
         <text class="form-label">{{definition.componentParams.title}}</text>
-        <switch @change="change" :value="value"></switch>
+        <bui-checkbox :items="items" @input="input" :value="value"></bui-checkbox>
     </div>
 </template>
 
@@ -13,11 +13,17 @@ export default {
     extends: mixin,
     data() {
         return {
+            items: this.definition.componentParams.options.map(o => {
+                return {
+                    value: o.id,
+                    title: o.text
+                }
+            })
         }
     },
     methods: {
-        change(e) {
-            this.$emit('input', e.value);
+        input(value) {
+            this.$emit('input', value);
         }
     },
 }

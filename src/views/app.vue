@@ -34,6 +34,7 @@
 </style>
 
 <script>
+    import EventBus from '../js/bus.js'
     //引入bui-weex模块
     var globalEvent = weex.requireModule('globalEvent');
     const modal = weex.requireModule('modal');
@@ -67,14 +68,13 @@
 
                 switch (o.componentType) {
                     case 'SingleLineText': {
-                        this.result[o.dataField] = 'testValue';
                         let singleLineText = h('single-line-text', {
                             props: {
                                 definition: o,
                             },
                             on: {
                                 input: (v) => {
-                                    this.result[o.dataField] = v;
+                                    this.result[o.dataField] = v; // TODO: this.$set
                                 }
                             },
                             ref: o.id
@@ -85,6 +85,24 @@
                         forms.push(singleLineText);
                         break;
                     }
+                    case 'MultiLineText': {
+                        let multiLineText = h('multi-line-text', {
+                            props: {
+                                definition: o,
+                            },
+                            on: {
+                                input: (v) => {
+                                    this.result[o.dataField] = v; // TODO: this.$set
+                                }
+                            },
+                            ref: o.id
+                        });
+                        if (o.componentParams.validation && o.componentParams.validation.validate) {
+                            this.validationRefs.push(o.id);
+                        }
+                        forms.push(multiLineText);
+                        break;
+                    }
                     case "Boolean": {
                         let b = h("boolean", {
                             props: {
@@ -92,28 +110,62 @@
                             },
                             on: {
                                 input: (v) => {
-                                    this.result[o.dataField] = v;
+                                    this.result[o.dataField] = v; // TODO: this.$set
                                 }
                             },
                         });
                         forms.push(b);
                         break;
                     }
-                    case "MultiLineText": {
-                        input = h("textarea", {
-                            class: ['form-input'],
-                            on: {
-                                input: (event) => {
-                                    this.result[o.dataField] = event.value;
-                                }
-                            },
-                            attrs: {
-                                value: '',
-                                placeholder: '请输入多行文本',
-                                rows: 3
+                    case "RadioButton": {
+                        // 读取默认值
+                        if (!this.result[o.dataField]) o.componentParams.options.forEach(option => {
+                            if (option.checked) {
+                                this.$set(this.result, o.dataField, option.id);
+                                return;
                             }
                         });
-                        if (input) forms.push(createFormGroup(input, label, h));
+
+                        let r = h("radio-button", {
+                            props: {
+                                definition: o,
+                                wholeDefinition: this.data,
+                                value: this.result[o.dataField],
+                            },
+                            on: {
+                                input: (v) => {
+                                    // console.log('radio-button on input: ' + v);
+                                    this.$set(this.result, o.dataField, v);
+                                }
+                            },
+                        });
+                        forms.push(r);
+                        break;
+                    }
+                    case 'CheckboxGroup': {
+                        // 读取默认值
+                        if (!this.result[o.dataField]) {
+                            let tmp = [];
+                            o.componentParams.options.forEach(option => {
+                                if (option.checked) {
+                                    tmp.push(option.id);
+                                }
+                            })
+                            this.$set(this.result, o.dataField, tmp);
+                        }
+                        let g = h("checkbox-group", {
+                            props: {
+                                definition: o,
+                                value: this.result[o.dataField],
+                            },
+                            on: {
+                                input: (v) => {
+                                    // console.log('checkbox-group on input: ' + v);
+                                    this.$set(this.result, o.dataField, v);
+                                }
+                            },
+                        });
+                        forms.push(g);
                         break;
                     }
                     case 'NumberInput': {
@@ -167,8 +219,6 @@
                         break;
                     }
                     case 'SingleSelect':
-                    case 'CheckboxGroup':
-                    case 'RadioButton':
                     default: {
                         break;
                         input = h('text', ['[组件待实现]'])
@@ -274,7 +324,10 @@
         },
         components: {
             'single-line-text': require('../components/single-line-text.vue'),
+            'multi-line-text': require('../components/multi-line-text.vue'),
             'boolean': require('../components/boolean.vue'),
+            'radio-button': require('../components/radio-button.vue'),
+            'checkbox-group': require('../components/checkbox-group.vue'),
         },
     }
 </script>
