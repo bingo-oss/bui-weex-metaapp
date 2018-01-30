@@ -21,7 +21,11 @@ export default {
     data() {
         return {
             controlledComps: [],
-            items: this.definition.componentParams.options.map(o => {
+        }
+    },
+    computed: {
+        items() {
+            return this.definition.componentParams.options.map(o => {
                 return {
                     value: o.id,
                     title: o.text

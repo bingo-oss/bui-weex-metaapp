@@ -59,7 +59,7 @@
     module.exports = {
         render(h) {
             console.log('rendering')
-            this.validationRefs = this.validationRefs || [];
+            this.validationRefs = this.validationRefs || {};
             let forms = [];
             // 遍历 layout 里的所有表单项
             this.data.layout && this.data.layout.forEach((o) => {
@@ -71,17 +71,16 @@
                         let singleLineText = h('single-line-text', {
                             props: {
                                 definition: o,
+                                value: this.result[o.dataField],
                             },
                             on: {
                                 input: (v) => {
-                                    this.result[o.dataField] = v; // TODO: this.$set
+                                    this.$set(this.result, o.dataField, v);
                                 }
                             },
                             ref: o.id
                         });
-                        if (o.componentParams.validation && o.componentParams.validation.validate) {
-                            this.validationRefs.push(o.id);
-                        }
+                        this.validationRefs[o.id] = true;
                         forms.push(singleLineText);
                         break;
                     }
@@ -89,17 +88,16 @@
                         let multiLineText = h('multi-line-text', {
                             props: {
                                 definition: o,
+                                value: this.result[o.dataField],
                             },
                             on: {
                                 input: (v) => {
-                                    this.result[o.dataField] = v; // TODO: this.$set
+                                    this.$set(this.result, o.dataField, v);
                                 }
                             },
                             ref: o.id
                         });
-                        if (o.componentParams.validation && o.componentParams.validation.validate) {
-                            this.validationRefs.push(o.id);
-                        }
+                        this.validationRefs[o.id] = true;
                         forms.push(multiLineText);
                         break;
                     }
@@ -107,10 +105,11 @@
                         let b = h("boolean", {
                             props: {
                                 definition: o,
+                                value: this.result[o.dataField],
                             },
                             on: {
                                 input: (v) => {
-                                    this.result[o.dataField] = v; // TODO: this.$set
+                                    this.$set(this.result, o.dataField, v);
                                 }
                             },
                         });
@@ -169,19 +168,20 @@
                         break;
                     }
                     case 'NumberInput': {
-                        input = h("input", {
-                            class: ['form-input'],
+                        let numberInput = h('number-input', {
+                            props: {
+                                definition: o,
+                                value: this.result[o.dataField],
+                            },
                             on: {
-                                input: (event) => {
-                                    this.result[o.dataField] = event.value;
+                                input: (v) => {
+                                    this.$set(this.result, o.dataField, v);
                                 }
                             },
-                            attrs: {
-                                type: 'number',
-                                placeholder: '请输入数字'
-                            }
+                            ref: o.id
                         });
-                        if (input) forms.push(createFormGroup(input, label, h));
+                        this.validationRefs[o.id] = true;
+                        forms.push(numberInput);
                         break;
                     }
 
@@ -252,14 +252,14 @@
                         console.log('submit');
                         console.log(this.result);
                         let validated = true;
-                        this.validationRefs.forEach(id => {
+                        for (let id in this.validationRefs) {
                             let result = this.$refs[id].validate();
                             if (!result) {
                                 this.$toast('验证出错')
                                 validated = false;
                                 return;
                             }
-                        })
+                        }
                         if (!validated) {
                             return;
                         }
@@ -275,8 +275,6 @@
                         this.result = {};
                         this.fetchData();
                         return;
-                        dataIndex = (dataIndex + 1) % datas.length
-                        this.data = datas[dataIndex];
                     }
                 }
             }, ['更新'])
@@ -325,6 +323,7 @@
         components: {
             'single-line-text': require('../components/single-line-text.vue'),
             'multi-line-text': require('../components/multi-line-text.vue'),
+            'number-input': require('../components/number-input.vue'),
             'boolean': require('../components/boolean.vue'),
             'radio-button': require('../components/radio-button.vue'),
             'checkbox-group': require('../components/checkbox-group.vue'),

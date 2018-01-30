@@ -7,7 +7,6 @@
 
 <script>
 import mixin from './component-mixin.js'
-import EventBus from '../js/bus.js'
 
 export default {
     componentType: 'MultiLineText',
@@ -22,12 +21,31 @@ export default {
         },
 
         validate() {
-            if (!this.definition.componentParams.validation.validate) {
-                // Validation off
-                return true;
+            let patternOk = true;
+            let lengthOk = true;
+
+            if (this.definition.componentParams.validation.validate) {
+                let pattern = this.definition.componentParams.validation.rule.pattern;
+                let r = new RegExp(pattern);
+                patternOk = r.test(this.value);
+                console.log('pattern test: ' + patternOk);
             }
-            // Validation fail return false
-            return true;
+
+            let limitLength = this.definition.componentParams.limitLength;
+            if (limitLength.limit) {
+                if (!this.value) {
+                    lengthOk = false;
+                } else {
+                    lengthOk = this.value.length >= limitLength.min && this.value.length <= limitLength.max;
+                }
+                console.log('length test: ' + lengthOk);
+            }
+
+            let validated = lengthOk && patternOk;
+            if (!validated) {
+                this.$toast(`${this.definition.componentParams.title} 输入验证失败`);
+            }
+            return validated;
         }
     },
 }

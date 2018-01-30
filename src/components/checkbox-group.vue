@@ -13,7 +13,11 @@ export default {
     extends: mixin,
     data() {
         return {
-            items: this.definition.componentParams.options.map(o => {
+        }
+    },
+    computed: {
+        items() {
+            return this.definition.componentParams.options.map(o => {
                 return {
                     value: o.id,
                     title: o.text
