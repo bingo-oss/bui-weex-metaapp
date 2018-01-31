@@ -186,36 +186,33 @@
                     }
 
                     case 'Date': {
-                        input = h("input", {
-                            class: ['form-input'],
+                        input = h("date", {
+                            props: {
+                                definition: o,
+                                value: this.result[o.dataField],
+                            },
                             on: {
-                                change: (e) => {
-                                    this.result[o.dataField] = e.value;
+                                input: (v) => {
+                                    this.$set(this.result, o.dataField, v);
                                 }
                             },
-                            attrs: {
-                                type: 'date',
-                                placeholder: '请输入日期'
-                            }
                         });
-                        if (input) forms.push(createFormGroup(input, label, h));
+                        forms.push(input);
                         break;
                     }
-                    case 'DateTime': {
-                        break;
-                        input = h("input", {
-                            class: ['form-input'],
+                    case 'Time': {
+                        input = h("time", {
+                            props: {
+                                definition: o,
+                                value: this.result[o.dataField],
+                            },
                             on: {
-                                change: function(e) {
-                                    this.result[o.dataField] = e.value;
+                                input: (v) => {
+                                    this.$set(this.result, o.dataField, v);
                                 }
                             },
-                            attrs: {
-                                type: 'datetime', // BUG: datetime 不生效
-                                placeholder: '请输入日期时间'
-                            }
                         });
-                        if (input) forms.push(createFormGroup(input, label, h));
+                        forms.push(input);
                         break;
                     }
                     case 'Description': {
@@ -346,6 +343,8 @@
             'checkbox-group': require('../components/checkbox-group.vue'),
             'description': require('../components/description.vue'),
             'division-line': require('../components/division-line.vue'),
+            'date': require('../components/date.vue'),
+            'time': require('../components/time.vue'),
         },
     }
 </script>

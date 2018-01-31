@@ -18,6 +18,13 @@ export default {
     methods: {
         validate() {
             return true;
+        },
+        log(any) {
+            if (typeof any === 'object') {
+                console.log(JSON.stringify(any));
+            } else {
+                console.log(any);
+            }
         }
     },
     mounted() {
