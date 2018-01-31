@@ -218,7 +218,24 @@
                         if (input) forms.push(createFormGroup(input, label, h));
                         break;
                     }
-                    case 'SingleSelect':
+                    case 'Description': {
+                        let des = h("description", {
+                            props: {
+                                definition: o,
+                            },
+                        });
+                        forms.push(des);
+                        break;
+                    }
+                    case 'DivisionLine': {
+                        let div = h("division-line", {
+                            props: {
+                                definition: o,
+                            },
+                        });
+                        forms.push(div);
+                        break;
+                    }
                     default: {
                         break;
                         input = h('text', ['[组件待实现]'])
@@ -327,6 +344,8 @@
             'boolean': require('../components/boolean.vue'),
             'radio-button': require('../components/radio-button.vue'),
             'checkbox-group': require('../components/checkbox-group.vue'),
+            'description': require('../components/description.vue'),
+            'division-line': require('../components/division-line.vue'),
         },
     }
 </script>
