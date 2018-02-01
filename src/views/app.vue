@@ -226,6 +226,76 @@
                         });
                         break;
                     }
+                    case 'SingleUserSelect': {
+                        input = h("single-user-select", {
+                            props: {
+                                definition: o,
+                                value: this.result[o.dataField],
+                            },
+                            on: {
+                                input: (v) => {
+                                    this.$set(this.result, o.dataField, v);
+                                }
+                            },
+                        });
+                        break;
+                    }
+                    case 'MultiUserSelect': {
+                        input = h("multi-user-select", {
+                            props: {
+                                definition: o,
+                                value: this.result[o.dataField],
+                            },
+                            on: {
+                                input: (v) => {
+                                    this.$set(this.result, o.dataField, v);
+                                }
+                            },
+                        });
+                        break;
+                    }
+                    case 'SingleOrgSelect': {
+                        input = h("single-org-select", {
+                            props: {
+                                definition: o,
+                                value: this.result[o.dataField],
+                            },
+                            on: {
+                                input: (v) => {
+                                    this.$set(this.result, o.dataField, v);
+                                }
+                            },
+                        });
+                        break;
+                    }
+                    case 'MultiOrgSelect': {
+                        input = h("multi-org-select", {
+                            props: {
+                                definition: o,
+                                value: this.result[o.dataField],
+                            },
+                            on: {
+                                input: (v) => {
+                                    this.$set(this.result, o.dataField, v);
+                                }
+                            },
+                        });
+                        break;
+                    }
+                    case 'PictureUpload': {
+                        input = h("picture-upload", {
+                            props: {
+                                definition: o,
+                                value: this.result[o.dataField],
+                            },
+                            on: {
+                                input: (v) => {
+                                    this.$set(this.result, o.dataField, v);
+                                }
+                            },
+                        });
+                        break;
+                    }
                     case 'Description': {
                         input = h("description", {
                             props: {
@@ -354,6 +424,11 @@
             'time': require('../components/time.vue'),
             'single-select': require('../components/single-select.vue'),
             'cascade-select': require('../components/cascade-select.vue'),
+            'single-user-select': require('../components/single-user-select.vue'),
+            'multi-user-select': require('../components/multi-user-select.vue'),
+            'single-org-select': require('../components/single-org-select.vue'),
+            'multi-org-select': require('../components/multi-org-select.vue'),
+            'picture-upload': require('../components/picture-upload.vue'),
         },
     }
 </script>

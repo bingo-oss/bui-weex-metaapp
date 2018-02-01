@@ -20,12 +20,12 @@ export default {
             return true;
         },
         log(any) {
-            if (typeof any === 'object') {
+            if (typeof any !== 'string') {
                 console.log(JSON.stringify(any));
             } else {
                 console.log(any);
             }
-        }
+        },
     },
     mounted() {
         EventBus.$on(this.definition.id, (visible) => {
