@@ -7,47 +7,11 @@
 
 <script>
 import mixin from './component-mixin.js'
+import SingleLineText from './single-line-text.vue'
 
 export default {
     componentType: 'MultiLineText',
-    extends: mixin,
-    data() {
-        return {
-        }
-    },
-    methods: {
-        input(e) {
-            this.$emit('input', e.value);
-        },
-
-        validate() {
-            let patternOk = true;
-            let lengthOk = true;
-
-            if (this.definition.componentParams.validation.validate) {
-                let pattern = this.definition.componentParams.validation.rule.pattern;
-                let r = new RegExp(pattern);
-                patternOk = r.test(this.value);
-                console.log('pattern test: ' + patternOk);
-            }
-
-            let limitLength = this.definition.componentParams.limitLength;
-            if (limitLength.limit) {
-                if (!this.value) {
-                    lengthOk = false;
-                } else {
-                    lengthOk = this.value.length >= limitLength.min && this.value.length <= limitLength.max;
-                }
-                console.log('length test: ' + lengthOk);
-            }
-
-            let validated = lengthOk && patternOk;
-            if (!validated) {
-                this.$toast(`${this.definition.componentParams.title} 输入验证失败`);
-            }
-            return validated;
-        }
-    },
+    extends: SingleLineText,
 }
 </script>
 
