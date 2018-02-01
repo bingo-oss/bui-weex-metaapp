@@ -34,27 +34,10 @@
 </style>
 
 <script>
-    import EventBus from '../js/bus.js'
-    //引入bui-weex模块
     var globalEvent = weex.requireModule('globalEvent');
     const modal = weex.requireModule('modal');
     var stream = weex.requireModule('stream');
     const data = require('../demoData.json')
-
-    var createFormGroup = function(input, label, h) {
-
-        let children = [];
-        if (label) {
-            children.push(h("text", {
-                'class': ["form-label"],
-            }, label))
-        }
-        if (input) children.push(input);
-        let formGroup = h("div", {
-            'class': ['form-group']
-        }, children);
-        return formGroup;
-    }
 
     module.exports = {
         render(h) {
@@ -63,12 +46,11 @@
             let forms = [];
             // 遍历 layout 里的所有表单项
             this.data.layout && this.data.layout.forEach((o) => {
-                let label = o.componentParams.title || o.dataField;
                 let input;
 
                 switch (o.componentType) {
                     case 'SingleLineText': {
-                        let singleLineText = h('single-line-text', {
+                        input = h('single-line-text', {
                             props: {
                                 definition: o,
                                 value: this.result[o.dataField],
@@ -81,11 +63,10 @@
                             ref: o.id
                         });
                         this.validationRefs[o.id] = true;
-                        forms.push(singleLineText);
                         break;
                     }
                     case 'MultiLineText': {
-                        let multiLineText = h('multi-line-text', {
+                        input = h('multi-line-text', {
                             props: {
                                 definition: o,
                                 value: this.result[o.dataField],
@@ -98,11 +79,10 @@
                             ref: o.id
                         });
                         this.validationRefs[o.id] = true;
-                        forms.push(multiLineText);
                         break;
                     }
                     case "Boolean": {
-                        let b = h("boolean", {
+                        input = h("boolean", {
                             props: {
                                 definition: o,
                                 value: this.result[o.dataField],
@@ -113,7 +93,6 @@
                                 }
                             },
                         });
-                        forms.push(b);
                         break;
                     }
                     case "RadioButton": {
@@ -125,7 +104,7 @@
                             }
                         });
 
-                        let r = h("radio-button", {
+                        input = h("radio-button", {
                             props: {
                                 definition: o,
                                 wholeDefinition: this.data,
@@ -138,7 +117,6 @@
                                 }
                             },
                         });
-                        forms.push(r);
                         break;
                     }
                     case 'CheckboxGroup': {
@@ -152,7 +130,7 @@
                             })
                             this.$set(this.result, o.dataField, tmp);
                         }
-                        let g = h("checkbox-group", {
+                        input = h("checkbox-group", {
                             props: {
                                 definition: o,
                                 value: this.result[o.dataField],
@@ -164,11 +142,47 @@
                                 }
                             },
                         });
-                        forms.push(g);
+                        break;
+                    }
+                    case "SingleSelect": {
+                        // 读取默认值
+                        if (!this.result[o.dataField]) o.componentParams.options.forEach(option => {
+                            if (option.checked) {
+                                this.$set(this.result, o.dataField, option.id);
+                                return;
+                            }
+                        });
+
+                        input = h("single-select", {
+                            props: {
+                                definition: o,
+                                wholeDefinition: this.data,
+                                value: this.result[o.dataField],
+                            },
+                            on: {
+                                input: (v) => {
+                                    this.$set(this.result, o.dataField, v);
+                                }
+                            },
+                        });
+                        break;
+                    }
+                    case "CascadeSelect": {
+                        input = h("cascade-select", {
+                            props: {
+                                definition: o,
+                                value: this.result[o.dataField],
+                            },
+                            on: {
+                                input: (v) => {
+                                    this.$set(this.result, o.dataField, v);
+                                }
+                            },
+                        });
                         break;
                     }
                     case 'NumberInput': {
-                        let numberInput = h('number-input', {
+                        input = h('number-input', {
                             props: {
                                 definition: o,
                                 value: this.result[o.dataField],
@@ -181,7 +195,6 @@
                             ref: o.id
                         });
                         this.validationRefs[o.id] = true;
-                        forms.push(numberInput);
                         break;
                     }
 
@@ -197,7 +210,6 @@
                                 }
                             },
                         });
-                        forms.push(input);
                         break;
                     }
                     case 'Time': {
@@ -212,35 +224,30 @@
                                 }
                             },
                         });
-                        forms.push(input);
                         break;
                     }
                     case 'Description': {
-                        let des = h("description", {
+                        input = h("description", {
                             props: {
                                 definition: o,
                             },
                         });
-                        forms.push(des);
                         break;
                     }
                     case 'DivisionLine': {
-                        let div = h("division-line", {
+                        input = h("division-line", {
                             props: {
                                 definition: o,
                             },
                         });
-                        forms.push(div);
                         break;
                     }
                     default: {
                         break;
-                        input = h('text', ['[组件待实现]'])
-                        if (input) forms.push(createFormGroup(input, label, h));
-                        break;
                     }
-
                 }
+
+                forms.push(input);
             });
 
             // 用 scroller 将 forms 包起来
@@ -345,6 +352,8 @@
             'division-line': require('../components/division-line.vue'),
             'date': require('../components/date.vue'),
             'time': require('../components/time.vue'),
+            'single-select': require('../components/single-select.vue'),
+            'cascade-select': require('../components/cascade-select.vue'),
         },
     }
 </script>
