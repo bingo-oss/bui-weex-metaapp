@@ -11,9 +11,15 @@ export default {
             type: Object,
             required: true,
         },
+        // value 与 filterValue 只能二选一
         value: {
             required: false,
-        }
+        },
+        filterValue: {
+            type: String,
+            required: false,
+        },
+        filterMode: false,
     },
     methods: {
         validate() {
@@ -28,10 +34,12 @@ export default {
         },
     },
     mounted() {
-        EventBus.$on(this.definition.id, (visible) => {
-            // 表单里的 RadioButton 可以控制别的组件的显示与隐藏
-            // 目前以组件 id 作为事件名，各自监听自身的显示与隐藏事件
-            this.showComponent = visible;
-        })
+        if (this.definition.id) {
+            EventBus.$on(this.definition.id, (visible) => {
+                // 表单里的 RadioButton 可以控制别的组件的显示与隐藏
+                // 目前以组件 id 作为事件名，各自监听自身的显示与隐藏事件
+                this.showComponent = visible;
+            })
+        }
     }
 }

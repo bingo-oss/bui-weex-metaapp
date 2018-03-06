@@ -1,7 +1,13 @@
 <template lang="html">
     <div v-if="showComponent" class="form-group">
-        <text class="form-label">{{definition.componentParams.title}}</text>
-        <text class="form-input" :style="inputStyle" @click="inputClicked">{{valueText || '选择用户...'}}</text>
+        <div class="label-wrapper">
+            <text class="form-label">{{definition.componentParams.title}}:</text>
+            <text class="required-mark" v-if="definition.componentParams.required">*</text>
+        </div>
+        <div class="from-input-wrapper" @click="inputClicked">
+            <text class="form-input" :style="inputStyle">{{valueText || '请选择'}}</text>
+            <bui-icon slot="action" name="ion-ios-arrow-right"></bui-icon>
+        </div>
     </div>
 </template>
 
@@ -20,7 +26,17 @@ export default {
     computed: {
         inputStyle() {
             return {
-                color: this.value ? '' : '#BEBCBC'
+                color: this.value ? 'black' : '#BEBCBC'
+            }
+        }
+    },
+    watch: {
+        value: {
+            immediate: true,
+            handler(v) {
+                linkapi.getUserInfo(v, (result) => {
+                    this.valueText = result.userName;
+                })
             }
         }
     },
@@ -28,7 +44,6 @@ export default {
         inputClicked(e) {
             linkapi.startContactSingleSelector(this.definition.componentParams.title, 1, {}, (result) => {
                 this.$emit('input', result.id)
-                this.valueText = result.name;
             }, (err) => {
                 this.$alert(err);
             })

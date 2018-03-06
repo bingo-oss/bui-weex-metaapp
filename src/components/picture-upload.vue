@@ -1,7 +1,10 @@
 <template lang="html">
     <div v-if="showComponent" class="form-group">
-        <text class="form-label">{{definition.componentParams.title}}</text>
-        <text class="form-input" :style="inputStyle" @click="inputClicked">{{valueText || '选择用户...'}}</text>
+        <div class="label-wrapper">
+            <text class="form-label">{{definition.componentParams.title}}:</text>
+            <text class="required-mark" v-if="definition.componentParams.required">*</text>
+        </div>
+        <text class="form-input" :style="inputStyle" @click="inputClicked">{{valueText || '选择图片...'}}</text>
     </div>
 </template>
 
@@ -27,7 +30,16 @@ export default {
     methods: {
         inputClicked(e) {
             linkapi.selectFiles(1, (result) => {
-                this.$alert(result);
+                // this.$alert(result);
+                if (result.resource) {
+                    linkapi.uploadFiles(result.resource, (res) => {
+                        this.$alert(res);
+                    }, (err) => {
+                        this.$alert(err);
+                    })
+                } else {
+                    // No resource selected.
+                }
                 // this.$emit('input', result.id)
                 // this.valueText = result.name;
             }, (err) => {

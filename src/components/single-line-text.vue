@@ -1,7 +1,10 @@
 <template lang="html">
     <div v-if="showComponent" class="form-group">
-        <text class="form-label">{{definition.componentParams.title}}</text>
-        <input @input="input" class="form-input" type="text" :value="value" :placeholder="definition.componentParams.placeholder"/>
+        <div class="label-wrapper">
+            <text class="form-label">{{definition.componentParams.title}}:</text>
+            <text class="required-mark" v-if="definition.componentParams.required">*</text>
+        </div>
+        <input @input="input" class="form-input-native" type="text" :value="value" :placeholder="definition.componentParams.placeholder"/>
     </div>
 </template>
 
@@ -15,9 +18,24 @@ export default {
         return {
         }
     },
+    watch: {
+        filterValue: {
+            immediate: true,
+            handler(val) {
+                if (this.filterMode) {
+                    let ret = /%(\S)*%/.exec(val);
+                    if (ret) this.value = ret[1];
+                }
+            }
+        }
+    },
     methods: {
         input(e) {
-            this.$emit('input', e.value);
+            if (!this.filterMode) {
+                this.$emit('input', e.value);
+            } else {
+                this.$emit('filterInput', `${this.definition.dataField} like %${e.value}%`)
+            }
         },
 
         validate() {

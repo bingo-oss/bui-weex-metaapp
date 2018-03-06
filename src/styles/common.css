@@ -1,4 +1,15 @@
 .form-group {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 40px;
+    padding-top: 40px;
+    border-bottom-color: #BEBCBC;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+}
+
+.form-group-vertical {
     flex-direction: column;
     padding-bottom: 40px;
     padding-top: 40px;
@@ -8,12 +19,35 @@
 }
 
 .form-label {
-    margin-bottom: 15px;
-    color: #BEBCBC;
-    font-size: 32px;
+    font-size: 36px;
+}
+
+
+.from-input-wrapper {
+    flex-direction: row;
+    flex: 1;
+    justify-content: flex-end;
+}
+
+.form-input-native {
+    flex: 1;
+    font-size: 36px;
+    text-align: right;
 }
 
 .form-input {
-    flex: 1;
-    font-size: 40px;
+    font-size: 36px;
+}
+
+.label-wrapper {
+    flex-direction: row;
+}
+
+.label-wrapper-vertical {
+    flex-direction: row;
+    margin-bottom: 15px;
+}
+
+.required-mark {
+    color: red;
 }

@@ -8,6 +8,8 @@
     "system": false,
     "display": true,
     "displayOrder": 0,
+    "createdBy": "e4cfb2ca-7b83-44d5-a32d-1f0c0fc6c94f",
+    "updatedBy": "e4cfb2ca-7b83-44d5-a32d-1f0c0fc6c94f",
     "metaEntityId": "vFK8QcvaThYcEJVQrSPj69",
     "metaEntityName": "test",
     "version": 1,
@@ -20,25 +22,25 @@
         "componentType": "SingleLineText",
         "dataField": "field6",
         "componentParams": {
-            "title": "单行文本",
-            "description": "test4",
+            "title": "单选关联单行文本",
+            "description": "desc",
             "layout": "vertical",
-            "width": "25",
+            "width": "100",
             "horizontalLayoutLabelWidth": "20",
             "required": true,
-            "placeholder": " test",
+            "placeholder": "tips",
             "unique": true,
             "limitLength": {
                 "limit": true,
-                "max": 200,
-                "min": 0
+                "max": 10,
+                "min": 5
             },
             "validation": {
                 "validate": true,
                 "rule": {
-                    "type": "email",
-                    "brief": "邮件",
-                    "pattern": "^[a-zA-Z0-9_\\.\\-]+\\@([a-zA-Z0-9\\-]+\\.)+[a-zA-Z0-9]{2,4}$"
+                    "type": "mobile",
+                    "brief": "手机号",
+                    "pattern": "^1[3|4|5|7|8]\\d{9}$"
                 }
             }
         }
@@ -48,13 +50,13 @@
         "componentType": "MultiLineText",
         "dataField": "field7",
         "componentParams": {
-            "title": "多行文本",
+            "title": "单选关联多行文本",
             "description": "desc",
             "layout": "vertical",
-            "width": "25",
+            "width": "100",
             "horizontalLayoutLabelWidth": "20",
             "required": false,
-            "placeholder": "",
+            "placeholder": "tips",
             "unique": false,
             "limitLength": {
                 "limit": false,
@@ -62,11 +64,11 @@
                 "min": 0
             },
             "validation": {
-                "validate": false,
+                "validate": true,
                 "rule": {
-                    "type": "",
-                    "brief": "",
-                    "pattern": ""
+                    "type": "url",
+                    "brief": "网址",
+                    "pattern": "^(http|https|ftp):\\/\\/(([a-zA-Z0-9][a-zA-Z0-9_-]*)(\\.[a-zA-Z0-9][a-zA-Z0-9_-]*)+)(:(\\d+))?\\/?"
                 }
             }
         }
@@ -84,15 +86,15 @@
             "required": false,
             "options": [{
                 "id": "16c51d53-00a9-11e8-a5d4-c508b215da81",
-                "text": "选项1",
+                "text": "显示单行和多行1",
                 "checked": true
             }, {
                 "id": "16c51d54-00a9-11e8-a5d4-c508b215da81",
-                "text": "选项2",
+                "text": "显示单行",
                 "checked": false
             }, {
                 "id": "16c51d55-00a9-11e8-a5d4-c508b215da81",
-                "text": "选项3",
+                "text": "显示多行",
                 "checked": false
             }],
             "otherOptions": {
@@ -101,34 +103,6 @@
                 "text": "其他",
                 "required": false
             },
-            "useOptionset": false
-        }
-    }, {
-        "id": "432b4240-00b1-11e8-a5d4-c508b215da81",
-        "isDataField": true,
-        "componentType": "SingleSelect",
-        "dataField": "field17",
-        "componentParams": {
-            "title": "单选下拉框",
-            "description": "描述",
-            "layout": "vertical",
-            "width": "100",
-            "horizontalLayoutLabelWidth": "20",
-            "required": true,
-            "options": [{
-                "id": "16c51d56-00a9-11e8-a5d4-c508b215da81",
-                "text": "选项1",
-                "checked": false
-            }, {
-                "id": "16c51d57-00a9-11e8-a5d4-c508b215da81",
-                "text": "选项2",
-                "checked": false
-            }, {
-                "id": "16c51d58-00a9-11e8-a5d4-c508b215da81",
-                "text": "选项3",
-                "checked": false
-            }],
-            "selectText": "测试提示文字",
             "useOptionset": false
         }
     }, {
@@ -144,15 +118,15 @@
             "horizontalLayoutLabelWidth": "20",
             "required": false,
             "options": [{
-                "id": "16c51d59-00a9-11e8-a5d4-c508b215da81",
+                "id": "0508c7a0-19fa-11e8-b42b-2d49f8b4dc91",
                 "text": "选项1",
-                "checked": false
+                "checked": true
             }, {
-                "id": "16c51d5a-00a9-11e8-a5d4-c508b215da81",
+                "id": "074dae90-19fa-11e8-b42b-2d49f8b4dc91",
                 "text": "选项2",
-                "checked": false
+                "checked": true
             }, {
-                "id": "16c51d5b-00a9-11e8-a5d4-c508b215da81",
+                "id": "0a8ecfd0-19fa-11e8-b42b-2d49f8b4dc91",
                 "text": "选项3",
                 "checked": false
             }],
@@ -161,7 +135,32 @@
                 "id": "_others",
                 "text": "其他",
                 "required": false
-            }
+            },
+            "useOptionset": false,
+            "optionsetId": ""
+        }
+    }, {
+        "id": "938be460-064c-11e8-9f37-bf60ee48e2c6",
+        "isDataField": true,
+        "componentType": "SingleSelect",
+        "dataField": "field36",
+        "componentParams": {
+            "title": "单选下拉框",
+            "description": "",
+            "layout": "vertical",
+            "width": "100",
+            "horizontalLayoutLabelWidth": "20",
+            "required": false,
+            "options": [{
+                "id": "c7062560-19f9-11e8-b42b-2d49f8b4dc91",
+                "text": "选项1",
+                "checked": true
+            }, {
+                "id": "c87a4ed0-19f9-11e8-b42b-2d49f8b4dc91",
+                "text": "选项2",
+                "checked": false
+            }],
+            "selectText": "请选择"
         }
     }, {
         "id": "bd2c5ce0-00b2-11e8-a5d4-c508b215da81",
@@ -175,7 +174,8 @@
             "width": "100",
             "horizontalLayoutLabelWidth": "20",
             "required": false,
-            "datePrecision": "month"
+            "datePrecision": "month",
+            "options": []
         }
     }, {
         "id": "bfafd370-00b2-11e8-a5d4-c508b215da81",
@@ -220,8 +220,8 @@
             "required": false,
             "limitRange": {
                 "limit": true,
-                "max": null,
-                "min": 0
+                "max": 0,
+                "min": ""
             },
             "decimal": {
                 "isAllowed": true,
@@ -229,7 +229,8 @@
             },
             "allowNegative": false,
             "unit": "",
-            "allowNegatived": true
+            "allowNegatived": true,
+            "options": []
         }
     }, {
         "id": "4c838e70-017d-11e8-9c0e-81f5d5dde30f",
@@ -280,40 +281,6 @@
             }
         }
     }, {
-        "id": "5aaff1a0-017d-11e8-9c0e-81f5d5dde30f",
-        "isDataField": true,
-        "componentType": "CascadeSelect",
-        "dataField": "field18",
-        "componentParams": {
-            "title": "级联下拉",
-            "description": "",
-            "layout": "vertical",
-            "width": "100",
-            "horizontalLayoutLabelWidth": "20",
-            "required": false,
-            "cascadeOptions": {
-                "options": [{
-                    "id": "5267ffc0-017c-11e8-9c0e-81f5d5dde30f",
-                    "text": "选项1",
-                    "children": [],
-                    "value": "5267ffc0-017c-11e8-9c0e-81f5d5dde30f",
-                    "label": "选项1",
-                    "__label": "选项1",
-                    "__value": "5267ffc0-017c-11e8-9c0e-81f5d5dde30f"
-                }, {
-                    "id": "5267ffc1-017c-11e8-9c0e-81f5d5dde30f",
-                    "text": "选项2",
-                    "children": [],
-                    "value": "5267ffc1-017c-11e8-9c0e-81f5d5dde30f",
-                    "label": "选项2",
-                    "__label": "选项2",
-                    "__value": "5267ffc1-017c-11e8-9c0e-81f5d5dde30f"
-                }],
-                "levels": 2,
-                "selectTexts": ["请选择", "请选择", "请选择", "请选择"]
-            }
-        }
-    }, {
         "id": "5f83c0d0-017d-11e8-9c0e-81f5d5dde30f",
         "isDataField": true,
         "componentType": "Boolean",
@@ -324,35 +291,28 @@
             "layout": "vertical",
             "width": "100",
             "horizontalLayoutLabelWidth": "20",
-            "required": false
+            "required": true
         }
     }, {
-        "id": "63828cc0-017d-11e8-9c0e-81f5d5dde30f",
-        "isDataField": false,
-        "componentType": "Description",
+        "id": "a3312ae0-071b-11e8-a362-a15cf184bc0c",
+        "isDataField": true,
+        "componentType": "SingleUserSelect",
+        "dataField": "field38",
         "componentParams": {
-            "width": "100",
-            "content": "文字内容",
-            "align": "left"
-        }
-    }, {
-        "id": "66082630-017d-11e8-9c0e-81f5d5dde30f",
-        "isDataField": false,
-        "componentType": "DivisionLine",
-        "componentParams": {
-            "width": "100",
-            "title": "",
+            "title": "用户选择",
             "description": "",
-            "titleAlign": "left",
-            "descriptionAlign": "left"
+            "layout": "vertical",
+            "width": "100",
+            "horizontalLayoutLabelWidth": "20",
+            "required": false
         }
     }, {
         "id": "67bb7b80-017d-11e8-9c0e-81f5d5dde30f",
         "isDataField": true,
-        "componentType": "SingleUserSelect",
+        "componentType": "MultiUserSelect",
         "dataField": "field33",
         "componentParams": {
-            "title": "用户选择",
+            "title": "用户多选",
             "description": "",
             "layout": "vertical",
             "width": "100",
@@ -373,43 +333,37 @@
             "required": false
         }
     }, {
-        "id": "6d4924d0-017d-11e8-9c0e-81f5d5dde30f",
+        "id": "af35a500-071b-11e8-a362-a15cf184bc0c",
+        "isDataField": true,
+        "componentType": "MultiOrgSelect",
+        "dataField": "field40",
+        "componentParams": {
+            "title": "部门多选",
+            "description": "",
+            "layout": "vertical",
+            "width": "100",
+            "horizontalLayoutLabelWidth": "20",
+            "required": false
+        }
+    }, {
+        "id": "63828cc0-017d-11e8-9c0e-81f5d5dde30f",
         "isDataField": false,
-        "componentType": "Group",
-        "children": [{
-            "id": "720f1150-017d-11e8-9c0e-81f5d5dde30f",
-            "isDataField": true,
-            "componentType": "SingleLineText",
-            "dataField": "field35",
-            "componentParams": {
-                "title": "单行文本",
-                "description": "",
-                "layout": "vertical",
-                "width": "100",
-                "horizontalLayoutLabelWidth": "20",
-                "required": false,
-                "placeholder": "",
-                "unique": false,
-                "limitLength": {
-                    "limit": false,
-                    "max": 200,
-                    "min": 0
-                },
-                "validation": {
-                    "validate": false,
-                    "rule": {
-                        "type": "",
-                        "brief": "",
-                        "pattern": ""
-                    }
-                }
-            }
-        }],
-        "isContainer": true,
+        "componentType": "Description",
         "componentParams": {
             "width": "100",
-            "title": "分组标题",
-            "description": "分组描述"
+            "content": "文本描述",
+            "align": "left"
+        }
+    }, {
+        "id": "66082630-017d-11e8-9c0e-81f5d5dde30f",
+        "isDataField": false,
+        "componentType": "DivisionLine",
+        "componentParams": {
+            "width": "100",
+            "title": "分割线标题",
+            "description": "",
+            "titleAlign": "left",
+            "descriptionAlign": "left"
         }
     }],
     "logistics": {
@@ -426,12 +380,12 @@
         "optionsToggleComponentsConfig": {
             "6e069790-00b0-11e8-a5d4-c508b215da81": {
                 "toggleSetting": {
-                    "16c51d53-00a9-11e8-a5d4-c508b215da81": ["206b69e0-00ae-11e8-a5d4-c508b215da81"],
+                    "16c51d53-00a9-11e8-a5d4-c508b215da81": ["206b69e0-00ae-11e8-a5d4-c508b215da81", "432b4240-00b1-11e8-a5d4-c508b215da81", "65bd9ed0-00b0-11e8-a5d4-c508b215da81"],
                     "16c51d54-00a9-11e8-a5d4-c508b215da81": ["206b69e0-00ae-11e8-a5d4-c508b215da81"],
-                    "16c51d55-00a9-11e8-a5d4-c508b215da81": [],
+                    "16c51d55-00a9-11e8-a5d4-c508b215da81": ["65bd9ed0-00b0-11e8-a5d4-c508b215da81"],
                     "_others": []
                 },
-                "optionsToggleCommonShowFields": ["65bd9ed0-00b0-11e8-a5d4-c508b215da81", "432b4240-00b1-11e8-a5d4-c508b215da81", "663f5c80-00b1-11e8-a5d4-c508b215da81", "bd2c5ce0-00b2-11e8-a5d4-c508b215da81", "bfafd370-00b2-11e8-a5d4-c508b215da81", "d2b97bb0-00b2-11e8-a5d4-c508b215da81", "457ab6d0-017d-11e8-9c0e-81f5d5dde30f", "4c838e70-017d-11e8-9c0e-81f5d5dde30f", "56c5e630-017d-11e8-9c0e-81f5d5dde30f", "5aaff1a0-017d-11e8-9c0e-81f5d5dde30f", "5f83c0d0-017d-11e8-9c0e-81f5d5dde30f", "67bb7b80-017d-11e8-9c0e-81f5d5dde30f", "69ef9990-017d-11e8-9c0e-81f5d5dde30f", "720f1150-017d-11e8-9c0e-81f5d5dde30f"]
+                "toggleFields": ["206b69e0-00ae-11e8-a5d4-c508b215da81", "65bd9ed0-00b0-11e8-a5d4-c508b215da81"]
             }
         }
     },
@@ -439,9 +393,7 @@
     "last": true,
     "type": "web",
     "shortId": "arrhhMrydrcgMqeg7iaEnN",
-    "createdBy": "e4cfb2ca-7b83-44d5-a32d-1f0c0fc6c94f",
-    "updatedBy": "e4cfb2ca-7b83-44d5-a32d-1f0c0fc6c94f",
     "description": "描述",
-    "createdAt": "2018-01-19T15:07:53.000+0800",
-    "updatedAt": "2018-01-26T15:27:58.000+0800"
+    "createdAt": "2018-01-19T07:07:53.000Z",
+    "updatedAt": "2018-02-25T07:03:25.000Z"
 }

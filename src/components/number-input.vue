@@ -1,7 +1,10 @@
 <template lang="html">
     <div v-if="showComponent" class="form-group">
-        <text class="form-label">{{definition.componentParams.title}}</text>
-        <input @input="input" class="form-input" type="number" :value="value"/>
+        <div class="label-wrapper">
+            <text class="form-label">{{definition.componentParams.title}}:</text>
+            <text class="required-mark" v-if="definition.componentParams.required">*</text>
+        </div>
+        <input @input="input" class="form-input-native" type="number" :value="value"/>
     </div>
 </template>
 

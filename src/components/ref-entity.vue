@@ -8,19 +8,26 @@
             <text class="form-input" :style="inputStyle">{{valueText || '请选择'}}</text>
             <bui-icon slot="action" name="ion-ios-arrow-right"></bui-icon>
         </div>
+
+        <bui-popup v-model="showPopup" pos="right" width=600>
+            <popup-view :definition="definition" @itemSelected="itemSelected"></popup-view>
+        </bui-popup>
     </div>
 </template>
 
 <script>
-const linkapi = require("linkapi");
 import mixin from './component-mixin.js'
+import ajax from '../js/ajax.js'
+const picker = weex.requireModule('picker');
 
 export default {
-    componentType: 'SingleOrgSelect',
+    componentType: 'RefEntity',
     extends: mixin,
     data() {
         return {
             valueText: '',
+            entities: [],
+            showPopup: false,
         }
     },
     computed: {
@@ -28,31 +35,33 @@ export default {
             return {
                 color: this.value ? 'black' : '#BEBCBC'
             }
-        }
+        },
     },
     watch: {
-        value: {
-            immediate: true,
-            handler(v) {
-                linkapi.getDeptInfoById(v, (result) => {
-                    console.log(result)
-                    this.valueText = result.name;
-                }, err => {
-                    console.log(err)
-                })
+        value(v) {
+            if (v) {
+                ajax.get(`${this.definition.componentParams.entityResourceUrl}/${v}`).then(resp => {
+                    this.valueText = resp.data.title;
+                });
             }
         }
     },
     methods: {
-        inputClicked(e) {
-            linkapi.startContactSingleSelector(this.definition.componentParams.title, 4, {}, (result) => {
-                // TODO
-                this.$emit('input', result.orgId);
-                console.log(result)
-            }, (err) => {
-                this.$alert(err);
-            })
+        inputClicked() {
+            this.showPopup = true;
+        },
+        itemSelected(item) {
+            this.$emit('input', item.id);
+            this.showPopup = false;
         }
+    },
+    created() {
+        ajax.get(this.definition.componentParams.entityResourceUrl).then(resp => {
+            this.entities = resp.data;
+        });
+    },
+    components: {
+        'popup-view': require('./ref-entity-popup.vue'),
     },
 }
 </script>
