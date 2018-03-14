@@ -29,6 +29,10 @@
         border-left-color: #BEBCBC;
         border-left-width: 1px;
         border-left-style: solid;
+        padding-left: 20px;
+        padding-right: 20px;
+        padding-top: 20px;
+        padding-bottom: 20px;
     }
 
 </style>
@@ -36,15 +40,15 @@
 <script>
     import ajax from '../js/ajax.js'
     import service from '../js/service.js'
+    import config from '../js/config.js';
+    import perm from '../js/perm.js';
 
     const globalEvent = weex.requireModule('globalEvent');
-    const stream = weex.requireModule('stream');
-    const data = require('../demoData.json')
+    // const data = require('../demoData.json')
 
     module.exports = {
         render(h) {
             console.log('rendering')
-            this.validationRefs = this.validationRefs || {};
             let forms = [];
             // 遍历 layout 里的所有表单项
             this.data.layout && this.data.layout.forEach((o) => {
@@ -56,12 +60,6 @@
                 }
 
                 switch (o.componentType) {
-                    case 'SingleLineText':
-                    case 'MultiLineText':
-                    case 'NumberInput': {
-                        this.validationRefs[o.id] = true;
-                        break;
-                    }
                     case "RadioButton": {
                         // 读取默认值
                         if (this.result[o.dataField] === undefined) {
@@ -116,8 +114,8 @@
                         definition: o,
                         value: this.result[o.dataField],
                         wholeDefinition: this.data,
-                        ref: o.id
                     },
+                    ref: o.id,
                     on: {
                         input: (v) => {
                             this.$set(this.result, o.dataField, v);
@@ -156,43 +154,53 @@
                         console.log('submit');
                         console.log(this.result);
                         let validated = true;
-                        for (let id in this.validationRefs) {
+                        for (let id in this.$refs) {
                             let result = this.$refs[id].validate();
                             if (!result) {
-                                // this.$toast('验证出错')
                                 validated = false;
+                                break;
                             }
                         }
                         if (!validated) {
-                            // return;
+                            return;
                         }
-                        // this.$alert(JSON.stringify(this.result));
-                        // return;
+                        if (this.isPostingData) return;
+                        this.isPostingData = true;
                         if (this.entityId) {
                             service.updateEntity(this.engineUrl, this.entityName, this.entityId, this.result).then(data => {
-                                this.$toast('编辑成功。')
+                                this.$toast('编辑成功');
+                                this.isPostingData = false;
                             }).catch(err => {
                                 this.$alert(err);
+                                this.isPostingData = false;
                             });
                         } else {
                             service.createEntify(this.engineUrl, this.entityName, this.result).then(data => {
-                                this.$toast('创建成功。')
+                                this.$toast('创建成功');
+                                this.isPostingData = false;
                             }).catch(err => {
                                 this.$alert(err);
+                                this.isPostingData = false;
                             });
                         }
-
                     }
                 }
-            }, ['提交'])
+            }, [this.submitTitle])
 
             let actionBar = h('div', {
                 'class': ['action-bar']
             }, [submitButton]);
 
+            let bodyParts = [titleDiv, forms];
+            if (this.readOnly
+                || (!this.permObj.canEdit && this.entityId)){
+                console.log('不显示提交按钮')
+            } else {
+                bodyParts.push(actionBar);
+            }
             return h('div', {
                 'class': ['container'],
-            }, [titleDiv, forms, actionBar]);
+            }, bodyParts);
         },
         methods: {
         },
@@ -200,54 +208,76 @@
             return {
                 result: {},
                 existedRecord: {},
+                permObj: {},
                 // data: data,
                 data: {},
+                readOnly: false,
                 engineUrl: '',
                 entityId: '',
                 entityName: '',
+                isPostingData: false,
+            }
+        },
+        computed: {
+            submitTitle() {
+                return this.isPostingData ? '提交中...' : '提交';
             }
         },
         mounted() {
             let pageParam = this.$getPageParams();
 
-            var configUrl = pageParam.configUrl;
-            var formId = pageParam.formId;
+            let formId = pageParam.formId;
             // Below are optional
             this.entityId = pageParam.entityId;
+            if (pageParam.readOnly
+                && pageParam.readOnly !== 'false'
+                && pageParam.readOnly !== '0') {
+                this.readOnly = true;
+            }
 
-            let debug = true;
+            let debug = config.debug;
+            let readRuntimeConfigPromise;
 
             if (debug) {
-                configUrl = configUrl || 'https://developer.bingosoft.net:12100/services/tool/system/config';
-                formId = formId || 'nvhNdnUr6UkAXtS2WmV7AQ';
-                // this.entityId = this.entityId || 'a52e91e1-dada-4e5b-8a3c-4578c3779e3d'
-                // this.data = data;
+                formId = formId || config.debugFormId;
+                service.init(config.debugConfigUrl);
+                readRuntimeConfigPromise = Promise.resolve();
+            } else {
+                if (!formId) {
+                    this.$alert('缺少参数 formId');
+                    return;
+                }
+                let contextPath = this.$getContextPath();
+                readRuntimeConfigPromise = config.readRuntimeConfig(contextPath).then(runtimeConfig => {
+                    service.init(runtimeConfig.configServerUrl)
+                });
             }
 
             console.log('fetch data')
-            service.getMetaFormDef(configUrl, formId).then(formDef => {
-                this.data = formDef;
-                this.entityName = formDef.metaEntityName;
-                service.getEngineUrl(configUrl, formDef.projectId).then(engineUrl => {
-                    this.engineUrl = engineUrl;
-                    if (this.entityId) {
-                        service.getEntityDataForId(engineUrl, formDef.metaEntityName, this.entityId).then(data => {
-                            this.existedRecord = data;
-                        })
-                    }
-                })
-
-
+            readRuntimeConfigPromise.then(() => {
+                return service.getMetaFormDef(formId).then(formDef => {
+                    this.data = formDef;
+                    this.entityName = formDef.metaEntityName;
+                    return service.getEngineUrl(formDef.projectId).then(engineUrl => {
+                        this.engineUrl = engineUrl;
+                        if (this.entityId) {
+                            service.getEntityDataForId(engineUrl, formDef.metaEntityName, this.entityId).then(data => {
+                                this.existedRecord = data;
+                                this.permObj = perm.parseBits(data.permVal);
+                            })
+                        }
+                    })
+                });
             })
             .catch(err => {
                 console.log(err)
-                this.$toast('Fetch data failed: ' + JSON.stringify(err));
+                this.$alert('Fetch data failed: ' + JSON.stringify(err));
             })
 
             // this.fetchData();
-            // globalEvent.addEventListener("androidback", e => {
-            //     this.$pop();
-            // });
+            globalEvent.addEventListener("androidback", e => {
+                this.$pop();
+            });
         },
         components: require('../components/all-components.js')
     }

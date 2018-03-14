@@ -14,10 +14,6 @@ import mixin from './component-mixin.js'
 export default {
     componentType: 'Boolean',
     extends: mixin,
-    data() {
-        return {
-        }
-    },
     methods: {
         change(e) {
             this.$emit('input', e.value);

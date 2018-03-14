@@ -14,8 +14,10 @@
                 </div>
             </div>
         </bui-header>
+        <bui-searchbar-center @search="onSearch" @clear="onSearchClear" placeholder="请输入搜索内容"></bui-searchbar-center>
         <scroller>
-            <bui-searchbar-left @search="onSearch" @clear="onSearchClear" placeholder="请输入搜索内容"></bui-searchbar-left>
+            <refresh-wrapper @refresh="onrefresh" :isRefreshing="isRefreshing">
+            </refresh-wrapper>
             <div v-for="o in listData" @click="cellClick(o.id)">
                 <!-- 布局 0 -->
                 <div class="list-item" v-if="layoutType == '0'">
@@ -38,8 +40,9 @@
                         <text class="sub-text">{{getFieldValue(o, p5)}}</text>
                     </div>
                 </div>
-
             </div>
+            <loading-wrapper v-if="listData.length && listData.length >= pageSize" @loading="onloading" :status="loadingStatus">
+            </loading-wrapper>
         </scroller>
 
         <bui-dropdown v-model="showDropdown" ref="dropdown" :center=true>
@@ -47,7 +50,7 @@
         </bui-dropdown>
 
         <bui-popup v-model="showPopup" pos="right" width=600>
-            <filter-view :filters="filters" :viewDef="viewDef" :swaggerEntiyDef="swaggerEntiyDef" @filter="customFilterSet">
+            <filter-view :filters="filters" :viewDef="viewDef" :swaggerEntiyDef="swaggerEntiyDef" @filter="customFilterSet" @cancel="showPopup = false">
             </filter-view>
         </bui-popup>
     </div>
@@ -57,8 +60,10 @@
 
 import service from '../js/service.js';
 import ajax from '../js/ajax.js';
+import config from '../js/config.js';
+const linkapi = require('linkapi');
 
-const _ = require('lodash');
+const globalEvent = weex.requireModule('globalEvent');
 
 module.exports = {
     data() {
@@ -78,9 +83,14 @@ module.exports = {
             p5: '5',
             presetFilters: [],
             filters: {}, // 高级搜索
+            quickSearchFilters: '',
             selectedFilter: null,
             showDropdown: false,
             showPopup: false,
+            isRefreshing: false,
+            loadingStatus: 'init',
+            currentPage: 1,
+            pageSize: 10,
         }
     },
     computed: {
@@ -96,18 +106,26 @@ module.exports = {
     },
     methods: {
         cellClick(id) {
-            let url = `http://10.200.210.215:8686/dist/app.weex.js?configUrl=${encodeURIComponent(this.configUrl)}&formId=${this.formId}&entityId=${id}`
-            this.$push(url)
+            // let url = `${this.contextPath}/form.weex.js?entityId=${id}&formId=${this.formId}`;
+            // this.$push(url)
+            let url = this.viewDef.settings.mViewUrl.appUrl.replace(':id', id);
+            let params = {
+                appCode: this.viewDef.settings.mViewUrl.appCode,
+                appUrl: url,
+            };
+            linkapi.runApp(params)
         },
         filterClicked() {
             this.showPopup = true;
         },
         customFilterSet(result) {
-            this.$alert(result);
+            // this.$alert(result);
             this.showPopup = false;
+            this.filters = result;
+            this.refreshData();
         },
         create() {
-            let url = `http://10.200.210.215:8686/dist/app.weex.js?configUrl=${encodeURIComponent(this.configUrl)}&formId=${this.formId}`
+            let url = `${this.contextPath}/form.weex.js?formId=${this.formId}`;
             this.$push(url)
         },
         titleClicked(e) {
@@ -143,106 +161,182 @@ module.exports = {
                 return obj[field];
             }
         },
-        refreshData() {
-            this.queryParam.page_size = 20;
-            this.queryParam.page = 1;
+        fetchData(page) {
+            this.queryParam.page_size = this.pageSize;
+            this.queryParam.page = page || 1;
+            let filtersParts = [];
+            if (this.filters) {
+                for (let k in this.filters) {
+                    if (this.filters[k]) filtersParts.push(this.filters[k]);
+                }
+            }
+            if (this.quickSearchFilters) {
+                filtersParts.push(this.quickSearchFilters);
+            }
+            this.queryParam.filters = filtersParts.join(' and ');
             return ajax.get(this.dataUrlPath, this.queryParam).then(resp => {
-                this.listData = resp.data;
+                return resp.data;
             })
         },
+        refreshData() {
+            if (this.isRefreshing) return;
+            this.isRefreshing = true;
+            this.fetchData(1).then(data => {
+                this.listData = data;
+                this.isRefreshing = false;
+                this.currentPage = 1;
+                this.loadingStatus = 'init';
+            }).catch(err => {
+                this.isRefreshing = false;
+            })
+        },
+        loadMore() {
+            if (this.loadingStatus == 'loading') return;
+            this.loadingStatus = 'loading';
+            this.fetchData(this.currentPage + 1).then(data => {
+                if (data.length) {
+                    this.listData = this.listData.concat(data);
+                    this.loadingStatus = 'init';
+                    this.currentPage++;
+                } else {
+                    this.loadingStatus = 'noMore';
+                }
+
+            }).catch(err => {
+                this.loadingStatus = 'init';
+            })
+        },
+        onrefresh() {
+            this.refreshData();
+        },
+        onloading() {
+            this.loadMore();
+        },
         onSearch(keyword) {
-            let filtersStr = this.quickSearchableField
+            let filtersStr = keyword && this.quickSearchableField
                 .map(name => `${name} like '%${keyword}%'`)
                 .join(' or ')
-            this.queryParam.filters = filtersStr;
+            this.quickSearchFilters = filtersStr && `(${filtersStr})`; // and 优先级比 or 高，这里先用 () 包裹起来
             this.refreshData();
         },
         onSearchClear() {
-            this.queryParam.filters = '';
+            this.quickSearchFilters = '';
             this.refreshData();
         }
     },
     created() {
+        this.contextPath = this.$getContextPath();
+        globalEvent.addEventListener("androidback", e => {
+            this.$pop();
+        });
+
         let pageParam = this.$getPageParams();
 
         // 以下变量由外部配置
-        var projectId = pageParam.projectId;
-        var entityName = pageParam.entityName;
+        let viewId = pageParam.viewId;
 
-        this.configUrl = pageParam.configUrl;
-        this.viewId = '9CsWFSCZ7bsvQqhYpm3i5f';
-        this.formId = 'nvhNdnUr6UkAXtS2WmV7AQ';
-
-        let debug = true;
+        let debug = config.debug;
+        let readRuntimeConfigPromise;
         if (debug) {
-            this.configUrl = this.configUrl || 'https://developer.bingosoft.net:12100/services/tool/system/config';
-            projectId = projectId || 'woNmj6STRzTcD7S53ZXTU3';
-            entityName = entityName || 'activity';
+            viewId = viewId || config.debugViewId;
+            service.init(config.debugConfigUrl);
+            readRuntimeConfigPromise = Promise.resolve();
+        } else {
+            if (!viewId) {
+                this.$alert('缺少参数 viewId');
+                return;
+            }
+            let contextPath = this.$getContextPath();
+            readRuntimeConfigPromise = config.readRuntimeConfig(contextPath).then(runtimeConfig => {
+                service.init(runtimeConfig.configServerUrl)
+            });
         }
 
-        service.getMetaViewDef(this.configUrl, this.viewId)
-        .then(viewDef => {
-            this.viewDef = viewDef;
-            let params = {
-                filters: viewDef.config.filters, // 过滤
-            }
-            // 选择字段
-            let fields = new Set();
-            fields.add('_data'); // _data 字段里会有冗余信息
-            viewDef.config.columns.forEach(col => {
-                fields.add(col.name)
-                if (col.quicksearchable) {
-                    this.quickSearchableField.push(col.name);
+        readRuntimeConfigPromise.then(() => {
+            return service.getMetaViewDef(viewId).catch((err) => {
+                this.$toast('getMetaViewDef error')
+                this.$alert(err)
+            })
+            .then(viewDef => {
+                this.viewDef = viewDef;
+                this.formId = viewDef.metaFormShortId;
+                let params = {
+                    filters: viewDef.config.filters, // 过滤
+                };
+                // 选择字段
+                let fields = new Set();
+                fields.add('_data'); // _data 字段里会有冗余信息
+                viewDef.config.columns.forEach(col => {
+                    fields.add(col.name)
+                    if (col.quicksearchable) {
+                        this.quickSearchableField.push(col.name);
+                    }
+                });
+                if (viewDef.config.mLayout) {
+                    // 处理手机端布局
+                    this.layoutType = viewDef.config.mLayout.template;
+                    if (this.layoutType == '1') {
+                        let layout = viewDef.config.mLayout.params;
+                        this.p1 = layout.p1;
+                        this.p2 = layout.p2;
+                        this.p3 = layout.p3;
+                        this.p4 = layout.p4;
+                        this.p5 = layout.p5;
+                        fields.add(this.p1);
+                        fields.add(this.p2);
+                        fields.add(this.p3);
+                        fields.add(this.p4);
+                        fields.add(this.p5);
+                    }
                 }
-            });
-            if (viewDef.config.mLayout) {
-                // 处理手机端布局
-                this.layoutType = viewDef.config.mLayout.template;
-                if (this.layoutType == '1') {
-                    let layout = viewDef.config.mLayout.params;
-                    this.p1 = layout.p1;
-                    this.p2 = layout.p2;
-                    this.p3 = layout.p3;
-                    this.p4 = layout.p4;
-                    this.p5 = layout.p5;
-                    fields.add(this.p1);
-                    fields.add(this.p2);
-                    fields.add(this.p3);
-                    fields.add(this.p4);
-                    fields.add(this.p5);
+                params.select = Array.from(fields).join(',');
+                // 排序
+                if (viewDef.config.orderby) {
+                    params.orderby = viewDef.config.orderby.map(o => `${o.name} ${o.type}`).join(',')
                 }
-            }
-            params.select = Array.from(fields).join(',');
-            // 排序
-            if (viewDef.config.orderby) {
-                params.orderby = viewDef.config.orderby.map(o => `${o.name} ${o.type}`).join(',')
-            }
-            // 预设的过滤器
-            if (viewDef.config.multipleFilters.support) {
-                this.presetFilters = viewDef.config.multipleFilters.filters;
-                this.selectedFilter = this.presetFilters.find(f => f.checked);
-                if (this.selectedFilter) {
-                    params.viewId = this.selectedFilter.viewId;
+                // 预设的过滤器
+                if (viewDef.config.multipleFilters.support) {
+                    this.presetFilters = viewDef.config.multipleFilters.filters;
+                    this.selectedFilter = this.presetFilters.find(f => f.checked);
+                    if (this.selectedFilter) {
+                        params.viewId = this.selectedFilter.viewId;
+                    }
                 }
-            }
-            return service.getEngineUrl(this.configUrl, viewDef.projectId).then(engineUrl => {
-                return ajax.get(`${engineUrl}/swagger.json`).then(resp => {
-                    let key = _.upperFirst(viewDef.metaEntityName);
-                    this.swaggerEntiyDef = resp.data.definitions[key];
-                }).then(() => {
-                    this.dataUrlPath = `${engineUrl}/${viewDef.metaEntityName}`;
-                    this.queryParam = params;
-                    return this.refreshData();
+                return service.getEngineUrl(viewDef.projectId)
+                .catch(err => {
+                    this.$toast('getEngineUrl error')
+                    this.$alert(err)
                 })
-            });
-        })
-        .catch(err => {
+                .then(engineUrl => {
+                    return ajax.get(`${engineUrl}/swagger.json`).then(resp => {
+                        let name = viewDef.metaEntityName;
+                        let key = name[0].toUpperCase() + name.substr(1);
+                        this.swaggerEntiyDef = resp.data.definitions[key];
+                    })
+                    .catch(err => {
+                        this.$toast('getSwagger error')
+                        this.$alert(err)
+                    })
+                    .then(() => {
+                        this.dataUrlPath = `${engineUrl}/${viewDef.metaEntityName}`;
+                        this.queryParam = params;
+                        return this.refreshData();
+                    })
+                    .catch(err => {
+                        this.$alert('refreshData error')
+                        this.$alert(err)
+                    })
+                });
+            })
+        }).catch(err => {
             console.log(err)
             this.$alert(err);
-        })
+        });
     },
     components: {
-        'filter-view': require('./filter.vue')
+        'filter-view': require('./filter.vue'),
+        'refresh-wrapper': require('../components/common/refresh.vue'),
+        'loading-wrapper': require('../components/common/loading.vue')
     }
 }
 </script>

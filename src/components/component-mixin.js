@@ -23,6 +23,10 @@ export default {
     },
     methods: {
         validate() {
+            if (this.definition.componentParams.required && this.value === undefined) {
+                this.$toast(`${this.definition.componentParams.title} 的输入不能为空`)
+                return false;
+            }
             return true;
         },
         log(any) {

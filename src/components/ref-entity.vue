@@ -10,7 +10,7 @@
         </div>
 
         <bui-popup v-model="showPopup" pos="right" width=600>
-            <popup-view :definition="definition" @itemSelected="itemSelected"></popup-view>
+            <popup-view :definition="definition" @itemSelected="itemSelected" @cancel="showPopup = false"></popup-view>
         </bui-popup>
     </div>
 </template>

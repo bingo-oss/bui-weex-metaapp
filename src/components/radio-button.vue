@@ -36,9 +36,24 @@ export default {
             })
         }
     },
+    watch: {
+        filterValue: {
+            immediate: true,
+            handler(val) {
+                if (this.filterMode) {
+                    let ret = /eq\s(\S*)/.exec(val);
+                    if (ret) this.value = ret[1];
+                }
+            }
+        }
+    },
     methods: {
         input(value) {
-            this.$emit('input', value);
+            if (this.filterMode) {
+                this.$emit('filterInput', `${this.definition.dataField} eq ${value}`);
+            } else {
+                this.$emit('input', value);
+            }
             // if (this.controlledComps.length) {
             //     // 存在关联关系的 RadioButton，触发显示/隐藏事件
             //     let tmpMemo = {};
@@ -55,9 +70,6 @@ export default {
             // }
         }
     },
-    created() {
-
-    }
 }
 </script>
 

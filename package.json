@@ -31,7 +31,7 @@
   "dependencies": {
     "bui-weex": "^0.2.0",
     "glob": "^7.1.2",
-    "linkapi": "^0.1.4",
+    "linkapi": "^0.2.1",
     "punycode": "^2.1.0",
     "vue": "^2.4.2",
     "vue-router": "^2.1.1",

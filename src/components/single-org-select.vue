@@ -35,20 +35,30 @@ export default {
             immediate: true,
             handler(v) {
                 linkapi.getDeptInfoById(v, (result) => {
-                    console.log(result)
                     this.valueText = result.name;
                 }, err => {
                     console.log(err)
                 })
+            }
+        },
+        filterValue: {
+            immediate: true,
+            handler(val) {
+                if (this.filterMode) {
+                    let ret = /eq\s(\S*)/.exec(val);
+                    if (ret) this.value = ret[1];
+                }
             }
         }
     },
     methods: {
         inputClicked(e) {
             linkapi.startContactSingleSelector(this.definition.componentParams.title, 4, {}, (result) => {
-                // TODO
-                this.$emit('input', result.orgId);
-                console.log(result)
+                if (this.filterMode) {
+                    this.$emit('filterInput', `${this.definition.dataField} eq ${result.orgId}`);
+                } else {
+                    this.$emit('input', result.orgId);
+                }
             }, (err) => {
                 this.$alert(err);
             })

@@ -31,37 +31,41 @@ export default {
     },
     methods: {
         input(e) {
-            if (!this.filterMode) {
-                this.$emit('input', e.value);
-            } else {
+            if (this.filterMode) {
                 this.$emit('filterInput', `${this.definition.dataField} like %${e.value}%`)
+            } else {
+                this.$emit('input', e.value);
             }
         },
 
         validate() {
             let patternOk = true;
             let lengthOk = true;
+            let errorTips = ''
 
             if (this.definition.componentParams.validation.validate) {
                 let pattern = this.definition.componentParams.validation.rule.pattern;
                 let r = new RegExp(pattern);
+                if (!patternOk) errorTips = '非法格式';
                 patternOk = r.test(this.value);
-                console.log('pattern test: ' + patternOk);
             }
 
             let limitLength = this.definition.componentParams.limitLength;
             if (limitLength.limit) {
                 if (!this.value) {
                     lengthOk = false;
+                    errorTips = '不能为空';
                 } else {
                     lengthOk = this.value.length >= limitLength.min && this.value.length <= limitLength.max;
+                    if (!lengthOk) {
+                        errorTips = `字数范围为 ${limitLength.min} - ${limitLength.max}`;
+                    }
                 }
-                console.log('length test: ' + lengthOk);
             }
 
             let validated = lengthOk && patternOk;
             if (!validated) {
-                this.$toast(`${this.definition.componentParams.title} 输入验证失败`);
+                this.$toast(`${this.definition.componentParams.title}: ${errorTips}`);
             }
             return validated;
         },

@@ -99,14 +99,13 @@
                     },
                     on: {
                         filterInput: (v) => {
+                            console.log(`setting ${v} for ${col.name}`)
                             this.$set(this.filters, col.name, v);
                         }
                     },
                 })
                 forms.push(input);
             });
-
-            console.log(forms);
 
             // 用 scroller 将 forms 包起来
             forms = h('scroller', {
@@ -118,11 +117,12 @@
                 attrs: {
                     title: '筛选设置',
                     leftItem: {
-                        icon: 'ion-ios-arrow-back',
+                        text: '取消',
                     }
                 },
                 on: {
                     leftClick: () => {
+                        this.$emit('cancel')
                     }
                 }
             })

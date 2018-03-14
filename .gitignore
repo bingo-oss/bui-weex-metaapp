@@ -9,3 +9,5 @@
 *log
 **/.DS_Store
 package-lock.json
+/publish.zip
+/publish
