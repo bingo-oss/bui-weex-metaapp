@@ -23,7 +23,7 @@ export default {
             immediate: true,
             handler(val) {
                 if (this.filterMode) {
-                    let ret = /%(\S)*%/.exec(val);
+                    let ret = /%(\S*)%/.exec(val);
                     if (ret) this.value = ret[1];
                 }
             }

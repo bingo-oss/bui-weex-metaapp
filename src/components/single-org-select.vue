@@ -45,7 +45,7 @@ export default {
             immediate: true,
             handler(val) {
                 if (this.filterMode) {
-                    let ret = /eq\s(\S*)/.exec(val);
+                    let ret = /eq\s(\S*)$/.exec(val);
                     if (ret) this.value = ret[1];
                 }
             }
@@ -55,9 +55,10 @@ export default {
         inputClicked(e) {
             linkapi.startContactSingleSelector(this.definition.componentParams.title, 4, {}, (result) => {
                 if (this.filterMode) {
-                    this.$emit('filterInput', `${this.definition.dataField} eq ${result.orgId}`);
+                    let v = `${this.definition.dataField} eq ${result.id}`;
+                    this.$emit('filterInput', v);
                 } else {
-                    this.$emit('input', result.orgId);
+                    this.$emit('input', result.id);
                 }
             }, (err) => {
                 this.$alert(err);

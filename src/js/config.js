@@ -9,6 +9,7 @@ export default {
     debugViewId: 'n34Zs9i2qAeEeqnZvfwUnW',
     debugFormId: 'ssyreSd',
     token: '7acbcce8-ba55-4c44-8c50-f9362649ee1b',
+    debugEntityId: 'O1PRfnK1A ',
     configFilename: 'config.json',
 
     readRuntimeConfig(contextPath) {

@@ -173,6 +173,9 @@ module.exports = {
             if (this.quickSearchFilters) {
                 filtersParts.push(this.quickSearchFilters);
             }
+            if (this.selectedFilter && this.selectedFilter.value) {
+                filtersParts.push(this.selectedFilter.value)
+            }
             this.queryParam.filters = filtersParts.join(' and ');
             return ajax.get(this.dataUrlPath, this.queryParam).then(resp => {
                 return resp.data;

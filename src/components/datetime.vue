@@ -44,15 +44,15 @@ export default {
         },
         filterPointStartText() {
             if (this.filterPointStart) {
-                let d = new Date(this.filterPointStart);
-                return d.toLocaleString(undefined, {hour12: false});
+                let d = this.parseDate(this.filterPointStart);
+                return d.toLocaleString('zh-CN', {hour12: false});
             }
             return '';
         },
         filterPointEndText() {
             if (this.filterPointEnd) {
-                let d = new Date(this.filterPointEnd);
-                return d.toLocaleString(undefined, {hour12: false});
+                let d = this.parseDate(this.filterPointEnd);
+                return d.toLocaleString('zh-CN', {hour12: false});
             }
             return '';
         },
@@ -96,9 +96,7 @@ export default {
                             }, (res) => {
                                 if (res.result === 'success') {
                                     let t = res.data;
-                                    // 参考 ISO Date String
-                                    let date = new Date(`${d}T${t}:00+08:00`)
-                                    resolve(date.toISOString());
+                                    resolve(`${d} ${t}:00`);
                                 }
                             })
                         }, 500) // TODO: 这里需要延时，否则 pickTime 无法弹出
@@ -107,13 +105,25 @@ export default {
             })
         },
         inputClicked() {
-            this.pickDateTime().then(v => {
-                this.$emit('input', v);
+            this.pickDateTime().then(dateStr => {
+                let date = new Date(dateStr)
+                this.$emit('input', date.toISOString());
             })
         },
+        parseDate(str) {
+            // 参考 ISO Date String
+            str = str.replace(' ', 'T');
+            let isoStr = `${str}`;
+            // this.$alert(isoStr)
+            return new Date(isoStr)
+        },
         toFilterPresentation(start, end) {
-            if (start) start = `${this.definition.dataField} ge '${start}'`;
-            if (end) end = `${this.definition.dataField} le '${end}'`;
+            if (start) {
+                start = `${this.definition.dataField} ge '${start}'`;
+            }
+            if (end) {
+                end = `${this.definition.dataField} le '${end}'`;
+            }
             if (start && end) {
                 return `${start} and ${end}`;
             } else {

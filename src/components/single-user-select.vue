@@ -34,16 +34,31 @@ export default {
         value: {
             immediate: true,
             handler(v) {
+
                 linkapi.getUserInfo(v, (result) => {
                     this.valueText = result.userName;
                 })
+            }
+        },
+        filterValue: {
+            immediate: true,
+            handler(val) {
+                if (this.filterMode) {
+                    let ret = /eq\s(\S*)$/.exec(val);
+                    if (ret) this.value = ret[1];
+                }
             }
         }
     },
     methods: {
         inputClicked(e) {
             linkapi.startContactSingleSelector(this.definition.componentParams.title, 1, {}, (result) => {
-                this.$emit('input', result.id)
+                if (this.filterMode) {
+                    let v = `${this.definition.dataField} eq ${result.id}`;
+                    this.$emit('filterInput', v);
+                } else {
+                    this.$emit('input', result.id);
+                }
             }, (err) => {
                 this.$alert(err);
             })
