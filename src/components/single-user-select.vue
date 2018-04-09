@@ -26,7 +26,7 @@ export default {
     computed: {
         inputStyle() {
             return {
-                color: this.value ? 'black' : '#BEBCBC'
+                color: this.valueText ? 'black' : '#BEBCBC'
             }
         }
     },
@@ -34,7 +34,6 @@ export default {
         value: {
             immediate: true,
             handler(v) {
-
                 linkapi.getUserInfo(v, (result) => {
                     this.valueText = result.userName;
                 })
@@ -45,7 +44,11 @@ export default {
             handler(val) {
                 if (this.filterMode) {
                     let ret = /eq\s(\S*)$/.exec(val);
-                    if (ret) this.value = ret[1];
+                    if (ret) {
+                        linkapi.getUserInfo(ret[1], (result) => {
+                            this.valueText = result.userName;
+                        })
+                    }
                 }
             }
         }
@@ -53,6 +56,7 @@ export default {
     methods: {
         inputClicked(e) {
             linkapi.startContactSingleSelector(this.definition.componentParams.title, 1, {}, (result) => {
+                if (!result.id) return;
                 if (this.filterMode) {
                     let v = `${this.definition.dataField} eq ${result.id}`;
                     this.$emit('filterInput', v);

@@ -26,7 +26,7 @@ export default {
     computed: {
         inputStyle() {
             return {
-                color: this.value ? 'black' : '#BEBCBC'
+                color: this.valueText ? 'black' : '#BEBCBC'
             }
         }
     },
@@ -46,7 +46,13 @@ export default {
             handler(val) {
                 if (this.filterMode) {
                     let ret = /eq\s(\S*)$/.exec(val);
-                    if (ret) this.value = ret[1];
+                    if (ret) {
+                        linkapi.getDeptInfoById(ret[1], (result) => {
+                            this.valueText = result.name;
+                        }, err => {
+                            console.log(err)
+                        })
+                    }
                 }
             }
         }
@@ -54,6 +60,7 @@ export default {
     methods: {
         inputClicked(e) {
             linkapi.startContactSingleSelector(this.definition.componentParams.title, 4, {}, (result) => {
+                if (!result.id) return;
                 if (this.filterMode) {
                     let v = `${this.definition.dataField} eq ${result.id}`;
                     this.$emit('filterInput', v);

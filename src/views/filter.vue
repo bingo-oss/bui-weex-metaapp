@@ -54,6 +54,7 @@
         },
         render(h) {
             console.log('rendering filters view');
+            // this.$toast('rendering filters view');
 
             let forms = [];
             // 遍历 layout 里的所有表单项
@@ -132,10 +133,11 @@
                 'class': ['action-button'],
                 on: {
                     click:() => {
+                        // this.$alert(this.filters);
                         this.$emit('filter', this.filters);
                     }
                 }
-            }, ['提交'])
+            }, ['筛选'])
 
             let resetButton = h('text', {
                 'class': ['action-button'],

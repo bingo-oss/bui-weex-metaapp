@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <bui-header>
+    <div @viewappear="viewAppear" @viewdisappear="viewDisappear">
+        <bui-header :leftItem="{icon: 'ion-ios-arrow-back'}" @leftClick="pop">
             <div slot="center" class="page-title-wrapper" @click="titleClicked">
                 <text class="page-title" @click="titleClicked">{{title}}</text>
                 <bui-icon name="ion-chevron-down" color="white" size=36 @click="titleClicked"></bui-icon>
@@ -18,29 +18,41 @@
         <scroller>
             <refresh-wrapper @refresh="onrefresh" :isRefreshing="isRefreshing">
             </refresh-wrapper>
-            <div v-for="o in listData" @click="cellClick(o.id)">
-                <!-- 布局 0 -->
-                <div class="list-item" v-if="layoutType == '0'">
-                    <div class="list-item-row">
-                        <text class="sub-text">{{o.title}}</text>
-                    </div>
-                </div>
 
-                <!-- 布局 1 -->
-                <div class="list-item" v-if="layoutType == '1'">
-                    <div class="list-item-row">
-                        <text class="title-text">{{getFieldValue(o, p1)}}</text>
+            <div v-for="(o, index) in listData">
+                <bui-swipe-cell height="200px" :items="swipeActions"
+                    @actionClick="swipeActionClicked($event, o.id, index)"
+                    @click="read(o.id)"
+                    >
+                    <!-- 布局 0 默认 -->
+                    <div class="list-item" v-if="layoutType == '0'" slot="content">
+                        <div class="list-item-row">
+                            <text class="title-text">{{o.id}}</text>
+                        </div>
                     </div>
-                    <div class="list-item-row">
-                        <text class="sub-text">{{getFieldValue(o, p2)}}</text>
-                        <text class="sub-text">{{getFieldValue(o, p3)}}</text>
+                    <!-- 布局 1 -->
+                    <div class="list-item" v-if="layoutType == '1'" slot="content">
+                        <div class="list-item-row">
+                            <text class="title-text">{{getFieldValue(o, p1)}}</text>
+                        </div>
+                        <div class="list-item-row">
+                            <text class="sub-text">{{getFieldValue(o, p2)}}</text>
+                            <text class="sub-text">{{getFieldValue(o, p3)}}</text>
+                        </div>
+                        <div class="list-item-row">
+                            <text class="sub-text">{{getFieldValue(o, p4)}}</text>
+                            <text class="sub-text">{{getFieldValue(o, p5)}}</text>
+                        </div>
                     </div>
-                    <div class="list-item-row">
-                        <text class="sub-text">{{getFieldValue(o, p4)}}</text>
-                        <text class="sub-text">{{getFieldValue(o, p5)}}</text>
-                    </div>
-                </div>
+                </bui-swipe-cell>
             </div>
+
+            <div class="list-item" v-if="listData.length === 0">
+                <text class="empty-tips">暂无数据</text>
+            </div>
+            <!-- <div class="list-item" v-for="i in [1, 2, 3, 4, 5, 6, 7]">
+                    <text class="empty-tips">{{i}}</text>
+            </div> -->
             <loading-wrapper v-if="listData.length && listData.length >= pageSize" @loading="onloading" :status="loadingStatus">
             </loading-wrapper>
         </scroller>
@@ -68,6 +80,8 @@ const globalEvent = weex.requireModule('globalEvent');
 module.exports = {
     data() {
         return {
+            engineUrl: '',
+            entityName: '',
             dataUrlPath: '', // 获取 listData 的 url 路径
             dataUrlParam: null, // 获取 listData 的 url query object
             listData: [],
@@ -75,7 +89,7 @@ module.exports = {
             selectFields: [],
             quickSearchableField: [],
             swaggerEntiyDef: {},
-            layoutType: "1",
+            layoutType: "0",
             p1: 'title',
             p2: '2',
             p3: '3',
@@ -91,6 +105,12 @@ module.exports = {
             loadingStatus: 'init',
             currentPage: 1,
             pageSize: 10,
+            swipeActions: [
+                {title: '查看', bgcolor: '#c6c7c8'},
+                {title: '编辑', bgcolor: '#3091f2'},
+                {title: '删除', bgcolor: '#ff4e24'}
+            ],
+            remainingPageParam: {},
         }
     },
     computed: {
@@ -105,16 +125,6 @@ module.exports = {
 
     },
     methods: {
-        cellClick(id) {
-            // let url = `${this.contextPath}/form.weex.js?entityId=${id}&formId=${this.formId}`;
-            // this.$push(url)
-            let url = this.viewDef.settings.mViewUrl.appUrl.replace(':id', id);
-            let params = {
-                appCode: this.viewDef.settings.mViewUrl.appCode,
-                appUrl: url,
-            };
-            linkapi.runApp(params)
-        },
         filterClicked() {
             this.showPopup = true;
         },
@@ -124,9 +134,52 @@ module.exports = {
             this.filters = result;
             this.refreshData();
         },
+        swipeActionClicked(actionIndex, id, listIndex) {
+            switch (actionIndex) {
+                case 0:
+                    this.read(id)
+                    break;
+                case 1:
+                    this.edit(id);
+                    break;
+                case 2:
+                    this.delete(id, listIndex);
+                    break
+                default:
+                    this.$alert('Not reach.')
+            }
+        },
+        read(id) {
+            let url = this.viewDef.settings.mViewUrl.appUrl.replace(':id', id);
+            let params = {
+                appCode: this.viewDef.settings.mViewUrl.appCode,
+                appUrl: url,
+            };
+            linkapi.runApp(params)
+        },
         create() {
-            let url = `${this.contextPath}/form.weex.js?formId=${this.formId}`;
+            // 将页面参数传递给下一个页面
+            let queryParam = Object.assign({formId: this.formId}, this.remainingPageParam);
+            let url = `${this.contextPath}/form.weex.js${ajax.object2query(queryParam)}`;
             this.$push(url)
+        },
+        edit(id) {
+            // 将页面参数传递给下一个页面
+            let queryParam = Object.assign({formId: this.formId, entityId: id}, this.remainingPageParam);
+            let url = `${this.contextPath}/form.weex.js${ajax.object2query(queryParam)}`;
+            this.$push(url)
+        },
+        delete(id, index) {
+            service.deleteEntity(this.engineUrl, this.entityName, id).then(() => {
+                this.$toast('删除成功')
+                this.listData.splice(index, 1);
+            }).catch((resp, ...args) => {
+                // this.$alert(resp);
+                // BUG: 错误时无法获取 resp.data，所以写死
+                if (resp.status == 500) {
+                    this.$alert('数据已归档，不允许再进行修改');
+                }
+            })
         },
         titleClicked(e) {
             this.$refs.dropdown.show(e);
@@ -191,6 +244,7 @@ module.exports = {
                 this.loadingStatus = 'init';
             }).catch(err => {
                 this.isRefreshing = false;
+                this.$alert(err);
             })
         },
         loadMore() {
@@ -225,6 +279,18 @@ module.exports = {
         onSearchClear() {
             this.quickSearchFilters = '';
             this.refreshData();
+        },
+        pop() {
+            this.$pop();
+        },
+        viewAppear() {
+            if (this.viewDisappeared) {
+                this.refreshData();
+                this.viewDisappear = false;
+            }
+        },
+        viewDisappear() {
+            this.viewDisappeared = true;
         }
     },
     created() {
@@ -237,11 +303,18 @@ module.exports = {
 
         // 以下变量由外部配置
         let viewId = pageParam.viewId;
+        delete pageParam.viewId;
+
+        // TODO: 暂时写死删除 title 键
+        delete pageParam.title;
+
+        this.remainingPageParam = pageParam;
 
         let debug = config.debug;
         let readRuntimeConfigPromise;
         if (debug) {
             viewId = viewId || config.debugViewId;
+            pageParam.activityId = 'jdgBczwGi';
             service.init(config.debugConfigUrl);
             readRuntimeConfigPromise = Promise.resolve();
         } else {
@@ -250,9 +323,14 @@ module.exports = {
                 return;
             }
             let contextPath = this.$getContextPath();
-            readRuntimeConfigPromise = config.readRuntimeConfig(contextPath).then(runtimeConfig => {
-                service.init(runtimeConfig.configServerUrl)
-            });
+            readRuntimeConfigPromise = config.readRuntimeConfig(contextPath)
+                .catch(err => {
+                    this.$alert(err);
+                    this.$toast('读取运行时配置失败');
+                })
+                .then(runtimeConfig => {
+                    service.init(runtimeConfig.configServerUrl)
+                })
         }
 
         readRuntimeConfigPromise.then(() => {
@@ -311,17 +389,24 @@ module.exports = {
                     this.$alert(err)
                 })
                 .then(engineUrl => {
-                    return ajax.get(`${engineUrl}/swagger.json`).then(resp => {
-                        let name = viewDef.metaEntityName;
-                        let key = name[0].toUpperCase() + name.substr(1);
-                        this.swaggerEntiyDef = resp.data.definitions[key];
+                    this.engineUrl = engineUrl;
+                    this.entityName = viewDef.metaEntityName;
+                    service.getSwaggerEntityDef(engineUrl, this.entityName).then(entityDef => {
+                        this.swaggerEntiyDef = entityDef;
+                        // 对于 pageParam 里的 query，遇到属于字段的 query 要在获取实体数据时带上
+                        for (let k in this.swaggerEntiyDef.properties) {
+                            if (pageParam[k]) {
+                                params[k] = pageParam[k];
+                            }
+                        }
                     })
                     .catch(err => {
                         this.$toast('getSwagger error')
                         this.$alert(err)
                     })
                     .then(() => {
-                        this.dataUrlPath = `${engineUrl}/${viewDef.metaEntityName}`;
+                        // 转成小写，否则不认
+                        this.dataUrlPath = `${engineUrl}/${viewDef.metaEntityName.toLowerCase()}`;
                         this.queryParam = params;
                         return this.refreshData();
                     })
@@ -370,12 +455,12 @@ module.exports = {
 .list-item {
     flex-direction: column;
     padding-bottom: 20px;
-    padding-top: 20px;
-    padding-left: 40px;
+    /* padding-top: 20px; */
+    /* padding-left: 40px; */
     padding-right: 40px;
-    border-bottom-color: #BEBCBC;
+    /* border-bottom-color: #BEBCBC;
     border-bottom-width: 1px;
-    border-bottom-style: solid;
+    border-bottom-style: solid; */
 }
 .list-item-row {
     flex-direction: row;
@@ -393,10 +478,18 @@ module.exports = {
 
 .sub-text {
     font-size: 32px;
-    max-width: 300px;
+    max-width: 400px;
     color: #BEBCBC;
-    /* text-overflow: ellipsis; */
-    /* overflow: hidden; */
-    /* white-space: nowrap; */
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.empty-tips {
+    font-size: 40px;
+    margin-top: 20px;
+    width: 750px;
+    text-align: center;
+    color: #BEBCBC;
 }
 </style>

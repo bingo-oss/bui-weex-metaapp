@@ -24,6 +24,10 @@ export default {
         },
 
         validate() {
+            if (!this.definition.componentParams.required && !this.value) {
+                return true;
+            }
+
             let pattern = /^-?\d+(\.\d+)?$/;
             let result = pattern.exec(this.value);
             if (!result) {

@@ -45,21 +45,21 @@ export default {
         filterPointStartText() {
             if (this.filterPointStart) {
                 let d = this.parseDate(this.filterPointStart);
-                return d.toLocaleString('zh-CN', {hour12: false});
+                return d.toLocaleString('zh-CN', {hour12: false, timeZone: 'Asia/Shanghai'});
             }
             return '';
         },
         filterPointEndText() {
             if (this.filterPointEnd) {
                 let d = this.parseDate(this.filterPointEnd);
-                return d.toLocaleString('zh-CN', {hour12: false});
+                return d.toLocaleString('zh-CN', {hour12: false, timeZone: 'Asia/Shanghai'});
             }
             return '';
         },
         valueText() {
             if (this.value) {
                 let d = new Date(this.value);
-                return d.toLocaleString(undefined, {hour12: false});
+                return d.toLocaleString('zh-CN', {hour12: false, timeZone: 'Asia/Shanghai'});
             }
             return '';
         }
@@ -84,36 +84,51 @@ export default {
     },
     methods: {
         pickDateTime() {
-            return new Promise((resolve, reject) => {
-                picker.pickDate({
-                    value: 'yyyy-MM-dd'
-                }, (res) => {
-                    if (res.result === 'success') {
-                        let d = res.data;
-                        setTimeout(() => {
-                            picker.pickTime({
-                                value: 'HH:mm'
-                            }, (res) => {
-                                if (res.result === 'success') {
-                                    let t = res.data;
-                                    resolve(`${d} ${t}:00`);
-                                }
-                            })
-                        }, 500) // TODO: 这里需要延时，否则 pickTime 无法弹出
-                    }
+            // this.$alert(weex.config.env.platform)
+            if (weex.config.env.platform === 'android') {
+                return new Promise((resolve, reject) => {
+                    picker.pickDate({
+                        format: 'yyyy-MM-dd hh:mm',
+                    }, (res) => {
+                        // this.$alert(res)
+                        if (res.result === 'success') {
+                            resolve(`${res.data}:00`);
+                        }
+                    })
                 })
-            })
+            } else if (weex.config.env.platform === 'iOS') {
+                return new Promise((resolve, reject) => {
+                    picker.pickDate({
+                        value: 'yyyy-MM-dd'
+                    }, (res) => {
+                        if (res.result === 'success') {
+                            let d = res.data;
+                            setTimeout(() => {
+                                picker.pickTime({
+                                    value: 'HH:mm'
+                                }, (res) => {
+                                    if (res.result === 'success') {
+                                        let t = res.data;
+                                        resolve(`${d} ${t}:00`);
+                                    }
+                                })
+                            }, 500) // TODO: 这里需要延时，否则 pickTime 无法弹出
+                        }
+                    });
+                })
+            }
+            return Promise.resolve('test')
         },
         inputClicked() {
             this.pickDateTime().then(dateStr => {
-                let date = new Date(dateStr)
+                let date = this.parseDate(dateStr);
                 this.$emit('input', date.toISOString());
             })
         },
         parseDate(str) {
             // 参考 ISO Date String
             str = str.replace(' ', 'T');
-            let isoStr = `${str}`;
+            let isoStr = `${str}+08:00`;
             // this.$alert(isoStr)
             return new Date(isoStr)
         },

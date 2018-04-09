@@ -1,9 +1,11 @@
 const stream = weex.requireModule('stream');
 const linkapi = require('linkapi')
 import config from './config.js';
+import util from './util.js';
 
 /**
  * {a: 'b', c: 'd'} => ?a=b&c=d
+ * {} => ''
  */
 function object2query(obj) {
     let parts = [];
@@ -16,7 +18,7 @@ function object2query(obj) {
         let part = `${key}=${v}`;
         parts.push(part)
     }
-    return `?${parts.join('&')}`;
+    return parts.length ? `?${parts.join('&')}` : '';
 }
 
 export default {
@@ -28,6 +30,12 @@ export default {
             // 暂时将其以纯文本的形式获取
             if (param.url.indexOf('swagger.json') != -1) param.type = 'text';
             param.headers = param.headers || {};
+
+            console.log(param);
+            if (param.queryParam) {
+                param.url += object2query(param.queryParam);
+                console.log(param.url)
+            }
 
             let tokenPromise = new Promise((resolve, reject) => {
                 if (config.debug) {
@@ -50,7 +58,8 @@ export default {
                         param.headers['Content-Type'] = 'application/json';
                     }
                 }
-                console.log(`GETing ${param.url}`)
+                console.log(`${param.method} ${param.url}`)
+                // util.alert(param.url)
                 stream.fetch(param, (resp) => {
                     // 由于将 type 设为了 text，这里需要解析，详见上解释
                     if (param.url.indexOf('swagger.json') != -1) {
@@ -85,5 +94,14 @@ export default {
             body: data,
         }
         return this.request(param);
-    }
+    },
+    delete(url) {
+        let param = {
+            method: 'DELETE',
+            url,
+        }
+        return this.request(param);
+    },
+
+    object2query,
 }

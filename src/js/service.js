@@ -51,16 +51,19 @@ export default {
      * @return {Promise} Promise 对象，成功返回对象数据，失败返回 error
      */
     getEntityDataForId(engineUrl, entityName, entityId) {
+        entityName = entityName.toLowerCase();
         return ajax.get(`${engineUrl}/${entityName}/${entityId}`).then((resp) => {
             return Promise.resolve(resp.data);
         })
     },
 
-    createEntify(engineUrl, entityName, data) {
+    createEntify(engineUrl, entityName, queryParam, data) {
+        entityName = entityName.toLowerCase();
         let param = {};
         param.method = 'POST';
         param.url = `${engineUrl}/${entityName}`;
         param.body = data;
+        param.queryParam = queryParam;
 
         return ajax.request(param).then((resp) => {
             return Promise.resolve(resp.data);
@@ -68,7 +71,15 @@ export default {
     },
 
     updateEntity(engineUrl, entityName, entityId, data) {
+        entityName = entityName.toLowerCase();
         return ajax.patch(`${engineUrl}/${entityName}/${entityId}`, data).then((resp) => {
+            return Promise.resolve(resp.data);
+        })
+    },
+
+    deleteEntity(engineUrl, entityName, entityId) {
+        entityName = entityName.toLowerCase();
+        return ajax.delete(`${engineUrl}/${entityName}/${entityId}`).then((resp) => {
             return Promise.resolve(resp.data);
         })
     },
@@ -95,6 +106,15 @@ export default {
             return ajax.get(url).then((resp) => {
                 return Promise.resolve(resp.data);
             })
+        })
+    },
+
+    getSwaggerEntityDef(engineUrl, entityName) {
+        return ajax.get(`${engineUrl}/swagger.json`).then(resp => {
+            // Capitalize
+            let capitalizedKey = entityName[0].toUpperCase() + entityName.substr(1);
+            let definition = resp.data.definitions;
+            return definition[entityName] || definition[capitalizedKey];
         })
     },
 

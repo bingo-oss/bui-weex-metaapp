@@ -4,7 +4,7 @@
             <text class="form-label">{{definition.componentParams.title}}:</text>
             <text class="required-mark" v-if="definition.componentParams.required">*</text>
         </div>
-        <bui-radio :items="items" @input="input" :value="value"></bui-radio>
+        <bui-radio :items="items" @input="input" :value="filterMode ? radioValue : value"></bui-radio>
     </div>
 </template>
 
@@ -24,6 +24,7 @@ export default {
     data() {
         return {
             controlledComps: [],
+            radioValue: null,
         }
     },
     computed: {
@@ -42,7 +43,7 @@ export default {
             handler(val) {
                 if (this.filterMode) {
                     let ret = /eq\s(\S*)/.exec(val);
-                    if (ret) this.value = ret[1];
+                    if (ret) this.radioValue = ret[1];
                 }
             }
         }

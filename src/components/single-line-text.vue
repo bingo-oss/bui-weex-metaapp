@@ -4,7 +4,7 @@
             <text class="form-label">{{definition.componentParams.title}}:</text>
             <text class="required-mark" v-if="definition.componentParams.required">*</text>
         </div>
-        <input @input="input" class="form-input-native" type="text" :value="value" :placeholder="definition.componentParams.placeholder"/>
+        <input @input="input" class="form-input-native" type="text" :value="valueText" :placeholder="definition.componentParams.placeholder"/>
     </div>
 </template>
 
@@ -16,15 +16,22 @@ export default {
     extends: mixin,
     data() {
         return {
+            valueText: '',
         }
     },
     watch: {
+        value: {
+            immediate: true,
+            handler(val) {
+                this.valueText = val;
+            }
+        },
         filterValue: {
             immediate: true,
             handler(val) {
                 if (this.filterMode) {
                     let ret = /%(\S*)%/.exec(val);
-                    if (ret) this.value = ret[1];
+                    if (ret) this.valueText = ret[1];
                 }
             }
         }
@@ -43,6 +50,11 @@ export default {
             let lengthOk = true;
             let errorTips = ''
 
+            if (this.definition.componentParams.required && this.value === undefined) {
+                this.$toast(`${this.definition.componentParams.title} 的输入不能为空`)
+                return false;
+            }
+
             if (this.definition.componentParams.validation.validate) {
                 let pattern = this.definition.componentParams.validation.rule.pattern;
                 let r = new RegExp(pattern);
@@ -52,10 +64,10 @@ export default {
 
             let limitLength = this.definition.componentParams.limitLength;
             if (limitLength.limit) {
-                if (!this.value) {
+                if (!this.value && limitLength.min > 0) {
                     lengthOk = false;
                     errorTips = '不能为空';
-                } else {
+                } else if (this.value) {
                     lengthOk = this.value.length >= limitLength.min && this.value.length <= limitLength.max;
                     if (!lengthOk) {
                         errorTips = `字数范围为 ${limitLength.min} - ${limitLength.max}`;

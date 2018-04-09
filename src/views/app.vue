@@ -155,7 +155,11 @@
                         console.log(this.result);
                         let validated = true;
                         for (let id in this.$refs) {
-                            let result = this.$refs[id].validate();
+                            let validateFunc = this.$refs[id].validate;
+                            if (!validateFunc) {
+                                continue;
+                            }
+                            let result = validateFunc();
                             if (!result) {
                                 validated = false;
                                 break;
@@ -175,7 +179,14 @@
                                 this.isPostingData = false;
                             });
                         } else {
-                            service.createEntify(this.engineUrl, this.entityName, this.result).then(data => {
+                            // 对于 this.queryParam 里的 query，遇到属于字段的 query 要在创建实体时带上
+                            let postData = Object.assign({}, this.result);
+                            for (let k in this.swaggerEntiyDef.properties) {
+                                if (this.queryParam[k]) {
+                                    postData[k] = this.queryParam[k];
+                                }
+                            }
+                            service.createEntify(this.engineUrl, this.entityName, this.queryParam, postData).then(data => {
                                 this.$toast('创建成功');
                                 this.isPostingData = false;
                             }).catch(err => {
@@ -211,6 +222,7 @@
                 permObj: {},
                 // data: data,
                 data: {},
+                queryParam: {},
                 readOnly: false,
                 engineUrl: '',
                 entityId: '',
@@ -224,21 +236,34 @@
             }
         },
         mounted() {
+            globalEvent.addEventListener("androidback", e => {
+                this.$pop();
+            });
+
             let pageParam = this.$getPageParams();
+            // this.$alert(pageParam);
 
             let formId = pageParam.formId;
+            delete pageParam.formId;
             // Below are optional
             this.entityId = pageParam.entityId;
+            delete pageParam.entityId;
+
             if (pageParam.readOnly
                 && pageParam.readOnly !== 'false'
                 && pageParam.readOnly !== '0') {
+                delete pageParam.readOnly;
                 this.readOnly = true;
             }
+
+            // After deleting those checked properties, use the rest of pageParam as queryParam
+            this.queryParam = pageParam;
 
             let debug = config.debug;
             let readRuntimeConfigPromise;
 
             if (debug) {
+                // this.entityId = config.debugEntityId;
                 formId = formId || config.debugFormId;
                 service.init(config.debugConfigUrl);
                 readRuntimeConfigPromise = Promise.resolve();
@@ -260,6 +285,9 @@
                     this.entityName = formDef.metaEntityName;
                     return service.getEngineUrl(formDef.projectId).then(engineUrl => {
                         this.engineUrl = engineUrl;
+                        service.getSwaggerEntityDef(engineUrl, this.entityName).then(entityDef => {
+                            this.swaggerEntiyDef = entityDef;
+                        })
                         if (this.entityId) {
                             service.getEntityDataForId(engineUrl, formDef.metaEntityName, this.entityId).then(data => {
                                 this.existedRecord = data;
@@ -273,11 +301,6 @@
                 console.log(err)
                 this.$alert('Fetch data failed: ' + JSON.stringify(err));
             })
-
-            // this.fetchData();
-            globalEvent.addEventListener("androidback", e => {
-                this.$pop();
-            });
         },
         components: require('../components/all-components.js')
     }
