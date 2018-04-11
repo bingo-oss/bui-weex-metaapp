@@ -52,12 +52,16 @@
             let forms = [];
             // 遍历 layout 里的所有表单项
             this.data.layout && this.data.layout.forEach((o) => {
-                // let input;
-                if (this.existedRecord[o.dataField] !== undefined
-                    && this.result[o.dataField] === undefined) {
-                    // 将已有记录里的值填充进 result 里
-                    this.$set(this.result, o.dataField, this.existedRecord[o.dataField]);
+
+                if (this.entityId) {
+                    // 当前表单正在编辑实体
+                    if (this.existedRecord[o.dataField] !== undefined
+                        && this.result[o.dataField] === undefined /*避免重复设值，造成 render 死循环*/) {
+                        // 将已有记录里的值填充进 result 里
+                        this.$set(this.result, o.dataField, this.existedRecord[o.dataField]);
+                    }
                 }
+
 
                 switch (o.componentType) {
                     case "RadioButton": {
@@ -214,6 +218,14 @@
             }, bodyParts);
         },
         methods: {
+            fetchCalcDefaultValues() {
+                return ajax.post(`${this.engineUrl}/${this.entityName}/calc`, this.requestDefaultValueParam).then(resp => {
+                    this.defaultValues = resp.data;
+                }).catch(err => {
+                    this.$alert('获取默认值失败')
+                    this.$alert(err)
+                })
+            }
         },
         data () {
             return {
@@ -228,11 +240,22 @@
                 entityId: '',
                 entityName: '',
                 isPostingData: false,
+                requestDefaultValueParam: null,
+                defaultValues: {},
             }
         },
         computed: {
             submitTitle() {
                 return this.isPostingData ? '提交中...' : '提交';
+            }
+        },
+        watch: {
+            defaultValues(val) {
+                for (let k in val) {
+                    if (this.result[k] === undefined) {
+                        this.$set(this.result, k, val[k]);
+                    }
+                }
             }
         },
         mounted() {
@@ -282,14 +305,31 @@
             readRuntimeConfigPromise.then(() => {
                 return service.getMetaFormDef(formId).then(formDef => {
                     this.data = formDef;
-                    this.entityName = formDef.metaEntityName;
+                    this.entityName = formDef.metaEntityName.toLowerCase();
                     return service.getEngineUrl(formDef.projectId).then(engineUrl => {
                         this.engineUrl = engineUrl;
+
+                        if (!this.entityId) {
+                            // 在非编辑实体的情况下，才fetch defaultValues
+                            this.data.layout.forEach(o => {
+                                if (o.componentParams.valueType === 'defaultValue') {
+                                    this.requestDefaultValueParam = this.requestDefaultValueParam || {};
+                                    this.requestDefaultValueParam[o.dataField] = null;
+                                }
+                            })
+                            if (this.requestDefaultValueParam) {
+                                this.fetchCalcDefaultValues();
+                            }
+                        }
+
+                        // 获取 swagger 定义
                         service.getSwaggerEntityDef(engineUrl, this.entityName).then(entityDef => {
                             this.swaggerEntiyDef = entityDef;
                         })
+
+                        // 在编辑实体的情况下，才获取实体数据
                         if (this.entityId) {
-                            service.getEntityDataForId(engineUrl, formDef.metaEntityName, this.entityId).then(data => {
+                            service.getEntityDataForId(engineUrl, this.entityName, this.entityId).then(data => {
                                 this.existedRecord = data;
                                 this.permObj = perm.parseBits(data.permVal);
                             })
