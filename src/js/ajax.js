@@ -31,10 +31,8 @@ export default {
             if (param.url.indexOf('swagger.json') != -1) param.type = 'text';
             param.headers = param.headers || {};
 
-            console.log(param);
             if (param.queryParam) {
                 param.url += object2query(param.queryParam);
-                console.log(param.url)
             }
 
             let tokenPromise = new Promise((resolve, reject) => {
@@ -58,7 +56,9 @@ export default {
                         param.headers['Content-Type'] = 'application/json';
                     }
                 }
-                console.log(`${param.method} ${param.url}`)
+
+                console.log(param);
+                
                 // util.alert(param.url)
                 stream.fetch(param, (resp) => {
                     // 由于将 type 设为了 text，这里需要解析，详见上解释
@@ -99,6 +99,14 @@ export default {
         let param = {
             method: 'DELETE',
             url,
+        }
+        return this.request(param);
+    },
+    post(url, data) {
+        let param = {
+            url,
+            method: 'POST',
+            body: data,
         }
         return this.request(param);
     },

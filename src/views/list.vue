@@ -1,9 +1,9 @@
 <template>
-    <div @viewappear="viewAppear" @viewdisappear="viewDisappear">
+    <div @viewappear="viewAppear">
         <bui-header :leftItem="{icon: 'ion-ios-arrow-back'}" @leftClick="pop">
             <div slot="center" class="page-title-wrapper" @click="titleClicked">
                 <text class="page-title" @click="titleClicked">{{title}}</text>
-                <bui-icon name="ion-chevron-down" color="white" size=36 @click="titleClicked"></bui-icon>
+                <bui-icon v-if="presetFilters.length" name="ion-chevron-down" color="white" size=36 @click="titleClicked"></bui-icon>
             </div>
             <div slot="right" class="header-right-wrapper">
                 <div class="header-button" @click="filterClicked">
@@ -118,7 +118,7 @@ module.exports = {
             if (this.selectedFilter) {
                 return this.selectedFilter.title;
             }
-            return this.viewDef.title;
+            return '全部'; // 无可用分类时，默认显示‘全部’
         }
     },
     watch: {
@@ -150,6 +150,7 @@ module.exports = {
             }
         },
         read(id) {
+            if (!this.viewDef.settings.mViewUrl) return;
             let url = this.viewDef.settings.mViewUrl.appUrl.replace(':id', id);
             let params = {
                 appCode: this.viewDef.settings.mViewUrl.appCode,
@@ -182,6 +183,7 @@ module.exports = {
             })
         },
         titleClicked(e) {
+            if (!this.presetFilters.length) return;
             this.$refs.dropdown.show(e);
             this.showDropdown = true;
         },
@@ -238,6 +240,7 @@ module.exports = {
             if (this.isRefreshing) return;
             this.isRefreshing = true;
             this.fetchData(1).then(data => {
+                this.dataInited = true; // 控制 viewAppear 时是否刷新页面，只有获取数据成功过才刷新
                 this.listData = data;
                 this.isRefreshing = false;
                 this.currentPage = 1;
@@ -284,13 +287,12 @@ module.exports = {
             this.$pop();
         },
         viewAppear() {
-            if (this.viewDisappeared) {
-                this.refreshData();
-                this.viewDisappear = false;
-            }
+             if (this.dataInited) {
+                 this.refreshData();
+             }
         },
         viewDisappear() {
-            this.viewDisappeared = true;
+            // BUG: Android 上如果绑定 viewdisappear，push 再 pop 页面会报错
         }
     },
     created() {
@@ -347,6 +349,7 @@ module.exports = {
                 // 选择字段
                 let fields = new Set();
                 fields.add('_data'); // _data 字段里会有冗余信息
+                fields.add('id'); // id 是一定要获取的，否则删改操作都无法进行
                 viewDef.config.columns.forEach(col => {
                     fields.add(col.name)
                     if (col.quicksearchable) {

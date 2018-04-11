@@ -174,10 +174,13 @@
                         }
                         if (this.isPostingData) return;
                         this.isPostingData = true;
+                        // 编辑或保存成功后，直接 this.$pop() 返回上一页
+                        // https://jira.bingosoft.net/browse/LINKSUITE-413
                         if (this.entityId) {
                             service.updateEntity(this.engineUrl, this.entityName, this.entityId, this.result).then(data => {
                                 this.$toast('编辑成功');
                                 this.isPostingData = false;
+                                this.$pop();
                             }).catch(err => {
                                 this.$alert(err);
                                 this.isPostingData = false;
@@ -193,6 +196,7 @@
                             service.createEntify(this.engineUrl, this.entityName, this.queryParam, postData).then(data => {
                                 this.$toast('创建成功');
                                 this.isPostingData = false;
+                                this.$pop();
                             }).catch(err => {
                                 this.$alert(err);
                                 this.isPostingData = false;
