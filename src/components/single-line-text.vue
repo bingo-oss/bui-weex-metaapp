@@ -23,7 +23,9 @@ export default {
         value: {
             immediate: true,
             handler(val) {
-                this.valueText = val;
+                if (!this.filterMode) {
+                    this.valueText = val;
+                }
             }
         },
         filterValue: {

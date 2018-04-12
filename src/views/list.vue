@@ -3,7 +3,7 @@
         <bui-header :leftItem="{icon: 'ion-ios-arrow-back'}" @leftClick="pop">
             <div slot="center" class="page-title-wrapper" @click="titleClicked">
                 <text class="page-title" @click="titleClicked">{{title}}</text>
-                <bui-icon v-if="presetFilters.length" name="ion-chevron-down" color="white" size=36 @click="titleClicked"></bui-icon>
+                <!-- <bui-icon v-if="presetFilters.length" name="ion-chevron-down" color="white" size=36 @click="titleClicked"></bui-icon> -->
             </div>
             <div slot="right" class="header-right-wrapper">
                 <div class="header-button" @click="filterClicked">
@@ -23,6 +23,8 @@
                 <bui-swipe-cell height="200px" :items="swipeActions"
                     @actionClick="swipeActionClicked($event, o.id, index)"
                     @click="read(o.id)"
+                    @swipeleft="cellSwiped(o.id)"
+                    :ref="o.id"
                     >
                     <!-- 布局 0 默认 -->
                     <div class="list-item" v-if="layoutType == '0'" slot="content">
@@ -50,9 +52,7 @@
             <div class="list-item" v-if="listData.length === 0">
                 <text class="empty-tips">暂无数据</text>
             </div>
-            <!-- <div class="list-item" v-for="i in [1, 2, 3, 4, 5, 6, 7]">
-                    <text class="empty-tips">{{i}}</text>
-            </div> -->
+            <!-- 在数据长度小于 pageSize 时，说明已经没有更多数据了 -->
             <loading-wrapper v-if="listData.length && listData.length >= pageSize" @loading="onloading" :status="loadingStatus">
             </loading-wrapper>
         </scroller>
@@ -82,8 +82,8 @@ module.exports = {
         return {
             engineUrl: '',
             entityName: '',
-            dataUrlPath: '', // 获取 listData 的 url 路径
-            dataUrlParam: null, // 获取 listData 的 url query object
+            dataUrlPath: '', // 获取 listData 的 url 路径，不包含 queryParam
+            queryParam: {}, // 获取 listData 的 queryParam
             listData: [],
             viewDef: {},
             selectFields: [],
@@ -96,9 +96,9 @@ module.exports = {
             p4: '4',
             p5: '5',
             presetFilters: [],
-            filters: {}, // 高级搜索
-            quickSearchFilters: '',
-            selectedFilter: null,
+            filters: {}, // 高级搜索 filter
+            quickSearchFilters: '', // 快捷搜索 filter
+            selectedFilter: null, // 预设 filter
             showDropdown: false,
             showPopup: false,
             isRefreshing: false,
@@ -120,9 +120,6 @@ module.exports = {
             }
             return '全部'; // 无可用分类时，默认显示‘全部’
         }
-    },
-    watch: {
-
     },
     methods: {
         filterClicked() {
@@ -146,9 +143,10 @@ module.exports = {
                     this.delete(id, listIndex);
                     break
                 default:
-                    this.$alert('Not reach.')
+                    this.$alert('Not reached.')
             }
         },
+        // 查看选中记录的主页
         read(id) {
             if (!this.viewDef.settings.mViewUrl) return;
             let url = this.viewDef.settings.mViewUrl.appUrl.replace(':id', id);
@@ -158,18 +156,21 @@ module.exports = {
             };
             linkapi.runApp(params)
         },
+        // 创建新记录
         create() {
             // 将页面参数传递给下一个页面
             let queryParam = Object.assign({formId: this.formId}, this.remainingPageParam);
             let url = `${this.contextPath}/form.weex.js${ajax.object2query(queryParam)}`;
             this.$push(url)
         },
+        // 编辑选中记录
         edit(id) {
-            // 将页面参数传递给下一个页面
+            // 将页面参数传递给下一个页面，必须带上 entityId
             let queryParam = Object.assign({formId: this.formId, entityId: id}, this.remainingPageParam);
             let url = `${this.contextPath}/form.weex.js${ajax.object2query(queryParam)}`;
             this.$push(url)
         },
+        // 删除选中记录
         delete(id, index) {
             service.deleteEntity(this.engineUrl, this.entityName, id).then(() => {
                 this.$toast('删除成功')
@@ -183,6 +184,7 @@ module.exports = {
             })
         },
         titleClicked(e) {
+            // 没有分类则无动作
             if (!this.presetFilters.length) return;
             this.$refs.dropdown.show(e);
             this.showDropdown = true;
@@ -193,6 +195,7 @@ module.exports = {
             this.queryParam.viewId = filter.viewId;
             this.refreshData();
         },
+        // 一些字段的值是 id，通过这个方法将其转换为对应的用于显示的值
         getFieldValue(obj, field) {
             if (obj._data && obj._data[field]) {
                 // 对于引用实体字段，读取 _data 里的内容
@@ -216,10 +219,15 @@ module.exports = {
                 return obj[field];
             }
         },
+        /**
+         * 获取指定页数的数据
+         * @param  {Number} page 页码
+         */
         fetchData(page) {
             this.queryParam.page_size = this.pageSize;
             this.queryParam.page = page || 1;
             let filtersParts = [];
+            // 最终参数里的 filters 由 this.filters, this.quickSearchFilters, this.selectedFilter 三大部分组成
             if (this.filters) {
                 for (let k in this.filters) {
                     if (this.filters[k]) filtersParts.push(this.filters[k]);
@@ -261,7 +269,6 @@ module.exports = {
                 } else {
                     this.loadingStatus = 'noMore';
                 }
-
             }).catch(err => {
                 this.loadingStatus = 'init';
             })
@@ -287,12 +294,20 @@ module.exports = {
             this.$pop();
         },
         viewAppear() {
-             if (this.dataInited) {
-                 this.refreshData();
-             }
+            // 只在获取过数据，且筛选页面未打开的时候才刷新
+            if (this.dataInited && !this.showPopup) {
+                this.refreshData();
+            }
         },
         viewDisappear() {
             // BUG: Android 上如果绑定 viewdisappear，push 再 pop 页面会报错
+        },
+        cellSwiped(id) {
+            if (this.lastSwipeCellId) {
+                let ref = this.$refs[this.lastSwipeCellId][0]; // TODO: 不知道为什么 this.$refs[id] 获得的是一个数组……
+                ref.close();
+            }
+            this.lastSwipeCellId = id;
         }
     },
     created() {
@@ -304,6 +319,7 @@ module.exports = {
         let pageParam = this.$getPageParams();
 
         // 以下变量由外部配置
+        // 获取这些变量之后，将其从 pageParam 里删除，pageParam 剩下的参数将会被透传
         let viewId = pageParam.viewId;
         delete pageParam.viewId;
 
@@ -336,6 +352,7 @@ module.exports = {
         }
 
         readRuntimeConfigPromise.then(() => {
+            // 获取视图定义
             return service.getMetaViewDef(viewId).catch((err) => {
                 this.$toast('getMetaViewDef error')
                 this.$alert(err)
@@ -458,12 +475,7 @@ module.exports = {
 .list-item {
     flex-direction: column;
     padding-bottom: 20px;
-    /* padding-top: 20px; */
-    /* padding-left: 40px; */
     padding-right: 40px;
-    /* border-bottom-color: #BEBCBC;
-    border-bottom-width: 1px;
-    border-bottom-style: solid; */
 }
 .list-item-row {
     flex-direction: row;

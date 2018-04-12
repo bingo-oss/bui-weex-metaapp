@@ -186,7 +186,7 @@
                                 this.isPostingData = false;
                             });
                         } else {
-                            // 对于 this.queryParam 里的 query，遇到属于字段的 query 要在创建实体时带上
+                            // 对于 this.queryParam 里的 query，遇到属于实体字段的 query 要在创建实体时带上
                             let postData = Object.assign({}, this.result);
                             for (let k in this.swaggerEntiyDef.properties) {
                                 if (this.queryParam[k]) {
@@ -255,6 +255,7 @@
         },
         watch: {
             defaultValues(val) {
+                // 将默认值 merge 到当前 result 里
                 for (let k in val) {
                     if (this.result[k] === undefined) {
                         this.$set(this.result, k, val[k]);
@@ -307,6 +308,7 @@
 
             console.log('fetch data')
             readRuntimeConfigPromise.then(() => {
+                // 获取表单定义
                 return service.getMetaFormDef(formId).then(formDef => {
                     this.data = formDef;
                     this.entityName = formDef.metaEntityName.toLowerCase();

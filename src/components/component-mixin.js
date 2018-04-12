@@ -11,7 +11,8 @@ export default {
             type: Object,
             required: true,
         },
-        // value 与 filterValue 只能二选一
+        // value 与 filterValue 只能二选一，通过 filterMode 决定用哪个。
+        // 对应 emit 的事件分别是 input 和 filterInput
         value: {
             required: false,
         },

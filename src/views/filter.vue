@@ -1,4 +1,3 @@
-<!--引入bui-weex样式文件-->
 <style lang="sass" src="bui-weex/src/css/buiweex.scss"></style>
 <style src="../styles/common.css"></style>
 
@@ -40,11 +39,11 @@
 
     const globalEvent = weex.requireModule('globalEvent');
     const stream = weex.requireModule('stream');
-    const data = require('../demoData.json')
 
     module.exports = {
         data () {
             return {
+                copiedFilters: Object.assign({}, this.filters)
             }
         },
         props: {
@@ -54,7 +53,6 @@
         },
         render(h) {
             console.log('rendering filters view');
-            // this.$toast('rendering filters view');
 
             let forms = [];
             // 遍历 layout 里的所有表单项
@@ -64,6 +62,7 @@
                 }
                 let properties = this.swaggerEntiyDef.properties[col.name];
                 let inputType = properties['x-input']
+                // 伪造 definition
                 let fakeDefinition = {
                     dataField: col.name,
                     componentParams: {
@@ -95,13 +94,13 @@
                 let input = h(inputType, {
                     props: {
                         definition: fakeDefinition,
-                        filterValue: this.filters[col.name],
+                        filterValue: this.copiedFilters[col.name],
                         filterMode: true,
                     },
                     on: {
                         filterInput: (v) => {
                             console.log(`setting ${v} for ${col.name}`)
-                            this.$set(this.filters, col.name, v);
+                            this.$set(this.copiedFilters, col.name, v);
                         }
                     },
                 })
@@ -133,8 +132,8 @@
                 'class': ['action-button'],
                 on: {
                     click:() => {
-                        // this.$alert(this.filters);
-                        this.$emit('filter', this.filters);
+                        // this.$alert(this.copiedFilters);
+                        this.$emit('filter', this.copiedFilters);
                     }
                 }
             }, ['筛选'])
@@ -143,8 +142,8 @@
                 'class': ['action-button'],
                 on: {
                     click:() => {
-                        this.filters = {};
-                        this.$emit('filter', this.filters);
+                        this.copiedFilters = {};
+                        this.$emit('filter', this.copiedFilters);
                     }
                 }
             }, ['重置'])
@@ -156,8 +155,6 @@
             return h('div', {
                 'class': ['container'],
             }, [titleDiv, forms, actionBar]);
-        },
-        methods: {
         },
         components: require('../components/all-components.js')
     }

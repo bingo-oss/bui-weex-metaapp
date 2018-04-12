@@ -26,7 +26,6 @@ export default {
     data() {
         return {
             valueText: '',
-            entities: [],
             showPopup: false,
         }
     },
@@ -40,7 +39,12 @@ export default {
     watch: {
         value(v) {
             if (v) {
-                ajax.get(`${this.definition.componentParams.entityResourceUrl}/${v}`).then(resp => {
+                let entityResourceUrl = this.definition.componentParams.entityResourceUrl;
+                if (!entityResourceUrl) {
+                    console.log('missing entityResourceUrl');
+                    return;
+                }
+                ajax.get(`${entityResourceUrl}/${v}`).then(resp => {
                     this.valueText = resp.data.title;
                 });
             }
@@ -54,11 +58,6 @@ export default {
             this.$emit('input', item.id);
             this.showPopup = false;
         }
-    },
-    created() {
-        ajax.get(this.definition.componentParams.entityResourceUrl).then(resp => {
-            this.entities = resp.data;
-        });
     },
     components: {
         'popup-view': require('./ref-entity-popup.vue'),

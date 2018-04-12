@@ -34,11 +34,13 @@ export default {
         value: {
             immediate: true,
             handler(v) {
-                linkapi.getDeptInfoById(v, (result) => {
-                    this.valueText = result.name;
-                }, err => {
-                    console.log(err)
-                })
+                if (!this.filterMode) {
+                    linkapi.getDeptInfoById(v, (result) => {
+                        this.valueText = result.name;
+                    }, err => {
+                        console.log(err)
+                    })
+                }
             }
         },
         filterValue: {

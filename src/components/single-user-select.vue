@@ -34,9 +34,11 @@ export default {
         value: {
             immediate: true,
             handler(v) {
-                linkapi.getUserInfo(v, (result) => {
-                    this.valueText = result.userName;
-                })
+                if (!this.filterMode) {
+                    linkapi.getUserInfo(v, (result) => {
+                        this.valueText = result.userName;
+                    })
+                }
             }
         },
         filterValue: {
