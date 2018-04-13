@@ -20,8 +20,8 @@
             </refresh-wrapper>
 
             <div v-for="(o, index) in listData">
-                <bui-swipe-cell height="200px" :items="swipeActions"
-                    @actionClick="swipeActionClicked($event, o.id, index)"
+                <bui-swipe-cell height="200px" :items="getSwipeActionForRecord(o)"
+                    @actionClick="swipeActionClicked(getSwipeActionForRecord(o), $event, o.id, index)"
                     @click="read(o.id)"
                     @swipeleft="cellSwiped(o.id)"
                     :ref="o.id"
@@ -79,6 +79,7 @@
 import service from '../js/service.js';
 import ajax from '../js/ajax.js';
 import config from '../js/config.js';
+import perm from '../js/perm.js';
 const linkapi = require('linkapi');
 
 const globalEvent = weex.requireModule('globalEvent');
@@ -137,15 +138,27 @@ module.exports = {
             this.filters = result;
             this.refreshData();
         },
-        swipeActionClicked(actionIndex, id, listIndex) {
-            switch (actionIndex) {
-                case 0:
+        getSwipeActionForRecord(o) {
+            let permObj = perm.parseBits(o.permVal);
+            let actions = [{title: '查看', bgcolor: '#c6c7c8'}];
+            if (permObj.canEdit) {
+                actions.push({title: '编辑', bgcolor: '#3091f2'})
+            }
+            if (permObj.canDelete) {
+                actions.push({title: '删除', bgcolor: '#ff4e24'})
+            }
+            return actions;
+        },
+        swipeActionClicked(actions, actionIndex, id, listIndex) {
+            let actionName = actions[actionIndex].title;
+            switch (actionName) {
+                case '查看':
                     this.read(id)
                     break;
-                case 1:
+                case '编辑':
                     this.edit(id);
                     break;
-                case 2:
+                case '删除':
                     this.delete(id, listIndex);
                     break
                 default:
