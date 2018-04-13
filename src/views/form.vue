@@ -118,6 +118,7 @@
                         definition: o,
                         value: this.result[o.dataField],
                         wholeDefinition: this.data,
+                        entityResourceUrl: o.componentParams.entityResourceUrl,
                     },
                     ref: o.id,
                     on: {

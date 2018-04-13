@@ -18,6 +18,7 @@ import ajax from '../js/ajax.js';
 export default {
     props: {
         definition: null,
+        entityResourceUrl: null,
     },
     data() {
         return {
@@ -27,6 +28,17 @@ export default {
             pageSize: 20,
             loadingStatus: 'init',
             currentPage: 1,
+        }
+    },
+    watch: {
+        entityResourceUrl: {
+            immediate: true,
+            handler(v) {
+                if (v) {
+                    this.dataUrlPath = v;
+                    this.refresh();
+                }
+            }
         }
     },
     methods: {
@@ -73,10 +85,6 @@ export default {
                 this.loadingStatus = 'init';
             })
         }
-    },
-    created() {
-        this.dataUrlPath = this.definition.componentParams.entityResourceUrl;
-        this.refresh();
     },
     components: {
         'refresh-wrapper': require('../components/common/refresh.vue'),

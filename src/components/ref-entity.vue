@@ -10,7 +10,12 @@
         </div>
 
         <bui-popup v-model="showPopup" pos="right" width=600>
-            <popup-view :definition="definition" @itemSelected="itemSelected" @cancel="showPopup = false"></popup-view>
+            <popup-view
+                :definition="definition"
+                :entityResourceUrl="entityResourceUrl"
+                @itemSelected="itemSelected"
+                @cancel="showPopup = false">
+            </popup-view>
         </bui-popup>
     </div>
 </template>
@@ -18,11 +23,13 @@
 <script>
 import mixin from './component-mixin.js'
 import ajax from '../js/ajax.js'
-const picker = weex.requireModule('picker');
 
 export default {
     componentType: 'RefEntity',
     extends: mixin,
+    props: {
+        entityResourceUrl: String,
+    },
     data() {
         return {
             valueText: '',
@@ -37,25 +44,46 @@ export default {
         },
     },
     watch: {
-        value(v) {
-            if (v) {
-                let entityResourceUrl = this.definition.componentParams.entityResourceUrl;
-                if (!entityResourceUrl) {
-                    console.log('missing entityResourceUrl');
-                    return;
+        value: {
+            immediate: true,
+            handler(v) {
+                if (!this.filterMode && v) {
+                    this.fetchDisplayNameForId(v);
                 }
-                ajax.get(`${entityResourceUrl}/${v}`).then(resp => {
-                    this.valueText = resp.data.title;
-                });
+            }
+        },
+        filterValue: {
+            immediate: true,
+            handler(val) {
+                if (this.filterMode) {
+                    let ret = /eq\s(\S*)$/.exec(val);
+                    if (ret) {
+                        this.fetchDisplayNameForId(ret[1])
+                    }
+                }
             }
         }
     },
     methods: {
+        fetchDisplayNameForId(id) {
+            if (!this.entityResourceUrl) {
+                console.log('missing entityResourceUrl');
+                return;
+            }
+            ajax.get(`${this.entityResourceUrl}/${id}`).then(resp => {
+                this.valueText = resp.data.title;
+            });
+        },
         inputClicked() {
             this.showPopup = true;
         },
         itemSelected(item) {
-            this.$emit('input', item.id);
+            if (this.filterMode) {
+                let v = `${this.definition.dataField} eq ${item.id}`;
+                this.$emit('filterInput', v);
+            } else {
+                this.$emit('input', item.id);
+            }
             this.showPopup = false;
         }
     },

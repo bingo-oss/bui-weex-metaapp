@@ -36,6 +36,7 @@
 <script>
     import ajax from '../js/ajax.js'
     import service from '../js/service.js'
+    import config from '../js/config.js'
 
     const globalEvent = weex.requireModule('globalEvent');
     const stream = weex.requireModule('stream');
@@ -49,7 +50,7 @@
         props: {
             filters: {},
             viewDef: null,
-            swaggerEntiyDef: null
+            swaggerEntiyDef: null,
         },
         render(h) {
             console.log('rendering filters view');
@@ -69,6 +70,7 @@
                         title: properties.title
                     }
                 }
+                let entityResourceUrl;
                 switch (inputType) {
                     case "RadioButton": {
                         let options = properties['x-options'].items.map(o => {
@@ -76,6 +78,17 @@
                         });
                         fakeDefinition.componentParams.options = options;
                         break;
+                    }
+                    case "RefEntity": {
+                        entityResourceUrl = properties.entityResourceUrl;
+                        if (!entityResourceUrl) {
+                            if (config.debug) {
+                                this.$alert(`No entityResourceUrl for ${col.name}`)
+                            } else {
+                                console.log(`No entityResourceUrl for ${col.name}`)
+                            }
+                        }
+                        break
                     }
                     case 'CheckboxGroup': {
                         // TODO
@@ -96,6 +109,7 @@
                         definition: fakeDefinition,
                         filterValue: this.copiedFilters[col.name],
                         filterMode: true,
+                        entityResourceUrl: entityResourceUrl,
                     },
                     on: {
                         filterInput: (v) => {

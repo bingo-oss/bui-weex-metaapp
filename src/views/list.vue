@@ -3,7 +3,7 @@
         <bui-header :leftItem="{icon: 'ion-ios-arrow-back'}" @leftClick="pop">
             <div slot="center" class="page-title-wrapper" @click="titleClicked">
                 <text class="page-title" @click="titleClicked">{{title}}</text>
-                <!-- <bui-icon v-if="presetFilters.length" name="ion-chevron-down" color="white" size=36 @click="titleClicked"></bui-icon> -->
+                <bui-icon v-if="presetFilters.length" name="ion-chevron-down" color="white" size=36 @click="titleClicked"></bui-icon>
             </div>
             <div slot="right" class="header-right-wrapper">
                 <div class="header-button" @click="filterClicked">
@@ -62,7 +62,13 @@
         </bui-dropdown>
 
         <bui-popup v-model="showPopup" pos="right" width=600>
-            <filter-view :filters="filters" :viewDef="viewDef" :swaggerEntiyDef="swaggerEntiyDef" @filter="customFilterSet" @cancel="showPopup = false">
+            <filter-view
+                :filters="filters"
+                :viewDef="viewDef"
+                :swaggerEntiyDef="swaggerEntiyDef"
+                :engineUrl="engineUrl"
+                @filter="customFilterSet"
+                @cancel="showPopup = false">
             </filter-view>
         </bui-popup>
     </div>
@@ -303,7 +309,8 @@ module.exports = {
             // BUG: Android 上如果绑定 viewdisappear，push 再 pop 页面会报错
         },
         cellSwiped(id) {
-            if (this.lastSwipeCellId) {
+            // 当一个 cell 被 swipe 的时候，将之前 open 的 cell close()
+            if (this.lastSwipeCellId && this.lastSwipeCellId !== id) {
                 let ref = this.$refs[this.lastSwipeCellId][0]; // TODO: 不知道为什么 this.$refs[id] 获得的是一个数组……
                 ref.close();
             }
@@ -412,6 +419,26 @@ module.exports = {
                     this.engineUrl = engineUrl;
                     this.entityName = viewDef.metaEntityName;
                     service.getSwaggerEntityDef(engineUrl, this.entityName).then(entityDef => {
+                        // 对于实体类型的字段，这里构造其 entityResourceUrl，参考以下 swagger.json 片段
+                        // "channelId": {
+                        //     "x-input": "RefEntity",
+                        // },
+                        // "channel": {
+                        //     "x-target-entity": "Channel",
+                        //     "x-join-fields": [
+                        //         "channelId"
+                        //     ],
+                        // },
+                        for (let k in entityDef.properties) {
+                            let p = entityDef.properties[k];
+                            if (p['x-join-fields']) {
+                                let entityRefProp = p['x-join-fields'][0];
+                                let entityName = p['x-target-entity'].toLowerCase();
+                                if (entityDef.properties[entityRefProp]) {
+                                    entityDef.properties[entityRefProp].entityResourceUrl = `${engineUrl}/${entityName}`
+                                }
+                            }
+                        }
                         this.swaggerEntiyDef = entityDef;
                         // 对于 pageParam 里的 query，遇到属于字段的 query 要在获取实体数据时带上
                         for (let k in this.swaggerEntiyDef.properties) {
