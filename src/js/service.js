@@ -57,6 +57,9 @@ export default {
         })
     },
 
+    /**
+     * 创建实体
+     */
     createEntify(engineUrl, entityName, queryParam, data) {
         entityName = entityName.toLowerCase();
         let param = {};
@@ -70,6 +73,10 @@ export default {
         })
     },
 
+    /**
+     * 更新实体
+     * @return {Promise} Promise 对象，失败返回 error
+     */
     updateEntity(engineUrl, entityName, entityId, data) {
         entityName = entityName.toLowerCase();
         return ajax.patch(`${engineUrl}/${entityName}/${entityId}`, data).then((resp) => {
@@ -77,6 +84,10 @@ export default {
         })
     },
 
+    /**
+     * 删除实体
+     * @return {Promise} Promise 对象，成功定义对象，失败返回 error
+     */
     deleteEntity(engineUrl, entityName, entityId) {
         entityName = entityName.toLowerCase();
         return ajax.delete(`${engineUrl}/${entityName}/${entityId}`).then((resp) => {
@@ -87,7 +98,7 @@ export default {
     /**
      * 获取元数据表单定义
      * @param  {string} formId  表单 ID
-     * @return {Promise} Promise 对象，成功定义对象，失败返回 error
+     * @return {Promise} Promise 对象，成功返回定义对象，失败返回 error
      */
     getMetaFormDef(formId) {
         return this._getConfig().then((data) => {
@@ -99,6 +110,10 @@ export default {
         })
     },
 
+    /**
+     * 获取视图定义
+     * @return {Promise} Promise 对象，成功返回定义对象，失败返回 error
+     */
     getMetaViewDef(viewId) {
         return this._getConfig().then((data) => {
             let metaApiEndpoint = data[keyMetaBaseEndpoint];
@@ -109,6 +124,10 @@ export default {
         })
     },
 
+    /**
+     *  获取实体的 swagger.json
+     * @return {Promise} Promise 对象，成功返回 swagger.json 数据，失败返回 error
+     */
     getSwaggerEntityDef(engineUrl, entityName) {
         return ajax.get(`${engineUrl}/swagger.json`).then(resp => {
             // Capitalize
@@ -120,6 +139,7 @@ export default {
 
     /**
      * 对 config 作缓存
+     * @return {Promise} Promise 对象，成功返回缓存的 config，失败返回 error
      */
     _getConfig() {
         if (CachedConfig) {

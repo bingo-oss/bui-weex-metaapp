@@ -343,7 +343,7 @@ module.exports = {
         let viewId = pageParam.viewId;
         delete pageParam.viewId;
 
-        // TODO: 暂时写死删除 title 键
+        // TODO: 暂时写死删除 title 键，聆客启动时写死带上了这个参数
         delete pageParam.title;
 
         this.remainingPageParam = pageParam;
@@ -352,7 +352,7 @@ module.exports = {
         let readRuntimeConfigPromise;
         if (debug) {
             viewId = viewId || config.debugViewId;
-            pageParam.activityId = 'jdgBczwGi';
+            pageParam.activityId = 'jdgBczwGi'; // 大事记、警务报务等依赖这个参数
             service.init(config.debugConfigUrl);
             readRuntimeConfigPromise = Promise.resolve();
         } else {
