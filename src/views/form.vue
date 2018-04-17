@@ -23,7 +23,7 @@
 
     .action-button {
         flex: 1;
-        font-size: 40px;
+        font-size: 34px;
         text-align: center;
         color: #86868D;
         border-left-color: #BEBCBC;
@@ -141,7 +141,7 @@
                 attrs: {
                     title: this.data.title,
                     leftItem: {
-                        icon: 'ion-ios-arrow-back',
+                        icon: 'ion-chevron-left',
                     }
                 },
                 on: {

@@ -40,3 +40,6 @@ entityId | 否 | `String` | 如果用此页面来编辑某条实体记录的数�
 ## 开发流程
 
 与一般的 weex 工程类似，只是可以在 src/js/config.js 里设置 debug 为 true 可以写死 viewId, formId 等方便调试。记得在 npm run publish 之前将 debug 设为 false 即可。
+
+测试云指系统地址
+https://developer.bingosoft.net:12100/mweb/metasuite.html

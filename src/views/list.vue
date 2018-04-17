@@ -1,9 +1,9 @@
 <template>
     <div @viewappear="viewAppear">
-        <bui-header :leftItem="{icon: 'ion-ios-arrow-back'}" @leftClick="pop">
+        <bui-header :leftItem="{icon: 'ion-chevron-left'}" @leftClick="pop">
             <div slot="center" class="page-title-wrapper" @click="titleClicked">
                 <text class="page-title" @click="titleClicked">{{title}}</text>
-                <bui-icon v-if="presetFilters.length" name="ion-chevron-down" color="white" size=36 @click="titleClicked"></bui-icon>
+                <bui-icon v-if="presetFilters.length" name="ion-chevron-down" color="white" size=34 @click="titleClicked"></bui-icon>
             </div>
             <div slot="right" class="header-right-wrapper">
                 <div class="header-button" @click="filterClicked">
@@ -526,7 +526,7 @@ module.exports = {
 .title-text {
     color: black;
     font-weight: 500;
-    font-size: 32px;
+    font-size: 33px;
     margin-bottom: 5px;
     flex: 1;
 }
@@ -541,7 +541,7 @@ module.exports = {
 }
 
 .empty-tips {
-    font-size: 40px;
+    font-size: 32px;
     margin-top: 20px;
     width: 750px;
     text-align: center;

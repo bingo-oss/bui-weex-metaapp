@@ -4,6 +4,7 @@ var modal = weex.requireModule('modal')
 /**
  * 在开发调试时，可以将 debug 设为 true，并设置相应的 token，viewId 和 formId 来调试
  * 发布时记得将 debug 设为 false
+ *
  */
 
 export default {
@@ -21,7 +22,7 @@ export default {
 
     debugEntityId: 'O1PRfnK1A',
 
-    token: '8d165c4b-7375-415d-991d-8198ead5b756',
+    token: 'bf456764-43da-4eae-a5b2-240791d1f201',
     configFilename: 'config.json',
 
     // 读取与 list.weex.js、form.weex.js 同级的配置文件

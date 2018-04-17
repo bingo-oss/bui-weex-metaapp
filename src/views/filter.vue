@@ -23,7 +23,7 @@
 
     .action-button {
         flex: 1;
-        font-size: 40px;
+        font-size: 34px;
         text-align: center;
         color: #86868D;
         border-left-color: #BEBCBC;

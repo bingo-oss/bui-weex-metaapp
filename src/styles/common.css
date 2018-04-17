@@ -2,24 +2,24 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    padding-bottom: 40px;
-    padding-top: 40px;
-    border-bottom-color: #BEBCBC;
+    padding-bottom: 30px;
+    padding-top: 30px;
+    border-bottom-color: #e6e4e4;
     border-bottom-width: 1px;
     border-bottom-style: solid;
 }
 
 .form-group-vertical {
     flex-direction: column;
-    padding-bottom: 40px;
-    padding-top: 40px;
-    border-bottom-color: #BEBCBC;
+    padding-bottom: 30px;
+    padding-top: 30px;
+    border-bottom-color: #e6e4e4;
     border-bottom-width: 1px;
     border-bottom-style: solid;
 }
 
 .form-label {
-    font-size: 36px;
+    font-size: 32px;
 }
 
 
@@ -31,12 +31,14 @@
 
 .form-input-native {
     flex: 1;
-    font-size: 36px;
+    font-size: 32px;
     text-align: right;
+    line-height:60px;
+    margin-right: 10px;
 }
 
 .form-input {
-    font-size: 36px;
+    font-size: 32px;
 }
 
 .label-wrapper {
