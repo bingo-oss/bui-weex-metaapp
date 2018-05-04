@@ -28,22 +28,36 @@
       </div>
       <div id="qrcode">
         <h3>聆客手机端扫描二维码</h3>
-        <a :href="val" target="_blank"><canvas ref="canvas" width="300" height="300"></canvas></a>
-        <p class="bundle-url"><a :href="val" target="_blank">{{val}}</a></p>
+        <a :href="pageTestUrl" target="_blank">
+          <canvas ref="canvas" width="300" height="300"></canvas>
+        </a>
+        <span class="bundle-url">
+          <a :href="pageTestUrl" target="_blank">{{pageTestUrl}}</a>
+        </span>
+
+        <a :href="activityListTestUrl" target="_blank">
+          <canvas ref="canvas1" width="300" height="300"></canvas>
+        </a>
+        <span class="bundle-url">
+          <a :href="activityListTestUrl" target="_blank">{{activityListTestUrl}}</a>
+        </span>
       </div>
     </div>
   </template>
   <script>
-    console.log('QR CODE URL: ' + url)
     new Vue({
       el: '#app',
       template: '#app-template',
       data: function(){
-        return {val: url }
+        return {
+          pageTestUrl: pageTestUrl ,
+          activityListTestUrl:activityListTestUrl
+        }
       },
       mounted: function () {
         var qrcodedraw = new QRCodeLib.QRCodeDraw()
-        qrcodedraw.draw(this.$refs.canvas, this.val, function () {})
+        qrcodedraw.draw(this.$refs.canvas, this.pageTestUrl, function () {})
+        qrcodedraw.draw(this.$refs.canvas1, this.activityListTestUrl, function () {})
       }
     })
   </script>

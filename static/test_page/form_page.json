@@ -1,0 +1,113 @@
+{
+	"id": "",
+	"title": "",
+	"params": {
+		"queryParams": {},
+		"pathParams": {}
+	},
+	"style": {
+		"columns": [4, 16, 4]
+	},
+	"widgets": [
+		[{
+				"id": "meta-widget-w2",
+				"props": {},
+				"operations": {
+					"commonOperations": [
+						{
+							"operationType": "common",
+							"name": "create",
+							"title": "通用操作-添加",
+							"icon": "asterisk"
+						},
+						{
+							"operationType": "popup",
+							"widget": "meta-widget-opt1",
+							"title": "弹出一个部件",
+							"icon": "alert",
+							"modalHeight": 200,
+							"modalWidth": 1000,
+							"modalTitle": "blablabla"
+						}
+					]
+				}
+        }],
+		[{
+				"id": "meta-widget-form",
+				"props": {
+					"dataId": {
+						"type": "text",
+						"value": {
+							"from": "path",
+							"key": "id"
+						}
+					},
+					"mode": {
+						"type": "text",
+						"value": {
+							"from": "query",
+							"key": "_action"
+						}
+					}
+				},
+				"operations": {
+					"viewOperations": [
+						{
+							"operationType": "common",
+							"name": "edit",
+							"icon": null,
+							"title": "编辑",
+							"permVal": "${ctx.form.innerPermissions.openEdit}"
+						}
+					],
+					"editOperations": [
+						{
+							"operationType": "common",
+							"name": "goback",
+							"icon": null,
+							"title": "取消",
+							"btnType": "ghost",
+							"permVal": "${ctx.form.innerPermissions.cancel}"
+						},
+						{
+							"operationType": "common",
+							"name": "save",
+							"icon": null,
+							"title": "保存",
+							"permVal": "${ctx.form.innerPermissions.edit}"
+						},
+						{
+							"operationType": "common",
+							"name": "del",
+							"icon": null,
+							"title": "删除",
+							"permVal": "${ctx.form.innerPermissions.del && ctx.form.isEdit}"
+						}
+					]
+				}
+        }],
+		[{
+				"id": "meta-widget-w2",
+				"props": {},
+				"operations": {
+					"commonOperations": [
+						{
+							"operationType": "common",
+							"name": "create",
+							"title": "通用操作-添加",
+							"icon": "asterisk"
+						},
+						{
+							"operationType": "popup",
+							"widget": "meta-widget-opt1",
+							"title": "弹出一个部件",
+							"icon": "alert",
+							"modalHeight": 200,
+							"modalWidth": 1000,
+							"modalTitle": "blablabla"
+						}
+					]
+				}
+        }]
+	]
+}

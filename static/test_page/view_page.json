@@ -1,0 +1,40 @@
+{
+  "id":"",
+  "title":"",
+  "params":{
+    "queryParams":{},
+    "pathParams":{}
+  },
+  "style":{
+    "columns":[24]
+  },
+  "widgets":[
+    [{
+      "id":"meta-widget-view",
+      "props":{
+        "dataId":{
+          "from":"query",
+          "key":"id"
+        },
+        "defaultView":{"id":"n34Zs9i2qAeEeqnZvfwUnW","title":"123123"},
+        "views":[{"id":"n34Zs9i2qAeEeqnZvfwUnW","title":"123123"},{"id":2,"title":"22222"},{"id":3,"title":"123123"}]
+      },
+      "operations":{
+        "commonOperations":[
+          {"operationType":"common","name":"create","title":"新建","icon":"plus-round"},
+          {"operationType":"common","name":"import","title":"通用操作-导入","icon":"ios-upload-outline"},
+          {"operationType":"script","title":"执行脚本","icon":"wrench","onclick":"alert('我执行了一段脚本');"}
+        ],
+        "singleOperations":[
+          {"operationType":"common","name":"edit","title":"编辑","icon":"ios-upload-outline"},
+          {"operationType":"script","title":"执行脚本","icon":"wrench","onclick":"alert('我执行了一段脚本');"}
+        ],
+        "batchOperations":[
+          {"operationType":"common","name":"batchDelete","title":"批量删除","icon":"ios-upload-outline"},
+          {"operationType":"script","title":"执行脚本","icon":"wrench","onclick":"alert('我执行了一段脚本');"}
+        ]
+      }
+    }]
+
+  ]
+}

@@ -80,6 +80,7 @@ import service from '../js/service.js';
 import ajax from '../js/ajax.js';
 import config from '../js/config.js';
 import perm from '../js/perm.js';
+import metabase from '../js/metadata/metabase.js';
 const linkapi = require('linkapi');
 
 const globalEvent = weex.requireModule('globalEvent');
@@ -348,28 +349,20 @@ module.exports = {
 
         this.remainingPageParam = pageParam;
 
-        let debug = config.debug;
         let readRuntimeConfigPromise;
-        if (debug) {
-            viewId = viewId || config.debugViewId;
-            pageParam.activityId = 'jdgBczwGi'; // 大事记、警务报务等依赖这个参数
-            service.init(config.debugConfigUrl);
-            readRuntimeConfigPromise = Promise.resolve();
-        } else {
-            if (!viewId) {
-                this.$alert('缺少参数 viewId');
-                return;
-            }
-            let contextPath = this.$getContextPath();
-            readRuntimeConfigPromise = config.readRuntimeConfig(contextPath)
-                .catch(err => {
-                    this.$alert(err);
-                    this.$toast('读取运行时配置失败');
-                })
-                .then(runtimeConfig => {
-                    service.init(runtimeConfig.configServerUrl)
-                })
+        if (!viewId) {
+            this.$alert('缺少参数 viewId');
+            return;
         }
+        let contextPath = this.$getContextPath();
+        readRuntimeConfigPromise = config.readRuntimeConfig(contextPath)
+            .catch(err => {
+                this.$alert(err);
+                this.$toast('读取运行时配置失败');
+            })
+            .then(runtimeConfig => {
+                service.init(runtimeConfig.configServerUrl)
+            })
 
         readRuntimeConfigPromise.then(() => {
             // 获取视图定义
@@ -423,6 +416,10 @@ module.exports = {
                         params.viewId = this.selectedFilter.viewId;
                     }
                 }
+                metabase.initMetabase(viewDef.projectId).then(ddd=>{
+                    var mentity=metabase.findMetaEntity('Activity');
+                    debugger
+                })
                 return service.getEngineUrl(viewDef.projectId)
                 .catch(err => {
                     this.$toast('getEngineUrl error')

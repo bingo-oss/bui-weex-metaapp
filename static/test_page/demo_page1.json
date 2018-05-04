@@ -1,0 +1,29 @@
+{
+    "id":"",
+    "title":"",
+    "params":{
+        "queryParams":{},
+        "pathParams":{}
+    },
+    "style":{
+        "columns":[4,16,4]
+    },
+    "widgets":[
+        [
+            
+        ],
+        [
+            {
+                "id":"meta-widget-w2",
+                "operations":{
+                    "commonOperations":[
+                        {"operationType":"common","name":"create","title":"通用操作-添加","icon":"asterisk"}
+                    ]
+                }
+            }
+        ],
+        [
+            
+        ]
+    ]
+}

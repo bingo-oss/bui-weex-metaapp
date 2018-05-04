@@ -288,24 +288,16 @@
             // After deleting those checked properties, use the rest of pageParam as queryParam
             this.queryParam = pageParam;
 
-            let debug = config.debug;
             let readRuntimeConfigPromise;
 
-            if (debug) {
-                // this.entityId = config.debugEntityId;
-                formId = formId || config.debugFormId;
-                service.init(config.debugConfigUrl);
-                readRuntimeConfigPromise = Promise.resolve();
-            } else {
-                if (!formId) {
-                    this.$alert('缺少参数 formId');
-                    return;
-                }
-                let contextPath = this.$getContextPath();
-                readRuntimeConfigPromise = config.readRuntimeConfig(contextPath).then(runtimeConfig => {
-                    service.init(runtimeConfig.configServerUrl)
-                });
+            if (!formId) {
+                this.$alert('缺少参数 formId');
+                return;
             }
+            let contextPath = this.$getContextPath();
+            readRuntimeConfigPromise = config.readRuntimeConfig(contextPath).then(runtimeConfig => {
+                service.init(runtimeConfig.configServerUrl)
+            });
 
             console.log('fetch data')
             readRuntimeConfigPromise.then(() => {

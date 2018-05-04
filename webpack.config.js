@@ -10,7 +10,8 @@ var bannerPlugin = new webpack.BannerPlugin(
 
 //  文件拷贝插件,将图片和字体拷贝到dist目录
 var copyPlugin = new copy([
-    {from: './src/image', to: "./image"},
+    {from: './static/test_page', to: "./test_page"},
+    {from: './static/config.json', to: "./"},//复制静态配置文件到dist目录
     {from: './node_modules/bui-weex/src/font', to: "./font"}
 ])
 

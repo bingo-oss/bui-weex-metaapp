@@ -23,15 +23,15 @@
   "scripts": {
     "start": "npm run serve & npm run dev",
     "dev": "webpack --watch",
-    "serve": "node build/init.js && serve -p $npm_package_ports_serverPort",
-    "debug": "weex-devtool -p  $npm_package_ports_debugPort",
+    "serve": "node build/init.js && npm run debug",
+    "debug": "weex debug -p  $npm_package_ports_debugPort",
     "publish": "node build/publish.js",
     "build": "webpack"
   },
   "dependencies": {
     "bui-weex": "^0.2.6",
     "glob": "^7.1.2",
-    "linkapi": "^0.3.1",
+    "linkapi": "^0.3.2",
     "punycode": "^2.1.0",
     "vue": "^2.4.2",
     "vue-router": "^2.1.1",
