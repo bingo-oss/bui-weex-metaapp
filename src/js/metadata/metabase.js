@@ -17,7 +17,7 @@ var Config=require("../config.js");
 import metaservice from './metaservice';
 //var store=require("store2");
 import ajax from '../ajax';
-import i18n from '../i18n/zh';
+import i18n from '../i18n/index';
 import _ from '../tool/lodash';
 
 var MetaEntityCls=require("./metaentity");

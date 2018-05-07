@@ -1,5 +1,5 @@
 const linkapi = require('linkapi');
-import i18n from '../js/i18n/zh';
+import i18n from '../js/i18n/index';
 import buiweex from 'bui-weex';
 import ajax from '../js/ajax.js';
 

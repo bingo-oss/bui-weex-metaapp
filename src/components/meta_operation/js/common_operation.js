@@ -7,56 +7,30 @@
 //var pathToRegexp = require('path-to-regexp');
 import Utils from '../../../js/tool/utils'
 import _ from '../../../js/tool/lodash'
-
+import ajax from '../../../js/ajax.js';
+import i18n from '../../../js/i18n/index';
+import buiweex from 'bui-weex'
 /**
  * 创建操作，跳转到新建表单页
  * @param context
  */
 function operationForCreate(){
   var operation= {
-    id:"create",
     title:"添加",
     icon:"plus-round",
     onclick:function(context,$optInst){
-    //   var path=context.grid&&context.grid.createPath;
-    //   var metaEntity=context.metaEntity;
-    //   if(_.isEmpty(path) && !_.isEmpty(metaEntity)){
-    //     path=context.metaEntity.formPathForCreate();
-    //   }
-    //   if(_.isEmpty(path)){
-    //     alert("not implement,please set createPath");
-    //     return ;
-    //   }
-    //   let _query=buildQuery(context);
-    //   if(path.indexOf('/')>-1){
-    //     router.push({path:path,query:_query});
-    //   }else{
-    //     router.push({name:path,params:{entityName:metaEntity.name},query:_query});
-    //   }
+      let pageId=$optInst.operation.page&&$optInst.operation.page.id;
+      if(!pageId){
+        buiweex.alert(i18n.pageIdNotSet);
+        return;
+      }
+      let queryParam = {pageId: 'pageId'};
+      let url = `${buiweex.getContextPath()}/page.weex.js${ajax.object2query(queryParam)}`;
+      buiweex.push(url);
     }
   };
   operation[Utils.dataPermField]=Utils.permValues.create;
   return operation;
-}
-/**
- * 将自定义视图和表单的shortId附加到query参数后
- */
-function buildQuery(context){
-  let _query={};
-  if(context.grid){
-    var routeQuery=context.grid.$route.query;
-    let contextParent=context.grid.contextParent;
-    let formShortId=contextParent?contextParent.formShortId:'';
-    let viewShortId=contextParent?contextParent.viewShortId:'';
-    _query= _.extend({},routeQuery);
-    if(formShortId){
-      _query.formShortId=formShortId;
-    }
-    if(viewShortId){
-      _query.viewShortId=viewShortId;
-    }
-  }
-  return _query;
 }
 function getIdFromContext(context){
   var id=context.selectedId;
@@ -84,26 +58,19 @@ function operationForEdit(){
     title:"修改",
     icon:"edit",
     onclick:function(context,$optInst){
-    //   var id=getIdFromContext(context);
-    //   if(!id){
-    //     iview$Modal.error({content:`当前数据id未设置`});
-    //     return;
-    //   }
-    //   var metaEntity=context.metaEntity;
-    //   var path=context.grid&&context.grid.editPath;
-    //   if(_.isEmpty(path) && !_.isEmpty(metaEntity)){
-    //     //必须传入数据id构造编辑的路径
-    //     path=metaEntity.formPathForEdit(id);
-    //   }else{
-    //     let toPath=pathToRegexp.compile(path);
-    //     path=toPath({id:id});
-    //   }
-    //   let _query=buildQuery(context);
-    //   if(path.indexOf('/')>-1){
-    //     router.push({path:path,query:_query});
-    //   }else{
-    //     router.push({name:path,params:{entityName:metaEntity.name},query:_query});
-    //   }
+      var id=getIdFromContext(context);
+      if(!id){
+        iview$Modal.error({content:i18n.dataIdNotSet});
+        return;
+      }
+      let pageId=$optInst.operation.page&&$optInst.operation.page.id;
+      if(!pageId){
+        buiweex.alert(i18n.pageIdNotSet);
+        return;
+      }
+      let queryParam = {pageId: 'pageId',dataId:id};
+      let url = `${buiweex.getContextPath()}/page.weex.js${ajax.object2query(queryParam)}`;
+      buiweex.push(url);
     }
   };
   operation[Utils.dataPermField]=Utils.permValues.edit;;
@@ -119,26 +86,19 @@ function operationForView(){
     title:"查看",
     icon:"ios-eye-outline",
     onclick:function(context,$optInst){
-    //   var id=getIdFromContext(context);
-    //   if(!id){
-    //     iview$Modal.error({content:`当前数据id未设置`});
-    //     return;
-    //   }
-    //   var metaEntity=context.metaEntity;
-    //   var path=context.grid&&context.grid.viewPath;
-    //   if(_.isEmpty(path) && !_.isEmpty(metaEntity)){
-    //     //必须传入数据id构造编辑的路径
-    //     path=metaEntity.formPathForEdit(id);
-    //   }else{
-    //     let toPath=pathToRegexp.compile(path);
-    //     path=toPath({id:id});
-    //   }
-    //   let _query=buildQuery(context);
-    //   if(path.indexOf('/')>-1){
-    //     router.push({path:path,query:_query});
-    //   }else{
-    //     router.push({name:path,params:{entityName:metaEntity.name},query:_query});
-    //   }
+      var id=getIdFromContext(context);
+      if(!id){
+        iview$Modal.error({content:i18n.dataIdNotSet});
+        return;
+      }
+      let pageId=$optInst.operation.page&&$optInst.operation.page.id;
+      if(!pageId){
+        buiweex.alert(i18n.pageIdNotSet);
+        return;
+      }
+      let queryParam = {pageId: 'pageId',dataId:id};
+      let url = `${buiweex.getContextPath()}/page.weex.js${ajax.object2query(queryParam)}`;
+      buiweex.push(url);
     }
   };
   operation[Utils.dataPermField]=Utils.permValues.view;
@@ -154,30 +114,20 @@ function operationForDel() {
     title:"删除",
     icon:"trash-a",
     onclick:function(context,$optInst){
-    //   var id=getIdFromContext(context);
-    //   if(!id){
-    //     iview$Modal.error({content:`当前数据id未设置`});
-    //     return;
-    //   }
-    //   var metaEntity=context.metaEntity;
-    //   var resource=context.grid&&context.grid.queryResource;
-    //   if(_.isEmpty(resource) &&  !_.isEmpty(metaEntity)){
-    //     resource=metaEntity.dataResource();
-    //   }
-    //   if(_.isEmpty(resource)){
-    //     iview$Modal.error({content:`实体删除地址未设置`});
-    //     return;
-    //   }
-    //   iview$Modal.confirm({
-    //     title: '提示',
-    //     content: '确定删除吗?',
-    //     onOk: () => {
-    //       //,cascade_delete:true
-    //       resource.delete({id:id}).then(function (re) {
-    //         context.grid&&context.grid.reload();
-    //       });
-    //     }
-    //   });
+      var id=getIdFromContext(context);
+      if(!id){
+        iview$Modal.error({content:i18n.dataIdNotSet});
+        return;
+      }
+      var metaEntity=context.metaEntity;
+      resource=metaEntity.dataResource();
+      buiweex.confirm(i18n.confirmDelete,function(ok){
+        if(ok){
+          resource.delete({id:id}).then(function (re) {
+            context.grid&&context.grid.reload();
+          });
+        }
+      });
     }
   };
   operation[Utils.dataPermField]=Utils.permValues.del;

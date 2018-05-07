@@ -1,4 +1,5 @@
 import _ from '../tool/lodash';
+import restResource from './rest_resource'
 module.exports=function (options) {
     var metaEntity=_.extend({
       name:"",
@@ -147,30 +148,15 @@ module.exports=function (options) {
     return resourceName;
   }
   /**
-   * 构造实体数据crud操作的vue-resource对象
+   * 构造实体数据crud操作的rest-resource对象
    */
   metaEntity.dataResource=function(){
     var pathname=_.trim(this.resourceUrl,'/');
     var resourceName=this.dataResourceUrl();
-    var customActions = {
-      calc: {method: 'POST', url: `${pathname}/calc`}
-    };
-    var dataResource = Vue.resource(resourceName,null,customActions);
+    
+    var dataResource = restResource(resourceName);
     return dataResource;
   }
-  /**
-   * dataResource变体方法，可控制loading
-   */
-  metaEntity.dataResourceWrapper=function(){
-    var resourceName=this.dataResourceUrl();
-    let $innerVueInst=new Vue({data:{showLoading:true}});
-    return {
-      $innerVueInst:$innerVueInst,
-      $resource:$innerVueInst.$resource(resourceName)
-    };
-  }
-  
-
   /**
    * 构造默认的创建表单Path
    */
