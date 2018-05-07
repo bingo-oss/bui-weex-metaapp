@@ -17,8 +17,7 @@ export default {
     extends: SingleLineText,
 }
 </script>
-
-<style src="../styles/common.css"></style>
+<style src="../../styles/common.css" scoped="false"></style>
 <style scoped="">
 .form-input-textarea {
     flex: 1;

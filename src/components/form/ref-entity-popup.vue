@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import ajax from '../js/ajax.js';
+import ajax from '../../js/ajax.js';
 
 export default {
     props: {
@@ -85,10 +85,6 @@ export default {
                 this.loadingStatus = 'init';
             })
         }
-    },
-    components: {
-        'refresh-wrapper': require('../components/common/refresh.vue'),
-        'loading-wrapper': require('../components/common/loading.vue')
     }
 }
 </script>

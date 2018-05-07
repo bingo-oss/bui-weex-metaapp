@@ -104,7 +104,7 @@
                     }
                 }
 
-                let input = h(inputType, {
+                let input = h(`Meta${inputType}`, {
                     props: {
                         definition: fakeDefinition,
                         filterValue: this.copiedFilters[col.name],
@@ -169,7 +169,6 @@
             return h('div', {
                 'class': ['container'],
             }, [titleDiv, forms, actionBar]);
-        },
-        components: require('../components/all-components.js')
+        }
     }
 </script>

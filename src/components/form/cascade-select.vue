@@ -13,7 +13,7 @@
 
 <script>
 import mixin from './component-mixin.js'
-import EventBus from '../js/bus.js'
+import EventBus from '../../js/bus.js'
 const picker = weex.requireModule('picker');
 
 export default {
@@ -60,5 +60,4 @@ export default {
     },
 }
 </script>
-
-<style src="../styles/common.css"></style>
+<style src="../../styles/common.css" scoped="false"></style>

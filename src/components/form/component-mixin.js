@@ -1,4 +1,4 @@
-import EventBus from '../js/bus.js'
+import EventBus from '../../js/bus.js'
 
 export default {
     data() {

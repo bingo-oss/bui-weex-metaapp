@@ -22,7 +22,7 @@
 
 <script>
 import mixin from './component-mixin.js'
-import ajax from '../js/ajax.js'
+import ajax from '../../js/ajax.js'
 
 export default {
     componentType: 'RefEntity',
@@ -92,5 +92,4 @@ export default {
     },
 }
 </script>
-
-<style src="../styles/common.css"></style>
+<style src="../../styles/common.css" scoped="false"></style>

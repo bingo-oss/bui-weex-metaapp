@@ -1,6 +1,6 @@
 <!--引入bui-weex样式文件-->
 <style lang="sass" src="bui-weex/src/css/buiweex.scss"></style>
-<style src="../styles/common.css"></style>
+<style src="../styles/common.css" scoped="false"></style>
 
 <style lang="css">
     .container {
@@ -113,7 +113,7 @@
                 // 以下为所有组件通用逻辑
                 //
                 // 对于像 Description 这样的组件，本来不需要传 value 或者 on input 这些参数，这里简单全传了
-                let input = h(o.componentType, {
+                let input = h(`Meta${o.componentType}`, {
                     props: {
                         definition: o,
                         value: this.result[o.dataField],
@@ -340,7 +340,6 @@
                 console.log(err)
                 this.$alert('Fetch data failed: ' + JSON.stringify(err));
             })
-        },
-        components: require('../components/all-components.js')
+        }
     }
 </script>

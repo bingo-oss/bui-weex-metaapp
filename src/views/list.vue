@@ -479,13 +479,10 @@ module.exports = {
         });
     },
     components: {
-        'filter-view': require('./filter.vue'),
-        'refresh-wrapper': require('../components/common/refresh.vue'),
-        'loading-wrapper': require('../components/common/loading.vue')
+        'filter-view': require('./filter.vue')
     }
 }
 </script>
-
 <style lang="css">
 .page-title-wrapper {
     flex-direction: row;

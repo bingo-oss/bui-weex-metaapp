@@ -12,11 +12,11 @@
 </template>
 
 <script>
-const linkapi = require("linkapi");
 import mixin from './component-mixin.js'
+const linkapi = require("linkapi");
 
 export default {
-    componentType: 'SingleOrgSelect',
+    componentType: 'SingleUserSelect',
     extends: mixin,
     data() {
         return {
@@ -35,10 +35,8 @@ export default {
             immediate: true,
             handler(v) {
                 if (!this.filterMode) {
-                    linkapi.getDeptInfoById(v, (result) => {
-                        this.valueText = result.name;
-                    }, err => {
-                        console.log(err)
+                    linkapi.getUserInfo(v, (result) => {
+                        this.valueText = result.userName;
                     })
                 }
             }
@@ -49,10 +47,8 @@ export default {
                 if (this.filterMode) {
                     let ret = /eq\s(\S*)$/.exec(val);
                     if (ret) {
-                        linkapi.getDeptInfoById(ret[1], (result) => {
-                            this.valueText = result.name;
-                        }, err => {
-                            console.log(err)
+                        linkapi.getUserInfo(ret[1], (result) => {
+                            this.valueText = result.userName;
                         })
                     }
                 }
@@ -61,7 +57,7 @@ export default {
     },
     methods: {
         inputClicked(e) {
-            linkapi.startContactSingleSelector(this.definition.componentParams.title, 4, {}, (result) => {
+            linkapi.startContactSingleSelector(this.definition.componentParams.title, 1, {}, (result) => {
                 if (!result.id) return;
                 if (this.filterMode) {
                     let v = `${this.definition.dataField} eq ${result.id}`;
@@ -77,4 +73,4 @@ export default {
 }
 </script>
 
-<style src="../styles/common.css"></style>
+<style src="../../styles/common.css" scoped="false"></style>

@@ -50,4 +50,4 @@ export default {
 }
 </script>
 
-<style src="../styles/common.css"></style>
+<style src="../../styles/common.css" scoped="false"></style>

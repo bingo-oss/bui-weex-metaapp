@@ -16,14 +16,14 @@ const linkapi = require("linkapi");
 import SingleUserSelect from './single-user-select.vue'
 
 export default {
-    componentType: 'MultiUserSelect',
+    componentType: 'MultiOrgSelect',
     extends: SingleUserSelect,
     methods: {
         inputClicked(e) {
-            linkapi.startContactMulitSelector(this.definition.componentParams.title, 1, {}, (result) => {
-                this.valueText = result.user.map(u => u.name).join(',');
-                this.$emit('input', result.user);
-                // this.$alert(result);
+            linkapi.startContactMulitSelector(this.definition.componentParams.title, 4, {}, (result) => {
+                // this.valueText = result.user.map(u => u.name).join(',');
+                // this.$emit('input', result.user);
+                this.$alert(result);
             }, (err) => {
                 this.$alert(err);
             })
@@ -32,4 +32,4 @@ export default {
 }
 </script>
 
-<style src="../styles/common.css"></style>
+<style src="../../styles/common.css" scoped="false"></style>
