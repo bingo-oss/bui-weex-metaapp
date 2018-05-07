@@ -1,5 +1,5 @@
 <template>
-<div>
+<div v-if="commonOperation">
     <!--有onclick的普通操作-->
     <div v-if="commonOperation&&!commonOperation.renderComponent" @click="buttonClick">
         <slot>
@@ -31,16 +31,15 @@ export default {
     data(){
         let commonOptName=this.operation.name;
         let commonOpt=commonOperation.createOperation(commonOptName);
-        if(!commonOpt){
-            this.$toast(`通用操作${commonOptName}未定义`);
-        }
         let _this=this;
-        //覆盖通用操作的某些属性
-        _.each(["title","icon"],function(k){
-            if(_this.operation[k]){
-                commonOpt[k]=_this.operation[k];
-            }
-        });
+        if(commonOpt){
+            //覆盖通用操作的某些属性
+            _.each(["title","icon"],function(k){
+                if(_this.operation[k]){
+                    commonOpt[k]=_this.operation[k];
+                }
+            });
+        }
         return {
             commonOperation:commonOpt
         };
