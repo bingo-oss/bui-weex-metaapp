@@ -29,7 +29,7 @@
     "build": "webpack"
   },
   "dependencies": {
-    "bui-weex": "^0.2.6",
+    "bui-weex": "^0.2.8",
     "glob": "^7.1.2",
     "linkapi": "^0.3.2",
     "punycode": "^2.1.0",
