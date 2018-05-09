@@ -10,7 +10,7 @@ import propParser from '../../js/tool/prop_parser';
 import _ from '../../js/tool/lodash'
 import Utils from '../../js/tool/utils'
 //操作类型定义
-var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script'};
+var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script',openApp:'openApp'};
 var permParser={
     //来自表单的取消、开启编辑、编辑、删除权限
     "formCancel":function(widgetContext){

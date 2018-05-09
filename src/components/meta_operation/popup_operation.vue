@@ -2,9 +2,9 @@
 <div bubble="true">
     <div @click="toggleModal">
         <slot>
-            <bui-button type="primary"
-                :value="operation.title" >
-            </bui-button>
+            <div class="btn-block">
+                <text class="btn-text">{{operation.title}}</text>
+            </div>
         </slot>
     </div>
     <bui-dialog class="popup-widget-con" v-model="popupWidgetModal"
@@ -53,5 +53,5 @@ export default {
         border:none;
     }
 </style>
-
+<style lang="sass" src="../../styles/operation.scss"></style>
 

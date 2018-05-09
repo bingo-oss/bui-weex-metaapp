@@ -1,3 +1,4 @@
+import buiweex from 'bui-weex';
 const Utils={
     dataPermField:"permVal",//数据权限值所在的字段
     operationDisplayField:"display",//部件操作是否显示的属性字段
@@ -38,6 +39,9 @@ const Utils={
             return false;
         }
         return Utils.hasPerm(userPermVal,operationPermVal);
+    },
+    pageEntry(){//页面渲染的入口页面
+        return `${buiweex.getContextPath()}/page.weex.js`;
     }
 };
 export default Utils;

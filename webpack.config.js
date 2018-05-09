@@ -3,6 +3,13 @@ var webpack = require('webpack');
 var glob = require("glob");
 var copy = require('copy-webpack-plugin');
 
+//非常酷的插件，自动浏览器预览最后生成的js boundles的内容
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+//非常酷的插件，自动浏览器预览最后生成的js boundles的内容
+var bundleAnalyzerPlugin=new BundleAnalyzerPlugin({
+    analyzerMode: 'static'
+});
+
 var bannerPlugin = new webpack.BannerPlugin(
     '// { "framework": "Vue" }\n',
     {raw: true}
@@ -27,7 +34,6 @@ function getEntries () {
     }
     return entries;
 }
-
 // 生成webpack配置
 function getBaseConfig() {
     return {
@@ -58,9 +64,9 @@ function getBaseConfig() {
     }
 }
 
-var webConfig = getBaseConfig();
-webConfig.output.filename = '[name].web.js';
-webConfig.module.loaders[1].loaders.push('vue');
+//var webConfig = getBaseConfig();
+//webConfig.output.filename = '[name].web.js';
+//webConfig.module.loaders[1].loaders.push('vue');
 
 var weexConfig = getBaseConfig();
 weexConfig.output.filename = '[name].weex.js';

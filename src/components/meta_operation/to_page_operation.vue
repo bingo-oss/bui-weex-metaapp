@@ -1,13 +1,14 @@
 <template>
 <div @click="gotoPage">
     <slot>
-        <bui-button type="primary" 
-            :value="operation.title" >
-        </bui-button>
+        <div class="btn-block">
+            <text class="btn-text">{{operation.title}}</text>
+        </div>
     </slot>
 </div>
 </template>
 <script>
+import Utils from '../../js/tool/utils';
 export default {
     props:{
         widgetContext:{//由使用操作的部件传入的部件上下文
@@ -29,15 +30,14 @@ export default {
     },
     methods:{
         gotoPage(){
-            // if(!this.operation.page){
-            //     return;
-            // }
-            // var _query=_.extend({},this.widgetContext.queryParams);
-            // var pageId=this.operation.page.id;
-            // var _params=_.extend({pageId:pageId},this.widgetContext.pathParams);
-            // router.push({name:"defaultPageIndex",query:_query,params:_params});
+            if(!this.operation.page){
+                return;
+            }
+            var pageId=this.operation.page.id;
+            var queryParam=_.extend({pageId:pageId},this.widgetContext.queryParams);
+            buiweex.push(Utils.pageEntry(),queryParam);
         }
     }
 }
 </script>
-
+<style lang="sass" src="../../styles/operation.scss"></style>

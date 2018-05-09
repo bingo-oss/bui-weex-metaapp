@@ -1,8 +1,6 @@
 const stream = weex.requireModule('stream');
 const linkapi = require('linkapi')
 import config from './config.js';
-import util from './util.js';
-
 /**
  * {a: 'b', c: 'd'} => ?a=b&c=d
  * {} => ''
@@ -59,7 +57,6 @@ export default {
 
                 console.log(param);
                 
-                // util.alert(param.url)
                 stream.fetch(param, (resp) => {
                     // 由于将 type 设为了 text，这里需要解析，详见上解释
                     if (param.url.indexOf('swagger.json') != -1) {

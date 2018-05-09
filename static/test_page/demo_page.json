@@ -46,7 +46,15 @@
                 },
                 "operations":{
                     "commonOperations":[
-                        {"operationType":"common","name":"create","title":"通用操作-添加","icon":"plus-round"},
+                        {
+                            "operationType":"common",
+                            "name":"create",
+                            "title":"通用操作-添加",
+                            "icon":"plus-round",
+                            "page":{
+                                "id":"default_form_page"
+                            }
+                        },
                         {
                             "operationType":"common",
                             "name":"edit",
@@ -85,7 +93,7 @@
                                 }
                             }
                         },
-                        {"operationType":"script","title":"执行脚本","icon":"wrench","onclick":"function(widgetContext){alert('我执行了一段脚本');}"}
+                        {"operationType":"script","title":"执行脚本","icon":"wrench","onclick":"function(widgetContext){console.log('我执行了一段脚本');}"}
                     ],
                     "singleOperations":[],
                     "batchOperations":[]

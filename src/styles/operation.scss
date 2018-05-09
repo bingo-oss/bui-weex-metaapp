@@ -1,0 +1,15 @@
+.btn-block {
+    width: 700px;
+    height: 88px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    flex-direction: row;
+    background-color: #3399ff;
+}
+.btn-text {
+    text-overflow: ellipsis;
+    lines: 1;
+    font-size: 36px;
+    color: #FFFFFF;
+}

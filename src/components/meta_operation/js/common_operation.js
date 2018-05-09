@@ -7,7 +7,6 @@
 //var pathToRegexp = require('path-to-regexp');
 import Utils from '../../../js/tool/utils'
 import _ from '../../../js/tool/lodash'
-import ajax from '../../../js/ajax.js';
 import i18n from '../../../js/i18n/index';
 import buiweex from 'bui-weex'
 /**
@@ -24,9 +23,8 @@ function operationForCreate(){
         buiweex.alert(i18n.pageIdNotSet);
         return;
       }
-      let queryParam = {pageId: 'pageId'};
-      let url = `${buiweex.getContextPath()}/page.weex.js${ajax.object2query(queryParam)}`;
-      buiweex.push(url);
+      let queryParam = {pageId: pageId};
+      buiweex.push(Utils.pageEntry(),queryParam);
     }
   };
   operation[Utils.dataPermField]=Utils.permValues.create;
@@ -68,9 +66,8 @@ function operationForEdit(){
         buiweex.alert(i18n.pageIdNotSet);
         return;
       }
-      let queryParam = {pageId: 'pageId',dataId:id};
-      let url = `${buiweex.getContextPath()}/page.weex.js${ajax.object2query(queryParam)}`;
-      buiweex.push(url);
+      let queryParam = {pageId: pageId,dataId:id};
+      buiweex.push(Utils.pageEntry(),queryParam);
     }
   };
   operation[Utils.dataPermField]=Utils.permValues.edit;;
@@ -96,9 +93,8 @@ function operationForView(){
         buiweex.alert(i18n.pageIdNotSet);
         return;
       }
-      let queryParam = {pageId: 'pageId',dataId:id};
-      let url = `${buiweex.getContextPath()}/page.weex.js${ajax.object2query(queryParam)}`;
-      buiweex.push(url);
+      let queryParam = {pageId: pageId,dataId:id};
+      buiweex.push(Utils.pageEntry(),queryParam);
     }
   };
   operation[Utils.dataPermField]=Utils.permValues.view;
@@ -120,7 +116,7 @@ function operationForDel() {
         return;
       }
       var metaEntity=context.metaEntity;
-      resource=metaEntity.dataResource();
+      var resource=metaEntity.dataResource();
       buiweex.confirm(i18n.confirmDelete,function(ok){
         if(ok){
           resource.delete({id:id}).then(function (re) {

@@ -3,9 +3,6 @@
         <div v-if="widgetParams&&widgetParams.commonOperations" 
             v-for="(commonOpt,index) in widgetParams.commonOperations" :key="index" class="common-operation">
             <meta-operation :operation="commonOpt" :widget-context="getWidgetContext(index)">
-                <bui-button type="primary"
-                    :value="commonOpt.title" >
-                </bui-button>
             </meta-operation>
         </div>
         <div style="text-align:center;">

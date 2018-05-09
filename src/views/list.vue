@@ -20,12 +20,14 @@
             </refresh-wrapper>
 
             <div v-for="(o, index) in listData">
+                
                 <bui-swipe-cell height="200px" :items="getSwipeActionForRecord(o)"
                     @actionClick="swipeActionClicked(getSwipeActionForRecord(o), $event, o.id, index)"
                     @click="read(o.id)"
                     @swipeleft="cellSwiped(o.id)"
                     :ref="o.id"
                     >
+                    
                     <!-- 布局 0 默认 -->
                     <div class="list-item" v-if="layoutType == '0'" slot="content">
                         <div class="list-item-row">

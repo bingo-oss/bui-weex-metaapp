@@ -3,15 +3,12 @@
     <!--有onclick的普通操作-->
     <div v-if="commonOperation&&!commonOperation.renderComponent" @click="buttonClick">
         <slot>
-            <bui-button type="primary" 
-                :value="commonOperation.title" >
-            </bui-button>
+            <div class="btn-block">
+                <text class="btn-text">{{commonOperation.title}}</text>
+            </div>
         </slot>
     </div>
-    <!--有renderComponent的普通操作-->
-    <component v-if="commonOperation&&commonOperation.renderComponent" :widget-context="widgetContext" :operation="commonOperation" :is="commonOperation.renderComponent">
-        <slot></slot>
-    </component>
+    
 </div>
 </template>
 <script>
@@ -53,4 +50,6 @@ export default {
     }
 }
 </script>
+<style lang="sass" src="../../styles/operation.scss"></style>
+
 
