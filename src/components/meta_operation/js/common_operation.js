@@ -15,8 +15,6 @@ import buiweex from 'bui-weex'
  */
 function operationForCreate(){
   var operation= {
-    title:"添加",
-    icon:"plus-round",
     onclick:function(context,$optInst){
       let pageId=$optInst.operation.page&&$optInst.operation.page.id;
       if(!pageId){
@@ -27,7 +25,6 @@ function operationForCreate(){
       buiweex.push(Utils.pageEntry(),queryParam);
     }
   };
-  operation[Utils.dataPermField]=Utils.permValues.create;
   return operation;
 }
 function getIdFromContext(context){
@@ -52,9 +49,6 @@ function getIdFromContext(context){
  */
 function operationForEdit(){
   var operation= {
-    id:"edit",
-    title:"修改",
-    icon:"edit",
     onclick:function(context,$optInst){
       var id=getIdFromContext(context);
       if(!id){
@@ -70,7 +64,6 @@ function operationForEdit(){
       buiweex.push(Utils.pageEntry(),queryParam);
     }
   };
-  operation[Utils.dataPermField]=Utils.permValues.edit;;
   return operation;
 }
 /**
@@ -79,9 +72,6 @@ function operationForEdit(){
  */
 function operationForView(){
   var operation= {
-    id:"view",
-    title:"查看",
-    icon:"ios-eye-outline",
     onclick:function(context,$optInst){
       var id=getIdFromContext(context);
       if(!id){
@@ -97,7 +87,6 @@ function operationForView(){
       buiweex.push(Utils.pageEntry(),queryParam);
     }
   };
-  operation[Utils.dataPermField]=Utils.permValues.view;
   return operation;
 }
 /**
@@ -106,9 +95,6 @@ function operationForView(){
  */
 function operationForDel() {
   var operation= {
-    id:"del",
-    title:"删除",
-    icon:"trash-a",
     onclick:function(context,$optInst){
       var id=getIdFromContext(context);
       if(!id){
@@ -126,7 +112,6 @@ function operationForDel() {
       });
     }
   };
-  operation[Utils.dataPermField]=Utils.permValues.del;
   return operation;
 }
 /**
@@ -135,9 +120,6 @@ function operationForDel() {
  */
 function save(){
   var operation= {
-    id:"save",
-    title:"保存",
-    icon:"",
     onclick:function(context,$optInst){
       var form=context.form;
       if(_.isEmpty(form)){

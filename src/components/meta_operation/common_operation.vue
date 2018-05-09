@@ -1,15 +1,13 @@
 <template>
-<div v-if="commonOperation">
+<div v-if="extendedOperation">
     <!--有onclick的普通操作-->
-    <div v-if="commonOperation&&!commonOperation.renderComponent" @click="buttonClick">
+    <div v-if="extendedOperation&&!extendedOperation.renderComponent" @click="buttonClick">
         <slot>
-            <div class="btn-block">
-                <text class="btn-text">{{commonOperation.title}}</text>
-            </div>
+            <meta-opt-btn :operation="extendedOperation"></meta-opt-btn>
         </slot>
     </div>
     <!--有renderComponent的普通操作-->
-    <component v-if="commonOperation&&commonOperation.renderComponent" :widget-context="widgetContext" :operation="commonOperation" :is="commonOperation.renderComponent">
+    <component v-if="extendedOperation&&extendedOperation.renderComponent" :widget-context="widgetContext" :operation="extendedOperation" :is="extendedOperation.renderComponent">
         <slot></slot>
     </component>
 </div>
@@ -28,31 +26,28 @@ export default {
             required:true
         }
     },
-    data(){
-        let commonOptName=this.operation.name;
-        let commonOpt=commonOperation.createOperation(commonOptName);
-        let _this=this;
-        if(commonOpt){
-            //覆盖通用操作的某些属性
-            _.each(["title","icon"],function(k){
-                if(_this.operation[k]){
-                    commonOpt[k]=_this.operation[k];
-                }
-            });
+    computed:{
+        extendedOperation:function(){
+            let commonOptName=this.operation.name;
+            let commonOpt=commonOperation.createOperation(commonOptName);
+            if(commonOpt){
+                return _.extend(this.operation,commonOpt);
+            }
+            return null;
         }
+    },
+    data(){
         return {
-            commonOperation:commonOpt
         };
     },
     methods:{
         buttonClick(){
-            if(this.commonOperation&&this.commonOperation.onclick){
-                this.commonOperation.onclick(this.widgetContext,this);
+            if(this.extendedOperation&&this.extendedOperation.onclick){
+                this.extendedOperation.onclick(this.widgetContext,this);
             }
         }
     }
 }
 </script>
-<style lang="sass" src="../../styles/operation.scss"></style>
 
 

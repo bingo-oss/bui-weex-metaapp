@@ -2,9 +2,7 @@
 <div bubble="true">
     <div @click="toggleModal">
         <slot>
-            <div class="btn-block">
-                <text class="btn-text">{{operation.title}}</text>
-            </div>
+            <meta-opt-btn :operation="operation"></meta-opt-btn>
         </slot>
     </div>
     <bui-popup pos="top" v-model="popupWidgetModal" :height="modalHeight" :width="modalWidth">
@@ -49,5 +47,4 @@ export default {
         border:none;
     }
 </style>
-<style lang="sass" src="../../styles/operation.scss"></style>
 
