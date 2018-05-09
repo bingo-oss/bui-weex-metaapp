@@ -1,9 +1,9 @@
 <template>
     <div @click="opt1Click">
         <slot>
-            <bui-button type="primary"
-                :value="operation.title" >
-            </bui-button>
+            <div class="btn-block">
+                <text class="btn-text">{{operation.title}}</text>
+            </div>
         </slot>
     </div>
 </template>
@@ -29,4 +29,4 @@ export default {
     }
 }
 </script>
-
+<style lang="sass" src="../../../styles/operation.scss"></style>

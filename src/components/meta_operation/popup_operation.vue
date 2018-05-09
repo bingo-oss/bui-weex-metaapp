@@ -7,14 +7,10 @@
             </div>
         </slot>
     </div>
-    <bui-dialog class="popup-widget-con" v-model="popupWidgetModal"
-            :title="modalTitle"
-            >
-            <div class="modal-inner-widget" :style="{height:modalHeight+'px'}">
-                <component :widget-context="widgetContext" :operation="operation" :is="operation.widget">
-                </component>
-            </div>
-    </bui-dialog>
+    <bui-popup pos="top" v-model="popupWidgetModal" :height="modalHeight" :width="modalWidth">
+        <component :widget-context="widgetContext" :operation="operation" :is="operation.widget">
+        </component>
+    </bui-popup>
 </div>
 </template>
 <script>
@@ -31,8 +27,8 @@ export default {
     },
     data(){
         return {
-            modalWidth:this.operation.modalWidth||500,
-            modalHeight:this.operation.modalHeight||340,
+            modalWidth:this.operation.modalWidth||750,
+            modalHeight:this.operation.modalHeight||840,
             modalTitle:this.operation.modalTitle,
             popupWidgetModal:false
         };

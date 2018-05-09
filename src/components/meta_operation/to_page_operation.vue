@@ -8,6 +8,7 @@
 </div>
 </template>
 <script>
+import _ from '../../js/tool/lodash.js';
 import Utils from '../../js/tool/utils';
 export default {
     props:{
@@ -35,7 +36,7 @@ export default {
             }
             var pageId=this.operation.page.id;
             var queryParam=_.extend({pageId:pageId},this.widgetContext.queryParams);
-            buiweex.push(Utils.pageEntry(),queryParam);
+            this.$push(Utils.pageEntry(),queryParam);
         }
     }
 }
