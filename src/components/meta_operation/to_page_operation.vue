@@ -35,7 +35,7 @@ export default {
                 return;
             }
             var pageId=this.operation.page.id;
-            var queryParam=_.extend({pageId:pageId},this.widgetContext.queryParams);
+            var queryParam=_.extend({pageId:pageId},this.operation.queryParams);
             this.$push(Utils.pageEntry(),queryParam);
         }
     }

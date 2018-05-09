@@ -2,6 +2,7 @@ import buiweex from 'bui-weex';
 const Utils={
     dataPermField:"permVal",//数据权限值所在的字段
     operationDisplayField:"display",//部件操作是否显示的属性字段
+    operationTermimalTypeField:"termimalType",//部件操作终端类型的属性字段
     permValues:{
         "view":1,
         "create":2,

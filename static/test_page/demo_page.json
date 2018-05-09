@@ -1,10 +1,6 @@
 {
     "id":"",
     "title":"",
-    "params":{
-        "queryParams":{},
-        "pathParams":{}
-    },
     "style":{
         "columns":[4,16,4]
     },
@@ -17,16 +13,72 @@
                 },
                 "operations":{
                     "commonOperations":[
-                        {"operationType":"common","name":"create","title":"通用操作-添加","icon":"asterisk"},
+                        {
+                            "operationType":"common",
+                            "termimalType":7,
+                            "name":"create",
+                            "props":{
+                                "title":{
+                                    "type":"text",
+                                    "value":"通用操作-添加"
+                                },
+                                "icon":{
+                                    "type":"icon",
+                                    "value":"asterisk"
+                                }
+                            }
+                        },
                         {
                             "operationType":"popup",
-                            "widget":"meta-widget-opt1",
-                            "title":"弹出一个部件",
-                            "icon":"alert",
-                            "modalHeight":200,
-                            "modalWidth":1000,
-                            "modalTitle":"blablabla",
-                            "display":"${ctx.metaEntity.name==='Activity'}"
+                            "termimalType":7,
+                            "props":{
+                                "widget":{
+                                    "type":"widget",
+                                    "value":"meta-widget-opt1"
+                                },
+                                "modalHeight":{
+                                    "type":"number",
+                                    "value":200
+                                },
+                                "modalWidth":{
+                                    "type":"number",
+                                    "value":1000
+                                },
+                                "modalTitle":{
+                                    "type":"text",
+                                    "value":"blablabla"
+                                },
+                                "title":{
+                                    "type":"text",
+                                    "value":"弹出一个部件"
+                                },
+                                "icon":{
+                                    "type":"icon",
+                                    "value":"alert"
+                                },
+                                "display":{
+                                    "type":"display",
+                                    "value":"${ctx.metaEntity.name==='Activity'}"
+                                }
+                            },
+                            "mobileProps":{
+                                "modalHeight":{
+                                    "type":"number",
+                                    "value":800
+                                },
+                                "modalWidth":{
+                                    "type":"number",
+                                    "value":750
+                                },
+                                "title":{
+                                    "type":"text",
+                                    "value":"弹出一个部件mobile"
+                                },
+                                "icon":{
+                                    "type":"icon",
+                                    "value":"ion-ionic"
+                                }
+                            }
                         }
                     ]
                 }
@@ -49,32 +101,104 @@
                         {
                             "operationType":"common",
                             "name":"create",
-                            "title":"通用操作-添加",
-                            "icon":"plus-round",
-                            "page":{
-                                "id":"default_form_page"
+                            "termimalType":7,
+                            "props":{
+                                "title":{
+                                    "type":"text",
+                                    "value":"通用操作-添加"
+                                },
+                                "icon":{
+                                    "type":"icon",
+                                    "value":"plus-round"
+                                },
+                                "page":{
+                                    "type":"page",
+                                    "value":{
+                                        "id":"default_form_page"
+                                    }
+                                }
                             }
                         },
                         {
                             "operationType":"common",
                             "name":"edit",
-                            "title":"通用操作-编辑1",
-                            "icon":"edit",
-                            "display":{
-                                "from":"formEdit"
+                            "termimalType":7,
+                            "props":{
+                                "title":{
+                                    "type":"text",
+                                    "value":"通用操作-编辑1"
+                                },
+                                "icon":{
+                                    "type":"icon",
+                                    "value":"edit"
+                                },
+                                "display":{
+                                    "type":"display",
+                                    "value":{
+                                        "from":"formEdit"
+                                    }
+                                }
                             }
                         },
-                        {"operationType":"common","name":"edit","title":"通用操作-编辑2","icon":"edit"},
-                        {"operationType":"common","name":"import","title":"通用操作-导入","icon":"ios-upload-outline"},
-                        {"operationType":"widget","widget":"meta-widget-opt1","title":"自定义widget操作一","icon":"ios-plus"},
+                        {
+                            "operationType":"common",
+                            "name":"edit",
+                            "termimalType":7,
+                            "props":{
+                                "title":{
+                                    "type":"text",
+                                    "value":"通用操作-编辑2"
+                                },
+                                "icon":{
+                                    "type":"icon",
+                                    "value":"edit"
+                                }
+                            }
+                        },
+                        {
+                            "operationType":"common",
+                            "name":"import",
+                            "termimalType":1,
+                            "props":{
+                                "title":{
+                                    "type":"text",
+                                    "value":"通用操作-导入"
+                                },
+                                "icon":{
+                                    "type":"icon",
+                                    "value":"ios-upload-outline"
+                                }
+                            }
+                        },
+                        {
+                            "operationType":"widget",
+                            "termimalType":7,
+                            "props":{
+                                "title":{
+                                    "type":"text",
+                                    "value":"自定义widget操作一"
+                                },
+                                "icon":{
+                                    "type":"icon",
+                                    "value":"ios-plus"
+                                },
+                                "widget":{
+                                    "type":"widget",
+                                    "value":"meta-widget-opt1"
+                                }
+                            }
+                        },
                         {
                             "operationType":"toPage",
-                            "title":"跳转到某个页面","icon":"arrow-return-left",
-                            "page":{
-                                "id":"demo_page1",
-                                "title":"测试页面1"
-                            },
+                            "termimalType":7,
                             "props":{
+                                "page":{
+                                    "type":"page",
+                                    "value":{
+                                        "id":"demo_page1",
+                                        "title":"测试页面1"
+                                    }
+                                },
                                 "queryParams":{
                                     "type":"map",
                                     "value":{
@@ -87,10 +211,37 @@
                                             "key":"dataId2"
                                         }
                                     }
+                                },
+                                "title":{
+                                    "type":"text",
+                                    "value":"跳转到某个页面"
+                                },
+                                "icon":{
+                                    "type":"icon",
+                                    "value":"arrow-return-left"
                                 }
                             }
                         },
-                        {"operationType":"script","title":"执行脚本","icon":"wrench","onclick":"function(widgetContext){console.log('我执行了一段脚本');}"}
+                        {
+                            "operationType":"script",
+                            "termimalType":7,
+                            "props":{
+                                "onclick":{
+                                    "type":"script",
+                                    "value":{
+                                        "operationId":"testMobile"
+                                    }
+                                },
+                                "title":{
+                                    "type":"text",
+                                    "value":"执行脚本"
+                                },
+                                "icon":{
+                                    "type":"icon",
+                                    "value":"wrench"
+                                }
+                            }
+                        }
                     ],
                     "singleOperations":[],
                     "batchOperations":[]
@@ -100,7 +251,21 @@
                 "id":"meta-widget-w2",
                 "operations":{
                     "commonOperations":[
-                        {"operationType":"common","name":"create","title":"通用操作-添加","icon":"asterisk"}
+                        {
+                            "operationType":"common",
+                            "name":"create",
+                            "termimalType":7,
+                            "props":{
+                                "title":{
+                                    "type":"text",
+                                    "value":"通用操作-添加"
+                                },
+                                "icon":{
+                                    "type":"icon",
+                                    "value":"asterisk"
+                                }
+                            }
+                        }
                     ]
                 }
             }
@@ -110,7 +275,21 @@
                 "id":"meta-widget-w2",
                 "operations":{
                     "commonOperations":[
-                        {"operationType":"common","name":"create","title":"通用操作-添加","icon":"asterisk"}
+                        {
+                            "operationType":"common",
+                            "name":"create",
+                            "termimalType":7,
+                            "props":{
+                                "title":{
+                                    "type":"text",
+                                    "value":"通用操作-添加"
+                                },
+                                "icon":{
+                                    "type":"icon",
+                                    "value":"asterisk"
+                                }
+                            }
+                        }
                     ]
                 }
             }

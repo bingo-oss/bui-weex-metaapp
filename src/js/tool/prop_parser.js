@@ -26,29 +26,19 @@ function parseFrom(value,curInst){
     }
 }
 //不同类型转换器定义
+//text date number map view form page array icon display widget script app
+function baseParser(initPropValue,curInst){
+    var value=initPropValue.value;
+    //非普通对象不需要转换直接返回
+    if(!_.isPlainObject(value)){
+        return value;
+    }
+    return parseFrom(value,curInst);
+}
 var parsers={
-    "text":function(initPropValue,curInst){
-        var value=initPropValue.value;
-        //非普通对象不需要转换直接返回
-        if(!_.isPlainObject(value)){
-            return value;
-        }
-        return parseFrom(value,curInst);
-    },
-    "date":function(initPropValue,curInst){
-        var value=initPropValue.value;
-        if(!_.isPlainObject(value)){
-            return value;
-        }
-        return parseFrom(value,curInst);
-    },
-    "number":function(initPropValue,curInst){
-        var value=initPropValue.value;
-        if(!_.isPlainObject(value)){
-            return value;
-        }
-        return parseFrom(value,curInst);
-    },
+    "text":baseParser,
+    "date":baseParser,
+    "number":baseParser,
     "map":function(initPropValue,curInst){
         var value=initPropValue.value;
         var _query={};
@@ -56,24 +46,7 @@ var parsers={
             _query[k]=parseFrom(v,curInst);
         });
         return _query;
-    },
-    "view":function(initPropValue,curInst){
-        var value=initPropValue.value;
-        return value;
-    },
-    "form":function(initPropValue,curInst){
-        var value=initPropValue.value;
-        return value;
-    },
-    "page":function(initPropValue,curInst){
-        var value=initPropValue.value;
-        return value;
-    },
-    "array":function(initPropValue,curInst){
-        var value=initPropValue.value;
-        return value;
     }
-
 };
 const parser={
     /**
@@ -89,8 +62,7 @@ const parser={
             if(_parse){
                 return _parse(initPropValue,curInst);
             }else{
-                console.log(`未定义属性type:${type}的转换器`);
-                return initPropValue;
+                return initPropValue.value;
             }
         }else{
             return initPropValue;

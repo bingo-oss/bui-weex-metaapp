@@ -1,10 +1,6 @@
 {
     "id":"",
     "title":"",
-    "params":{
-        "queryParams":{},
-        "pathParams":{}
-    },
     "style":{
         "columns":[4,16,4]
     },
@@ -17,7 +13,21 @@
                 "id":"meta-widget-w2",
                 "operations":{
                     "commonOperations":[
-                        {"operationType":"common","name":"create","title":"通用操作-添加","icon":"asterisk"}
+                        {
+                            "operationType":"common",
+                            "name":"create",
+                            "termimalType":7,
+                            "props":{
+                                "title":{
+                                    "type":"text",
+                                    "value":"通用操作-添加"
+                                },
+                                "icon":{
+                                    "type":"icon",
+                                    "value":"asterisk"
+                                }
+                            }
+                        }
                     ]
                 }
             }

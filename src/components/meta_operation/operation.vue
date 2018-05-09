@@ -1,6 +1,6 @@
 <template>
     <div class="widget-operation div-inline-block" v-if="showOperation">
-        <component :is="operationComponent" :operation="operation" :widget-context="extendedWidgetContext">
+        <component :is="operationComponent" :operation="extendedOperation" :widget-context="extendedWidgetContext">
             <slot></slot>
         </component>
     </div>
@@ -55,16 +55,49 @@ export default {
             }
             return `${this.operation.operationType}Operation`;
         },
+        extendedOperation:function(){
+            var _this=this;
+            var params={};
+            _.each(this.operation.props,function(propValue,propKey){
+                if(!propValue.internal){//非来自于context的属性，作为普通操作属性合并到operation中
+                    var parsedValue=propParser.parse(propValue,_this);
+                    params[propKey]=parsedValue;
+                }
+            });
+            //移动端配置的属性将覆盖上面的属性
+            _.each(this.operation.mobileProps,function(propValue,propKey){
+                if(!propValue.internal){//非来自于context的属性，作为普通操作属性合并到operation中
+                    var parsedValue=propParser.parse(propValue,_this);
+                    params[propKey]=parsedValue;
+                }
+            });
+            return _.extend(this.operation,params);
+        },
         extendedWidgetContext:function(){
             var _this=this;
             var params={};
             _.each(this.operation.props,function(propValue,propKey){
-                var parsedValue=propParser.parse(propValue,_this);
-                params[propKey]=parsedValue;
+                if(propValue.internal){//来自于context的属性，合并到widgetContext中
+                    var parsedValue=propParser.parse(propValue,_this);
+                    params[propKey]=parsedValue;
+                }
+            });
+            //移动端配置的属性将覆盖上面的属性
+            _.each(this.operation.mobileProps,function(propValue,propKey){
+                if(propValue.internal){//来自于context的属性，合并到widgetContext中
+                    var parsedValue=propParser.parse(propValue,_this);
+                    params[propKey]=parsedValue;
+                }
             });
             return _.extend(this.widgetContext,params);
         },
         showOperation:function(){//根据自定义操作权限表达式计算操作是否需要隐藏
+            //只显示当前端的操作，目前只区分移动端和pcweb端
+            //terminalType 1：pcweb 2：android 4：ios
+            var terminalType=this.operation[Utils.operationTermimalTypeField];
+            if(terminalType===1){
+                return false;
+            }
             var optPermValue=this.operation[Utils.operationDisplayField];
             if(!_.isPlainObject(optPermValue)){
                 optPermValue=_.trim(optPermValue);

@@ -28,11 +28,11 @@ export default {
     },
     methods:{
         openApp(){
-            var app=this.widgetContext.app;
+            var app=this.operation.app;
             var appCode=app.appCode;
             var appUrl=app.appUrl;
             var appData=app.appData;
-            var appParams=this.widgetContext.appParams;
+            var appParams=this.operation.appParams;
             if(appUrl){
                 appUrl=pathToRegexp.compile(appUrl)(appParams);
             }
