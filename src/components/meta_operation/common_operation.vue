@@ -8,7 +8,10 @@
             </div>
         </slot>
     </div>
-    
+    <!--有renderComponent的普通操作-->
+    <component v-if="commonOperation&&commonOperation.renderComponent" :widget-context="widgetContext" :operation="commonOperation" :is="commonOperation.renderComponent">
+        <slot></slot>
+    </component>
 </div>
 </template>
 <script>
