@@ -6,7 +6,7 @@
         </slot>
     </div>
     <bui-popup pos="top" v-model="popupWidgetModal" :height="modalHeight" :width="modalWidth">
-        <component :widget-context="widgetContext" :operation="operation" :is="operation.widget">
+        <component @close="close" :widget-context="widgetContext" :operation="operation" :is="operation.widget">
         </component>
     </bui-popup>
 </div>
@@ -34,6 +34,9 @@ export default {
     methods:{
         toggleModal(){
             this.popupWidgetModal=!this.popupWidgetModal;
+        },
+        close(){
+            this.popupWidgetModal=false;
         }
     }
 }

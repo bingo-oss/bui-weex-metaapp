@@ -25,6 +25,7 @@ export default {
     methods:{
         opt1Click(){
             this.$toast("我是一个自定义操作，类型为部件操作类型");
+            this.$emit("close");
         }
     }
 }
