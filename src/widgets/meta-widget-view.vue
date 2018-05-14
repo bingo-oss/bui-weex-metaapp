@@ -477,11 +477,15 @@ module.exports = {
             },
         getWidgetContext(obj){
             //传入操作的上下文内容
+            let _t = this,_obj = {};
             if(obj){
-                this.selectedId = obj.id;
-                this.selectedItem = obj;
+                _obj.selectedId = obj.id;
+                _obj.selectedItem = obj;
             }
-            return this;
+            return Object.assign({grid:_t,metaEntity:_t.metaEntity,entityName:_t.entityName},_obj);
+        },
+        reload(){
+            this.refreshData();
         }
     },
     created(){
