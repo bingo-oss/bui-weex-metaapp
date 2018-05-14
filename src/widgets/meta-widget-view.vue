@@ -3,7 +3,7 @@
         <bui-header :leftItem="{icon: 'ion-chevron-left'}" @leftClick="pop">
             <div slot="center" class="page-title-wrapper" @click="titleClicked">
                 <text class="page-title" @click="titleClicked">{{title}}</text>
-                <bui-icon v-if="presetFilters.length" name="ion-chevron-down" color="white" size=34 @click="titleClicked"></bui-icon>
+                <bui-icon v-if="presetFilters.length" name="ion-chevron-down" color="white" size=39 @click="titleClicked"></bui-icon>
             </div>
             <div slot="right" class="header-right-wrapper">
                 <div class="header-button" @click="filterClicked">
@@ -515,7 +515,8 @@ module.exports = {
 
 .page-title {
     color: white;
-    font-size: 36px;
+    font-size: 34px;
+
 }
 
 .header-button {
