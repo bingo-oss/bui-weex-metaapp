@@ -101,6 +101,9 @@
                 //return (v)=>{ _t.$alert(v);_t.$set(_t.result,dataField, v)}
                 //this.$alert(dataField);
                 //this.$set(this.result, o.dataField, v);
+            },
+            doSaveModel(){
+                //通用保存操作后的回调方法,内置的保存逻辑
             }
         },
         data () {
@@ -123,7 +126,8 @@
                     edit:true,//修改或者保存按钮权限
                     del:true,//删除按钮权限
                     cancel:true//取消按钮
-                }
+                },
+                metaEntity:{}
             }
         },
         computed: {
@@ -223,7 +227,7 @@
             });
 
             let pageParam = this.$getPageParams();
-            // this.$alert(pageParam);
+            //this.$alert(this.widgetParams);
             let formId
             if(this.widgetParams.form) {
                 formId = this.widgetParams.form.id//pageParam.formId;
@@ -231,7 +235,7 @@
             //delete pageParam.formId;
             // Below are optional
             if(this.widgetParams.dataId) {
-                this.entityId = this.widgetParams.dataId.from//this.widgetParams.dataId//pageParam.entityId;
+                this.entityId = this.widgetParams.dataId.from||this.widgetParams.dataId//this.widgetParams.dataId//pageParam.entityId;
             }
             //delete pageParam.entityId;
             if (pageParam.readOnly
@@ -284,6 +288,7 @@
 
                         // 在编辑实体的情况下，才获取实体数据
                         if (this.entityId) {
+                            this.result.id = this.entityId;
                             service.getEntityDataForId(engineUrl, this.entityName, this.entityId).then(data => {
                                 this.existedRecord = data;
                                 this.permObj = perm.parseBits(data.permVal);
