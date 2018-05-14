@@ -15,7 +15,38 @@
         "views":[
           {"id":"n34Zs9i2qAeEeqnZvfwUnW","title":"指挥活动"},
           {"id":"ybKtnxaBKbBTL5NNf2tbZW","title":"警力报备"}
-        ]
+        ],
+        "rowSingleClick":{
+            "title":"单击行操作",
+            "type":"commonOperation",
+            "value":{
+              "operationType":"common",
+              "termimalType":7,
+              "name":"view",
+              "props":{
+                "page":{
+                  "type":"page",
+                  "value":{
+                    "id":"form_page"
+                  }
+                },
+                "display":{
+                  "type":"display",
+                  "value":{
+                    "from": "selectedItemView"
+                  }
+                },
+                "title":{
+                    "type":"text",
+                    "value":"查看"
+                },
+                "icon":{
+                    "type":"icon",
+                    "value":"ios-eye-outline"
+                }
+              }
+            }
+        }
       },
       "operations":{
         "commonOperations":[

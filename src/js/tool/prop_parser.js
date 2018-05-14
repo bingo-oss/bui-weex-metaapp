@@ -26,7 +26,7 @@ function parseFrom(value,curInst){
     }
 }
 //不同类型转换器定义
-//text date number map view form page array icon display widget script app
+//text date number map view form page array icon display widget script app commonOperation operation
 function baseParser(initPropValue,curInst){
     var value=initPropValue.value;
     //非普通对象不需要转换直接返回

@@ -23,7 +23,7 @@
 
             <cell v-for="(o, index) in listData" :key="index">
                 <bui-swipe-cell height="200px"
-                    @click="read(o.id)"
+                    @click="rowSingleClick(o)"
                     @swipeleft="cellSwiped(o.id)"
                     :ref="o.id"
                     :items="widgetParams.singleOperations"
@@ -99,6 +99,8 @@ import perm from '../js/perm.js';
 import metabase from '../js/metadata/metabase.js';
 import _ from '../js/tool/lodash';
 import Utils from '../js/tool/utils';
+import OperationUtils from '../components/meta_operation/js/operation_utils';
+import commonOperation from '../components/meta_operation/js/common_operation.js';
 
 const linkapi = require('linkapi');
 const buiweex = require('bui-weex');
@@ -182,14 +184,19 @@ module.exports = {
             this.refreshData();
         },
         // 查看选中记录的主页
-        read(id) {
-            if (!this.viewDef.settings.mViewUrl) return;
-            let url = this.viewDef.settings.mViewUrl.appUrl.replace(':id', id);
-            let params = {
-                appCode: this.viewDef.settings.mViewUrl.appCode,
-                appUrl: url,
-            };
-            linkapi.runApp(params)
+        rowSingleClick(rowData) {
+            var _rowSingleClick=this.widgetParams.rowSingleClick;
+            var _widgetCtx=this.getWidgetContext(rowData);
+            var operation=OperationUtils.expandOperation(_rowSingleClick,{
+                operation:_rowSingleClick,
+                widgetContext:_widgetCtx
+            });
+            let commonOptName=operation.name;
+            let commonOpt=commonOperation.createOperation(commonOptName);
+            if(commonOpt){
+                operation= _.extend(operation,commonOpt);
+                operation.onclick(_widgetCtx,{operation:operation});
+            }
         },
         titleClicked(e) {
             // 没有分类则无动作

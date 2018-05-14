@@ -4,7 +4,7 @@
 <template>
     <div class="container">
         <bui-header :leftItem="{icon: 'ion-chevron-left'}" :title="data.title" @leftClick="() =>{this.$pop()}"></bui-header>
-        <scroller class="scroller" :style="{height:(getDeviceHeight-250)+'px'}">
+        <scroller class="scroller">
             <div class="scrollerDiv" v-for="o in data.layout" v-if="['SingleUserSelect','MultiUserSelect','SingleOrgSelect'].indexOf(o.componentType)==-1">
                 <component :is="'Meta'+o.componentType"
                            :ref = "o.id"
@@ -16,10 +16,9 @@
                 ></component>
             </div>
         </scroller>
-        <div class="action-bar" v-if="widgetParams.editOperations||widgetParams.viewOperations">
-            <template v-for="(commonOpt,index) in [].concat(widgetParams.viewOperations,widgetParams.editOperations)">
-                <meta-operation style="flex:1" :operation="commonOpt" :widget-context="getWidgetContext">
-                    <text class="action-button">{{commonOpt.title}}</text>
+        <div class="action-bar" v-if="widgetParams.editOperations">
+            <template v-for="(commonOpt,index) in [].concat(widgetParams.editOperations)">
+                <meta-operation :operation="commonOpt" :widget-context="getWidgetContext">
                 </meta-operation>
             </template>
         </div>
@@ -140,9 +139,6 @@
                     "selectedId": this.result.id,
                     "selectedItem": this.result
                 }
-            },
-            getDeviceHeight(){
-                return (750/(weex.config.env.deviceWidth))*weex.config.env.deviceHeight
             }
         },
         watch: {
