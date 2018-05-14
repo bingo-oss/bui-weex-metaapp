@@ -35,6 +35,13 @@
           <a :href="pageTestUrl" target="_blank">{{pageTestUrl}}</a>
         </span>
 
+        <a :href="viewPageTestUrl" target="_blank">
+          <canvas ref="canvas0" width="300" height="300"></canvas>
+        </a>
+        <span class="bundle-url">
+          <a :href="viewPageTestUrl" target="_blank">{{viewPageTestUrl}}</a>
+        </span>
+
         <a :href="activityListTestUrl" target="_blank">
           <canvas ref="canvas1" width="300" height="300"></canvas>
         </a>
@@ -51,12 +58,14 @@
       data: function(){
         return {
           pageTestUrl: pageTestUrl ,
+          viewPageTestUrl:viewPageTestUrl,
           activityListTestUrl:activityListTestUrl
         }
       },
       mounted: function () {
         var qrcodedraw = new QRCodeLib.QRCodeDraw()
         qrcodedraw.draw(this.$refs.canvas, this.pageTestUrl, function () {})
+        qrcodedraw.draw(this.$refs.canvas0, this.viewPageTestUrl, function () {})
         qrcodedraw.draw(this.$refs.canvas1, this.activityListTestUrl, function () {})
       }
     })

@@ -1,7 +1,7 @@
 <template>
-<div @click="gotoPage">
+<div @click="gotoPage" class="full-column">
     <slot>
-        <meta-opt-btn :operation="operation"></meta-opt-btn>
+        <meta-opt-btn :btn-type="btnType" :operation="operation"></meta-opt-btn>
     </slot>
 </div>
 </template>
@@ -17,6 +17,9 @@ export default {
         operation:{//操作的定义，必传参数
             type:Object,
             required:true
+        },
+        btnType:{//操作按钮的类型
+            type:String
         }
     },
     data(){
@@ -39,3 +42,4 @@ export default {
     }
 }
 </script>
+<style src="../../styles/common.css"></style>

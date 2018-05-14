@@ -9,6 +9,16 @@ import Utils from '../../../js/tool/utils'
 import _ from '../../../js/tool/lodash'
 import i18n from '../../../js/i18n/index';
 import buiweex from 'bui-weex'
+
+/**
+ * 跳转到pageId指定的页面
+ * @param {string} pageId 页面id
+ * @param {object} _query 页面url query参数
+ */
+function toPage(pageId,_query){
+  let queryParam =_.extend({pageId: pageId},_query);
+  buiweex.push(Utils.pageEntry(),queryParam);
+}
 /**
  * 创建操作，跳转到新建表单页
  * @param context
@@ -21,8 +31,8 @@ function operationForCreate(){
         buiweex.alert(i18n.pageIdNotSet);
         return;
       }
-      let queryParam = {pageId: pageId};
-      buiweex.push(Utils.pageEntry(),queryParam);
+      var _query=_.extend({},operation.queryParams);
+      toPage(pageId,_query);
     }
   };
   return operation;
@@ -60,8 +70,8 @@ function operationForEdit(){
         buiweex.alert(i18n.pageIdNotSet);
         return;
       }
-      let queryParam = {pageId: pageId,dataId:id};
-      buiweex.push(Utils.pageEntry(),queryParam);
+      var _query=_.extend({dataId:id},operation.queryParams);
+      toPage(pageId,_query);
     }
   };
   return operation;
@@ -83,8 +93,8 @@ function operationForView(){
         buiweex.alert(i18n.pageIdNotSet);
         return;
       }
-      let queryParam = {pageId: pageId,dataId:id};
-      buiweex.push(Utils.pageEntry(),queryParam);
+      var _query=_.extend({dataId:id},operation.queryParams);
+      toPage(pageId,_query);
     }
   };
   return operation;
@@ -105,7 +115,7 @@ function operationForDel() {
       var resource=metaEntity.dataResource();
       buiweex.confirm(i18n.confirmDelete,function(ok){
         if(ok){
-          resource.delete({id:id}).then(function (re) {
+          resource.delete(id).then(function (re) {
             context.grid&&context.grid.reload();
           });
         }

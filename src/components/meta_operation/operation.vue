@@ -1,6 +1,6 @@
 <template>
-    <div class="widget-operation div-inline-block" v-if="showOperation">
-        <component :is="operationComponent" :operation="extendedOperation" :widget-context="extendedWidgetContext">
+    <div class="widget-operation full-column" v-if="showOperation">
+        <component :btn-type="btnType" :is="operationComponent" :operation="extendedOperation" :widget-context="extendedWidgetContext">
             <slot></slot>
         </component>
     </div>
@@ -46,11 +46,14 @@ export default {
         operation:{//操作的定义，必传参数
             type:Object,
             required:true
+        },
+        btnType:{//操作按钮的类型
+            type:String
         }
     },
     computed:{
         operationComponent:function(){
-            if(this.operation.onclick){
+            if(this.operation.onclick&&!this.operation.operationType){
                 this.operation.operationType=operationType.script;
             }
             return `${this.operation.operationType}Operation`;
@@ -139,4 +142,5 @@ export default {
     }
 }
 </script>
+<style src="../../styles/common.css"></style>
 

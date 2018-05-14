@@ -18,15 +18,17 @@
         <list :style="{height:(getDeviceHeight-250)+'px'}">
             <refresh-wrapper @refresh="onrefresh" :isRefreshing="isRefreshing"></refresh-wrapper>
 
-            <cell v-for="(o, index) in listData">
+            <cell v-for="(o, index) in listData" :key="index">
                 <bui-swipe-cell height="200px"
                     @click="read(o.id)"
                     @swipeleft="cellSwiped(o.id)"
                     :ref="o.id"
+                    :items="widgetParams.singleOperations"
                     >
-                    <div slot="action" style="flex-direction: row;">
-                        <div v-for="(commonOpt,index) in widgetParams.singleOperations" class="action_btn">
-                            <meta-operation :operation="commonOpt" :widget-context="getWidgetContext(o)"><text class="action_btn_text">{{commonOpt.title}}</text></meta-operation>
+                    <div slot="action" class="bui-list-swipe" title="1">
+                        <div title="2" v-for="(commonOpt,index) in widgetParams.singleOperations" :key="index" class="bui-list-swipe-btn-custom">
+                            <meta-operation btn-type="swipe-cell" :operation="commonOpt" :widget-context="getWidgetContext(o)">
+                            </meta-operation>
                         </div>
                     </div>
                     <!-- 布局 0 默认 -->
@@ -559,6 +561,9 @@ module.exports = {
 }
 .action_btn_text{
     font-size: 30px;
-    color: #fff;
+    color: red;
 }
 </style>
+<style lang="sass" src="bui-weex/src/css/list.scss"></style>
+<style src="../styles/common.css"></style>
+

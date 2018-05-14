@@ -53,3 +53,15 @@
 .required-mark {
     color: red;
 }
+.full-column{
+    flex:1;
+    flex-direction: column;
+}
+.bui-list-swipe-btn-custom{
+    flex-direction: column;
+    width: 120px;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-color: #c6c7c8;
+}

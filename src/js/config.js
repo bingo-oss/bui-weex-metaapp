@@ -23,7 +23,7 @@ export default {
 
     //debugEntityId: 'O1PRfnK1A',
 
-    token: 'fa90c88f-f6b9-4bcb-9ded-0d3d8ab586dc',
+    token: 'f3361908-9260-4723-b2c7-4739333637ee',
     configFilename: 'config.json',
 
     // 读取与 list.weex.js、form.weex.js 同级的配置文件

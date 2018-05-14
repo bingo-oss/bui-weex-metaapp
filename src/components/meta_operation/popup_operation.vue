@@ -1,8 +1,8 @@
 <template>
-<div bubble="true">
-    <div @click="toggleModal">
+<div bubble="true" class="full-column">
+    <div @click="toggleModal" class="full-column">
         <slot>
-            <meta-opt-btn :operation="operation"></meta-opt-btn>
+            <meta-opt-btn :btn-type="btnType" :operation="operation"></meta-opt-btn>
         </slot>
     </div>
     <bui-popup pos="top" v-model="popupWidgetModal" :height="modalHeight" :width="modalWidth">
@@ -21,6 +21,9 @@ export default {
         operation:{//操作的定义，必传参数
             type:Object,
             required:true
+        },
+        btnType:{//操作按钮的类型
+            type:String
         }
     },
     data(){
@@ -50,4 +53,5 @@ export default {
         border:none;
     }
 </style>
+<style src="../../styles/common.css"></style>
 

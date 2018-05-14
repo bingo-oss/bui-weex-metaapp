@@ -1,9 +1,9 @@
 <template>
-<div v-if="extendedOperation">
+<div v-if="extendedOperation" class="full-column">
     <!--有onclick的普通操作-->
-    <div v-if="extendedOperation&&!extendedOperation.renderComponent" @click="buttonClick">
+    <div v-if="extendedOperation&&!extendedOperation.renderComponent" @click="buttonClick" class="full-column">
         <slot>
-            <meta-opt-btn :operation="extendedOperation"></meta-opt-btn>
+            <meta-opt-btn :btn-type="btnType" :operation="extendedOperation"></meta-opt-btn>
         </slot>
     </div>
     <!--有renderComponent的普通操作-->
@@ -24,6 +24,9 @@ export default {
         operation:{//操作的定义，必传参数
             type:Object,
             required:true
+        },
+        btnType:{//操作按钮的类型
+            type:String
         }
     },
     computed:{
@@ -49,5 +52,5 @@ export default {
     }
 }
 </script>
-
+<style src="../../styles/common.css"></style>
 

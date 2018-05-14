@@ -1,6 +1,6 @@
 <template>
-<div>
-    <component :widget-context="widgetContext" :operation="operation" :is="operation.widget">
+<div class="full-column">
+    <component :widget-context="widgetContext" :btn-type="btnType" :operation="operation" :is="operation.widget">
         <slot>
         </slot>
     </component>
@@ -16,6 +16,9 @@ export default {
         operation:{//操作的定义，必传参数
             type:Object,
             required:true
+        },
+        btnType:{//操作按钮的类型
+            type:String
         }
     },
     data(){
@@ -25,3 +28,4 @@ export default {
     }
 }
 </script>
+<style src="../../styles/common.css"></style>

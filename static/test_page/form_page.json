@@ -1,76 +1,139 @@
 {
-	"id": "",
-	"title": "",
-	"style": {
-	  "columns": [
-		24
-	  ]
-	},
-	"widgets": [
-	  [
-		{
-		  "id": "meta-widget-form",
-		  "props": {
-			"dataId": {
-			  "type": "text",
-			  "value": {
-				"from": "query",
-				"key": "id"
-			  }
-			},
-			"form": {
-			  "type": "form",
-			  "value": {
-				"formId":"ssyreSd",
-				"entityName":"Activity"
-			  }
-			},
-			"mode": {
-			  "type": "text",
-			  "value": {
-				"from": "query",
-				"key": "_action"
-			  }
-			}
-		  },
-		  "operations": {
-			"viewOperations": [
-			  {
-				"operationType": "common",
-				"name": "edit",
-				"icon": null,
-				"title": "编辑",
-				"display": {"from": "formOpenEdit"},
-				"params": {"pageId": "form_page"}
-			  }
-			],
-			"editOperations": [
-			  {
-				"operationType": "common",
-				"name": "goback",
-				"icon": null,
-				"title": "取消",
-				"btnType": "ghost",
-				"display": {"from": "formCancel"}
-			  },
-			  {
-				"operationType": "common",
-				"name": "save",
-				"icon": null,
-				"title": "保存",
-				"display": {"from": "formEdit"}
-			  },
-			  {
-				"operationType": "common",
-				"name": "del",
-				"icon": null,
-				"title": "删除",
-				"display": {"from": "formDel"}
-			  }
-			]
-		  }
-		}
-	  ]
-	]
-  }
-  
+  "id": "",
+  "title": "",
+  "style": {
+    "columns": [
+      24
+    ]
+  },
+  "widgets": [
+    [
+      {
+        "id": "meta-widget-form",
+        "props": {
+          "dataId": {
+            "type": "text",
+            "value": {
+              "from": "query",
+              "key": "dataId"
+            }
+          },
+          "form": {
+            "type": "form",
+            "value": {
+              "id":"ssyreSd",
+              "entityName":"activity"
+            }
+          },
+          "mode": {
+            "type": "text",
+            "value": {
+              "from": "query",
+              "key": "_action"
+            }
+          }
+        },
+        "operations": {
+          "viewOperations": [
+            {
+              "operationType": "common",
+              "termimalType":7,
+              "name":"edit",
+              "props":{
+                  "page":{
+                    "type":"page",
+                    "value":{
+                      "id":"form_page"
+                    }
+                  },
+                  "display":{
+                    "type":"display",
+                    "value":{
+                      "from": "formOpenEdit"
+                    }
+                  },
+                  "title":{
+                    "type":"text",
+                    "value":"编辑"
+                  },
+                  "icon":{
+                    "type":"icon",
+                    "value":null
+                  }
+              }
+            }
+          ],
+          "editOperations": [
+            {
+              "operationType": "common",
+              "termimalType":1,
+              "name": "goback",
+              "props":{
+                "display":{
+                  "type":"display",
+                  "value":{
+                    "from": "formCancel"
+                  }
+                },
+                "title":{
+                  "type":"text",
+                  "value":"取消"
+                },
+                "icon":{
+                  "type":"icon",
+                  "value":null
+                },
+                "btnType":{
+                  "type":"btnType",
+                  "value":"ghost"
+                }
+              }
+            },
+            {
+              "operationType": "common",
+              "name": "save",
+              "termimalType":7,
+              "props":{
+                "display":{
+                  "type":"display",
+                  "value":{
+                    "from": "formEdit"
+                  }
+                },
+                "title":{
+                  "type":"text",
+                  "value":"保存"
+                },
+                "icon":{
+                  "type":"icon",
+                  "value":null
+                }
+              }
+            },
+            {
+              "operationType": "common",
+              "name": "del",
+              "termimalType":7,
+              "props":{
+                "display":{
+                  "type":"display",
+                  "value":{
+                    "from": "formDel"
+                  }
+                },
+                "title":{
+                  "type":"text",
+                  "value":"删除"
+                },
+                "icon":{
+                  "type":"icon",
+                  "value":null
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  ]
+}

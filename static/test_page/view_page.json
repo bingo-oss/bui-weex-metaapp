@@ -1,10 +1,6 @@
 {
   "id":"",
   "title":"",
-  "params":{
-    "queryParams":{},
-    "pathParams":{}
-  },
   "style":{
     "columns":[24]
   },
@@ -12,29 +8,172 @@
     [{
       "id":"meta-widget-view",
       "props":{
-        "dataId":{
-          "from":"query",
-          "key":"id"
+        "defaultView":{
+          "id":"n34Zs9i2qAeEeqnZvfwUnW",
+          "title":"123123"
         },
-        "defaultView":{"id":"n34Zs9i2qAeEeqnZvfwUnW","title":"123123"},
-        "views":[{"id":"n34Zs9i2qAeEeqnZvfwUnW","title":"123123"},{"id":2,"title":"22222"},{"id":3,"title":"123123"}]
+        "views":[
+          {"id":"n34Zs9i2qAeEeqnZvfwUnW","title":"指挥活动"},
+          {"id":"ybKtnxaBKbBTL5NNf2tbZW","title":"警力报备"}
+        ]
       },
       "operations":{
         "commonOperations":[
-          {"operationType":"common","name":"create","title":"新建","icon":"plus-round"},
-          {"operationType":"common","name":"import","title":"通用操作-导入","icon":"ios-upload-outline"},
-          {"operationType":"script","title":"执行脚本","icon":"wrench","onclick":"alert('我执行了一段脚本');"}
+          {
+            "operationType":"common",
+            "termimalType":7,
+            "name":"create",
+            "props":{
+              "page":{
+                "type":"page",
+                "value":{
+                  "id":"form_page"
+                }
+              },
+              "title":{
+                  "type":"text",
+                  "value":"新建"
+              },
+              "icon":{
+                  "type":"icon",
+                  "value":"plus-round"
+              }
+            }
+          },
+          {
+            "operationType":"common",
+            "termimalType":1,
+            "name":"import",
+            "props":{
+              "title":{
+                  "type":"text",
+                  "value":"导入"
+              },
+              "icon":{
+                  "type":"icon",
+                  "value":"ios-upload-outline"
+              }
+            }
+          },
+          {
+            "operationType":"common",
+            "termimalType":1,
+            "name":"import",
+            "props":{
+              "title":{
+                  "type":"text",
+                  "value":"导出"
+              },
+              "icon":{
+                  "type":"icon",
+                  "value":"ios-download-outline"
+              }
+            }
+          }
         ],
         "singleOperations":[
-          {"operationType":"common","name":"edit","title":"编辑","icon":"ios-upload-outline"},
-          {"operationType":"script","title":"执行脚本","icon":"wrench","onclick":"alert('我执行了一段脚本');"}
+          {
+            "operationType":"common",
+            "termimalType":7,
+            "name":"view",
+            "props":{
+              "page":{
+                "type":"page",
+                "value":{
+                  "id":"form_page"
+                }
+              },
+              "display":{
+                "type":"display",
+                "value":{
+                  "from": "selectedItemView"
+                }
+              },
+              "title":{
+                  "type":"text",
+                  "value":"查看"
+              },
+              "icon":{
+                  "type":"icon",
+                  "value":"ios-eye-outline"
+              }
+            }
+          },
+          {
+            "operationType":"common",
+            "termimalType":7,
+            "name":"edit",
+            "props":{
+              "page":{
+                "type":"page",
+                "value":{
+                  "id":"form_page"
+                }
+              },
+              "display":{
+                "type":"display",
+                "value":{
+                  "from": "selectedItemEdit"
+                }
+              },
+              "title":{
+                  "type":"text",
+                  "value":"编辑"
+              },
+              "icon":{
+                  "type":"icon",
+                  "value":"edit"
+              },
+              "btnType":{
+                "type":"btnType",
+                "value":"primary"
+              }
+            }
+          },
+          {
+            "operationType":"common",
+            "termimalType":7,
+            "name":"del",
+            "props":{
+              "display":{
+                "type":"display",
+                "value":{
+                  "from": "selectedItemDel"
+                }
+              },
+              "title":{
+                  "type":"text",
+                  "value":"删除"
+              },
+              "icon":{
+                  "type":"icon",
+                  "value":"trash-a"
+              },
+              "btnType":{
+                "type":"btnType",
+                "value":"error"
+              }
+            }
+          }
         ],
         "batchOperations":[
-          {"operationType":"common","name":"batchDelete","title":"批量删除","icon":"ios-upload-outline"},
-          {"operationType":"script","title":"执行脚本","icon":"wrench","onclick":"alert('我执行了一段脚本');"}
+          {
+            "operationType":"common",
+            "termimalType":7,
+            "name":"batchDelete",
+            "props":{
+              "title":{
+                  "type":"text",
+                  "value":"批量删除"
+              },
+              "icon":{
+                  "type":"icon",
+                  "value":"trash-a"
+              }
+            }
+          }
         ]
       }
     }]
-
   ]
 }
