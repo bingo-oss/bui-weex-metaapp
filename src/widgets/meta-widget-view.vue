@@ -10,7 +10,10 @@
                     <bui-icon name="ion-funnel" color="white" @click="filterClicked"></bui-icon>
                 </div>
                 <div class="header-button" @click="titleOperationClicked">
-                    <bui-icon name="ion-plus" color="white" @click="titleOperationClicked"></bui-icon>
+                    <template v-if="mobileHeaderOperations.length===1">
+                        <meta-operation  btn-type="icon" :operation="mobileHeaderOperations[0]" :widget-context="getWidgetContext()"></meta-operation>
+                    </template>
+                    <bui-icon v-if="mobileHeaderOperations.length>1" name="ion-ios-more" color="white" @click="titleOperationClicked"></bui-icon>
                 </div>
             </div>
         </bui-header>
@@ -25,8 +28,8 @@
                     :ref="o.id"
                     :items="widgetParams.singleOperations"
                     >
-                    <div slot="action" class="bui-list-swipe" title="1">
-                        <div title="2" v-for="(commonOpt,index) in widgetParams.singleOperations" :key="index" class="bui-list-swipe-btn-custom">
+                    <div slot="action" class="bui-list-swipe">
+                        <div v-for="(commonOpt,index) in widgetParams.singleOperations" :key="index" class="bui-list-swipe-btn-custom">
                             <meta-operation btn-type="swipe-cell" :operation="commonOpt" :widget-context="getWidgetContext(o)">
                             </meta-operation>
                         </div>
@@ -62,10 +65,9 @@
             </loading-wrapper>
         </list>
 
-        <bui-dropdown ref="operationsDropdown" :center=true>
-            <div v-for="(commonOpt,index) in widgetParams.commonOperations">
-                <meta-operation :operation="commonOpt" :widget-context="getWidgetContext()">
-                    <div class="bui-cell"><text class="cell-label-text">{{commonOpt.title}}</text></div>
+        <bui-dropdown ref="operationsDropdown" :center=false>
+            <div v-for="(commonOpt,index) in mobileHeaderOperations" :key="index">
+                <meta-operation btn-type="dropdown" :operation="commonOpt" :widget-context="getWidgetContext()">
                 </meta-operation>
             </div>
         </bui-dropdown>
@@ -95,6 +97,9 @@ import ajax from '../js/ajax.js';
 import config from '../js/config.js';
 import perm from '../js/perm.js';
 import metabase from '../js/metadata/metabase.js';
+import _ from '../js/tool/lodash';
+import Utils from '../js/tool/utils';
+
 const linkapi = require('linkapi');
 const buiweex = require('bui-weex');
 
@@ -153,6 +158,17 @@ module.exports = {
         },
         getDeviceHeight(){
             return (750/(weex.config.env.deviceWidth))*weex.config.env.deviceHeight
+        },
+        mobileHeaderOperations(){
+            var opts=(this.widgetParams&&this.widgetParams.commonOperations);
+            var _opts=[];
+            _.each(opts,function(opt){
+                var terminalType=opt[Utils.operationTermimalTypeField];
+                if(terminalType!==1){
+                    _opts.push(opt);
+                }
+            });
+            return _opts;
         }
     },
     methods: {
@@ -536,32 +552,6 @@ module.exports = {
     width: 750px;
     text-align: center;
     color: #BEBCBC;
-}
-.bui-cell {
-    flex-direction: row;
-    align-items: center;
-    height: 100px;
-    border-bottom-width: 1px;
-    border-bottom-color: #d7dde4;
-    border-bottom-style: solid; }
-.cell-label-text {
-    font-size: 30px;
-    color: #666666;
-    width: 188px;
-    margin-right: 10px;
-}
-.action_btn{
-    /*flex-direction: row;*/
-    /*width: 120px;*/
-    padding-right: 10px;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    background-color: #c6c7c8;
-}
-.action_btn_text{
-    font-size: 30px;
-    color: red;
 }
 </style>
 <style lang="sass" src="bui-weex/src/css/list.scss"></style>

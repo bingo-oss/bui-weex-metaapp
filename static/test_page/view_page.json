@@ -38,6 +38,12 @@
                   "type":"icon",
                   "value":"plus-round"
               }
+            },
+            "mobileProps":{
+              "icon":{
+                  "type":"icon",
+                  "value":"ion-plus"
+              }
             }
           },
           {

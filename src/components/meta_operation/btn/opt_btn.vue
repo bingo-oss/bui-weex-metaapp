@@ -9,7 +9,7 @@ export default {
         },
         btnType:{
             type:String,
-            default:'normal'//normal,swipe-cell
+            default:'normal'//normal,swipe-cell,icon
         }
     },
     computed:{
@@ -19,7 +19,9 @@ export default {
     },
     components:{
         "normal-btn":require('./normal_btn.vue'),
-        "swipe-cell-btn":require('./swipe_cell_btn.vue')
+        "swipe-cell-btn":require('./swipe_cell_btn.vue'),
+        "icon-btn":require('./icon_btn.vue'),
+        "dropdown-btn":require('./dropdown_btn.vue')
     }
 }
 </script>

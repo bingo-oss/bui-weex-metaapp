@@ -23,11 +23,6 @@ export default {
 }
 </script>
 <style lang="sass" src="bui-weex/src/css/list.scss"></style>
-<style>
-.full-column{
-    flex:1;
-    flex-direction: column;
-}
-</style>
+<style src="../../../styles/common.css"></style>
 
 
