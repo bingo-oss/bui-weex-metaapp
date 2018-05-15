@@ -292,7 +292,6 @@
                             service.getEntityDataForId(engineUrl, this.entityName, this.entityId).then(data => {
                                 this.existedRecord = data;
                                 this.permObj = perm.parseBits(data.permVal);
-                                this.processing();//实行表单数据处理
                             })
                         }
                     })
