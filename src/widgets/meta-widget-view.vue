@@ -30,7 +30,7 @@
                     >
                     <div slot="action" class="bui-list-swipe">
                         <div v-for="(commonOpt,index) in widgetParams.singleOperations" :key="index" class="bui-list-swipe-btn-custom">
-                            <meta-operation btn-type="swipe-cell" :operation="commonOpt" :widget-context="getWidgetContext(o)">
+                            <meta-operation @triggered="closeSwipeCell(o.id)" btn-type="swipe-cell" :operation="commonOpt" :widget-context="getWidgetContext(o)">
                             </meta-operation>
                         </div>
                     </div>
@@ -333,6 +333,10 @@ module.exports = {
                 ref.close();
             }
             this.lastSwipeCellId = id;
+        },
+        closeSwipeCell(id){//操作触发后，需要还原向左滑动出来的按钮区
+            let swipeCell = this.$refs[id][0];
+            swipeCell&&swipeCell.close();
         },
         getView() {
                 this.contextPath = this.$getContextPath();
