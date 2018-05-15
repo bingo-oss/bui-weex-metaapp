@@ -38,6 +38,7 @@ export default {
             var pageId=this.operation.page.id;
             var queryParam=_.extend({pageId:pageId},this.operation.queryParams);
             this.$push(Utils.pageEntry(),queryParam);
+            this.$emit("triggered");
         }
     }
 }

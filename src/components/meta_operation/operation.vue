@@ -1,6 +1,6 @@
 <template>
     <div class="widget-operation full-column" v-if="showOperation">
-        <component :btn-type="btnType" :is="operationComponent" :operation="extendedOperation" :widget-context="extendedWidgetContext">
+        <component @triggered="triggered" :btn-type="btnType" :is="operationComponent" :operation="extendedOperation" :widget-context="extendedWidgetContext">
             <slot></slot>
         </component>
     </div>
@@ -120,6 +120,11 @@ export default {
     },
     data(){
         return {};
+    },
+    methods:{
+        triggered(){
+            this.$emit("triggered");
+        }
     },
     components:{
         commonOperation:require('./common_operation.vue'),
