@@ -4,8 +4,8 @@
 <template>
     <div class="container">
         <bui-header :leftItem="{icon: 'ion-chevron-left'}" :title="data.title" @leftClick="() =>{this.$pop()}"></bui-header>
-        <scroller class="scroller">
-            <div class="scrollerDiv" v-for="o in data.layout" v-if="['SingleUserSelect','MultiUserSelect','SingleOrgSelect'].indexOf(o.componentType)==-1">
+        <list class="scroller" :style="{height:(getDeviceHeight-250)+'px'}">
+            <cell class="scrollerDiv" v-for="o in data.layout" v-if="['SingleUserSelect','MultiUserSelect','SingleOrgSelect'].indexOf(o.componentType)==-1">
                 <component :is="'Meta'+o.componentType"
                            :ref = "o.id"
                            :definition = "o"
@@ -14,11 +14,12 @@
                            :entityResourceUrl =  "o.componentParams.entityResourceUrl"
                            @input="o.input"
                 ></component>
-            </div>
-        </scroller>
+            </cell>
+        </list>
         <div class="action-bar" v-if="widgetParams.editOperations">
             <template v-for="(commonOpt,index) in [].concat(widgetParams.editOperations)">
                 <meta-operation :operation="commonOpt" :widget-context="getWidgetContext">
+                    <text class="action-button">{{commonOpt.title}}</text>
                 </meta-operation>
             </template>
         </div>
@@ -104,6 +105,56 @@
             },
             doSaveModel(){
                 //通用保存操作后的回调方法,内置的保存逻辑
+
+                console.log('submit');
+                console.log(this.result);
+                let validated = true;
+                for (let id in this.$refs) {
+                    let validateFunc = this.$refs[id].validate;
+                    if (!validateFunc) {
+                        continue;
+                    }
+                    let result = validateFunc();
+                    if (!result) {
+                        validated = false;
+                        break;
+                    }
+                }
+                if (!validated) {
+                    return;
+                }
+                if (this.isPostingData) return;
+                this.isPostingData = true;
+                // 编辑或保存成功后，直接 this.$pop() 返回上一页
+                // https://jira.bingosoft.net/browse/LINKSUITE-413
+                if (this.entityId) {
+                    this.$alert(this.entityId)
+                    service.updateEntity(this.engineUrl, this.entityName, this.entityId, this.result).then(data => {
+                        this.$toast('编辑成功');
+                        this.isPostingData = false;
+                        this.$pop();
+                    }).catch(err => {
+                        this.$alert(err);
+                        this.isPostingData = false;
+                    });
+                } else {
+                    // 对于 this.queryParam 里的 query，遇到属于实体字段的 query 要在创建实体时带上
+                    let postData = Object.assign({}, this.result);
+                    for (let k in this.swaggerEntiyDef.properties) {
+                        if (this.queryParam[k]) {
+                            postData[k] = this.queryParam[k];
+                        }
+                    }
+                    service.createEntify(this.engineUrl, this.entityName, this.queryParam, postData).then(data => {
+                        this.$toast('创建成功');
+                    this.isPostingData = false;
+                    this.$pop();
+                }).catch(err => {
+                        this.$alert(err);
+                    this.isPostingData = false;
+                });
+                }
+
             }
         },
         data () {
@@ -139,6 +190,9 @@
                     "selectedId": this.result.id,
                     "selectedItem": this.result
                 }
+            },
+            getDeviceHeight(){
+                return (750/(weex.config.env.deviceWidth))*weex.config.env.deviceHeight
             }
         },
         watch: {
@@ -157,6 +211,7 @@
             "existedRecord"(val){
                 let forms = [];
                 // 遍历 layout 里的所有表单项
+                Object.assign(this.result,val);
                 this.data.layout && this.data.layout.forEach((o) => {
                     if (this.entityId) {
                         // 当前表单正在编辑实体
