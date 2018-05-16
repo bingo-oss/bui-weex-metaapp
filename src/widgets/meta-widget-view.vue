@@ -9,7 +9,7 @@
                 <div class="header-button" @click="filterClicked">
                     <bui-icon name="ion-funnel" color="white" @click="filterClicked"></bui-icon>
                 </div>
-                <div class="header-button" @click="titleOperationClicked">
+                <div class="header-button">
                     <template v-if="mobileHeaderOperations.length===1">
                         <meta-operation  btn-type="icon" :operation="mobileHeaderOperations[0]" :widget-context="getWidgetContext()"></meta-operation>
                     </template>
