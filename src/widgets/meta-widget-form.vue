@@ -4,7 +4,7 @@
 <template>
     <div class="container">
         <bui-header :leftItem="{icon: 'ion-chevron-left'}" :title="data.title" @leftClick="() =>{this.$pop()}"></bui-header>
-        <list class="scroller" :style="{height:(getDeviceHeight-250)+'px'}">
+        <list class="scroller" >
             <cell class="scrollerDiv" v-for="o in data.layout" v-if="['SingleUserSelect','MultiUserSelect','SingleOrgSelect'].indexOf(o.componentType)==-1">
                 <component :is="'Meta'+o.componentType"
                            :ref = "o.id"
@@ -68,6 +68,7 @@
 
 <script>
     import ajax from '../js/ajax.js'
+    import _ from '../js/tool/lodash.js'
     import service from '../js/service.js'
     import config from '../js/config.js';
     import perm from '../js/perm.js';
@@ -103,6 +104,50 @@
                 //this.$alert(dataField);
                 //this.$set(this.result, o.dataField, v);
             },
+            ignoreReadonlyFields(){//过滤掉不需要提交到后台的数据
+                let _model={};
+                let _this=this;
+                _.each(_this.result,function(v,k){
+                    let metaField=_this.metaEntity.findField(k);
+                    if(metaField&&metaField.readonly){
+                        //readonly字段不提交
+                    }else{
+                        _model[k]=v;
+                    }
+                });
+                return _model;
+            },
+            //返回所有字段组件
+            getAllFieldItems(){
+                var formItems=[];
+                _.each(this.data.layout,function(formItem){
+                    if(formItem.isContainer&&formItem.children&&formItem.children.length>0){
+                        _.each(formItem.children,function(child){
+                            if(child.isDataField){
+                                formItems.push(child);
+                            }
+                        });
+                    }else{
+                        if(formItem.isDataField){
+                            formItems.push(formItem);
+                        }
+                    }
+                });
+                return formItems;
+            },
+            getToUpdateModel(){//更新模型只包含表单有的数据
+                let _model = this.ignoreReadonlyFields();
+                let formItems = this.getAllFieldItems();
+                let _toUpdateModel={};
+                _.each(formItems,function(v){
+                    let name=v.dataField;
+                    if(_model[name]){
+                        _toUpdateModel[name]=_model[name];
+                    }
+                });
+                _toUpdateModel[this.entityModelRedundantKey]=_model[this.entityModelRedundantKey];
+                return _toUpdateModel;
+            },
             doSaveModel(){
                 //通用保存操作后的回调方法,内置的保存逻辑
 
@@ -128,8 +173,8 @@
                 // 编辑或保存成功后，直接 this.$pop() 返回上一页
                 // https://jira.bingosoft.net/browse/LINKSUITE-413
                 if (this.entityId) {
-                    this.$alert(this.entityId)
-                    service.updateEntity(this.engineUrl, this.entityName, this.entityId, this.result).then(data => {
+                    let _model=this.getToUpdateModel();
+                    service.updateEntity(this.engineUrl, this.entityName, this.entityId, _model).then(data => {
                         this.$toast('编辑成功');
                         this.isPostingData = false;
                         this.$pop();
@@ -139,7 +184,7 @@
                     });
                 } else {
                     // 对于 this.queryParam 里的 query，遇到属于实体字段的 query 要在创建实体时带上
-                    let postData = Object.assign({}, this.result);
+                    let postData = this.ignoreReadonlyFields();;
                     for (let k in this.swaggerEntiyDef.properties) {
                         if (this.queryParam[k]) {
                             postData[k] = this.queryParam[k];
@@ -159,6 +204,7 @@
         },
         data () {
             return {
+                entityModelRedundantKey:'_data',
                 result: {},
                 existedRecord: {},
                 permObj: {},
