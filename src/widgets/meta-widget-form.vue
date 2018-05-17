@@ -238,8 +238,7 @@
                     cancel:true,//取消按钮
                     view:view
                 },
-                metaEntity:{},
-                title:""
+                metaEntity:{}
             }
         },
         computed: {
@@ -254,6 +253,15 @@
             },
             getDeviceHeight(){
                 return (750/(weex.config.env.deviceWidth))*weex.config.env.deviceHeight
+            },
+            title(){
+                let _title = "新建";
+                if(this.innerPermissions.view){
+                    _title = "查看"
+                }else if (this.entityId) {
+                    _title = "编辑"
+                }
+                return _title;
             }
         },
         watch: {
@@ -335,19 +343,6 @@
                 this.data.layout && this.data.layout.forEach((o) => {
                     o.input = (v)=>{this.$set(this.result, o.dataField, v)}
                 });
-            },
-            "metaEntity"(val){
-                //标题处理
-                let name =  val.title;
-                if(this.innerPermissions.view){
-                    this.title = "查看"+name
-                }else{
-                    if (this.entityId) {
-                        this.title = "编辑"+name
-                    }else{
-                        this.title = "新建"+name
-                    }
-                }
             }
         },
         mounted() {
@@ -431,7 +426,6 @@
                 console.log(err)
                 this.$alert('Fetch data failed: ' + JSON.stringify(err));
             })*/
-
         }
     }
 </script>
