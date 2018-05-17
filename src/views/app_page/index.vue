@@ -1,12 +1,18 @@
 <template>
-    <div v-if="pageConfig">
-        <div v-for="(col,colIndex) in pageConfig.style.columns" :key="colIndex">
+    <div v-if="pageConfig" class="full-column" >
+        <div class="full-column" v-for="(col,colIndex) in pageConfig.style.columns" :key="colIndex">
             <template v-for="(widget,index) in pageConfig.widgets[colIndex]">
                 <component :is="widget.id" :key="index" :widget-params="widget.params"></component>
             </template>
         </div>
     </div>
 </template>
+<style>
+    .full-column{
+        flex:1;
+        flex-direction: column;
+    }
+</style>
 <script>
 import pageService from '../../js/page/page_service';
 import propParser from '../../js/tool/prop_parser';

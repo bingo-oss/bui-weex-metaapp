@@ -1,5 +1,5 @@
 <template>
-    <div @viewappear="viewAppear">
+    <div @viewappear="viewAppear" class="wrapper">
         <bui-header :leftItem="{icon: 'ion-chevron-left'}" @leftClick="pop">
             <div slot="center" class="page-title-wrapper" @click="titleClicked">
                 <text class="page-title" @click="titleClicked">{{title}}</text>
@@ -18,7 +18,7 @@
             </div>
         </bui-header>
         <bui-searchbar-center @search="onSearch" @clear="onSearchClear" placeholder="请输入搜索内容"></bui-searchbar-center>
-        <list :style="{height:(getDeviceHeight-250)+'px'}">
+        <list class="scroller">
             <refresh-wrapper @refresh="onrefresh" :isRefreshing="isRefreshing"></refresh-wrapper>
 
             <cell v-for="(o, index) in listData" :key="index">
@@ -54,7 +54,7 @@
                 </bui-swipe-cell>
             </cell>
 
-            <cell class="list-item" v-if="listData.length === 0">
+            <cell class="list-item no-data" v-if="listData.length === 0">
                 <text class="empty-tips">暂无数据</text>
             </cell>
             <!-- 在数据长度小于 pageSize 时，说明已经没有更多数据了 -->
@@ -508,6 +508,12 @@ module.exports = {
 }
 </script>
 <style lang="css">
+.wrapper{
+    flex: 1;
+}
+.scroller{
+    flex: 1;
+}
 .page-title-wrapper {
     flex-direction: row;
 }
@@ -561,10 +567,15 @@ module.exports = {
 
 .empty-tips {
     font-size: 32px;
-    margin-top: 20px;
-    width: 750px;
+    /*margin-top: 20px;*/
+    /*width: 750px;*/
     text-align: center;
     color: #BEBCBC;
+}
+.no-data{
+    flex: 1;
+    align-items: center;
+    justify-content: center;
 }
 </style>
 <style lang="sass" src="bui-weex/src/css/list.scss"></style>
