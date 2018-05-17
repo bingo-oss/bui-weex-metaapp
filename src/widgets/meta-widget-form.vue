@@ -18,13 +18,13 @@
         </list>
         <div class="action-bar" v-if="widgetParams.editOperations||widgetParams.viewOperations">
             <template  v-if="!innerPermissions.view" v-for="(commonOpt,index) in [].concat(widgetParams.editOperations)">
-                <meta-operation :operation="commonOpt" :widget-context="getWidgetContext">
+                <meta-operation class="full-column" :operation="commonOpt" :widget-context="getWidgetContext">
                     <text class="action-button">{{commonOpt.title}}</text>
                 </meta-operation>
             </template>
 
             <template v-if="innerPermissions.view" v-for="(commonOpt,index) in [].concat(widgetParams.viewOperations)">
-                <meta-operation :operation="commonOpt" :widget-context="getWidgetContext">
+                <meta-operation class="full-column" :operation="commonOpt" :widget-context="getWidgetContext">
                     <text class="action-button">{{commonOpt.title}}</text>
                 </meta-operation>
             </template>
@@ -429,3 +429,4 @@
         }
     }
 </script>
+<style src="../styles/common.css"></style>
