@@ -26,13 +26,10 @@
                     @click="rowSingleClick(o)"
                     @swipeleft="cellSwiped(o.id)"
                     :ref="o.id"
-                    :items="widgetParams.singleOperations"
                     >
-                    <div slot="action" class="bui-list-swipe">
-                        <div v-for="(commonOpt,index) in widgetParams.singleOperations" :key="index" class="bui-list-swipe-btn-custom">
-                            <meta-operation @triggered="closeSwipeCell(o.id)" btn-type="swipe-cell" :operation="commonOpt" :widget-context="getWidgetContext(o)">
-                            </meta-operation>
-                        </div>
+                    <div slot="action" class="bui-list-swipe" title="1">
+                        <meta-operation class="bui-list-swipe-btn-custom" v-for="(commonOpt,index) in widgetParams.singleOperations" :key="index" @triggered="closeSwipeCell(o.id)" btn-type="swipe-cell" :operation="commonOpt" :widget-context="getWidgetContext(o)">
+                        </meta-operation>
                     </div>
                     <!-- 布局 0 默认 -->
                     <div class="list-item" v-if="layoutType == '0'" slot="content">
@@ -67,7 +64,7 @@
 
         <bui-dropdown ref="operationsDropdown" :center=false>
             <div v-for="(commonOpt,index) in mobileHeaderOperations" :key="index">
-                <meta-operation btn-type="dropdown" :operation="commonOpt" :widget-context="getWidgetContext()">
+                <meta-operation class="full-column" btn-type="dropdown" :operation="commonOpt" :widget-context="getWidgetContext()">
                 </meta-operation>
             </div>
         </bui-dropdown>

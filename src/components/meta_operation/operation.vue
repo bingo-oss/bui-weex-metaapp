@@ -1,5 +1,5 @@
 <template>
-    <div class="widget-operation full-column" v-if="showOperation">
+    <div class="widget-operation" v-if="showOperation">
         <component @triggered="triggered" :btn-type="btnType" :is="operationComponent" :operation="extendedOperation" :widget-context="extendedWidgetContext">
             <slot></slot>
         </component>
