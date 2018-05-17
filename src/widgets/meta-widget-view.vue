@@ -1,5 +1,5 @@
 <template>
-    <div @viewappear="viewAppear">
+    <div @viewappear="viewAppear" class="wrapper">
         <bui-header :leftItem="{icon: 'ion-chevron-left'}" @leftClick="pop">
             <div slot="center" class="page-title-wrapper" @click="titleClicked">
                 <text class="page-title" @click="titleClicked">{{title}}</text>
@@ -18,7 +18,7 @@
             </div>
         </bui-header>
         <bui-searchbar-center @search="onSearch" @clear="onSearchClear" placeholder="请输入搜索内容"></bui-searchbar-center>
-        <list :style="{height:(getDeviceHeight-250)+'px'}">
+        <list class="scroller">
             <refresh-wrapper @refresh="onrefresh" :isRefreshing="isRefreshing"></refresh-wrapper>
 
             <cell v-for="(o, index) in listData" :key="index">
@@ -511,6 +511,12 @@ module.exports = {
 }
 </script>
 <style lang="css">
+.wrapper{
+    flex: 1;
+}
+.scroller{
+    flex: 1;
+}
 .page-title-wrapper {
     flex-direction: row;
 }

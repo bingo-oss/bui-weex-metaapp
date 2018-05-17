@@ -3,7 +3,7 @@
 <style src="../styles/common.css" scoped="false"></style>
 <template>
     <div class="container">
-        <bui-header :leftItem="{icon: 'ion-chevron-left'}" :title="data.title" @leftClick="() =>{this.$pop()}"></bui-header>
+        <bui-header :leftItem="{icon: 'ion-chevron-left'}" :title="title" @leftClick="() =>{this.$pop()}"></bui-header>
         <list class="scroller" >
             <cell class="scrollerDiv" v-for="o in data.layout" v-if="['SingleUserSelect','MultiUserSelect','SingleOrgSelect'].indexOf(o.componentType)==-1">
                 <component :is="'Meta'+o.componentType"
@@ -16,8 +16,14 @@
                 ></component>
             </cell>
         </list>
-        <div class="action-bar" v-if="widgetParams.editOperations">
-            <template v-for="(commonOpt,index) in [].concat(widgetParams.editOperations)">
+        <div class="action-bar" v-if="widgetParams.editOperations||widgetParams.viewOperations">
+            <template  v-if="!innerPermissions.view" v-for="(commonOpt,index) in [].concat(widgetParams.editOperations)">
+                <meta-operation :operation="commonOpt" :widget-context="getWidgetContext">
+                    <text class="action-button">{{commonOpt.title}}</text>
+                </meta-operation>
+            </template>
+
+            <template v-if="innerPermissions.view" v-for="(commonOpt,index) in [].concat(widgetParams.viewOperations)">
                 <meta-operation :operation="commonOpt" :widget-context="getWidgetContext">
                     <text class="action-button">{{commonOpt.title}}</text>
                 </meta-operation>
@@ -27,24 +33,28 @@
 </template>
 <style lang="css">
     .container {
+        flex:1;
         flex-direction: column;
         align-items: stretch;
     }
 
     .scroller {
-        /*padding-left: 20px;
-        padding-right: 20px;*/
+        padding-left: 20px;
+        padding-right: 20px;
         flex: 1;
     }
     .scrollerDiv{
-        padding-left: 20px;
-        padding-right: 20px;
+/*        padding-left: 20px;
+        padding-right: 20px;*/
     }
     .action-bar {
         height: 100px;
         flex-direction: row;
         align-items: center;
         background-color: #F9F9F9;
+        border-top-style: solid;
+        border-top-width: 2px;
+        border-top-color: #CCCCCC;
     }
 
     .action-button {
@@ -57,8 +67,10 @@
         border-left-style: solid;
         padding-left: 20px;
         padding-right: 20px;
-        padding-top: 20px;
-        padding-bottom: 20px;
+        /*padding-top: 0px;
+        padding-bottom: 0px;*/
+        margin-top: 20px;
+        margin-bottom: 20px;
     }
     .widget-operation{
         background-color: #000;
@@ -203,6 +215,7 @@
             }
         },
         data () {
+            let view = this.widgetParams.mode || "";
             return {
                 entityModelRedundantKey:'_data',
                 result: {},
@@ -222,9 +235,11 @@
                     openEdit:true,//开启编辑按钮权限
                     edit:true,//修改或者保存按钮权限
                     del:true,//删除按钮权限
-                    cancel:true//取消按钮
+                    cancel:true,//取消按钮
+                    view:view
                 },
-                metaEntity:{}
+                metaEntity:{},
+                title:""
             }
         },
         computed: {
@@ -320,6 +335,19 @@
                 this.data.layout && this.data.layout.forEach((o) => {
                     o.input = (v)=>{this.$set(this.result, o.dataField, v)}
                 });
+            },
+            "metaEntity"(val){
+                //标题处理
+                let name =  val.title;
+                if(this.innerPermissions.view){
+                    this.title = "查看"+name
+                }else{
+                    if (this.entityId) {
+                        this.title = "编辑"+name
+                    }else{
+                        this.title = "新建"+name
+                    }
+                }
             }
         },
         mounted() {
