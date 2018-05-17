@@ -1,11 +1,11 @@
 <!--引入bui-weex样式文件-->
 <style lang="sass" src="bui-weex/src/css/buiweex.scss"></style>
-<style src="../styles/common.css" scoped="false"></style>
+<style src="../styles/common.css"></style>
 <template>
     <div class="container">
         <bui-header :leftItem="{icon: 'ion-chevron-left'}" :title="title" @leftClick="() =>{this.$pop()}"></bui-header>
         <list class="scroller" >
-            <cell class="scrollerDiv" v-for="o in data.layout" v-if="['SingleUserSelect','MultiUserSelect','SingleOrgSelect'].indexOf(o.componentType)==-1">
+            <cell class="scrollerDiv" v-for="o in data.layout" :key="o.id" v-if="['SingleUserSelect','MultiUserSelect','SingleOrgSelect'].indexOf(o.componentType)==-1">
                 <component :is="'Meta'+o.componentType"
                            :ref = "o.id"
                            :definition = "o"
@@ -18,13 +18,13 @@
         </list>
         <div class="action-bar" v-if="widgetParams.editOperations||widgetParams.viewOperations">
             <template  v-if="!innerPermissions.view" v-for="(commonOpt,index) in [].concat(widgetParams.editOperations)">
-                <meta-operation class="full-column" :operation="commonOpt" :widget-context="getWidgetContext">
+                <meta-operation :key="index" class="full-column" :operation="commonOpt" :widget-context="getWidgetContext">
                     <text class="action-button">{{commonOpt.title}}</text>
                 </meta-operation>
             </template>
 
             <template v-if="innerPermissions.view" v-for="(commonOpt,index) in [].concat(widgetParams.viewOperations)">
-                <meta-operation class="full-column" :operation="commonOpt" :widget-context="getWidgetContext">
+                <meta-operation :key="index" class="full-column" :operation="commonOpt" :widget-context="getWidgetContext">
                     <text class="action-button">{{commonOpt.title}}</text>
                 </meta-operation>
             </template>
@@ -429,4 +429,3 @@
         }
     }
 </script>
-<style src="../styles/common.css"></style>
