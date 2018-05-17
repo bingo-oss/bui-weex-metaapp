@@ -93,7 +93,7 @@ function operationForView(){
         buiweex.alert(i18n.pageIdNotSet);
         return;
       }
-      var _query=_.extend({dataId:id},operation.queryParams);
+      var _query=_.extend({dataId:id,_action:"view"},operation.queryParams);
       toPage(pageId,_query);
     }
   };
