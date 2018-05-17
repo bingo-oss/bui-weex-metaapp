@@ -18,7 +18,7 @@
         </list>
         <div class="action-bar" v-if="widgetParams.editOperations||widgetParams.viewOperations">
             <template  v-if="!innerPermissions.view" v-for="(commonOpt,index) in [].concat(widgetParams.editOperations)">
-                <meta-operation :key="index" class="full-column" :operation="commonOpt" :widget-context="getWidgetContext">
+                <meta-operation @successed="successed" :key="index" class="full-column" :operation="commonOpt" :widget-context="getWidgetContext">
                     <text class="action-button">{{commonOpt.title}}</text>
                 </meta-operation>
             </template>
@@ -102,6 +102,11 @@
             }
         },
         methods: {
+            successed(optType){
+                if(optType==="del"){//删除成功后返回
+                    this.$pop();
+                }
+            },
             fetchCalcDefaultValues() {
                 return ajax.post(`${this.engineUrl}/${this.entityName}/calc`, this.requestDefaultValueParam).then(resp => {
                     this.defaultValues = resp.data;

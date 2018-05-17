@@ -1,6 +1,6 @@
 <template>
     <div class="widget-operation" v-if="showOperation">
-        <component @triggered="triggered" :btn-type="btnType" :is="operationComponent" :operation="extendedOperation" :widget-context="extendedWidgetContext">
+        <component @triggered="triggered" @successed="successed" :btn-type="btnType" :is="operationComponent" :operation="extendedOperation" :widget-context="extendedWidgetContext">
             <slot></slot>
         </component>
     </div>
@@ -122,8 +122,11 @@ export default {
         return {};
     },
     methods:{
-        triggered(){
-            this.$emit("triggered");
+        triggered(optType){
+            this.$emit("triggered",optType);
+        },
+        successed(optType){
+            this.$emit("successed",optType);
         }
     },
     components:{

@@ -114,9 +114,9 @@ function operationForDel() {
       var metaEntity=context.metaEntity;
       var resource=metaEntity.dataResource();
       buiweex.confirm(i18n.confirmDelete,function(ok){
-        if(ok){
+        if(ok==="确定"){
           resource.delete(id).then(function (re) {
-            context.grid&&context.grid.reload();
+            $optInst.$emit("successed","del");
           });
         }
       });

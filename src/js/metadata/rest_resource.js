@@ -31,11 +31,12 @@ function resource(restResourceUrl){
             },e=>{return Promise.reject(resp);});
         },
         delete(id){
-            debugger
             let url=template.parse(restResourceUrl).expand({id:id});
             return ajax.delete(url).then((resp) => {
                 return Promise.resolve(resp.data);
-            },e=>{return Promise.reject(resp);});
+            },e=>{
+                return Promise.reject(e);
+            });
         },
         calc(data){
             let url=template.parse(`${restResourceUrl}/calc`).expand({id:null});
