@@ -1,5 +1,5 @@
 <template>
-    <div @viewappear="viewAppear" class="wrapper">
+    <div class="wrapper">
         <bui-header :leftItem="{icon: 'ion-chevron-left'}" @leftClick="pop">
             <div slot="center" class="page-title-wrapper" @click="titleClicked">
                 <text class="page-title" @click="titleClicked">{{title}}</text>
@@ -339,6 +339,9 @@ module.exports = {
                 this.contextPath = this.$getContextPath();
                 globalEvent.addEventListener("androidback", e => {
                     this.$pop();
+                });
+                globalEvent.addEventListener("resume", e => {
+                    this.viewAppear();
                 });
                 let pageParam = this.$getPageParams();
 
