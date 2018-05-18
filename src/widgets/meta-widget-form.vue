@@ -19,13 +19,17 @@
         <div class="action-bar" v-if="widgetParams.editOperations||widgetParams.viewOperations">
             <template  v-if="!innerPermissions.view" v-for="(commonOpt,index) in [].concat(widgetParams.editOperations)">
                 <meta-operation @successed="successed" :key="index" class="full-column" :operation="commonOpt" :widget-context="getWidgetContext">
-                    <text class="action-button">{{commonOpt.title}}</text>
+                    <div class="action-button">
+                        <text class="action-button-text">{{commonOpt.title}}</text>
+                    </div>
                 </meta-operation>
             </template>
 
             <template v-if="innerPermissions.view" v-for="(commonOpt,index) in [].concat(widgetParams.viewOperations)">
                 <meta-operation :key="index" class="full-column" :operation="commonOpt" :widget-context="getWidgetContext">
-                    <text class="action-button">{{commonOpt.title}}</text>
+                    <div class="action-button">
+                        <text class="action-button-text">{{commonOpt.title}}</text>
+                    </div>
                 </meta-operation>
             </template>
         </div>
@@ -48,29 +52,26 @@
         padding-right: 20px;*/
     }
     .action-bar {
+        flex-direction: row;
+    }
+    .action-button {
         height: 100px;
         flex-direction: row;
         align-items: center;
+        flex: 1;
         background-color: #F9F9F9;
         border-top-style: solid;
         border-top-width: 2px;
         border-top-color: #CCCCCC;
     }
-
-    .action-button {
+    .action-button-text{
         flex: 1;
-        font-size: 34px;
         text-align: center;
+        font-size: 34px;
         color: #86868D;
         border-left-color: #BEBCBC;
         border-left-width: 1px;
         border-left-style: solid;
-        padding-left: 20px;
-        padding-right: 20px;
-        /*padding-top: 0px;
-        padding-bottom: 0px;*/
-        margin-top: 20px;
-        margin-bottom: 20px;
     }
     .widget-operation{
         background-color: #000;
