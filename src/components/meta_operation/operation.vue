@@ -54,8 +54,8 @@ export default {
     },
     computed:{
         operationComponent:function(){
-            if(this.operation.onclick&&!this.operation.operationType){
-                this.operation.operationType=operationType.script;
+            if(!this.operation.operationType){
+                return;
             }
             return `${this.operation.operationType}Operation`;
         },
@@ -85,11 +85,12 @@ export default {
         showOperation:function(){//根据自定义操作权限表达式计算操作是否需要隐藏
             //只显示当前端的操作，目前只区分移动端和pcweb端
             //terminalType 1：pcweb 2：android 4：ios
-            var terminalType=this.operation[Utils.operationTermimalTypeField];
+            var operation=OperationUtils.expandOperation(this.operation,this);
+            var terminalType=operation[Utils.operationTermimalTypeField];
             if(terminalType===1){
                 return false;
             }
-            var optPermValue=this.operation[Utils.operationDisplayField];
+            var optPermValue=operation[Utils.operationDisplayField];
             if(!_.isPlainObject(optPermValue)){
                 optPermValue=_.trim(optPermValue);
                 if(_.isNil(optPermValue)||optPermValue===''){
@@ -98,7 +99,7 @@ export default {
             }
             var ctx={
                 ctx: this.widgetContext,
-                opt:this.operation
+                opt:operation
             }
             if(_.startsWith(optPermValue,'${')){
                 var compiled = _.template(optPermValue);
