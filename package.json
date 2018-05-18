@@ -21,9 +21,9 @@
     "debugPort": 8088
   },
   "scripts": {
-    "start": "npm run serve & npm run dev",
+    "start": "npm run serve & npm run dev & npm run debug",
     "dev": "webpack --watch",
-    "serve": "node build/init.js && npm run debug",
+    "serve": "serve -p  $npm_package_ports_serverPort",
     "debug": "weex debug -p  $npm_package_ports_debugPort",
     "publish": "node build/publish.js",
     "build": "webpack"
