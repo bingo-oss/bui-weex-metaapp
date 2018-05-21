@@ -29,7 +29,7 @@
     "build": "webpack"
   },
   "dependencies": {
-    "bui-weex": "^0.2.9",
+    "bui-weex": "^0.3.0",
     "linkapi": "^0.3.2",
     "url-template": "^2.0.8",
     "vue": "^2.4.2",
