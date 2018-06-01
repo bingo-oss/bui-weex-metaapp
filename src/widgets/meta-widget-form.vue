@@ -168,55 +168,55 @@
             },
             doSaveModel(){
                 //通用保存操作后的回调方法,内置的保存逻辑
-
                 console.log('submit');
                 console.log(this.result);
-                let validated = true;
-                for (let id in this.$refs) {
-                    let validateFunc = this.$refs[id].validate;
-                    if (!validateFunc) {
-                        continue;
-                    }
-                    let result = validateFunc();
-                    if (!result) {
-                        validated = false;
-                        break;
-                    }
-                }
-                if (!validated) {
-                    return;
-                }
-                if (this.isPostingData) return;
-                this.isPostingData = true;
-                // 编辑或保存成功后，直接 this.$pop() 返回上一页
-                // https://jira.bingosoft.net/browse/LINKSUITE-413
-                if (this.entityId) {
-                    let _model=this.getToUpdateModel();
-                    service.updateEntity(this.engineUrl, this.entityName, this.entityId, _model).then(data => {
-                        this.$toast('编辑成功');
-                        this.isPostingData = false;
-                        this.$pop();
-                    }).catch(err => {
-                        this.$alert(err);
-                        this.isPostingData = false;
-                    });
-                } else {
-                    // 对于 this.queryParam 里的 query，遇到属于实体字段的 query 要在创建实体时带上
-                    let postData = this.ignoreReadonlyFields();;
-                    for (let k in this.swaggerEntiyDef.properties) {
-                        if (this.queryParam[k]) {
-                            postData[k] = this.queryParam[k];
+                return new Promise((resolve,reject)=>{
+                    let validated = true;
+                    for (let id in this.$refs) {
+                        let validateFunc = this.$refs[id].validate;
+                        if (!validateFunc) {
+                            continue;
+                        }
+                        let result = validateFunc();
+                        if (!result) {
+                            validated = false;
+                            break;
                         }
                     }
-                    service.createEntify(this.engineUrl, this.entityName, this.queryParam, postData).then(data => {
-                        this.$toast('创建成功');
-                    this.isPostingData = false;
-                    this.$pop();
-                }).catch(err => {
-                        this.$alert(err);
-                    this.isPostingData = false;
+                    if (!validated) {
+                        reject();
+                        return;
+                    }
+                    // 编辑或保存成功后，直接 this.$pop() 返回上一页
+                    // https://jira.bingosoft.net/browse/LINKSUITE-413
+                    if (this.entityId) {
+                        let _model=this.getToUpdateModel();
+                        service.updateEntity(this.engineUrl, this.entityName, this.entityId, _model).then(data => {
+                            resolve(data);
+                            this.$toast('编辑成功');
+                            this.$pop();
+                        }).catch(err => {
+                            reject();
+                            this.$alert(err);
+                        });
+                    } else {
+                        // 对于 this.queryParam 里的 query，遇到属于实体字段的 query 要在创建实体时带上
+                        let postData = this.ignoreReadonlyFields();;
+                        for (let k in this.swaggerEntiyDef.properties) {
+                            if (this.queryParam[k]) {
+                                postData[k] = this.queryParam[k];
+                            }
+                        }
+                        service.createEntify(this.engineUrl, this.entityName, this.queryParam, postData).then(data => {
+                            resolve(data);
+                            this.$toast('创建成功');
+                            this.$pop();
+                        }).catch(err => {
+                            reject();
+                            this.$alert(err);
+                        });
+                    }
                 });
-                }
 
             }
         },
@@ -234,7 +234,6 @@
                 engineUrl: '',
                 entityId: '',
                 entityName: '',
-                isPostingData: false,
                 requestDefaultValueParam: null,
                 defaultValues: {},
                 innerPermissions:{
