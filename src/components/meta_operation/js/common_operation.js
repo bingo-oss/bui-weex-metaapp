@@ -33,6 +33,7 @@ function operationForCreate(){
       }
       var _query=_.extend({},operation.queryParams);
       toPage(pageId,_query);
+      $optInst.mustStopRepeatedClick = false;
     }
   };
   return operation;
@@ -67,11 +68,13 @@ function operationForEdit(){
       }
       let pageId=$optInst.operation.page&&$optInst.operation.page.id;
       if(!pageId){
+        $optInst.mustStopRepeatedClick = false;
         buiweex.alert(i18n.pageIdNotSet);
         return;
       }
       var _query=_.extend({dataId:id},operation.queryParams);
       toPage(pageId,_query);
+      $optInst.mustStopRepeatedClick = false;
     }
   };
   return operation;
@@ -85,16 +88,19 @@ function operationForView(){
     onclick:function(context,$optInst){
       var id=getIdFromContext(context);
       if(!id){
+        $optInst.mustStopRepeatedClick = false;
         buiweex.alert(i18n.dataIdNotSet);
         return;
       }
       let pageId=$optInst.operation.page&&$optInst.operation.page.id;
       if(!pageId){
+        $optInst.mustStopRepeatedClick = false;
         buiweex.alert(i18n.pageIdNotSet);
         return;
       }
-      var _query=_.extend({dataId:id,_action:"view"},operation.queryParams);
+      var _query=_.extend({dataId:id,forceView:true },operation.queryParams);
       toPage(pageId,_query);
+      $optInst.mustStopRepeatedClick = false;
     }
   };
   return operation;
@@ -108,6 +114,7 @@ function operationForDel() {
     onclick:function(context,$optInst){
       var id=getIdFromContext(context);
       if(!id){
+        $optInst.mustStopRepeatedClick = false;
         buiweex.alert(i18n.dataIdNotSet);
         return;
       }
@@ -116,8 +123,13 @@ function operationForDel() {
       buiweex.confirm(i18n.confirmDelete,function(ok){
         if(ok==="确定"){
           resource.delete(id).then(function (re) {
+            $optInst.mustStopRepeatedClick = false;
             $optInst.$emit("successed","del");
+          },()=>{
+            $optInst.mustStopRepeatedClick = false;
           });
+        }else{
+          $optInst.mustStopRepeatedClick = false;
         }
       });
     }
@@ -133,10 +145,16 @@ function save(){
     onclick:function(context,$optInst){
       var form=context.form;
       if(_.isEmpty(form)){
+        $optInst.mustStopRepeatedClick = false;
         buiweex.alert(`表单保存操作必须传入表单实例参数`);
         return;
       }
-      form.doSaveModel();
+      var savePromise=form.doSaveModel();
+      savePromise.then(()=>{
+        $optInst.mustStopRepeatedClick = false;
+      },()=>{
+        $optInst.mustStopRepeatedClick = false;
+      });
     }
   };
   return operation;
