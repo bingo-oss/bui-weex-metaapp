@@ -13,6 +13,7 @@ Vue.component('meta-widget-opt2',require("../widgets/demo/operation/opt2.vue"));
 //列表,表单部件
 Vue.component('meta-widget-view',require("../widgets/meta-widget-view.vue"));
 Vue.component('meta-widget-form',require("../widgets/meta-widget-form.vue"));
+Vue.component('meta-widget-page',require("../widgets/meta-widget-page.vue"));
 App.el = '#root'
 
 new Vue(App)

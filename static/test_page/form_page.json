@@ -9,7 +9,8 @@
   "widgets": [
     [
       {
-        "id": "meta-widget-form",
+        "id": "1",
+        "tagName": "meta-widget-form",
         "props": {
           "dataId": {
             "type": "text",
@@ -25,11 +26,11 @@
               "entityName":"activity"
             }
           },
-          "mode": {
-            "type": "text",
+          "forceView": {
+            "type": "boolean",
             "value": {
               "from": "query",
-              "key": "_action"
+              "key": "forceView"
             }
           }
         },

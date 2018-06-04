@@ -7,7 +7,8 @@
     "widgets":[
         [
             {
-                "id":"meta-widget-w2",
+                "id":"1",
+                "tagName":"meta-widget-w2",
                 "props":{
 
                 },
@@ -86,7 +87,8 @@
         ],
         [
             {
-                "id":"meta-widget-w1",
+                "id":"2",
+                "tagName":"meta-widget-w1",
                 "props":{
                     "dataId":{
                         "type":"text",
@@ -248,7 +250,8 @@
                 }
             },
             {
-                "id":"meta-widget-w2",
+                "id":"3",
+                "tagName":"meta-widget-w2",
                 "operations":{
                     "commonOperations":[
                         {
@@ -272,7 +275,8 @@
         ],
         [
             {
-                "id":"meta-widget-w2",
+                "id":"4",
+                "tagName":"meta-widget-w2",
                 "operations":{
                     "commonOperations":[
                         {

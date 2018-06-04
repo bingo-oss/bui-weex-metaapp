@@ -34,7 +34,8 @@
     "url-template": "^2.0.8",
     "vue": "^2.4.2",
     "path-to-regexp" : "1.7.0",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "co": "^4.6.0"
   },
   "devDependencies": {
     "punycode": "^2.1.0",

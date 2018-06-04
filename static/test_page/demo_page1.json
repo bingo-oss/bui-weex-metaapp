@@ -10,7 +10,8 @@
         ],
         [
             {
-                "id":"meta-widget-w2",
+                "id":"1",
+                "tagName":"meta-widget-w2",
                 "operations":{
                     "commonOperations":[
                         {

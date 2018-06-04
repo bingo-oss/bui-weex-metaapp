@@ -6,7 +6,8 @@
   },
   "widgets":[
     [{
-      "id":"meta-widget-view",
+      "1":"meta-widget-view",
+      "tagName":"meta-widget-view",
       "props":{
         "defaultView":{
           "id":"n34Zs9i2qAeEeqnZvfwUnW",
