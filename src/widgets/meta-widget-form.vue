@@ -166,10 +166,11 @@
                 _toUpdateModel[this.entityModelRedundantKey]=_model[this.entityModelRedundantKey];
                 return _toUpdateModel;
             },
+            submit(){//页面部件提交方法
+                return this.doSaveModel();
+            },
             doSaveModel(){
                 //通用保存操作后的回调方法,内置的保存逻辑
-                console.log('submit');
-                console.log(this.result);
                 return new Promise((resolve,reject)=>{
                     let validated = true;
                     for (let id in this.$refs) {
