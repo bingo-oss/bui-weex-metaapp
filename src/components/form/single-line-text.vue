@@ -4,7 +4,7 @@
             <text class="form-label">{{definition.componentParams.title}}:</text>
             <text class="required-mark" v-if="definition.componentParams.required">*</text>
         </div>
-        <input @input="input" class="form-input-native" type="text" :value="valueText" :placeholder="definition.componentParams.placeholder"/>
+        <input @input="input" :disabled="readonly" class="form-input-native" type="text" :value="valueText" :placeholder="definition.componentParams.placeholder"/>
     </div>
 </template>
 
