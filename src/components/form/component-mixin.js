@@ -1,9 +1,11 @@
-import EventBus from '../../js/bus.js'
+import EventBus from '../../js/bus.js';
+import Utils from '../../js/tool/utils'
 
 export default {
     data() {
         return {
             showComponent: true,  // 每个组件都可以被控制展示与否
+            readonly:false //组件只读模式
         }
     },
     props: {
@@ -21,6 +23,13 @@ export default {
             required: false,
         },
         filterMode: false,
+        fieldSetting:{
+            type:Object,
+            required: false,
+            default(){
+                return {};
+            }
+        }
     },
     methods: {
         validate() {
@@ -37,6 +46,10 @@ export default {
                 console.log(any);
             }
         },
+        fieldSettingApply(){//将字段的显示和隐藏等设置应用到当前字段组件
+            this.showComponent=!(this.fieldSetting.mode===Utils.widgetMode.invisible);
+            this.readonly=this.fieldSetting.mode===Utils.widgetMode.readonly;
+        }
     },
     mounted() {
         if (this.definition.id) {
@@ -46,5 +59,6 @@ export default {
                 this.showComponent = visible;
             })
         }
+        this.fieldSettingApply();
     }
 }

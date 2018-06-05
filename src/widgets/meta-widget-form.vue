@@ -12,6 +12,7 @@
                            :value =  "result[o.dataField]"
                            :wholeDefinition =  "data"
                            :entityResourceUrl =  "o.componentParams.entityResourceUrl"
+                           :field-setting="fieldSetting(o)"
                            @input="o.input"
                 ></component>
             </cell>
@@ -103,6 +104,15 @@
             }
         },
         methods: {
+            fieldSetting(item){
+                var dataField=item.dataField;
+                if(!dataField){
+                    return {};
+                }
+                return this.widgetParams
+                    &&this.widgetParams.fieldSettings
+                    &&this.widgetParams.fieldSettings[dataField];
+            },
             successed(optType){
                 if(optType==="del"){//删除成功后返回
                     this.$pop();

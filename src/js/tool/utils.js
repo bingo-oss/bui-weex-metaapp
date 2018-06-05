@@ -43,6 +43,12 @@ const Utils={
     },
     pageEntry(){//页面渲染的入口页面
         return `${buiweex.getContextPath()}/page.weex.js`;
+    },
+    widgetMode:{
+        editable:"editable",
+        invisible:"invisible",
+        readonly:"readonly",
+        forceView:"forceView"//保留模式，流程表单暂不启用，兼容旧的强制查看模式
     }
 };
 export default Utils;
