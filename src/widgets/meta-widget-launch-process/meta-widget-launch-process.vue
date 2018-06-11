@@ -51,6 +51,7 @@
                 }
             },
             startProcess(){//启动流程
+            debugger
                 let formPromise=this.$refs.formPage.submit();
                 let _this=this;
                 return new Promise((resolve,reject)=>{
@@ -101,7 +102,7 @@
                 if(res.settings){
                     _this.params = Object.assign({},_this.params,res.settings)
                 }
-            })
+            });
         }
     };
 </script>
