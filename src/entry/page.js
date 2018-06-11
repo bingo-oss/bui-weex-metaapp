@@ -14,6 +14,8 @@ Vue.component('meta-widget-opt2',require("../widgets/demo/operation/opt2.vue"));
 Vue.component('meta-widget-view',require("../widgets/meta-widget-view.vue"));
 Vue.component('meta-widget-form',require("../widgets/meta-widget-form.vue"));
 Vue.component('meta-widget-page',require("../widgets/meta-widget-page.vue"));
+Vue.component('meta-widget-launch-process',require("../widgets/meta-widget-launch-process/meta-widget-launch-process.vue"));
+
 App.el = '#root'
 
 new Vue(App)
