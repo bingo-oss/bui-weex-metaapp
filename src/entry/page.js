@@ -15,6 +15,8 @@ Vue.component('meta-widget-view',require("../widgets/meta-widget-view.vue"));
 Vue.component('meta-widget-form',require("../widgets/meta-widget-form.vue"));
 Vue.component('meta-widget-page',require("../widgets/meta-widget-page.vue"));
 Vue.component('meta-widget-launch-process',require("../widgets/meta-widget-launch-process/meta-widget-launch-process.vue"));
+Vue.component('meta-widget-todo-list',require("../widgets/meta-widget-todo-list/meta-widget-todo-list.vue"));
+Vue.component('meta-widget-approval-process',require("../widgets/meta-widget-approval-process/meta-widget-approval-process.vue"));
 
 App.el = '#root'
 

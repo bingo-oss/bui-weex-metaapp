@@ -8,9 +8,13 @@ const service={
         //启动流程
         return new Promise(function(resolve,reject){
             config.readRuntimeConfig().then(runtimeConfig => {
-                ax.post(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/process-instances`, JSON.stringify(param), function (res) {
+                ax.post(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/process-instances`, JSON.stringify(param)).then(function(res){
                     resolve(res);
+                },(err)=>{
+                    reject(err);
                 });
+            },(err)=>{
+                reject(err);
             });
         });
     },

@@ -1,5 +1,6 @@
 <template>
     <div class="container">
+        <bui-header :leftItem="{icon: 'ion-chevron-left'}" :title="title" @leftClick="() =>{this.$pop()}"></bui-header>
         <div class="container">
             <meta-widget-page ref="formPage" :query="{dataId:params.dataId}" :widget-params="params"></meta-widget-page>
         </div>
@@ -16,6 +17,7 @@
 
 <script>
     import service from './js/service';
+    import _ from '../../js/tool/lodash.js'
     export default {
         props: {
             widgetParams: {
@@ -26,6 +28,7 @@
         },
         data() {
             return {
+                title:"发起流程",
                 params:{},
             }
         },
@@ -51,7 +54,6 @@
                 }
             },
             startProcess(){//启动流程
-            debugger
                 let formPromise=this.$refs.formPage.submit();
                 let _this=this;
                 return new Promise((resolve,reject)=>{
@@ -62,7 +64,6 @@
                             _this.subParams.variables.name = formData.title;
                         }
                         service.startProcessInstanceCmd(_this.subParams).then((res)=> {
-                            this.$Loading.finish();
                             resolve();
                             _this.$Message.success('发起流程成功');
                             _this.back();
@@ -78,10 +79,9 @@
                     item.onclick = function (ctx,$optInst) {
                         var spPromise=ctx.processLauncher.startProcess();
                         //完成后按钮可再次点击
-                        spPromise.then(
-                                ()=>{
+                        spPromise.then(()=>{
                             $optInst.mustStopRepeatedClick = false;
-                    },()=>{
+                        },()=>{
                             $optInst.mustStopRepeatedClick = false;
                         });
                     }

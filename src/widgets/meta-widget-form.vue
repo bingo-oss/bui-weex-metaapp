@@ -353,6 +353,7 @@
                         }
                     }
                 });
+                this.$forceUpdate();//更新下视图
             },
             "data.layout"(val){
                 //处理父子组件回调事件

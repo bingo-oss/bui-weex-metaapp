@@ -1,0 +1,12 @@
+{
+	"id": "meta-widget-approval-trail",
+	"widgetDef": "",
+	"exports": {},
+	"props": {
+		"procInstId": {
+			"type": "text",
+			"title":"流程实例ID",
+			"require": true
+		}
+	}
+}
