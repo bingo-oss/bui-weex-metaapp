@@ -17,6 +17,12 @@
             widgetParams: {
                 type: Object,
                 required: true
+            },
+            query:{//模拟页面的query参数，页面部件比较特殊
+                type:Object,
+                default(){
+                    return {};
+                }
             }
         },
         data(){

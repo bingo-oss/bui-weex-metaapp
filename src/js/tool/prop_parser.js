@@ -1,9 +1,13 @@
 import buiweex from 'bui-weex'
-import _ from '../../js/tool/lodash'
+import _ from './lodash'
 
 //用来将部件或者操作的props根据属性类型转换成具体的属性值
 
 function fromQuery(key,curInst){
+    //特殊的逻辑，页面部件可以从模拟的query属性中取值
+    if(_.isPlainObject(curInst.query)&&_.has(curInst.query,key)){
+        return curInst.query[key];
+    }
     return buiweex.getPageParams()[key];
 }
 function fromPath(key,curInst){

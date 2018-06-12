@@ -15,8 +15,9 @@ var isNaN=require('lodash/isNaN.js');
 var isUndefined=require('lodash/isUndefined.js');
 var includes=require('lodash/includes.js');
 var isArray=require('lodash/isArray.js');
+var has=require('lodash/has.js');
 const _={
     forEach,each,isFunction,extend,isPlainObject,trim,template,isNil,startsWith,isEmpty,
-    snakeCase,isString,isNaN,isUndefined,includes,isArray
+    snakeCase,isString,isNaN,isUndefined,includes,isArray,has
 };
 export default _
