@@ -31,6 +31,9 @@ export default {
     },
     methods: {
         inputClicked() {
+            if(this.readonly){
+                return;
+            }
             picker.pickTime({
                 value: 'HH:mm'
             }, (res) => {

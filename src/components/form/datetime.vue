@@ -120,6 +120,9 @@ export default {
             return Promise.resolve('test')
         },
         inputClicked() {
+            if(this.readonly){
+                return;
+            }
             this.pickDateTime().then(dateStr => {
                 let date = this.parseDate(dateStr);
                 this.$emit('input', date.toISOString());

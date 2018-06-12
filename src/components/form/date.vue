@@ -31,6 +31,9 @@ export default {
     },
     methods: {
         inputClicked() {
+            if(this.readonly){
+                return;
+            }
             picker.pickDate({
                 value: 'yyyy-MM-dd'
             }, (res) => {
