@@ -149,11 +149,17 @@ export default {
             }
         },
         pickStart() {
+            if(this.readonly){
+                return;
+            }
             this.pickDateTime().then(start => {
                 this.$emit('filterInput', this.toFilterPresentation(start, this.filterPointEnd));
             })
         },
         pickEnd() {
+            if(this.readonly){
+                return;
+            }
             this.pickDateTime().then(end => {
                 this.$emit('filterInput', this.toFilterPresentation(this.filterPointStart, end));
             })

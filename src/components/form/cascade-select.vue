@@ -33,6 +33,9 @@ export default {
     },
     methods: {
         inputClicked() {
+            if(this.readonly){
+                return;
+            }
             let pickOptions = (options) => {
                 picker.pick({
                     items: options.map(option => option.text)

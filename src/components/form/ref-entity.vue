@@ -75,6 +75,9 @@ export default {
             });
         },
         inputClicked() {
+            if(this.readonly){
+                return;
+            }
             this.showPopup = true;
         },
         itemSelected(item) {

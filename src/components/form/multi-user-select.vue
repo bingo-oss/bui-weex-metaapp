@@ -20,6 +20,9 @@ export default {
     extends: SingleUserSelect,
     methods: {
         inputClicked(e) {
+            if(this.readonly){
+                return;
+            }
             linkapi.startContactMulitSelector(this.definition.componentParams.title, 1, {}, (result) => {
                 this.valueText = result.user.map(u => u.name).join(',');
                 this.$emit('input', result.user);

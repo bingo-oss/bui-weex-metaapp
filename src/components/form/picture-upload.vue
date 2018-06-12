@@ -29,6 +29,9 @@ export default {
     },
     methods: {
         inputClicked(e) {
+            if(this.readonly){
+                return;
+            }
             linkapi.selectFiles(1, (result) => {
                 // this.$alert(result);
                 if (result.resource) {

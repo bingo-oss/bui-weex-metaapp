@@ -61,6 +61,9 @@ export default {
     },
     methods: {
         inputClicked(e) {
+            if(this.readonly){
+                return;
+            }
             linkapi.startContactSingleSelector(this.definition.componentParams.title, 4, {}, (result) => {
                 if (!result.id) return;
                 if (this.filterMode) {

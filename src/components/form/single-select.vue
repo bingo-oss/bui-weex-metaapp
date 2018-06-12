@@ -31,6 +31,9 @@ export default {
     },
     methods: {
         inputClicked() {
+            if(this.readonly){
+                return;
+            }
             picker.pick({
                 items: this.definition.componentParams.options.map(option => option.text)
             }, (res) => {
