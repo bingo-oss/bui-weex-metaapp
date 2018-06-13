@@ -1,14 +1,11 @@
 <template>
     <div class="container">
-        <bui-header :leftItem="{icon: 'ion-chevron-left'}" :title="title" @leftClick="() =>{this.$pop()}"></bui-header>
         <div class="container">
             <meta-widget-page ref="formPage" :query="{dataId:params.dataId}" :widget-params="params"></meta-widget-page>
         </div>
         <div class="action-bar">
             <meta-operation v-for="(toolbarBtn,index) in widgetParams.commonOperations" :operation="adjustment(toolbarBtn)" :widget-context="getWidgetContext(toolbarBtn)" :key="index" class="full-column">
-                <div class="action-button">
-                    <text class="action-button-text">{{toolbarBtn.title}}</text>
-                </div>
+                
             </meta-operation>
         </div>
 
@@ -17,7 +14,8 @@
 
 <script>
     import service from './js/service';
-    import _ from '../../js/tool/lodash.js'
+    import _ from '../../js/tool/lodash.js';
+    import EventBus from '../../js/bus';
     export default {
         props: {
             widgetParams: {
@@ -32,7 +30,9 @@
                 params:{},
             }
         },
-        watch:{},
+        created(){
+            EventBus.$emit("widget-push-title",this.title);
+        },
         computed: {
             subParams(){
                 let _t = this;

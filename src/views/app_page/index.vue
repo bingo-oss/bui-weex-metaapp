@@ -1,12 +1,29 @@
 <template>
-    <meta-widget-page :widget-params="params"></meta-widget-page>
+    <div class="full-column">
+        <bui-header v-if="title" :leftItem="{icon: 'ion-chevron-left'}" :title="title" @leftClick="() =>{this.$pop()}"></bui-header>
+        <meta-widget-page :widget-params="params"></meta-widget-page>
+    </div>
 </template>
 <script>
+import EventBus from '../../js/bus';
 export default {
     data(){
         return {
-            params:{}
+            params:{},
+            title:""
         };
+    },
+    computed:{
+        headerTitle(){
+            return this.title;
+        }
+    },
+    created(){
+        EventBus.$on("widget-push-title",(data) =>{
+            if(!this.title){
+                this.title=data;
+            }
+        });
     },
     mounted(){
         var pageId=this.$getPageParams()['pageId'];
@@ -14,4 +31,6 @@ export default {
     }
 }
 </script>
+<style src="../../styles/common.css"></style>
+
 

@@ -1,6 +1,5 @@
 <template>
     <div class="full-column">
-        <bui-header :leftItem="{icon: 'ion-chevron-left'}" :title="title" @leftClick="() =>{this.$pop()}"></bui-header>
         <div class="full-column">
             <bui-tabbar :tabItems="tabItems" showSelectedLine=true @change="onItemChange" v-model="currentTab" titleSize="32"></bui-tabbar>
             <slider class="full-column" @change="" :index="currentTab">
@@ -35,7 +34,8 @@
 
 <script>
     import service from './js/service';
-    import buiweex from 'bui-weex'
+    import buiweex from 'bui-weex';
+    import EventBus from '../../js/bus';
     export default {
         props: {
             widgetParams: {
@@ -65,7 +65,9 @@
                 ]
             }
         },
-        watch:{},
+        created(){
+            EventBus.$emit("widget-push-title",this.title);
+        },
         computed: {
             subParams(){
                 let _t = this;

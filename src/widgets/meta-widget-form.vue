@@ -3,7 +3,6 @@
 <style src="../styles/common.css"></style>
 <template>
     <div class="container">
-        <bui-header :leftItem="{icon: 'ion-chevron-left'}" :title="title" @leftClick="() =>{this.$pop()}"></bui-header>
         <list class="scroller" >
             <cell class="scrollerDiv" v-for="o in data.layout" :key="o.id" v-if="['SingleUserSelect','MultiUserSelect','SingleOrgSelect'].indexOf(o.componentType)==-1">
                 <component :is="'Meta'+o.componentType"
@@ -48,10 +47,6 @@
         padding-right: 20px;
         flex: 1;
     }
-    .scrollerDiv{
-/*        padding-left: 20px;
-        padding-right: 20px;*/
-    }
     .action-bar {
         flex-direction: row;
     }
@@ -94,7 +89,7 @@
     Vue.use(buiweex);
 
     const globalEvent = weex.requireModule('globalEvent');
-    // const data = require('../demoData.json')
+    import EventBus from '../js/bus';
 
     module.exports = {
         props:{
@@ -281,6 +276,9 @@
             }
         },
         watch: {
+            title(){
+                EventBus.$emit("widget-push-title",this.title);
+            },
             defaultValues(val) {
                 // 将默认值 merge 到当前 result 里
                 for (let k in val) {
@@ -363,6 +361,7 @@
             }
         },
         mounted() {
+            EventBus.$emit("widget-push-title",this.title);
             globalEvent.addEventListener("androidback", e => {
                 this.$pop();
             });
