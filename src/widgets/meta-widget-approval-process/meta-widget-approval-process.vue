@@ -7,7 +7,7 @@
                 <scroller class="full-column" v-show="currentTab==0">
                     <div class="process_abstract _wrap" v-if="abstract.processInstance">
                         <p class="_wrap"><text class="pageSize1">{{abstract.processInstance.name}}</text></p>
-                        <p class="_wrap"><text class="pageSize1">发起人：{{abstract.processInstance.startUserName}} &nbsp;&nbsp; 发起时间：{{formatDateTime(abstract.processInstance.startDate)}}</text></p>
+                        <p class="_wrap"><text class="pageSize2">发起人：{{abstract.processInstance.startUserName}} &nbsp;&nbsp; 发起时间：{{formatDateTime(abstract.processInstance.startDate)}}</text></p>
                     </div>
                     <div>
                         <meta-widget-page ref="formPage" :query="{dataId:params.dataId}" :widget-params="params"></meta-widget-page>
@@ -211,6 +211,10 @@
     }
     .pageSize1{
         font-size: 34px;
+    }
+    .pageSize2{
+        font-size: 30px;
+        color: #666;
     }
     .process_abstract{
         padding-top:20px;

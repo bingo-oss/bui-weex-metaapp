@@ -163,6 +163,10 @@
             }
         },
         methods: {
+            toPage(queryParam){
+              //跳转页面--暴露给外部使用
+              buiweex.push(Utils.pageEntry(),queryParam);
+            },
             filterClicked() {
                 this.showPopup = true;
             },
