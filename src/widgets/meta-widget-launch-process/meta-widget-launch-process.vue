@@ -65,7 +65,7 @@
                         }
                         service.startProcessInstanceCmd(_this.subParams).then((res)=> {
                             resolve();
-                            _this.$Message.success('发起流程成功');
+                            _this.$toast('发起流程成功');
                             _this.back();
                         })
                      });
@@ -89,7 +89,7 @@
                 return item;
             },
             back:function(){
-                router.go(-1);
+                this.$pop();
             }
         },
         mounted(){

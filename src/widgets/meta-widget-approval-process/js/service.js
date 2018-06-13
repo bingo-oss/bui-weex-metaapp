@@ -8,7 +8,7 @@ const service={
         //完成任务
         return new Promise(function(resolve,reject){
             config.readRuntimeConfig().then(runtimeConfig => {
-                ax.post(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/tasks/${param.taskId}/complete`, JSON.stringify(param)).then(res=>{
+                ax.post(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/tasks/${param.taskId}/complete`, param).then(res=>{
                     resolve(res.data);
                 },(err)=>{
                     reject(err);
@@ -50,7 +50,7 @@ const service={
         //驳回任务
         return new Promise(function(resolve,reject){
             config.readRuntimeConfig().then(runtimeConfig => {
-                ax.post(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/tasks/${param.taskId}/reject`, JSON.stringify(param)).then(res=>{
+                ax.post(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/tasks/${param.taskId}/reject`, param).then(res=>{
                     resolve(res);
                 },(err)=>{
                     reject(err);

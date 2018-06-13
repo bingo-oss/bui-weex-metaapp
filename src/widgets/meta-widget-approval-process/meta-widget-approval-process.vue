@@ -2,19 +2,19 @@
     <div class="full-column">
         <bui-header :leftItem="{icon: 'ion-chevron-left'}" :title="title" @leftClick="() =>{this.$pop()}"></bui-header>
         <div class="full-column">
-            <bui-tabbar :tabItems="tabItems" showSelectedLine=true @change="onItemChange" v-model="currentTab"></bui-tabbar>
+            <bui-tabbar :tabItems="tabItems" showSelectedLine=true @change="onItemChange" v-model="currentTab" titleSize="32"></bui-tabbar>
             <slider class="full-column" @change="" :index="currentTab">
                 <scroller class="full-column" v-show="currentTab==0">
                     <div class="process_abstract _wrap" v-if="abstract.processInstance">
-                        <p class="_wrap">{{abstract.processInstance.name}}</p>
-                        <p class="_wrap">发起人：{{abstract.processInstance.startUserName}} &nbsp;&nbsp; 发起时间：{{formatDateTime(abstract.processInstance.startDate)}}</p>
+                        <p class="_wrap"><text class="pageSize1">{{abstract.processInstance.name}}</text></p>
+                        <p class="_wrap"><text class="pageSize1">发起人：{{abstract.processInstance.startUserName}} &nbsp;&nbsp; 发起时间：{{formatDateTime(abstract.processInstance.startDate)}}</text></p>
                     </div>
                     <div>
                         <meta-widget-page ref="formPage" :query="{dataId:params.dataId}" :widget-params="params"></meta-widget-page>
                     </div>
                     <div class="process_foot" v-show="abstract.taskDefinitionKey">
-                        <label class="ivu-form-item-label">审批意见:</label>
-                        <textarea rows="5" placeholder="" v-model="subParams.outputVariables[abstract.id+'-opinion']" class="form-control"></textarea>
+                        <label class="ivu-form-item-label"><text class="pageSize1">审批意见:</text></label>
+                        <textarea rows="5" placeholder="" v-model="subParams.outputVariables[abstract.id+'-opinion']" class="form-control pageSize1"></textarea>
                     </div>
                 </scroller>
 
@@ -140,11 +140,11 @@
                             $optInst.mustStopRepeatedClick = false;
                         });
                     }
-                }2
+                }
                 return item
             },
             back:function(){
-                router.go(-1);
+                this.$pop();
             },
             formatDateTime(obj){
                 let d = new Date(obj);
@@ -208,6 +208,9 @@
     }
     .widget-operation{
         background-color: #000;
+    }
+    .pageSize1{
+        font-size: 34px;
     }
     .process_abstract{
         padding-top:20px;

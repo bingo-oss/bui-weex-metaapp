@@ -205,7 +205,7 @@
                         service.updateEntity(this.engineUrl, this.entityName, this.entityId, _model).then(data => {
                             resolve(data);
                             this.$toast('编辑成功');
-                            this.$pop();
+                            //this.$pop();
                         }).catch(err => {
                             reject();
                             this.$alert(err);
@@ -221,7 +221,7 @@
                         service.createEntify(this.engineUrl, this.entityName, this.queryParam, postData).then(data => {
                             resolve(data);
                             this.$toast('创建成功');
-                            this.$pop();
+                            //this.$pop();
                         }).catch(err => {
                             reject();
                             this.$alert(err);
