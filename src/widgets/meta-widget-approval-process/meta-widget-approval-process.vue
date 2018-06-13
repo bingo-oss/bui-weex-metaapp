@@ -23,11 +23,7 @@
             </slider>
         </div>
         <div class="action-bar">
-            <meta-operation v-for="(toolbarBtn,index) in widgetParams.commonOperations" :operation="adjustment(toolbarBtn)" :widget-context="getWidgetContext(toolbarBtn)" :key="index" class="full-column" style="flex: 1">
-                <div class="action-button">
-                    <text class="action-button-text">{{toolbarBtn.title}}</text>
-                </div>
-            </meta-operation>
+            <meta-operation v-for="(toolbarBtn,index) in widgetParams.commonOperations" :operation="adjustment(toolbarBtn)" :widget-context="getWidgetContext(toolbarBtn)" :key="index" class="full-column" style="flex: 1"></meta-operation>
         </div>
     </div>
 </template>

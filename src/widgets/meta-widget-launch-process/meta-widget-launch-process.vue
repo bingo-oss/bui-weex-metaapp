@@ -4,9 +4,7 @@
             <meta-widget-page ref="formPage" :query="{dataId:params.dataId}" :widget-params="params"></meta-widget-page>
         </div>
         <div class="action-bar">
-            <meta-operation v-for="(toolbarBtn,index) in widgetParams.commonOperations" :operation="adjustment(toolbarBtn)" :widget-context="getWidgetContext(toolbarBtn)" :key="index" class="full-column">
-                
-            </meta-operation>
+            <meta-operation v-for="(toolbarBtn,index) in widgetParams.commonOperations" :operation="adjustment(toolbarBtn)" :widget-context="getWidgetContext(toolbarBtn)" :key="index" class="full-column"></meta-operation>
         </div>
 
     </div>
@@ -118,31 +116,8 @@
         padding-right: 20px;
         flex: 1;
     }
-    .scrollerDiv{
-        /*        padding-left: 20px;
-                padding-right: 20px;*/
-    }
     .action-bar {
         flex-direction: row;
-    }
-    .action-button {
-        height: 100px;
-        flex-direction: row;
-        align-items: center;
-        flex: 1;
-        background-color: #F9F9F9;
-        border-top-style: solid;
-        border-top-width: 2px;
-        border-top-color: #CCCCCC;
-    }
-    .action-button-text{
-        flex: 1;
-        text-align: center;
-        font-size: 34px;
-        color: #86868D;
-        border-left-color: #BEBCBC;
-        border-left-width: 1px;
-        border-left-style: solid;
     }
     .widget-operation{
         background-color: #000;
