@@ -4,7 +4,7 @@
             <bui-tabbar :tabItems="tabItems" showSelectedLine=true @change="onItemChange" v-model="currentTab" titleSize="32"></bui-tabbar>
             <slider class="full-column" @change="" :index="currentTab">
                 <scroller class="full-column" v-show="currentTab==0">
-                    <div class="process_abstract" v-if="abstract.processInstance">
+                    <div class="form-group process_abstract" v-if="abstract.processInstance">
                         <p class="_wrap"><text class="pageSize1">{{abstract.processInstance.name}}</text></p>
                         <p class="_wrap"><text class="pageSize2">发起人：{{abstract.processInstance.startUserName}} &nbsp;&nbsp; </text></p>
                         <p class="_wrap"><text class="pageSize2">发起时间：{{formatDateTime(abstract.processInstance.startDate)}}</text></p>
@@ -213,17 +213,18 @@
         font-size: 34px;
     }
     .pageSize2{
-        font-size: 30px;
+        font-size: 28px;
         color: #666;
     }
     .process_abstract{
-        padding-top:20px;
-        padding-left: 20px;
-        padding-right: 20px;
-        padding-bottom: 20px;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-left: 20px;
+        margin-right: 20px;
+        padding-bottom: 50px;
     }
     ._wrap{
-        padding-top: 20px;
+        padding-top: 25px;
         flex-wrap: wrap;
     }
     .process_foot{ padding-top: 15px; padding-left: 15px; padding-right: 15px;}
