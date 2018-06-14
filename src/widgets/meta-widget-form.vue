@@ -199,8 +199,10 @@
                         let _model=this.getToUpdateModel();
                         service.updateEntity(this.engineUrl, this.entityName, this.entityId, _model).then(data => {
                             resolve(data);
-                            this.$toast('编辑成功');
-                            //this.$pop();
+                            //嵌入使用时，不弹出提示
+                            if(!this.widgetParams.embedded){
+                                this.$toast('编辑成功');
+                            }
                         }).catch(err => {
                             reject();
                             this.$alert(err);
@@ -215,8 +217,9 @@
                         }
                         service.createEntify(this.engineUrl, this.entityName, this.queryParam, postData).then(data => {
                             resolve(data);
-                            this.$toast('创建成功');
-                            //this.$pop();
+                            if(!this.widgetParams.embedded){
+                                this.$toast('创建成功');
+                            }
                         }).catch(err => {
                             reject();
                             this.$alert(err);
