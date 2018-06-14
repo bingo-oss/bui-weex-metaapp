@@ -13,7 +13,7 @@
 
 <script>
 import mixin from './component-mixin.js'
-const picker = weex.requireModule('picker');
+const picker = weex.requireModule('PickerModule');
 
 export default {
     componentType: 'Time',

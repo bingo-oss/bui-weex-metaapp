@@ -25,7 +25,7 @@
 
 <script>
 import mixin from './component-mixin.js'
-const picker = weex.requireModule('picker');
+const picker = weex.requireModule('PickerModule');
 
 export default {
     componentType: 'DateTime',
@@ -84,40 +84,15 @@ export default {
     },
     methods: {
         pickDateTime() {
-            // this.$alert(weex.config.env.platform)
-            if (weex.config.env.platform === 'android') {
-                return new Promise((resolve, reject) => {
-                    picker.pickDate({
-                        format: 'yyyy-MM-dd hh:mm',
-                    }, (res) => {
-                        // this.$alert(res)
-                        if (res.result === 'success') {
-                            resolve(`${res.data}:00`);
-                        }
-                    })
+            return new Promise((resolve, reject) => {
+                picker.pickDate({
+                    format: 'yyyy-MM-dd HH:mm',
+                }, (res) => {
+                    if (res.result === 'success') {
+                        resolve(`${res.data}:00`);
+                    }
                 })
-            } else if (weex.config.env.platform === 'iOS') {
-                return new Promise((resolve, reject) => {
-                    picker.pickDate({
-                        value: 'yyyy-MM-dd'
-                    }, (res) => {
-                        if (res.result === 'success') {
-                            let d = res.data;
-                            setTimeout(() => {
-                                picker.pickTime({
-                                    value: 'HH:mm'
-                                }, (res) => {
-                                    if (res.result === 'success') {
-                                        let t = res.data;
-                                        resolve(`${d} ${t}:00`);
-                                    }
-                                })
-                            }, 500) // TODO: 这里需要延时，否则 pickTime 无法弹出
-                        }
-                    });
-                })
-            }
-            return Promise.resolve('test')
+            })
         },
         inputClicked() {
             if(this.readonly){

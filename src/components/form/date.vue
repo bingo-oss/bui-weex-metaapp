@@ -13,7 +13,7 @@
 
 <script>
 import mixin from './component-mixin.js'
-const picker = weex.requireModule('picker');
+const picker = weex.requireModule('PickerModule');
 
 export default {
     componentType: 'Date',
@@ -35,7 +35,7 @@ export default {
                 return;
             }
             picker.pickDate({
-                value: 'yyyy-MM-dd'
+                format: 'yyyy-MM-dd'
             }, (res) => {
                 if (res.result === 'success') {
                     this.$emit('input', res.data);
