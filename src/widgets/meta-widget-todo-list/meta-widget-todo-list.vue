@@ -185,11 +185,13 @@
                     operation:_rowSingleClick,
                     widgetContext:_widgetCtx
                 });
-                let commonOptName=operation.name;
-                let commonOpt=commonOperation.createOperation(commonOptName);
-                if(commonOpt){
-                    operation= _.extend(operation,commonOpt);
-                    operation.onclick(_widgetCtx,{operation:operation});
+                if(operation.onclick){//脚本操作
+                    if(_.isFunction(operation.onclick)){
+                        operation.onclick(_widgetCtx,{operation:operation});
+                    }else{
+                        var onclick=Function('"use strict";return ' + operation.onclick  )();
+                        onclick(_widgetCtx,{operation:operation});
+                    }
                 }
             },
             titleClicked(e) {
