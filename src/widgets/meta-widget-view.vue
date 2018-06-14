@@ -180,7 +180,7 @@ module.exports = {
             this.filters = result;
             this.refreshData();
         },
-        // 查看选中记录的主页
+        //单击行执行
         rowSingleClick(rowData) {
             var _rowSingleClick=this.widgetParams.rowSingleClick;
             var _widgetCtx=this.getWidgetContext(rowData);
