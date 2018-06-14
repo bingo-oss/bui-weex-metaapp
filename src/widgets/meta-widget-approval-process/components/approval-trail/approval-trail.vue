@@ -12,6 +12,7 @@
 <script>
 import _ from '../../../../js/tool/lodash.js'
 import service from './js/service';
+import utils from '../../../../js/tool/utils';
 export default {
     props: {
         widgetParams: {
@@ -54,7 +55,7 @@ export default {
                             item.date = "审核人："+item.assigneeName+" "
                         }
                         if (item.createTime) {
-                            item.date += "审核时间：" + (new Date(item.createTime)).toLocaleString(undefined, {hour12: true})+" "
+                            item.date += "审核时间：" + utils.formatDate(new Date(item.createTime))+" "
                         }
                         if(!item.assigneeName && !item.createTime && index<(taskList.length-1)) {
                             item.date = "被驳回"
@@ -70,7 +71,7 @@ export default {
 
                     _this.trail.unshift({
                         title: procInst.startUserName + "发起了" + procInst.processDefinitionName,
-                        date: "发起时间"+(new Date(procInst.startDate)).toLocaleString(undefined, {hour12: true})
+                        date: "发起时间："+utils.formatDate(new Date(procInst.startDate))
                     });
                 })
             }

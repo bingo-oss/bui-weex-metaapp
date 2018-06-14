@@ -32,6 +32,7 @@
     import service from './js/service';
     import buiweex from 'bui-weex';
     import EventBus from '../../js/bus';
+    import utils from '../../js/tool/utils';
     export default {
         props: {
             widgetParams: {
@@ -146,7 +147,7 @@
             },
             formatDateTime(obj){
                 let d = new Date(obj);
-                return d.toLocaleString(undefined, {hour12: true});
+                return utils.formatDate(d);
             }
         },
         mounted(){

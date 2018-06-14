@@ -26,6 +26,7 @@
 <script>
 import mixin from './component-mixin.js'
 const picker = weex.requireModule('PickerModule');
+import utils from '../../js/tool/utils';
 
 export default {
     componentType: 'DateTime',
@@ -34,6 +35,7 @@ export default {
         return {
             filterPointStart: '',
             filterPointEnd: '',
+            datetimeFormat:'yyyy-MM-dd HH:mm'
         }
     },
     computed: {
@@ -45,21 +47,21 @@ export default {
         filterPointStartText() {
             if (this.filterPointStart) {
                 let d = this.parseDate(this.filterPointStart);
-                return d.toLocaleString('zh-CN', {hour12: false, timeZone: 'Asia/Shanghai'});
+                return utils.formatDate(d,this.datetimeFormat);
             }
             return '';
         },
         filterPointEndText() {
             if (this.filterPointEnd) {
                 let d = this.parseDate(this.filterPointEnd);
-                return d.toLocaleString('zh-CN', {hour12: false, timeZone: 'Asia/Shanghai'});
+                return utils.formatDate(d,this.datetimeFormat);
             }
             return '';
         },
         valueText() {
             if (this.value) {
                 let d = new Date(this.value);
-                return d.toLocaleString('zh-CN', {hour12: false, timeZone: 'Asia/Shanghai'});
+                return utils.formatDate(d,this.datetimeFormat);
             }
             return '';
         }
@@ -86,7 +88,7 @@ export default {
         pickDateTime() {
             return new Promise((resolve, reject) => {
                 picker.pickDate({
-                    format: 'yyyy-MM-dd HH:mm',
+                    format: this.datetimeFormat,
                 }, (res) => {
                     if (res.result === 'success') {
                         resolve(`${res.data}:00`);

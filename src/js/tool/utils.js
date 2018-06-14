@@ -49,6 +49,27 @@ const Utils={
         invisible:"invisible",
         readonly:"readonly",
         forceView:"forceView"//保留模式，流程表单暂不启用，兼容旧的强制查看模式
+    },
+    formatDate(dateObj,fmt){ //dateObj:new Date fmt:yyyy-MM-dd HH:mm
+        fmt=fmt||'yyyy-MM-dd HH:mm:ss';
+        var dateStr=fmt;
+        var o = {
+            "M+": dateObj.getMonth() + 1, //月份 
+            "d+": dateObj.getDate(), //日 
+            "H+": dateObj.getHours(), //小时 
+            "m+": dateObj.getMinutes(), //分 
+            "s+": dateObj.getSeconds(), //秒 
+            "S": dateObj.getMilliseconds() //毫秒 
+        };
+        if (/(y+)/.test(dateStr)) {
+            dateStr = dateStr.replace(RegExp.$1, (dateObj.getFullYear() + "").substr(4 - RegExp.$1.length));
+        }
+        for (var k in o){
+            if (new RegExp("(" + k + ")").test(dateStr)) {
+                dateStr = dateStr.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            }
+        }
+        return dateStr;
     }
 };
 export default Utils;

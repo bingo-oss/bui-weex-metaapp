@@ -221,7 +221,7 @@
                     switch (field.type) {
                         case 'date-time':
                             let d = new Date(obj[field.key]);
-                            return d.toLocaleString(undefined, {hour12: true})
+                            return Utils.formatDate(d);
                         default:
                     }
                     return obj[field.key];
