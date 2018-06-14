@@ -187,10 +187,10 @@
                 });
                 if(operation.onclick){//脚本操作
                     if(_.isFunction(operation.onclick)){
-                        operation.onclick(_widgetCtx,{operation:operation});
+                        operation.onclick(Object.assign(_widgetCtx,operation),{operation:operation});
                     }else{
                         var onclick=Function('"use strict";return ' + operation.onclick  )();
-                        onclick(_widgetCtx,{operation:operation});
+                        onclick(Object.assign(_widgetCtx,operation),{operation:operation});
                     }
                 }
             },
