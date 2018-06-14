@@ -179,7 +179,7 @@
                 return new Promise((resolve,reject)=>{
                     let validated = true;
                     for (let id in this.$refs) {
-                        let validateFunc = this.$refs[id].validate;
+                        let validateFunc = this.$refs[id]&&this.$refs[id][0].validate;
                         if (!validateFunc) {
                             continue;
                         }
