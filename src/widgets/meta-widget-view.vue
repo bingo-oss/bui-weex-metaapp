@@ -188,11 +188,21 @@ module.exports = {
                 operation:_rowSingleClick,
                 widgetContext:_widgetCtx
             });
+            //目前支持通用操作和脚本操作
             let commonOptName=operation.name;
-            let commonOpt=commonOperation.createOperation(commonOptName);
-            if(commonOpt){
-                operation= _.extend(operation,commonOpt);
-                operation.onclick(_widgetCtx,{operation:operation});
+            if(commonOptName){
+                let commonOpt=commonOperation.createOperation(commonOptName);
+                if(commonOpt){
+                    operation= _.extend(operation,commonOpt);
+                    operation.onclick(_widgetCtx,{operation:operation});
+                }
+            }else if(operation.onclick){//脚本操作
+                if(_.isFunction(operation.onclick)){
+                    operation.onclick(_widgetCtx,{operation:operation});
+                }else{
+                    var onclick=Function('"use strict";return ' + operation.onclick  )();
+                    onclick(_widgetCtx,{operation:operation});
+                }
             }
         },
         titleClicked(e) {
