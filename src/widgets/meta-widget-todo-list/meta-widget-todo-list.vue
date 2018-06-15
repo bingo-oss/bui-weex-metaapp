@@ -2,13 +2,9 @@
     <div class="wrapper">
         <bui-header :leftItem="{icon: 'ion-chevron-left'}" @leftClick="pop">
             <div slot="center" class="page-title-wrapper" @click="titleClicked">
-                <text class="page-title" @click="titleClicked">{{title}}</text>
-                <bui-icon v-if="presetFilters.length" name="ion-chevron-down" color="white" @click="titleClicked"></bui-icon>
+                <text class="page-title">{{title}}</text>
             </div>
             <div slot="right" class="header-right-wrapper">
-                <!--<div class="header-button" @click="filterClicked">
-                    <bui-icon name="ion-funnel" color="white" @click="filterClicked"></bui-icon>
-                </div>-->
                 <div class="header-button">
                     <template v-if="mobileHeaderOperations.length===1">
                         <meta-operation  btn-type="icon" :operation="mobileHeaderOperations[0]" :widget-context="getWidgetContext()"></meta-operation>
@@ -17,7 +13,6 @@
                 </div>
             </div>
         </bui-header>
-        <!--<bui-searchbar-center @search="onSearch" @clear="onSearchClear" placeholder="请输入搜索内容"></bui-searchbar-center>-->
         <list class="scroller">
             <refresh-wrapper @refresh="onrefresh" :isRefreshing="isRefreshing"></refresh-wrapper>
 
@@ -62,22 +57,6 @@
                 </meta-operation>
             </div>
         </bui-dropdown>
-
-        <bui-dropdown ref="dropdown" :center=true>
-            <bui-cell v-for="filter in presetFilters" :key="filter.id" :title="filter.title" @cellClick="presetFilterChosen(filter)"></bui-cell>
-        </bui-dropdown>
-
-
-        <!--<bui-popup v-model="showPopup" pos="right" width=600>
-            <filter-view
-                    :filters="filters"
-                    :viewDef="viewDef"
-                    :swaggerEntiyDef="swaggerEntiyDef"
-                    :engineUrl="engineUrl"
-                    @filter="customFilterSet"
-                    @cancel="showPopup = false">
-            </filter-view>
-        </bui-popup>-->
     </div>
 </template>
 
@@ -112,8 +91,6 @@
                 dataUrlPath: '', // 获取 listData 的 url 路径，不包含 queryParam
                 queryParam: {}, // 获取 listData 的 queryParam
                 listData: [],
-                selectFields: [],
-                quickSearchableField: [],
                 swaggerEntiyDef: {},
                 p1: 'name',
                 p2: 'processDefinitionName',
@@ -123,13 +100,6 @@
                     key:"startDate",
                     type:"date-time"
                 },
-                //presetFilters: [],
-                filters: {}, // 高级搜索 filter
-                quickSearchFilters: '', // 快捷搜索 filter
-                selectedFilter: null, // 预设 filter
-                showDropdown: false,
-                showPopup: false,
-                showOperationsDropdown:false,
                 isRefreshing: false,
                 loadingStatus: 'init',
                 currentPage: 1,
@@ -139,13 +109,7 @@
         },
         computed: {
             title() {
-                if (this.selectedFilter) {
-                    return this.selectedFilter.title;
-                }
                 return '全部'; // 无可用分类时，默认显示‘全部’
-            },
-            presetFilters(){
-                return this.widgetParams.views||[];
             },
             grid(){
                 return this;
@@ -167,15 +131,6 @@
               //跳转页面--暴露给外部使用
               buiweex.push(Utils.pageEntry(),queryParam);
             },
-            filterClicked() {
-                this.showPopup = true;
-            },
-            customFilterSet(result) {
-                // this.$alert(result);
-                this.showPopup = false;
-                this.filters = result;
-                this.refreshData();
-            },
             // 查看选中记录的主页
             rowSingleClick(rowData) {
                 if(!this.widgetParams.rowSingleClick)return
@@ -194,25 +149,12 @@
                     }
                 }
             },
-            titleClicked(e) {
-                // 没有分类则无动作
-                if (!this.presetFilters.length) return;
-                this.$refs.dropdown.show(e);
-                this.showDropdown = true;
-            },
             titleOperationClicked(e){
                 //通用操作弹窗
                 //let _t = this;
                 if (!this.widgetParams.commonOperations.length<2) return;
                 this.$refs.operationsDropdown.show(e);
                 this.operationsDropdown = true;
-            },
-            presetFilterChosen(filter) {
-                this.$refs.dropdown.hide();
-                this.selectedFilter = filter;
-                this.getView();//获取视图配置和数据
-                //this.queryParam.viewId = filter.viewId;
-                //this.refreshData();
             },
             // 一些字段的值是 id，通过这个方法将其转换为对应的用于显示的值
             getFieldValue(obj, field) {
@@ -235,20 +177,6 @@
             fetchData(page) {
                 this.queryParam.size = this.size;
                 this.queryParam.page = page || 0;
-                let filtersParts = [];
-                // 最终参数里的 filters 由 this.filters, this.quickSearchFilters, this.selectedFilter 三大部分组成
-                if (this.filters) {
-                    for (let k in this.filters) {
-                        if (this.filters[k]) filtersParts.push(this.filters[k]);
-                    }
-                }
-                if (this.quickSearchFilters) {
-                    filtersParts.push(this.quickSearchFilters);
-                }
-                if (this.selectedFilter && this.selectedFilter.value) {
-                    filtersParts.push(this.selectedFilter.value)
-                }
-                this.queryParam.filters = filtersParts.join(' and ');
                 this.queryParam.total = true;
                 return ajax.get(this.dataUrlPath, this.queryParam).then(resp => {
                     return resp.data;
@@ -289,23 +217,12 @@
             onloading() {
                 this.loadMore();
             },
-            onSearch(keyword) {
-                let filtersStr = keyword && this.quickSearchableField.map(name => `${name} like '%${keyword}%'`).join(' or ')
-                this.quickSearchFilters = filtersStr && `(${filtersStr})`; // and 优先级比 or 高，这里先用 () 包裹起来
-                this.refreshData();
-            },
-            onSearchClear() {
-                this.quickSearchFilters = '';
-                this.refreshData();
-            },
             pop() {
                 this.$pop();
             },
             viewAppear() {
                 // 只在获取过数据，且筛选页面未打开的时候才刷新
-                if (this.dataInited && !this.showPopup) {
-                    this.refreshData();
-                }
+                this.refreshData();
             },
             viewDisappear() {
                 // BUG: Android 上如果绑定 viewdisappear，push 再 pop 页面会报错
@@ -354,9 +271,6 @@
             }
         },
         created(){
-            if(this.widgetParams.defaultView) {
-                this.selectedFilter = this.widgetParams.defaultView;
-            }
             this.getView();//获取数据
         },
         components: {

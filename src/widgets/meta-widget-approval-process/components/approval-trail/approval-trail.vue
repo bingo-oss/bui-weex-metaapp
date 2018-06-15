@@ -52,16 +52,16 @@ export default {
                         item.title = item.name;
                         item.date = "";
                         if(item.assigneeName){
-                            item.date = "审核人："+item.assigneeName+" "
+                            item.date = "审批人："+item.assigneeName+" "
                         }
                         if (item.createTime) {
-                            item.date += "审核时间：" + utils.formatDate(new Date(item.createTime))+" "
+                            item.date += "审批时间：" + utils.formatDate(new Date(item.createTime))+" "
                         }
                         if(!item.assigneeName && !item.createTime && index<(taskList.length-1)) {
                             item.date = "被驳回"
                         }
                         if (variables[item.id + "-opinion"]) {
-                            item.date += "审核意见" + variables[item.id + "-opinion"];//审批意见
+                            item.date += "审批意见" + variables[item.id + "-opinion"];//审批意见
                         }
                         if(index==(taskList.length-1)) {
                             item.highlight = true;

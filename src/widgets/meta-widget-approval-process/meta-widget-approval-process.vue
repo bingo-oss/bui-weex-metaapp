@@ -34,6 +34,8 @@
     import buiweex from 'bui-weex';
     import EventBus from '../../js/bus';
     import utils from '../../js/tool/utils';
+    import _ from '../../js/tool/lodash.js'
+
     export default {
         props: {
             widgetParams: {
