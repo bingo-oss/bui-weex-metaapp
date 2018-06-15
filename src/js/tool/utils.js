@@ -51,6 +51,22 @@ const Utils={
         forceView:"forceView"//保留模式，流程表单暂不启用，兼容旧的强制查看模式
     },
     formatDate(dateObj,fmt){ //dateObj:new Date fmt:yyyy-MM-dd HH:mm
+        //是否是合法的日期对象
+        let isDate=dateObj instanceof Date && !isNaN(dateObj.valueOf());
+        if(!isDate){
+            //直接传递的合法的日期字符串，转换成日期
+            if(typeof dateObj === 'string' || dateObj instanceof String){
+                let dateObj2=new Date(dateObj);
+                isDate=dateObj2 instanceof Date && !isNaN(dateObj2.valueOf());
+                if(!isDate){//不合法的日期，返回原始值
+                    return dateObj;
+                }else{
+                    dateObj=dateObj2;
+                }
+            }else{
+                return '';
+            }
+        }
         fmt=fmt||'yyyy-MM-dd HH:mm:ss';
         var dateStr=fmt;
         var o = {

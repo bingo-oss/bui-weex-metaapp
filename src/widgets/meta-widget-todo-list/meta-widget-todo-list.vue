@@ -222,8 +222,7 @@
                     // 对于非直接调用的字段处理
                     switch (field.type) {
                         case 'date-time':
-                            let d = new Date(obj[field.key]);
-                            return Utils.formatDate(d);
+                            return Utils.formatDate(obj[field.key]);
                         default:
                     }
                     return obj[field.key];
