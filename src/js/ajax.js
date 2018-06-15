@@ -74,13 +74,14 @@ export default {
 
         })
     },
-    get(url, queryParam) {
+    get(url, queryParam,headers) {
         if (queryParam) {
             url += object2query(queryParam);
         }
         let param = {
             method: 'GET',
             url,
+            headers:headers
         }
         return this.request(param);
     },
