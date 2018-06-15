@@ -51,8 +51,7 @@
             <cell class="list-item no-data" v-if="listData.length === 0">
                 <text class="empty-tips">暂无数据</text>
             </cell>
-            <!-- 在数据长度小于 size 时，说明已经没有更多数据了 -->
-            <loading-wrapper v-if="listData.length && listData.length >= size" @loading="onloading" :status="loadingStatus">
+            <loading-wrapper @loading="onloading" :status="loadingStatus">
             </loading-wrapper>
         </list>
 
@@ -111,7 +110,7 @@
                 entityName: '',
                 dataUrlPath: '', // 获取 listData 的 url 路径，不包含 queryParam
                 queryParam: {}, // 获取 listData 的 queryParam
-                listData: [],
+                listData: [],//所有数据
                 selectFields: [],
                 quickSearchableField: [],
                 swaggerEntiyDef: {},
@@ -220,10 +219,9 @@
                     return obj[field]
                 } else if(typeof field!="string") {
                     // 对于非直接调用的字段处理
-                    switch (field.type) {
-                        case 'date-time':
-                            return Utils.formatDate(obj[field.key]);
-                        default:
+                    if (field.type==='date-time') {
+                        let _temp= Utils.formatDate(obj[field.key]);
+                        return _temp;
                     }
                     return obj[field.key];
                 }
@@ -248,18 +246,25 @@
                 if (this.selectedFilter && this.selectedFilter.value) {
                     filtersParts.push(this.selectedFilter.value)
                 }
-                this.queryParam.filters = filtersParts.join(' and ');
+                //this.queryParam.filters = filtersParts.join(' and ');
                 this.queryParam.total = true;
-                return ajax.get(this.dataUrlPath, this.queryParam).then(resp => {
+                return ajax.get(this.dataUrlPath, this.queryParam,{accept:"application/json"}).then(resp => {
                     return resp.data;
                 })
+            },
+            toListData(data){
+                var _d=[];
+                _.each(data.list.entries,(v)=>{
+                    _d.push(v.entry);
+                });
+                return _d;
             },
             refreshData() {
                 if (this.isRefreshing) return;
                 this.isRefreshing = true;
                 this.fetchData(0).then(data => {
                     this.dataInited = true; // 控制 viewAppear 时是否刷新页面，只有获取数据成功过才刷新
-                    this.listData = data["_embedded"]["qTasks"];
+                    this.listData = this.toListData(data);
                     this.isRefreshing = false;
                     this.currentPage = 1;
                     this.loadingStatus = 'init';
@@ -272,8 +277,8 @@
                 if (this.loadingStatus == 'loading') return;
                 this.loadingStatus = 'loading';
                 this.fetchData(this.currentPage + 1).then(data => {
-                    if (data&&data["_embedded"]&&data["_embedded"]["qTasks"].length) {
-                        this.listData = this.listData.concat(data["_embedded"]["qTasks"]);
+                    if (data&&data.list&&data.list.entries&&data.list.entries.length) {
+                        this.listData = this.listData.concat(this.toListData(data));
                         this.loadingStatus = 'init';
                         this.currentPage++;
                     } else {
