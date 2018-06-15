@@ -47,6 +47,9 @@ export default {
                 }
                 case 'noMore': {
                     this.display = 'show';
+                    setTimeout(()=>{
+                        this.display='hide';
+                    },500);
                     break;
                 }
             }
