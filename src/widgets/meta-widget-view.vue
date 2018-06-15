@@ -57,8 +57,7 @@
             <cell class="list-item no-data" v-if="listData.length === 0">
                 <text class="empty-tips">暂无数据</text>
             </cell>
-            <!-- 在数据长度小于 pageSize 时，说明已经没有更多数据了 -->
-            <loading-wrapper v-if="listData.length && listData.length >= pageSize" @loading="onloading" :status="loadingStatus">
+            <loading-wrapper @loading="onloading" :status="loadingStatus">
             </loading-wrapper>
         </list>
 
