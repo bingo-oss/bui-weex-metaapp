@@ -1,7 +1,7 @@
 <template lang="html">
     <div v-if="showComponent" class="form-group">
         <div class="label-wrapper">
-            <text class="form-label">{{definition.componentParams.title}}:</text>
+            <text class="form-label">{{definition.componentParams.title}}</text>
             <text class="required-mark" v-if="definition.componentParams.required">*</text>
         </div>
         <switch @change="change" :disabled="readonly" :value="value"></switch>
