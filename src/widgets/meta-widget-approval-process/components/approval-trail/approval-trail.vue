@@ -1,10 +1,24 @@
 <template>
 <div class="approval-trail">
     <scroller class="scroller">
-        <bui-flow
-            :items="trail"
-            :customStyles="customStyles"
-            @click=''></bui-flow>
+        <bui-timeline>
+            <bui-timeline-item v-for="(item,index) in trail" :first="index===0" :last="index===trail.length-1 && index!==0" :key="item.id">
+                <div style="flex-direction:column;">
+                    <div class="approval-trail-title">
+                        <text class="font28">{{item.name}}</text>
+                    </div>
+                    <div class="approval-trail-details" style="flex-direction:column;">
+                        <div class="approval-trail-info" v-if="index===0">
+                            <text class="font28 color-sub" v-if="item.createTime">发起时间: {{item.createTime}}&nbsp;&nbsp;</text>
+                        </div>
+                        <div class="approval-trail-info" v-else>
+                            <text class="font28 color-sub" v-if="item.assigneeName">审批人: {{item.assigneeName}}&nbsp;&nbsp;审批时间: {{item.createTime}}</text>
+                            <text class="font28 color-sub" v-if="item.opinion">审批意见: {{item.opinion}}</text>
+                        </div>
+                    </div>
+                </div>
+            </bui-timeline-item>
+        </bui-timeline>
     </scroller>
 </div>
 </template>
@@ -49,29 +63,18 @@ export default {
                     var variables =  resp.processInstance.variables;
                     var taskList = resp.tasks.content
                     _.each(taskList,function(item,index){
-                        item.title = item.name;
-                        item.date = "";
-                        if(item.assigneeName){
-                            item.date = "审批人："+item.assigneeName+" "
-                        }
                         if (item.createTime) {
-                            item.date += "审批时间：" + utils.formatDate(new Date(item.createTime))+" "
-                        }
-                        if(!item.assigneeName && !item.createTime && index<(taskList.length-1)) {
-                            item.date = "被驳回"
+                            item.createTime=utils.formatDate(item.createTime);
                         }
                         if (variables[item.id + "-opinion"]) {
-                            item.date += "审批意见" + variables[item.id + "-opinion"];//审批意见
-                        }
-                        if(index==(taskList.length-1)) {
-                            item.highlight = true;
+                            item.opinion = variables[item.id + "-opinion"];
                         }
                         _this.trail.push(item)
                     });
 
                     _this.trail.unshift({
-                        title: procInst.startUserName + "发起了" + procInst.processDefinitionName,
-                        date: "发起时间："+utils.formatDate(new Date(procInst.startDate))
+                        name: procInst.startUserName + "发起了" + procInst.processDefinitionName,
+                        createTime: utils.formatDate(procInst.startDate)
                     });
                 })
             }
@@ -86,7 +89,19 @@ export default {
     .scroller{
         flex:1;
     }
+    .font28{
+        font-size:28px;
+    }
+    .color-sub{
+        color:#666;
+    }
     .approval-trail{
         flex:1;
+        padding-top:66px;
+        padding-left:20px;
     }
+    .approval-trail-details{
+        margin-top:20px;
+    }
+    
 </style>
