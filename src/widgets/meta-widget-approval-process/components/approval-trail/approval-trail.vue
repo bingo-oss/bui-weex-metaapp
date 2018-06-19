@@ -7,13 +7,17 @@
                     <div class="approval-trail-title">
                         <text class="font28">{{item.name}}</text>
                     </div>
-                    <div class="approval-trail-details" style="flex-direction:column;">
+                    <div class="approval-trail-details">
                         <div class="approval-trail-info" v-if="index===0">
                             <text class="font28 color-sub" v-if="item.createTime">发起时间: {{item.createTime}}&nbsp;&nbsp;</text>
                         </div>
                         <div class="approval-trail-info" v-else>
-                            <text class="font28 color-sub" v-if="item.assigneeName">审批人: {{item.assigneeName}}&nbsp;&nbsp;审批时间: {{item.createTime}}</text>
-                            <text class="font28 color-sub" v-if="item.opinion">审批意见: {{item.opinion}}</text>
+                            <template v-if="item.assigneeName||item.opinion">
+                                <text class="font28 color-sub" v-if="item.assigneeName">审批人: {{item.assigneeName}}&nbsp;&nbsp;<template v-if="item.createTime">审批时间: {{item.createTime}}</template></text>
+                                <text class="font28 color-sub" v-if="item.opinion">审批意见: {{item.opinion}}</text>
+                            </template>
+                            <template v-if="!item.assigneeName && !item.createTime && index<(trail.length-1)"><text class="font28 color-sub">被驳回 &nbsp;&nbsp;<template v-if="item.opinion">驳回意见: {{item.opinion}}</template></text>
+                            </template>
                         </div>
                     </div>
                 </div>
@@ -95,6 +99,7 @@ export default {
     .color-sub{
         color:#666;
     }
+    .approval-trail-title{ padding-top: 4px;}
     .approval-trail{
         flex:1;
         padding-top:66px;
@@ -102,6 +107,10 @@ export default {
     }
     .approval-trail-details{
         margin-top:20px;
+        flex-direction:column;
+    }
+    .approval-trail-info{
+        width: 700px;
     }
     
 </style>
