@@ -4,18 +4,15 @@
             <bui-tabbar :tabItems="tabItems" showSelectedLine=true @change="onItemChange" v-model="currentTab" titleSize="32"></bui-tabbar>
             <slider class="full-column" @change="" :index="currentTab">
                 <scroller class="full-column" v-show="currentTab==0">
-                    <div class="form-group process_abstract" v-if="abstract.processInstance">
-                        <p class="_wrap"><text class="pageSize1">{{abstract.processInstance.name}}</text></p>
-                        <p class="_wrap"><text class="pageSize2">发起人：{{abstract.processInstance.startUserName}} &nbsp;&nbsp; </text></p>
-                        <p class="_wrap"><text class="pageSize2">发起时间：{{formatDateTime(abstract.processInstance.startDate)}}</text></p>
-                    </div>
-                    <div>
+                    <div style="margin-bottom: 20px;">
                         <meta-widget-page ref="formPage" :query="{dataId:params.dataId}" :widget-params="params"></meta-widget-page>
                     </div>
-                    <div class="process_foot" v-show="abstract.taskDefinitionKey">
-                        <label class="ivu-form-item-label"><text class="pageSize1">审批意见:</text></label>
-                        <textarea rows="5" placeholder="" v-model="subParams.outputVariables[abstract.id+'-opinion']" class="form-control pageSize1"></textarea>
-                    </div>
+
+                    <bui-panel title="附件" border="1">
+                        <attachment v-model="attachmentObject.list"></attachment>
+                    </bui-panel>
+
+                    <bui-panel title="正文" border="1"></bui-panel>
                 </scroller>
 
                 <div style="flex:10" v-if="currentTab==1">
@@ -24,7 +21,7 @@
             </slider>
         </div>
         <div class="action-bar">
-            <meta-operation v-for="(toolbarBtn,index) in widgetParams.commonOperations" :operation="adjustment(toolbarBtn)" :widget-context="getWidgetContext(toolbarBtn)" :key="index" class="full-column" style="flex: 1"></meta-operation>
+            <meta-operation v-for="(toolbarBtn,index) in widgetParams.commonOperations" :operation="toolbarBtn" :widget-context="getWidgetContext(toolbarBtn)" :key="index" class="full-column" style="flex: 1"></meta-operation>
         </div>
     </div>
 </template>
@@ -62,7 +59,11 @@
                         icon: "",
                         title: "处理轨迹"
                     }
-                ]
+                ],
+                attachmentObject:{
+                    list:[],//用于存储附件组件返回的数据结构
+                    oList:[]//存储附件数据,用于过滤新数据结构
+                }
             }
         },
         created(){
@@ -74,9 +75,10 @@
                 return {
                     taskId:_t.params.taskId,
                     outputVariables: {
-                        deptLeaderPass: true,
-                        hrPass: true,
-                        [_t.abstract.id+'-opinion']:""
+                        hrPass: true
+                    },
+                    localVariables:{
+                        opinion:""
                     },
                     "commandType":"CompleteTaskCmd"
                 }
@@ -119,31 +121,16 @@
                     });
                 })
             },
-            adjustment(item){
-                //测试操作执行逻辑
-                let _t = this;
-                if(item.title=="提交") {
-                    item.onclick = function (ctx,$optInst) {
-                        var spPromise=ctx.processLauncher.startProcess();
-                        //完成后按钮可再次点击
-                        spPromise.then(()=>{
-                            $optInst.mustStopRepeatedClick = false;
-                        },()=>{
-                            $optInst.mustStopRepeatedClick = false;
-                        });
-                    }
-                }else if(item.title=="驳回"){
-                    item.onclick = function (ctx,$optInst) {
-                        var spPromise=ctx.processLauncher.dismissProcess();
-                        //完成后按钮可再次点击
-                        spPromise.then(()=>{
-                            $optInst.mustStopRepeatedClick = false;
-                        },()=>{
-                            $optInst.mustStopRepeatedClick = false;
-                        });
-                    }
-                }
-                return item
+            processFormSave(){
+                //表单保存
+                let formPromise=this.$refs.formPage.submit();
+                let _this=this;
+                return new Promise((resolve,reject)=>{
+                    formPromise.then((data)=>{
+                        resolve();
+                        _this.$toast('编辑成功');
+                    });
+                });
             },
             back:function(){
                 this.$pop();
@@ -169,6 +156,12 @@
                         _this.params = Object.assign({} ,_this.widgetParams,_params);
                     })
                 }
+                service.getAttachment(_this.widgetParams.taskId,res.processInstance.businessKey).then((res) =>{
+                    //获取对应任务下的附件
+                    //_this.attachmentObject.oList = Object.assign([],res);
+                    _this.attachmentObject.list = res.data;
+                })
+
             })
 
             _.each(this.$refs.formPage.$refs.childWidgets,function(cw){

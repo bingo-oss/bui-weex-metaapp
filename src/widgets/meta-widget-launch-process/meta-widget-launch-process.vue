@@ -4,7 +4,7 @@
             <meta-widget-page ref="formPage" :query="{dataId:params.dataId}" :widget-params="params"></meta-widget-page>
         </div>
         <div class="action-bar">
-            <meta-operation v-for="(toolbarBtn,index) in widgetParams.commonOperations" :operation="adjustment(toolbarBtn)" :widget-context="getWidgetContext(toolbarBtn)" :key="index" class="full-column"></meta-operation>
+            <meta-operation v-for="(toolbarBtn,index) in widgetParams.commonOperations" :operation="toolbarBtn" :widget-context="getWidgetContext(toolbarBtn)" :key="index" class="full-column"></meta-operation>
         </div>
 
     </div>
@@ -69,22 +69,16 @@
                      });
                 });
             },
-            adjustment(item){
-                //测试操作执行逻辑
-                let _t = this;
-                if(item.title="提交") {
-                    //TODO 现在可以暂时先写在这里，后续确定后移走
-                    item.onclick = function (ctx,$optInst) {
-                        var spPromise=ctx.processLauncher.startProcess();
-                        //完成后按钮可再次点击
-                        spPromise.then(()=>{
-                            $optInst.mustStopRepeatedClick = false;
-                        },()=>{
-                            $optInst.mustStopRepeatedClick = false;
-                        });
-                    }
-                }
-                return item;
+            processFormSave(){
+                //表单保存
+                let formPromise=this.$refs.formPage.submit();
+                let _this=this;
+                return new Promise((resolve,reject)=>{
+                    formPromise.then((data)=>{
+                        resolve();
+                        _this.$toast('保存成功');
+                    });
+                });
             },
             back:function(){
                 this.$pop();

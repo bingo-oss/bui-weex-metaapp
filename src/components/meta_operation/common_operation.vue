@@ -14,6 +14,8 @@
 </template>
 <script>
 import commonOperation from './js/common_operation.js';
+import commonOperationFun from '../../widgets/libs/common_operation';
+commonOperation.register(commonOperationFun);
 import _ from '../../js/tool/lodash.js';
 export default {
     props:{

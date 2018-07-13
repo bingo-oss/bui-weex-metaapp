@@ -23,7 +23,7 @@ export default {
 
     //debugEntityId: 'O1PRfnK1A',
 
-    token: 'fa176228-319a-446d-969f-0c57838b30b0',
+    token: 'b7d271ef-b6c3-48e3-9627-99750ae3ed36',
     configFilename: 'config.json',
 
     // 读取与 list.weex.js、form.weex.js 同级的配置文件
@@ -75,6 +75,19 @@ export default {
             this.readRuntimeConfig().then((c)=>{
                 debugger
                 var url=c['apiBaseUrl'];
+                if(url){
+                    resolve(url);
+                }else{
+                    buiweex.toast(i18n.noMetadataConfigUrl);
+                    reject();
+                }
+            });
+        });
+    },
+    getStreamUrl(){
+        return new Promise((resolve, reject) => {
+            this.readRuntimeConfig().then((c)=>{
+                var url=c['service.stream.endpoint'];
                 if(url){
                     resolve(url);
                 }else{

@@ -8,15 +8,10 @@
                         <text class="font28">{{item.name}}</text>
                     </div>
                     <div class="approval-trail-details">
-                        <div class="approval-trail-info" v-if="index===0">
-                            <text class="font28 color-sub" v-if="item.createTime">发起时间: {{item.createTime}}&nbsp;&nbsp;</text>
-                        </div>
-                        <div class="approval-trail-info" v-else>
-                            <template v-if="item.assigneeName||item.opinion">
+                        <div class="approval-trail-info">
+                            <template>
                                 <text class="font28 color-sub" v-if="item.assigneeName">审批人: {{item.assigneeName}}&nbsp;&nbsp;<template v-if="item.createTime">审批时间: {{item.createTime}}</template></text>
                                 <text class="font28 color-sub" v-if="item.opinion">审批意见: {{item.opinion}}</text>
-                            </template>
-                            <template v-if="!item.assigneeName && !item.createTime && index<(trail.length-1)"><text class="font28 color-sub">被驳回 &nbsp;&nbsp;<template v-if="item.opinion">驳回意见: {{item.opinion}}</template></text>
                             </template>
                         </div>
                     </div>
@@ -66,20 +61,15 @@ export default {
                     var procInst = resp.processInstance;
                     var variables =  resp.processInstance.variables;
                     var taskList = resp.tasks.content
-                    _.each(taskList,function(item,index){
-                        if (item.createTime) {
-                            item.createTime=utils.formatDate(item.createTime);
+                    _this.trail = taskList.map(item => {
+                        return {
+                            name:item.name,
+                            assigneeName:item.assigneeName,
+                            createTime:item.createTime?utils.formatDate(item.createTime):"",
+                            opinion:item.variables?item.variables.opinion:""
                         }
-                        if (variables[item.id + "-opinion"]) {
-                            item.opinion = variables[item.id + "-opinion"];
-                        }
-                        _this.trail.push(item)
                     });
 
-                    _this.trail.unshift({
-                        name: procInst.startUserName + "发起了" + procInst.processDefinitionName,
-                        createTime: utils.formatDate(procInst.startDate)
-                    });
                 })
             }
         }

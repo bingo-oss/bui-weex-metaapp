@@ -189,6 +189,14 @@ export default {
       return func();
     }
     return null;
+  },
+  //注册部件提供的通用操作
+  register(newAddedOperations){//{name:func,name2:func2}
+    _.each(newAddedOperations,(func,name)=>{
+      if(!operations[name]){
+        operations[name]=func;
+      }
+    });
   }
 }
 

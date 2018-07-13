@@ -17,7 +17,10 @@ Vue.component('meta-widget-page',require("../widgets/meta-widget-page.vue"));
 Vue.component('meta-widget-launch-process',require("../widgets/meta-widget-launch-process/meta-widget-launch-process.vue"));
 Vue.component('meta-widget-todo-list',require("../widgets/meta-widget-todo-list/meta-widget-todo-list.vue"));
 Vue.component('meta-widget-approval-process',require("../widgets/meta-widget-approval-process/meta-widget-approval-process.vue"));
-
+//提交审批框组件
+Vue.component('submission-frame',require("../widgets/meta-widget-approval-process/components/submission-frame/submission-frame.vue"));
+//附件组件
+Vue.component('attachment',require("../widgets/meta-widget-approval-process/components/attachment/attachment.vue"));
 App.el = '#root'
 
 new Vue(App)
