@@ -16,6 +16,7 @@
 <script>
     import mixin from './component-mixin.js';
     import buiweex from "bui-weex";
+    import _ from '../../js/tool/lodash.js';
     const picker = weex.requireModule('picker');
     export default {
         componentType: 'IssuedNumber',
@@ -59,6 +60,16 @@
                         this.$emit('input', this.issuedObjcet);
                     }
                 })
+            },
+            input(){
+                let _issuedObjcet = this.issuedObjcet;
+                _issuedObjcet.fullText = "";
+                _issuedObjcet.fullText = _.values(_issuedObjcet).join("");
+                if(_.every(_.values(_issuedObjcet))){
+                    this.$emit('input',this.issuedObjcet);
+                }else{
+                    this.$emit('input',"");
+                }
             }
         },
         computed: {
