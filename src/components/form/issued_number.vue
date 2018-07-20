@@ -8,9 +8,9 @@
             <text class="form-input" :style="inputStyle">{{valueText || '选择选项...'}}</text>
             <bui-icon slot="action" name="ion-ios-arrow-right"></bui-icon>
         </div>
-        <input @input="input" :disabled="readonly" class="form-input-native" type="text" :value="issuedObjcet.code" :placeholder="definition.componentParams.placeholder" v-if="definition.componentParams.standard!='standard2'" />
-        <input @input="input" :disabled="readonly" class="form-input-native" type="text" :value="issuedObjcet.year" :placeholder="definition.componentParams.placeholder"/>
-        <input @input="input" :disabled="readonly" class="form-input-native" type="text" :value="issuedObjcet.number" :placeholder="definition.componentParams.placeholder"/>
+        <input @input="input" :disabled="readonly" class="form-input-native" type="text" v-model="issuedObjcet.code" :placeholder="definition.componentParams.placeholder" v-if="definition.componentParams.standard!='standard2'" />
+        <input @input="input" :disabled="readonly" class="form-input-native" type="text" v-model="issuedObjcet.year" :placeholder="definition.componentParams.placeholder"/>
+        <input @input="input" :disabled="readonly" class="form-input-native" type="text" v-model="issuedObjcet.number" :placeholder="definition.componentParams.placeholder"/>
     </div>
 </template>
 <script>
@@ -57,15 +57,23 @@
                     if (res.result === 'success') {
                         let id = this.definition.componentParams.options[res.data].id;
                         this.issuedObjcet.code = id;
-                        this.$emit('input', this.issuedObjcet);
+                        this.input();
                     }
                 })
             },
             input(){
-                let _issuedObjcet = this.issuedObjcet;
+                let _issuedObjcet = this.issuedObjcet,_vals=[],valueText = this.valueText;
                 _issuedObjcet.fullText = "";
-                _issuedObjcet.fullText = _.values(_issuedObjcet).join("");
-                if(_.every(_.values(_issuedObjcet))){
+                _.each(_issuedObjcet,(val,key)=>{
+                    if(val){
+                        if(key=="code"&&valueText){
+                          val = valueText;
+                        }
+                        _vals.push(val);
+                    }
+                });
+                _issuedObjcet.fullText = _vals.join("");
+                if(_vals.length){
                     this.$emit('input',this.issuedObjcet);
                 }else{
                     this.$emit('input',"");
