@@ -19,6 +19,7 @@ const formComponents= {
     'PictureUpload': require('./form/picture-upload.vue'),
     'RefEntity': require('./form/ref-entity.vue'),
     'DateTime': require('./form/datetime.vue'),
+    'IssuedNumber': require('./form/issued_number.vue'),
 }
 const tools={
     'refresh-wrapper': require('./common/refresh.vue'),

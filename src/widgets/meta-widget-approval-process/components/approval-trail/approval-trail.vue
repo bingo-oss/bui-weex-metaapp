@@ -10,7 +10,7 @@
                     <div class="approval-trail-details">
                         <div class="approval-trail-info">
                             <template>
-                                <text class="font28 color-sub" v-if="item.assigneeName">审批人: {{item.assigneeName}}&nbsp;&nbsp;<template v-if="item.createTime">审批时间: {{item.createTime}}</template></text>
+                                <text class="font28 color-sub" v-if="item.assigneeName">审批人: {{item.assigneeName}}&nbsp;&nbsp;<template v-if="item.createTime">审批时间: {{item.endTime}}</template></text>
                                 <text class="font28 color-sub" v-if="item.opinion">审批意见: {{item.opinion}}</text>
                             </template>
                         </div>
@@ -66,6 +66,7 @@ export default {
                             name:item.name,
                             assigneeName:item.assigneeName,
                             createTime:item.createTime?utils.formatDate(item.createTime):"",
+                            endTime:item.endTime?utils.formatDate(item.endTime):"",
                             opinion:item.variables?item.variables.opinion:""
                         }
                     });

@@ -4,7 +4,7 @@
             <bui-tabbar :tabItems="tabItems" showSelectedLine=true @change="onItemChange" v-model="currentTab" titleSize="32"></bui-tabbar>
             <slider class="full-column" @change="" :index="currentTab">
                 <scroller class="full-column" v-show="currentTab==0">
-                    <div style="margin-bottom: 20px;">
+                    <div>
                         <meta-widget-page ref="formPage" :query="{dataId:params.dataId}" :widget-params="params"></meta-widget-page>
                     </div>
 
