@@ -1,24 +1,30 @@
 <template>
     <div class="full-column">
         <div class="full-column">
-            <bui-tabbar :tabItems="tabItems" showSelectedLine=true @change="onItemChange" v-model="currentTab" titleSize="32"></bui-tabbar>
-            <slider class="full-column" @change="" :index="currentTab">
-                <scroller class="full-column" v-show="currentTab==0">
-                    <div>
+            <scroller class="full-column" style="background-color: #F8F8F8;">
+                <div class="panel">
+                    <text class="panel-header">基本信息</text>
+                    <div class="panel-body">
                         <meta-widget-page ref="formPage" :query="{dataId:params.dataId}" :widget-params="params"></meta-widget-page>
                     </div>
-
-                    <bui-panel title="附件" border="1">
-                        <attachment v-model="attachmentObject.list"></attachment>
-                    </bui-panel>
-
-                    <bui-panel title="正文" border="1"></bui-panel>
-                </scroller>
-
-                <div style="flex:10" v-if="currentTab==1">
-                    <approval-trail :widget-params="abstract" v-if="abstract.procInstId"></approval-trail>
                 </div>
-            </slider>
+                <div class="panel">
+                    <text class="panel-header">附件</text>
+                    <div class="panel-body">
+                        <attachment v-model="attachmentObject.list"></attachment>
+                    </div>
+                </div>
+                <div class="panel">
+                    <text class="panel-header">正文</text>
+                    <div class="panel-body"></div>
+                </div>
+                <div class="panel">
+                    <text class="panel-header">流程轨迹</text>
+                    <div class="panel-body">
+                        <approval-trail :widget-params="abstract" v-if="abstract.procInstId"></approval-trail>
+                    </div>
+                </div>
+            </scroller>
         </div>
         <div class="action-bar">
             <meta-operation v-for="(toolbarBtn,index) in widgetParams.commonOperations" :operation="toolbarBtn" :widget-context="getWidgetContext(toolbarBtn)" :key="index" class="full-column" style="flex: 1"></meta-operation>
@@ -45,21 +51,10 @@
             return {
                 abstract:{},
                 params:{},
-                title:"流程审批",
+                title:"详情",
                 leftItem: {
                     icon: 'ion-chevron-left'
                 },
-                currentTab:0,
-                tabItems: [
-                    {
-                        title: "基本信息",
-                        icon: ""
-                    },
-                    {
-                        icon: "",
-                        title: "处理轨迹"
-                    }
-                ],
                 attachmentObject:{
                     list:[],//用于存储附件组件返回的数据结构
                     oList:[]//存储附件数据,用于过滤新数据结构
@@ -223,4 +218,23 @@
         flex-wrap: wrap;
     }
     .process_foot{ padding-top: 15px; padding-left: 15px; padding-right: 15px;}
+    .panel {
+        margin-bottom: 20px;
+        background-color: #fff;
+        border-color: #E5E5E5;
+        border-width: 1px;
+    }
+    .panel-header{
+        font-size: 30px;
+        font-weight: bold;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-left: 30px;
+        padding-right: 30px;
+    }
+    .panel-body{
+        padding-bottom: 20px;
+        padding-left: 30px;
+        padding-right: 30px;
+    }
 </style>

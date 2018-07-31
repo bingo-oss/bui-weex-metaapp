@@ -1,15 +1,20 @@
 <template>
     <div>
-        <div v-for="fileList in defaultFileList" @click="handlePreview(fileList)" class="label-wrapper" style="align-items: center; height: 120px;">
-            <!--<bui-image class="file_img" width="120px" height="120px" src="https://img.alicdn.com/tps/TB1z.55OFXXXXcLXXXXXXXXXXXX-560-560.jpg"></bui-image>-->
-            <text style="font-size: 30px; width: 750px;">{{fileList.name}}</text>
+        <div v-for="(fileList,index) in defaultFileList" @click="handlePreview(fileList)" class="label-wrapper file_d" style="align-items: center;" v-if="more||(!more&&index<3)">
+            <bui-image class="file_img" width="80px" height="80px" :src="suffixImg(fileList)"></bui-image>
+            <div class="file_info">
+                <text class="file_title">{{fileList.name}}</text>
+                <text class="file_size">{{humanFileSize(fileList.size)}}</text>
+            </div>
         </div>
+        <text class="more" v-if="defaultFileList.length>3" @click="moreShow">{{more?"收起":"查看更多"}}</text>
     </div>
 </template>
 <script>
     import _ from '../../../../js/tool/lodash'
     import config from '../../../../js/config';
     import linkapi from "linkapi";
+    import buiweex from "bui-weex";
     export default {
         props: {
             uploadAction: { //上传地址
@@ -43,6 +48,7 @@
         data() {
             var officeUrl = "https://officeonline.bingosoft.net";
             return {
+                more:false,
                 officeViewUrl: `${officeUrl}/op/view.aspx?src=`,  //预览office文件地址前缀
                 officeSupport: ["ods","xls","xlsb","xlsm","xlsx","one","onetoc2","onepkg","odp","pot","potm","potx","pps","ppsm","ppsx","ppsx","ppt","pptm","pptx","doc","docm","docx","dot","dotm","dotx","odt","pdf"],
                 oldFileList: []
@@ -69,6 +75,22 @@
         },
         mounted () {},
         methods: {
+            suffixImg(file){
+                let fileSuffix = file.name.split('.');
+                if(fileSuffix&&fileSuffix.length) {
+                    fileSuffix = fileSuffix[1];
+                    var flag = 1,imgSrc = "../../../images/doc/unknown@2x.png",imgIcon = ["acc@2x.png", "avi@2x.png", "bmp@2x.png", "css@2x.png", "doc@2x.png", "docx@2x.png", "dwg@2x.png", "eml@2x.png", "eps@2x.png", "file@2x.png", "fla@2x.png", "gif@2x.png", "html@2x.png", "htm@2x.png", "ind@2x.png", "ini@2x.png", "jpeg@2x.png", "jpg@2x.png", "jsf@2x.png", "mdb@2x.png", "mid@2x.png", "mkv@2x.png", "mov@2x.png", "mp3@2x.png", "mp4@2x.png", "mpeg@2x.png", "pdf@2x.png", "png@2x.png", "ppt@2x.png", "pptx@2x.png", "proj@2x.png", "ps@2x.png", "pst@2x.png", "pub@2x.png", "rar@2x.png", "rtf@2x.png", "svg@2x.png", "swf@2x.png", "tif@2x.png", "txt@2x.png", "url@2x.png", "vsd@2x.png", "wav@2x.png", "wma@2x.png", "wmp@2x.png", "xls@2x.png", "xlsx@2x.png", "zip@2x.png"];
+                    _.each(imgIcon,function(icon,index){
+                        if (icon.split("@")[0] == fileSuffix.toLowerCase()) {
+                            flag = 0;
+                            imgSrc = icon.split("@")[0]+"_2x.png";
+                        }
+                    });
+                    //默认读取我们专业模块的图片包
+                    return  "https://www.bingolink.biz/web/images/document/"+imgSrc;
+                }
+                //return imgSrc;
+            },
             emitValue() {
                 let _uploadList=[];
                 _.each(this.$refs.upload.fileList,function(uploadFile){
@@ -81,9 +103,18 @@
                 });
                 this.$emit("input", _uploadList);
             },
-            humanFileSize(fileSize) {
-                fileSize = Number(fileSize||0);
-                return filesize(fileSize).human('jedec');//si,jedec
+            humanFileSize(fileSize){
+                //文件大小转换
+                if(typeof fileSize=="string"){
+                    return fileSize;
+                }
+                if(Math.floor(fileSize/1024/1024/1024)>0){
+                    return (fileSize/1024/1024/1024).toFixed(2)+"GB";
+                }else if(Math.floor(fileSize/1024/1024)>0){
+                    return (fileSize/1024/1024).toFixed(2)+"MB";
+                }else{
+                    return (fileSize/1024).toFixed(2)+"KB";
+                }
             },
             downloadUrl(url,success) {
                 if (_.startsWith(url, 'http://') || _.startsWith(url, 'https://')) {
@@ -156,13 +187,21 @@
                 window.open(downloadUrl, "_blank");*/
                 this.downloadUrl(file.downloadUrl,(downloadUrl)=>{
                     linkapi.openLinkBroswer("预览",previewUrl);
-                })
+                });
+            },
+            moreShow(){
+                this.more = !this.more;
             }
         }
     }
 </script>
 <style src="../../../../styles/common.css"></style>
 <style>
+    .file_d{ background-color: #F2F2F2; padding: 20px; margin-bottom: 10px;}
     .file_img{ margin-right: 20px;}
+    .file_info{ font-size: 30px; width: 750px;}
+    .file_title{ font-size: 30px; lines :1; width: 550px; text-overflow:ellipsis;}
+    .file_size{ font-size: 28px; color: #808080; margin-top: 8px;  lines :1; width: 550px; text-overflow:ellipsis;}
     .mb10{ margin-bottom: 15px;}
+    .more{ text-align: center; padding-top: 30px; padding-bottom: 20px; font-size: 30px; color: #AEAEAE;}
 </style>

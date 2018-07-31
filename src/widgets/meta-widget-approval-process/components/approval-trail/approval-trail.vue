@@ -93,11 +93,11 @@ export default {
     .approval-trail-title{ padding-top: 4px;}
     .approval-trail{
         flex:1;
-        padding-top:66px;
+        padding-top:20px;
         padding-left:20px;
     }
     .approval-trail-details{
-        margin-top:20px;
+        /*margin-top:20px;*/
         flex-direction:column;
     }
     .approval-trail-info{
