@@ -54,7 +54,7 @@
                 //监听环节id变化--设置所选环节
                 if(!this.taskInfor.nextNodes)return false;
                 let _selectNode = this.taskInfor.nextNodes.filter((node)=>{return node.id==val});
-                if(_selectNode.length){
+                if(_selectNode&&_selectNode.length){
                     this.selectNode = _selectNode[0];//转化为当前选择的环节
                     let selectNode_userName = this.selectNode;
                     selectNode_userName.processingPerson=[];
@@ -78,7 +78,7 @@
             },
             "taskInfor"(val){
                 let _nodes = this.taskInfor.nextNodes;
-                if(_nodes.length) {
+                if(_nodes&&_nodes.length) {
                     this.formDate.nodeId = this.taskInfor.nextNodes[(_nodes.length-1)].id;//默认选择最后一个
                 }
             }

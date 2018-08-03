@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-for="(fileList,index) in defaultFileList" @click="handlePreview(fileList)" class="label-wrapper file_d" style="align-items: center;" v-if="more||(!more&&index<3)">
-            <bui-image class="file_img" width="80px" height="80px" :src="suffixImg(fileList)"></bui-image>
+            <bui-image class="file_img" width="80px" height="80px" :src="getFiletype(fileList.name)"></bui-image>
             <div class="file_info">
                 <text class="file_title">{{fileList.name}}</text>
                 <text class="file_size">{{humanFileSize(fileList.size)}}</text>
@@ -50,7 +50,35 @@
             return {
                 more:false,
                 officeViewUrl: `${officeUrl}/op/view.aspx?src=`,  //预览office文件地址前缀
-                officeSupport: ["ods","xls","xlsb","xlsm","xlsx","one","onetoc2","onepkg","odp","pot","potm","potx","pps","ppsm","ppsx","ppsx","ppt","pptm","pptx","doc","docm","docx","dot","dotm","dotx","odt","pdf"],
+                officeSupport: [
+                    "ods",
+                    "xls",
+                    "xlsb",
+                    "xlsm",
+                    "xlsx",
+                    "one",
+                    "onetoc2",
+                    "onepkg",
+                    "odp",
+                    "pot",
+                    "potm",
+                    "potx",
+                    "pps",
+                    "ppsm",
+                    "ppsx",
+                    "ppsx",
+                    "ppt",
+                    "pptm",
+                    "pptx",
+                    "doc",
+                    "docm",
+                    "docx",
+                    "dot",
+                    "dotm",
+                    "dotx",
+                    "odt",
+                    "pdf"
+                ],
                 oldFileList: []
             }
         },
@@ -75,21 +103,43 @@
         },
         mounted () {},
         methods: {
-            suffixImg(file){
-                let fileSuffix = file.name.split('.');
-                if(fileSuffix&&fileSuffix.length) {
-                    fileSuffix = fileSuffix[1];
-                    var flag = 1,imgSrc = "../../../images/doc/unknown@2x.png",imgIcon = ["acc@2x.png", "avi@2x.png", "bmp@2x.png", "css@2x.png", "doc@2x.png", "docx@2x.png", "dwg@2x.png", "eml@2x.png", "eps@2x.png", "file@2x.png", "fla@2x.png", "gif@2x.png", "html@2x.png", "htm@2x.png", "ind@2x.png", "ini@2x.png", "jpeg@2x.png", "jpg@2x.png", "jsf@2x.png", "mdb@2x.png", "mid@2x.png", "mkv@2x.png", "mov@2x.png", "mp3@2x.png", "mp4@2x.png", "mpeg@2x.png", "pdf@2x.png", "png@2x.png", "ppt@2x.png", "pptx@2x.png", "proj@2x.png", "ps@2x.png", "pst@2x.png", "pub@2x.png", "rar@2x.png", "rtf@2x.png", "svg@2x.png", "swf@2x.png", "tif@2x.png", "txt@2x.png", "url@2x.png", "vsd@2x.png", "wav@2x.png", "wma@2x.png", "wmp@2x.png", "xls@2x.png", "xlsx@2x.png", "zip@2x.png"];
-                    _.each(imgIcon,function(icon,index){
-                        if (icon.split("@")[0] == fileSuffix.toLowerCase()) {
-                            flag = 0;
-                            imgSrc = icon.split("@")[0]+"_2x.png";
-                        }
-                    });
-                    //默认读取我们专业模块的图片包
-                    return  "https://www.bingolink.biz/web/images/document/"+imgSrc;
+            getFiletype(fileName) {
+                let suffix = fileName.split(".");
+                if (suffix.length > 1) {
+                    suffix = suffix[suffix.length - 1].toLowerCase();
+                } else {
+                    suffix = "";
                 }
-                //return imgSrc;
+                var supportSuffix = [
+                    "doc", "docx", "jpg", "jpeg", "png", "gif", "bmp", "key", "mp3", "wma", "ogg", "wav", "flac",
+                    "ape", "mp4", "wmv", "ogv", "avi", "flv", "mov", "mpeg", "rmvb", "pdf", "ppt", "pptx", "rar",
+                    "zip", "7z", "bz", "tgz", "tar", "gz", "txt", "conf", "vsd", "vsm", "vsdx", "xls", "xlsx"
+                ];
+                if (supportSuffix.indexOf(suffix) != -1) {
+                    let _icon = suffix
+                    if(["png","jpeg","jpg","gif","bmp"].indexOf(suffix)!=-1){
+                        _icon = "jpg"
+                    }else if(["doc","docx"].indexOf(suffix)!=-1){
+                        _icon = "doc"
+                    }else if(["mp3","wma","ogg","wav","flac","ape"].indexOf(suffix)!=-1){
+                        _icon = "mp3"
+                    }else if(["mp4","wmv","ogv","avi","flv","mov","mpeg","rmvb"].indexOf(suffix)!=-1){
+                        _icon = "mp4"
+                    }else if(["ppt","pptx"].indexOf(suffix)!=-1){
+                        _icon = "ppt"
+                    }else if(["rar","zip","7z","bz","tgz","tar","gz"].indexOf(suffix)!=-1){
+                        _icon = "rar"
+                    }else if(["txt","conf"].indexOf(suffix)!=-1){
+                        _icon = "txt"
+                    }else if(["vsd","vsm","vsdx"].indexOf(suffix)!=-1){
+                        _icon = "vsd"
+                    }else if(["xls","xlsx"].indexOf(suffix)!=-1){
+                        _icon = "xls"
+                    }
+                    return "/images/filetypes/" + _icon +".png";
+                } else {
+                    return "/images/filetypes/other.png";
+                }
             },
             emitValue() {
                 let _uploadList=[];

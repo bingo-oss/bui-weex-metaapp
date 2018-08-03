@@ -170,6 +170,10 @@ module.exports = {
         }
     },
     methods: {
+        toPage(queryParam){
+            //跳转页面--暴露给外部使用
+            buiweex.push(Utils.pageEntry(),queryParam);
+        },
         filterClicked() {
             this.showPopup = true;
         },
@@ -197,10 +201,10 @@ module.exports = {
                 }
             }else if(operation.onclick){//脚本操作
                 if(_.isFunction(operation.onclick)){
-                    operation.onclick(_widgetCtx,{operation:operation});
+                    operation.onclick(Object.assign(_widgetCtx,operation),{operation:operation});
                 }else{
                     var onclick=Function('"use strict";return ' + operation.onclick  )();
-                    onclick(_widgetCtx,{operation:operation});
+                    onclick(Object.assign(_widgetCtx,operation),{operation:operation});
                 }
             }
         },

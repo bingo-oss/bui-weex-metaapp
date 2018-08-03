@@ -16,7 +16,9 @@
                 </div>
                 <div class="panel">
                     <text class="panel-header">正文</text>
-                    <div class="panel-body"></div>
+                    <div class="panel-body">
+                        <attachment v-model="formalArticleObject"></attachment>
+                    </div>
                 </div>
                 <div class="panel">
                     <text class="panel-header">流程轨迹</text>
@@ -58,7 +60,8 @@
                 attachmentObject:{
                     list:[],//用于存储附件组件返回的数据结构
                     oList:[]//存储附件数据,用于过滤新数据结构
-                }
+                },
+                formalArticleObject:{}//正文对象
             }
         },
         created(){
@@ -91,11 +94,25 @@
                 return new Promise((resolve,reject)=>{
                     formPromise.then((data)=>{
                         var formData=data&&data[0];
-                        service.taskComplete(_t.subParams).then((res)=>{
-                            resolve(res);
-                            _t.$toast('提交成功');
-                            _t.back();
-                        })
+                        if(_t.abstract.processInstance) {
+                            service.taskComplete(_t.subParams).then((res) => {
+                                resolve(res);
+                                _t.$toast('提交成功');
+                                _t.back();
+                            })
+                        }else{
+                            if(formData&&formData.id) {
+                                _t.subParams.businessKey = formData.id
+                                _t.subParams.variables.name = formData.title;
+                                _t.subParams.commandType = "StartProcessInstanceCmd";
+                                _t.subParams.processDefinitionKey = _t.widgetParams.procDefKey;
+                            }
+                            service.startProcessInstanceCmd(_t.subParams).then((res)=> {
+                                resolve();
+                                _t.$toast('提交成功');
+                                _t.back();
+                            })
+                        }
                     })
                 })
             },
@@ -136,25 +153,42 @@
             }
         },
         mounted(){
-            let _this = this,_params = {}
+            let _this = this,_params = {},_businessKey,_procDefKey;
             //this.params = this.widgetParams;
             service.getTaskInfo(this.widgetParams.taskId).then((res) =>{
                 //任务信息
                 _this.abstract = Object.assign(res,{"procInstId":res.processInstanceId});
-                Object.assign(_params,{"dataId":res.processInstance.businessKey});//设置下数据id--表单部件接受的参数
-                if(res.processDefinitionId) {
-                    service.getProcdefSetting(res.processInstance.processDefinitionKey,res.taskDefinitionKey).then(function (res) {
-                        //获取流程配置
-                        if (res.settings) {
-                            Object.assign(_params, res.settings);
-                        }
-                        _this.params = Object.assign({} ,_this.widgetParams,_params);
-                    })
+                if(res.processInstance){
+                    _businessKey = res.processInstance.businessKey
+                }else if(_this.widgetParams.businessKey){
+                    _businessKey = _this.widgetParams.businessKey
                 }
-                service.getAttachment(_this.widgetParams.taskId,res.processInstance.businessKey).then((res) =>{
+                if(res.processDefinitionId) {
+                    _procDefKey = res.processInstance.processDefinitionKey
+                }else {
+                    _procDefKey = _this.widgetParams.procDefKey;
+                }
+                Object.assign(_params,{"dataId":_businessKey});//设置下数据id--表单部件接受的参数
+                service.getProcdefSetting(_procDefKey,res.taskDefinitionKey).then(function (res) {
+                    //获取流程配置
+                    if (res.settings) {
+                        Object.assign(_params, res.settings);
+                    }
+                    _this.params = Object.assign({} ,_this.widgetParams,_params);
+                })
+                service.getAttachment(_this.widgetParams.taskId,_businessKey).then((res) =>{
                     //获取对应任务下的附件
-                    //_this.attachmentObject.oList = Object.assign([],res);
-                    _this.attachmentObject.list = res.data;
+                    let _attachment=[];
+                    _.each(res.data,(item,index)=>{
+                        if(item.attachmentType==1){
+                            //正文
+                            _this.formalArticleObject = [item];
+                        }else{
+                            _attachment.push(item)
+                        }
+                    });
+                    //_this.attachmentObject.oList = Object.assign([],_attachment);
+                    _this.attachmentObject.list = _attachment;
                 })
 
             })
