@@ -33,11 +33,11 @@ export default {
             }
             if(_.isFunction(this.operation.onclick)){
                 this.mustStopRepeatedClick=true;
-                this.operation.onclick(this.widgetContext,this);
+                this.operation.onclick(Object.assign(this.widgetContext,this.operation),this);
             }else{
                 this.mustStopRepeatedClick=true;
                 var onclick=Function('"use strict";return ' + this.operation.onclick  )();
-                onclick(this.widgetContext,this);
+                onclick(Object.assign(this.widgetContext,this.operation),this);
             }
             this.mustStopRepeatedClick=false;
             this.$emit("triggered","script");
