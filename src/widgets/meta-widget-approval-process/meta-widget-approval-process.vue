@@ -155,7 +155,7 @@
         mounted(){
             let _this = this,_params = {},_businessKey,_procDefKey;
             //this.params = this.widgetParams;
-            service.getTaskInfo(this.widgetParams.taskId).then((res) =>{
+            service.getTaskInfo(this.widgetParams.taskId,this.widgetParams.businessKey).then((res) =>{
                 //任务信息
                 _this.abstract = Object.assign(res,{"procInstId":res.processInstanceId});
                 if(res.processInstance){

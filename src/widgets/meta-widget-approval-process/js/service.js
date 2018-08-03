@@ -32,11 +32,11 @@ const service={
             })
         });
     },
-    getTaskInfo(taskId){
+    getTaskInfo(taskId,businessKey){
         //获取任务详情
         return new Promise(function(resolve,reject){
             config.readRuntimeConfig().then(runtimeConfig => {
-                ax.get(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/tasks/info/${taskId}`, {getInstance: true}).then(res=>{
+                ax.get(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/tasks/info`,{taskId: taskId,businessKey:businessKey,getInstance: true}).then(res=>{
                     resolve(res.data);
                 },(err)=>{
                     reject(err);
