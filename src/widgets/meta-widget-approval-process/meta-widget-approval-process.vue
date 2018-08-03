@@ -72,13 +72,13 @@
                 let _t = this;
                 return {
                     taskId:_t.params.taskId,
-                    outputVariables: {
+                    variables: {
                         hrPass: true
                     },
                     localVariables:{
                         opinion:""
                     },
-                    "commandType":"COMPLETE_TASK"
+                    "payloadType":"CompleteTaskPayload"
                 }
             }
         },
@@ -104,7 +104,7 @@
                             if(formData&&formData.id) {
                                 _t.subParams.businessKey = formData.id
                                 _t.subParams.variables.name = formData.title;
-                                _t.subParams.commandType = "START_PROCESS";
+                                _t.subParams.payloadType = "StartProcessPayload";
                                 _t.subParams.processDefinitionKey = _t.widgetParams.procDefKey;
                             }
                             service.startProcessInstanceCmd(_t.subParams).then((res)=> {

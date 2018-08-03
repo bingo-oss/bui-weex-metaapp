@@ -120,8 +120,8 @@
                     {
                         _subParams.localVariables[key] = val;
                     }
-                    if(_subParams.outputVariables) {
-                        _subParams.outputVariables[key] = val
+                    if(_subParams.variables) {
+                        _subParams.variables[key] = val
                     }
                 });
                 if (ctx.processLauncher.startProcess) {

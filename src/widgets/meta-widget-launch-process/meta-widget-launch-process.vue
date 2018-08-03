@@ -41,7 +41,7 @@
                         "userId": "fulsh",
                     },
                     "businessKey": _t.params.businessKey,
-                    "commandType": "START_PROCESS"
+                    "payloadType": "StartProcessPayload"
                 }
             }
         },
