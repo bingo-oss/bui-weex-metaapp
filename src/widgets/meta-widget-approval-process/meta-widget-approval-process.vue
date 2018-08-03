@@ -78,7 +78,7 @@
                     localVariables:{
                         opinion:""
                     },
-                    "commandType":"CompleteTaskCmd"
+                    "commandType":"COMPLETE_TASK"
                 }
             }
         },
@@ -104,7 +104,7 @@
                             if(formData&&formData.id) {
                                 _t.subParams.businessKey = formData.id
                                 _t.subParams.variables.name = formData.title;
-                                _t.subParams.commandType = "StartProcessInstanceCmd";
+                                _t.subParams.commandType = "START_PROCESS";
                                 _t.subParams.processDefinitionKey = _t.widgetParams.procDefKey;
                             }
                             service.startProcessInstanceCmd(_t.subParams).then((res)=> {

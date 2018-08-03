@@ -41,7 +41,7 @@
                         "userId": "fulsh",
                     },
                     "businessKey": _t.params.businessKey,
-                    "commandType": "StartProcessInstanceCmd"
+                    "commandType": "START_PROCESS"
                 }
             }
         },
