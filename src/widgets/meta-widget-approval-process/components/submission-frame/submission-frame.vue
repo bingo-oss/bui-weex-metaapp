@@ -113,8 +113,7 @@
             handleSubmit(Boolean){
                 let ctx = this.widgetContext,_t = this,Process,ProcessType="";
                 if(_t.mustStopRepeatedClick){return}else{_t.mustStopRepeatedClick=true}
-                var _subParams  = this.widgetContext.processLauncher.subParams//获取审批需要的结构数据
-                /*Object.assign(_subParams.localVariables,{"opinion":_t.formDate.opinion})*/
+                var _subParams  = Object.assign({},this.widgetContext.processLauncher.subParams)//获取审批需要的结构数据
                 _.each(_t.formDate,(val,key)=>{
                     if(_subParams.localVariables)
                     {
@@ -123,7 +122,8 @@
                     if(_subParams.variables) {
                         _subParams.variables[key] = val
                     }
-                });
+                });//组装传入值
+
                 if (ctx.processLauncher.startProcess) {
                     Process = ctx.processLauncher.startProcess
                 } else if (ctx.processLauncher.approveProcess) {
@@ -133,10 +133,8 @@
                 //完成后按钮可再次点击
                 spPromise.then(()=>{
                     _t.mustStopRepeatedClick = false;
-                    _t.toggleModal()
                 },()=>{
                     _t.mustStopRepeatedClick = false;
-                    _t.toggleModal()
                 });
             },
             radioChange(item){

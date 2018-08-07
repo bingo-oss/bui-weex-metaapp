@@ -58,8 +58,9 @@
                     formPromise.then((data)=>{
                         var formData=data&&data[0];
                         if(formData&&formData.id) {
-                            _this.subParams.businessKey = formData.id
-                            _this.subParams.variables.name = formData.title;
+                            _this.params.businessKey = formData.id
+                            _this.params.dataId = formData.id;
+                            //_this.params.variables.name = formData.title;
                         }
                         service.startProcessInstanceCmd(_this.subParams).then((res)=> {
                             resolve();
@@ -75,6 +76,13 @@
                 let _this=this;
                 return new Promise((resolve,reject)=>{
                     formPromise.then((data)=>{
+                        var formData=data&&data[0];
+                        if(formData&&formData.id) {
+                            _this.params.businessKey = formData.id
+                            _this.params.dataId = formData.id;
+                            //_this.params.variables.name = formData.title;
+                        }
+                        _this.params = Object.assign({},_this.params);
                         resolve();
                         _this.$toast('保存成功');
                     });
@@ -88,7 +96,6 @@
             let _this = this;
             //这里对于从某条数据发起流程businessKey是存在的，需要传递到页面部件的表单部件自动获取数据
             this.params = Object.assign({dataId:this.widgetParams.businessKey},this.widgetParams);
-
             service.getProcdefSetting(_this.subParams.processDefinitionKey).then(function(res){
                 //获取流程配置
                 if(res.settings){

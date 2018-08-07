@@ -21,7 +21,7 @@
                     </div>
                 </div>
                 <div class="panel">
-                    <text class="panel-header">流程轨迹</text>
+                    <text class="panel-header">审批轨迹</text>
                     <div class="panel-body">
                         <approval-trail :widget-params="abstract" v-if="abstract.procInstId"></approval-trail>
                     </div>
@@ -72,6 +72,8 @@
                 let _t = this;
                 return {
                     taskId:_t.params.taskId,
+                    processDefinitionKey:_t.params.procDefKey,
+                    businessKey:_t.params.businessKey,
                     variables: {
                         hrPass: true
                     },
@@ -88,26 +90,24 @@
                     processLauncher:this
                 }
             },
-            startProcess(){
+            approveProcess(param){
                 let formPromise=this.$refs.formPage.submit();
                 let _t=this;
                 return new Promise((resolve,reject)=>{
                     formPromise.then((data)=>{
                         var formData=data&&data[0];
                         if(_t.abstract.processInstance) {
-                            service.taskComplete(_t.subParams).then((res) => {
+                            service.taskComplete(param).then((res) => {
                                 resolve(res);
                                 _t.$toast('提交成功');
                                 _t.back();
                             })
                         }else{
-                            if(formData&&formData.id) {
-                                _t.subParams.businessKey = formData.id
-                                _t.subParams.variables.name = formData.title;
-                                _t.subParams.payloadType = "StartProcessPayload";
-                                _t.subParams.processDefinitionKey = _t.widgetParams.procDefKey;
-                            }
-                            service.startProcessInstanceCmd(_t.subParams).then((res)=> {
+                            //需要对没有关联任务的数据进行初始化信息
+                            param.businessKey = _t.widgetParams.businessKey;
+                            param.procDefKey = _t.widgetParams.procDefKey;
+                            param.payloadType = "StartProcessPayload";
+                            service.startProcessInstanceCmd(param).then((res)=> {
                                 resolve();
                                 _t.$toast('提交成功');
                                 _t.back();
@@ -154,8 +154,9 @@
         },
         mounted(){
             let _this = this,_params = {},_businessKey,_procDefKey;
-            //this.params = this.widgetParams;
-            service.getTaskInfo(this.widgetParams.taskId,this.widgetParams.businessKey).then((res) =>{
+            if(_this.widgetParams.taskId=="undefined"){_this.widgetParams.taskId=""}
+            if(_this.widgetParams.businessKey=="undefined"){_this.widgetParams.businessKey=""}
+            service.getTaskInfo(_this.widgetParams.taskId,_this.widgetParams.businessKey).then((res) =>{
                 //任务信息
                 _this.abstract = Object.assign(res,{"procInstId":res.processInstanceId});
                 if(res.processInstance){
@@ -168,7 +169,7 @@
                 }else {
                     _procDefKey = _this.widgetParams.procDefKey;
                 }
-                Object.assign(_params,{"dataId":_businessKey});//设置下数据id--表单部件接受的参数
+                Object.assign(_params,{"dataId":_businessKey,"taskId":res.id});//设置下数据id--表单部件接受的参数
                 service.getProcdefSetting(_procDefKey,res.taskDefinitionKey).then(function (res) {
                     //获取流程配置
                     if (res.settings) {
@@ -176,7 +177,7 @@
                     }
                     _this.params = Object.assign({} ,_this.widgetParams,_params);
                 })
-                service.getAttachment(_this.widgetParams.taskId,_businessKey).then((res) =>{
+                service.getAttachment(_params.taskId,_businessKey).then((res) =>{
                     //获取对应任务下的附件
                     let _attachment=[];
                     _.each(res.data,(item,index)=>{

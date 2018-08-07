@@ -150,8 +150,7 @@
             },
             titleOperationClicked(e){
                 //通用操作弹窗
-                //let _t = this;
-                if (!this.widgetParams.commonOperations.length<2) return;
+                //if (!this.widgetParams.commonOperations.length<2) return;
                 this.$refs.operationsDropdown.show(e);
                 this.operationsDropdown = true;
             },

@@ -216,8 +216,7 @@ module.exports = {
         },
         titleOperationClicked(e){
             //通用操作弹窗
-            //let _t = this;
-            if (!this.widgetParams.commonOperations.length<2) return;
+            //if (this.widgetParams.commonOperations.length<2) return;
             this.$refs.operationsDropdown.show(e);
             this.operationsDropdown = true;
         },
@@ -505,6 +504,7 @@ module.exports = {
             if(obj){
                 _obj.selectedId = obj.id;
                 _obj.selectedItem = obj;
+                _obj.grid = this
             }
             return Object.assign({grid:_t,metaEntity:_t.metaEntity,entityName:_t.entityName},_obj);
         },
