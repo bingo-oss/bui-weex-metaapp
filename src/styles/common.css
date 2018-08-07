@@ -65,3 +65,8 @@
     text-align: center;
     background-color: #c6c7c8;
 }
+.view-text{
+    font-size: 32px;
+    margin-left: 10px;
+}
+.view-label{ color: #999999}

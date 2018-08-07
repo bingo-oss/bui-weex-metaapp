@@ -1,6 +1,14 @@
 <template>
     <div class="form-group">
-        <text :style="contentStyle">{{definition.componentParams.content}}</text>
+        <template v-if="viewMode||forceView">
+            <div class="label-wrapper">
+                <text class="form-label view-label">{{definition.componentParams.title}}</text>
+                <text class="view-text" :value="definition.componentParams.content"></text>
+            </div>
+        </template>
+        <template v-else>
+            <text :style="contentStyle">{{definition.componentParams.content}}</text>
+        </template>
     </div>
 </template>
 

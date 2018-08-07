@@ -1,16 +1,25 @@
 <template lang="html">
     <div v-if="showComponent" class="form-group-vertical">
-        <div class="label-wrapper-vertical">
-            <text class="form-label">{{definition.componentParams.title}}</text>
-            <text class="required-mark" v-if="definition.componentParams.required">*</text>
-        </div>
-        <bui-radio :items="items" @input="input" :value="filterMode ? radioValue : value"></bui-radio>
+        <template v-if="viewMode||forceView">
+            <div class="label-wrapper">
+                <text class="form-label view-label">{{definition.componentParams.title}}</text>
+                <text class="view-text" :value="valueText"></text>
+            </div>
+        </template>
+        <template v-else>
+            <div class="label-wrapper-vertical">
+                <text class="form-label">{{definition.componentParams.title}}</text>
+                <text class="required-mark" v-if="definition.componentParams.required">*</text>
+            </div>
+            <bui-radio :items="items" @input="input" :value="filterMode ? radioValue : value"></bui-radio>
+        </template>
     </div>
 </template>
 
 <script>
 import mixin from './component-mixin.js'
 import EventBus from '../../js/bus.js'
+import _ from '../../js/tool/lodash.js'
 
 export default {
     componentType: 'Boolean',
@@ -25,6 +34,7 @@ export default {
         return {
             controlledComps: [],
             radioValue: null,
+            valueText:""
         }
     },
     computed: {
@@ -46,6 +56,15 @@ export default {
                     if (ret) this.radioValue = ret[1];
                 }
             }
+        },
+        value(val){
+            let _value=[];
+            _.each(this.items,(item,index)=>{
+                if(item.value==val){
+                    _value.push(item.title)
+                }
+            });
+            this.valueText = _value.join(",");
         }
     },
     methods: {

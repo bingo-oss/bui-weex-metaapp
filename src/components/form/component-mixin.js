@@ -5,7 +5,8 @@ export default {
     data() {
         return {
             showComponent: true,  // 每个组件都可以被控制展示与否
-            readonly:false //组件只读模式
+            readonly:false, //组件只读模式
+            forceView:false//组件视图模式
         }
     },
     props: {
@@ -29,6 +30,12 @@ export default {
             default(){
                 return {};
             }
+        },
+        viewMode:{
+            default(){
+                //视图模式
+                return false
+            }
         }
     },
     methods: {
@@ -49,6 +56,7 @@ export default {
         fieldSettingApply(){//将字段的显示和隐藏等设置应用到当前字段组件
             this.showComponent=!(this.fieldSetting.mode===Utils.widgetMode.invisible);
             this.readonly=this.fieldSetting.mode===Utils.widgetMode.readonly;
+            this.forceView=this.fieldSetting.mode===Utils.widgetMode.forceView;
         }
     },
     mounted() {

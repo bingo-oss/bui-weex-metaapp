@@ -13,6 +13,7 @@
                            :entityResourceUrl =  "o.componentParams.entityResourceUrl"
                            :field-setting="fieldSetting(o)"
                            @input="o.input"
+                           :force-view="forceView"
                 ></component>
             </cell>
         </list>
@@ -276,6 +277,9 @@
                     _title = "编辑"
                 }
                 return _title;
+            },
+            forceView() {
+                return !!this.widgetParams.forceView;
             }
         },
         watch: {

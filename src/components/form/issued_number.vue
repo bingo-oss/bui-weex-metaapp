@@ -1,16 +1,27 @@
 <template>
     <div v-if="showComponent" class="form-group">
-        <div class="label-wrapper-vertical">
-            <text class="form-label">{{definition.componentParams.title}}</text>
-            <text class="required-mark" v-if="definition.componentParams.required">*</text>
-        </div>
-        <div class="from-input-wrapper" @click="inputClicked" v-if="definition.componentParams.standard=='standard2'">
-            <text class="form-input" :style="inputStyle">{{valueText || '选择选项...'}}</text>
-            <bui-icon slot="action" name="ion-ios-arrow-right"></bui-icon>
-        </div>
-        <input @input="input" :disabled="readonly" class="form-input-native" type="text" v-model="issuedObjcet.code" :placeholder="definition.componentParams.placeholder" v-if="definition.componentParams.standard!='standard2'" />
-        <input @input="input" :disabled="readonly" class="form-input-native" type="text" v-model="issuedObjcet.year" :placeholder="definition.componentParams.placeholder"/>
-        <input @input="input" :disabled="readonly" class="form-input-native" type="text" v-model="issuedObjcet.number" :placeholder="definition.componentParams.placeholder"/>
+        <template v-if="viewMode||forceView">
+            <div class="label-wrapper">
+                <text class="form-label view-label">{{definition.componentParams.title}}</text>
+                <text class="view-text" :value="issuedObjcet.fullText"></text>
+            </div>
+        </template>
+        <template v-else>
+            <div class="label-wrapper-vertical">
+                <text class="form-label">{{definition.componentParams.title}}</text>
+                <text class="required-mark" v-if="definition.componentParams.required">*</text>
+            </div>
+            <div class="from-input-wrapper" @click="inputClicked" v-if="definition.componentParams.standard=='standard2'">
+                <text class="form-input" :style="inputStyle">{{valueText || '选择选项...'}}</text>
+                <bui-icon slot="action" name="ion-ios-arrow-right"></bui-icon>
+            </div>
+            <input @input="input" :disabled="readonly" class="form-input-native" type="text" v-model="issuedObjcet.code" :placeholder="definition.componentParams.placeholder" v-if="definition.componentParams.standard!='standard2'" />
+            <text class="view-text" style="margin-right: 5px; margin-left: 5px;">[</text>
+            <input @input="input" :disabled="readonly" class="form-input-native" type="text" v-model="issuedObjcet.year" :placeholder="definition.componentParams.placeholder" style="text-align: center;" />
+            <text class="view-text" style="margin-right: 5px; margin-left: 5px;">]</text>
+            <input @input="input" :disabled="readonly" class="form-input-native" type="text" v-model="issuedObjcet.number" :placeholder="definition.componentParams.placeholder" style="text-align: center;" />
+            <text class="view-text">号</text>
+        </template>
     </div>
 </template>
 <script>
@@ -37,7 +48,7 @@
         },
         watch:{
             "value":function(newV,oldV){
-                //var _issuedObjcet=this.issuedObjcet
+                if(typeof(newV)=="sting"){newV = eval('('+newV+')')}
                 if(newV){
                     this.issuedObjcet = newV;
                 }
@@ -72,7 +83,7 @@
                         _vals.push(val);
                     }
                 });
-                _issuedObjcet.fullText = _vals.join("");
+                _issuedObjcet.fullText = _vals[0]+"["+_vals[1]+"]"+_vals[2]+"号"//_vals.join("");
                 if(_vals.length){
                     this.$emit('input',this.issuedObjcet);
                 }else{
