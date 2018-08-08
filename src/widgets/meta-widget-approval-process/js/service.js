@@ -50,7 +50,7 @@ const service={
         //根据流程定义，及环节名获取合并后的流程配置
         return new Promise(function(resolve,reject){
             config.readRuntimeConfig().then(runtimeConfig => {
-                ax.get(`${runtimeConfig["service.metabase.endpoint"]}/mp_procdef_setting/proc/def/${processDefinitionKey}`, {actId: actId}).then((res)=>{
+                ax.get(`${runtimeConfig["service.metabase.endpoint"]}/proc_tool/proc/setting/${processDefinitionKey}`, {actId: actId}).then((res)=>{
                     resolve(res.data);
                 },(err)=>{
                     reject(err);
