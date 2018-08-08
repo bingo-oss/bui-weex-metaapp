@@ -1,6 +1,6 @@
 <template>
     <div class="full-column">
-        <bui-header v-if="title" :leftItem="{icon: 'ion-chevron-left'}" :title="title" @leftClick="() =>{this.$pop()}"></bui-header>
+        <bui-header v-if="title&&!hideHeader" :leftItem="{icon: 'ion-chevron-left'}" :title="title" @leftClick="() =>{this.$pop()}"></bui-header>
         <meta-widget-page :widget-params="params"></meta-widget-page>
     </div>
 </template>
@@ -10,7 +10,8 @@ export default {
     data(){
         return {
             params:{},
-            title:""
+            title:"",
+            hideHeader:false
         };
     },
     computed:{
@@ -23,6 +24,9 @@ export default {
             if(!this.title){
                 this.title=data;
             }
+        });
+        EventBus.$on("widget-hide-header",(data) =>{
+            this.hideHeader=data;
         });
     },
     mounted(){

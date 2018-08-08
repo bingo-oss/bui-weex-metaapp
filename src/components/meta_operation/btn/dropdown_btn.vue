@@ -1,7 +1,7 @@
 <template>
     <div v-if="operation" class="bui-cell cell-bottom-border full-column">
         <div class="cell-title">
-            <text class="cell-content" v-if="operation.title">{{operation.title}}</text>
+            <text class="cell-content" v-if="operation.title" :style="operation.style">{{operation.title}}</text>
         </div>
     </div>
 </template>
@@ -32,6 +32,7 @@ export default {
         flex: 1;
     }
     .cell-content {
+        text-align: center;
         color: #333333;
         font-size: 30px;
         line-height: 40px;

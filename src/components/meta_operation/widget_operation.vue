@@ -1,6 +1,6 @@
 <template>
 <div class="full-column">
-    <component :widget-context="widgetContext" :btn-type="btnType" :operation="operation" :is="operation.widget">
+    <component :widget-context="widgetContext" :btn-type="btnType" :operation="operation" :is="operation.widget" @triggered="triggered" @successed="successed">
         <slot>
         </slot>
     </component>
@@ -25,6 +25,14 @@ export default {
         return {
 
         };
+    },
+    methods:{
+        triggered(optType){
+            this.$emit("triggered",optType);
+        },
+        successed(optType){
+            this.$emit("successed",optType);
+        }
     }
 }
 </script>

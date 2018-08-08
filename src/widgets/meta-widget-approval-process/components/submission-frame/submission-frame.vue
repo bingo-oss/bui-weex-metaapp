@@ -100,12 +100,14 @@
         methods: {
             open() {
                 this.showDialog = true;
+                this.$emit("triggered","widget");
             },
             onDialogCallback (text) {
                 this.showDialog = false;
                 if(text=="确定"){
                     this.handleSubmit(true)
                 }
+                this.$emit("successed","widget");
             },
             addPeople(){
                 //选择人

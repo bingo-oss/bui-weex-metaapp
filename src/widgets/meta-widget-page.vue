@@ -67,6 +67,10 @@
                         if(_this.widgetParams.widgetSettings){
                             Object.assign(w.params,_this.widgetParams.widgetSettings[w.id]);
                         }
+                        //移动端处理是否隐藏头部
+                        if(_this.widgetParams.hideHeader){
+                            Object.assign(w.params,{hideHeader:true});
+                        }
                     });
                 });
                 return pageConfig;

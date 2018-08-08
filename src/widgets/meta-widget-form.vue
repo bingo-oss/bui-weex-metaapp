@@ -3,6 +3,17 @@
 <style src="../styles/common.css"></style>
 <template>
     <div class="container">
+        <bui-header v-if="!widgetParams.hideHeader" :leftItem="{icon: 'ion-chevron-left'}" :title="title" @leftClick="() =>{this.$pop()}">
+            <div slot="right" class="header-right-wrapper">
+                <div class="header-button">
+                    <!--头部为上拉菜单操作区域-->
+                    <template v-if="mobileHeaderOperations().length===1">
+                        <meta-operation  btn-type="icon" :operation="mobileHeaderOperations()[0]" :widget-context="getWidgetContext()"></meta-operation>
+                    </template>
+                    <bui-icon v-if="mobileHeaderOperations().length>1" name="ion-ios-more" color="white" @click="titleOperationClicked"></bui-icon>
+                </div>
+            </div>
+        </bui-header>
         <list class="scroller" >
             <cell class="scrollerDiv" v-for="o in data.layout" :key="o.id" v-if="['SingleUserSelect','MultiUserSelect','SingleOrgSelect'].indexOf(o.componentType)==-1">
                 <component :is="'Meta'+o.componentType"
@@ -17,6 +28,8 @@
                 ></component>
             </cell>
         </list>
+
+        <!--表单底部为公共操作区域-->
         <div class="action-bar" v-if="widgetParams.editOperations||widgetParams.viewOperations">
             <template  v-if="!innerPermissions.view" v-for="(commonOpt,index) in [].concat(widgetParams.editOperations)">
                 <meta-operation @successed="successed" :key="index" class="full-column" :operation="commonOpt" :widget-context="getWidgetContext">
@@ -34,6 +47,17 @@
                 </meta-operation>
             </template>
         </div>
+
+        <!--下拉弹出窗口-->
+        <actionsheet-wrapper
+                ref="actionsheet"
+                v-model="showActionsheet"
+        >
+            <div v-for="(commonOpt,index) in mobileHeaderOperations()" :key="index">
+                <meta-operation class="full-column" btn-type="dropdown" :operation="actionsheetStyle(commonOpt,index)" :widget-context="getWidgetContext()" @triggered="actionsheetTriggered" @successed="actionsheetSuccessed"></meta-operation>
+            </div>
+        </actionsheet-wrapper>
+
     </div>
 </template>
 <style lang="css">
@@ -85,6 +109,7 @@
     import buiweex from 'bui-weex';
     import allComponents from '../components/all-components';
     import metabase from '../js/metadata/metabase.js';
+    import Utils from '../js/tool/utils';
 
     Vue.use(allComponents);
     Vue.use(buiweex);
@@ -228,6 +253,40 @@
                     }
                 });
 
+            },
+            titleOperationClicked(){
+                this.showActionsheet = true;
+            },
+            actionsheetTriggered(type){
+                //针对下拉菜单显隐处理--部件类型操作比较特殊
+                if(type=="widget"){
+                    this.$refs.actionsheet.hide();
+                }else{
+                    this.$refs.actionsheet._maskClick()
+                }
+            },
+            actionsheetSuccessed(type){
+                //针对下拉菜单显隐处理--部件类型操作比较特殊
+                this.$refs.actionsheet._maskClick()
+            },
+            actionsheetStyle(item,index){
+                //处理按钮样式
+                item.style={
+                    "color":"#4CA4FE",
+                    "font-size":"30px"
+                }
+                return item;
+            },
+            mobileHeaderOperations(){
+                var opts=(this.widgetParams&&this.widgetParams.actionsheetOperation);
+                var _opts=[];
+                _.each(opts,function(opt){
+                    var terminalType=opt[Utils.operationTermimalTypeField];
+                    if(terminalType!==1){
+                        _opts.push(opt);
+                    }
+                });
+                return _opts;
             }
         },
         data () {
@@ -253,7 +312,8 @@
                     cancel:true,//取消按钮
                     view:view
                 },
-                metaEntity:{}
+                metaEntity:{},
+                showActionsheet: false
             }
         },
         computed: {
@@ -284,7 +344,7 @@
         },
         watch: {
             title(){
-                EventBus.$emit("widget-push-title",this.title);
+                //EventBus.$emit("widget-push-title",this.title);
             },
             defaultValues(val) {
                 // 将默认值 merge 到当前 result 里

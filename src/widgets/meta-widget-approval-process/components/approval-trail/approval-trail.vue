@@ -1,16 +1,20 @@
 <template>
 <div class="approval-trail">
     <scroller class="scroller">
-        <bui-timeline>
-            <bui-timeline-item v-for="(item,index) in trail" :first="index===0" :last="index===trail.length-1 && index!==0" :key="item.id">
+        <bui-timeline :customStyles="customStyles">
+            <bui-timeline-item v-for="(item,index) in trail" :first="index===0" :last="index===trail.length-1 && index!==0" :key="item.id" :color="item.color">
                 <div style="flex-direction:column;">
                     <div class="approval-trail-title">
-                        <text class="font28">{{item.name}}</text>
+                        <!--<text class="font28">{{item.name}}</text>-->
+                        <div style="flex-direction: row;">
+                            <text class="font28" :style="{width:'400px',color:item.textColor}" v-if="item.assigneeName">{{item.name}}</text>
+                            <text class="font28 color-sub" v-if="item.createTime" style="text-align: right"> {{item.endTime}}</text>
+                        </div>
                     </div>
                     <div class="approval-trail-details">
                         <div class="approval-trail-info">
                             <template>
-                                <text class="font28 color-sub" v-if="item.assigneeName">审批人: {{item.assigneeName}}&nbsp;&nbsp;<template v-if="item.createTime">审批时间: {{item.endTime}}</template></text>
+                                <text class="font28 color-sub" v-if="item.assigneeName">{{item.assigneeName}}</text>
                                 <text class="font28 color-sub" v-if="item.opinion">审批意见: {{item.opinion}}</text>
                             </template>
                         </div>
@@ -67,9 +71,13 @@ export default {
                             assigneeName:item.assigneeName,
                             createTime:item.createTime?utils.formatDate(item.createTime):"",
                             endTime:item.endTime?utils.formatDate(item.endTime):"",
-                            opinion:item.variables?item.variables.opinion:""
+                            opinion:item.variables?item.variables.opinion:"",
+                            color:"#DFDFDF",
+                            textColor:"#000"
                         }
                     });
+                    _this.trail[(_this.trail.length-1)].color = "#5099F4";//高亮dot
+                    _this.trail[(_this.trail.length-1)].textColor = "#5099F4";//高亮文字
 
                 })
             }
@@ -97,7 +105,7 @@ export default {
         padding-left:20px;
     }
     .approval-trail-details{
-        /*margin-top:20px;*/
+        margin-top:10px;
         flex-direction:column;
     }
     .approval-trail-info{

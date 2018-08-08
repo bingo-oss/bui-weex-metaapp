@@ -17,7 +17,7 @@ export default {
             if(btnType&&btnStyle[btnType]){
                  return btnStyle[btnType]&&btnStyle[btnType].bgcolor
             }
-            return "#F9F9F9"
+            return "#4CA4FE"
         }
     }
 }

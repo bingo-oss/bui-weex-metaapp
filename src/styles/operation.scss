@@ -1,20 +1,17 @@
 .btn-block {
-    height: 100px;
+    height: 80px;
     flex-direction: row;
     align-items: center;
     flex: 1;
-    border-top-style: solid;
-    border-top-width: 2px;
-    border-top-color: #CCCCCC;
+    border-radius: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 .btn-text {
     text-overflow: ellipsis;
     lines: 1;
     flex: 1;
     text-align: center;
-    font-size: 34px;
-    color: #86868D;
-    border-left-color: #BEBCBC;
-    border-left-width: 1px;
-    border-left-style: solid;
+    font-size: 30px;
+    color: #FFF;
 }
