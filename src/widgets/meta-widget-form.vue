@@ -49,10 +49,7 @@
         </div>
 
         <!--下拉弹出窗口-->
-        <actionsheet-wrapper
-                ref="actionsheet"
-                v-model="showActionsheet"
-        >
+        <actionsheet-wrapper ref="actionsheet" v-model="showActionsheet">
             <div v-for="(commonOpt,index) in mobileHeaderOperations()" :key="index">
                 <meta-operation class="full-column" btn-type="dropdown" :operation="actionsheetStyle(commonOpt,index)" :widget-context="getWidgetContext()" @triggered="actionsheetTriggered" @successed="actionsheetSuccessed"></meta-operation>
             </div>
@@ -205,6 +202,7 @@
                 return new Promise((resolve,reject)=>{
                     let validated = true;
                     for (let id in this.$refs) {
+                        if(["actionsheet"].indexOf(id)!=-1)continue;//过滤下拉菜单组件
                         let validateFunc = this.$refs[id]&&this.$refs[id][0].validate;
                         if (!validateFunc) {
                             continue;
@@ -279,6 +277,7 @@
             },
             mobileHeaderOperations(){
                 var opts=(this.widgetParams&&this.widgetParams.actionsheetOperation);
+                //下拉菜单操作
                 var _opts=[];
                 _.each(opts,function(opt){
                     var terminalType=opt[Utils.operationTermimalTypeField];
@@ -428,7 +427,7 @@
             }
         },
         mounted() {
-            EventBus.$emit("widget-push-title",this.title);
+            //EventBus.$emit("widget-push-title",this.title);
             globalEvent.addEventListener("androidback", e => {
                 this.$pop();
             });

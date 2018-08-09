@@ -25,9 +25,6 @@ export default {
                 this.title=data;
             }
         });
-        EventBus.$on("widget-hide-header",(data) =>{
-            this.hideHeader=data;
-        });
     },
     mounted(){
         var pageId=this.$getPageParams()['pageId'];

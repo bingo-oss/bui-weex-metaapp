@@ -16,7 +16,7 @@
             <scroller class="full-column" style="background-color: #F8F8F8;">
                 <div class="panel">
                     <text class="panel-header">基本信息</text>
-                    <div class="panel-body">
+                    <div class="panel-body-form">
                         <meta-widget-page ref="formPage" :query="{dataId:params.dataId}" :widget-params="params"></meta-widget-page>
                     </div>
                 </div>
@@ -94,7 +94,6 @@
         },
         created(){
             //EventBus.$emit("widget-push-title",this.title);
-            EventBus.$emit("widget-hide-header",true);//隐藏pageHeader
         },
         computed: {
             subParams(){
@@ -142,7 +141,13 @@
                                 _t.back();
                             })
                         }
+                    },(erro)=>{
+                        reject();
+                        _this.$toast(erro);
                     })
+                },(erro)=>{
+                    reject();
+                    _this.$toast(erro);
                 })
             },
             dismissProcess(){
@@ -170,7 +175,13 @@
                     formPromise.then((data)=>{
                         resolve();
                         _this.$toast('编辑成功');
+                    },(erro)=>{
+                        reject();
+                        _this.$toast(erro);
                     });
+                },(erro)=>{
+                    reject();
+                    _this.$toast(erro);
                 });
             },
             back:function(){
@@ -182,6 +193,7 @@
             },
             mobileHeaderOperations(){
                 var opts=(this.widgetParams&&this.widgetParams.actionsheetOperation);
+                //下拉菜单操作
                 var _opts=[];
                 _.each(opts,function(opt){
                     var terminalType=opt[Utils.operationTermimalTypeField];
@@ -339,5 +351,10 @@
         padding-bottom: 20px;
         padding-left: 30px;
         padding-right: 30px;
+    }
+    .panel-body-form{
+        padding-bottom: 20px;
+        padding-left: 10px;
+        padding-right: 10px;
     }
 </style>

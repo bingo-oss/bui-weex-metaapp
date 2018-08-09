@@ -73,7 +73,7 @@
                 })
             },
             input(){
-                let _issuedObjcet = this.issuedObjcet,_vals=[],valueText = this.valueText;
+                let _issuedObjcet = Object.assign({},this.issuedObjcet),_vals=[],valueText = this.valueText;
                 _issuedObjcet.fullText = "";
                 _.each(_issuedObjcet,(val,key)=>{
                     if(val){
@@ -83,7 +83,7 @@
                         _vals.push(val);
                     }
                 });
-                _issuedObjcet.fullText = _vals[0]+"["+_vals[1]+"]"+_vals[2]+"号"//_vals.join("");
+                this.issuedObjcet.fullText =  _vals[0]+"["+_vals[1]+"]"+_vals[2]+"号"//_vals.join("");
                 if(_vals.length){
                     this.$emit('input',this.issuedObjcet);
                 }else{

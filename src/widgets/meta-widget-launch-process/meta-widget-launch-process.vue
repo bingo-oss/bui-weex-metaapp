@@ -58,7 +58,6 @@
         },
         created(){
             //EventBus.$emit("widget-push-title","");
-            EventBus.$emit("widget-hide-header",true);//隐藏pageHeader
         },
         computed: {
             subParams(){
@@ -96,13 +95,19 @@
                             _this.$toast('发起流程成功');
                             _this.back();
                         })
-                     });
+                     },(erro)=>{
+                        reject();
+                        _this.$toast(erro);
+                    });
+                },(erro)=>{
+                    reject();
+                    _this.$toast(erro);
                 });
             },
             processFormSave(){
                 //表单保存
                 let formPromise=this.$refs.formPage.submit();
-                let _this=this;
+                let _this = this;
                 return new Promise((resolve,reject)=>{
                     formPromise.then((data)=>{
                         var formData=data&&data[0];
@@ -114,7 +119,12 @@
                         _this.params = Object.assign({},_this.params);
                         resolve();
                         _this.$toast('保存成功');
+                    },(erro)=>{
+                        reject();
+                        _this.$toast(erro);
                     });
+                },(erro)=>{
+                    reject();
                 });
             },
             back(){
@@ -122,6 +132,7 @@
             },
             mobileHeaderOperations(){
                 var opts=(this.widgetParams&&this.widgetParams.actionsheetOperation);
+                //下拉菜单操作
                 var _opts=[];
                 _.each(opts,function(opt){
                     var terminalType=opt[Utils.operationTermimalTypeField];
@@ -179,8 +190,8 @@
     }
 
     .scroller {
-        padding-left: 20px;
-        padding-right: 20px;
+        padding-left: 10px;
+        padding-right: 10px;
         flex: 1;
     }
     .action-bar {
