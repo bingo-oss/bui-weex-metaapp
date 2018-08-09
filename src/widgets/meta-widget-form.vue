@@ -421,8 +421,12 @@
             },
             "data.layout"(val){
                 //处理父子组件回调事件
+                let _t = this;
                 this.data.layout && this.data.layout.forEach((o) => {
-                    o.input = (v)=>{this.$set(this.result, o.dataField, v)}
+                    o.input = (v)=>{
+                        this.$set(this.result, o.dataField, v);
+                        this.$forceUpdate();//更新下视图
+                    }
                 });
             }
         },

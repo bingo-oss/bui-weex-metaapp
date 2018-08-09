@@ -267,10 +267,6 @@
                     _this.attachmentObject.list = _attachment;
                 })
 
-            })
-
-            _.each(this.$refs.formPage.$refs.childWidgets,function(cw){
-                cw.hideHeader = true;
             });
         },
         components: {
