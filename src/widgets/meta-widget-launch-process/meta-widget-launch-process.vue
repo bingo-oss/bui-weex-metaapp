@@ -66,7 +66,8 @@
         },
         computed: {
             metaForm(){
-                return this.$refs.formPage&&this.$refs.formPage.metaForm;
+                //读取formPage内的视图配置
+                return this.$refs.formPage.$refs.childWidgets.filter((cw)=>{return cw.metaForm})[0].metaForm;
             },
             subParams(){
                 let _t = this;
@@ -84,7 +85,9 @@
         methods:{
             getWidgetContext(item){
                 return {
-                    processLauncher:this
+                    processLauncher:this,
+                    selectedId:this.params.dataId,
+                    form:this
                 }
             },
             startProcess(){//启动流程
