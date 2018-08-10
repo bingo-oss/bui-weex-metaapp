@@ -74,6 +74,10 @@ export default {
             } else {
                 this.$emit('input', value);
             }
+            if(this.valueText){
+                let text = this.valueText
+                this.emitExData(value,text);
+            }
             // if (this.controlledComps.length) {
             //     // 存在关联关系的 RadioButton，触发显示/隐藏事件
             //     let tmpMemo = {};
@@ -88,6 +92,12 @@ export default {
             //         }
             //     })
             // }
+        },
+        emitExData:function(id,text){
+            var exData={};
+            exData[id]=this.buildExData(text);
+            let _dataField = this.definition.dataField;
+            this.$emit("exDataChanged",exData,_dataField);
         }
     },
 }

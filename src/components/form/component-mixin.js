@@ -1,6 +1,9 @@
 import EventBus from '../../js/bus.js';
 import Utils from '../../js/tool/utils'
-
+let constants = {
+    entityModelRedundantKey:'_data',
+    entityModelTitleKey:'title'
+}
 export default {
     data() {
         return {
@@ -36,9 +39,27 @@ export default {
                 //视图模式
                 return false
             }
+        },
+        model:{
+            type: Object,
+            required: true,
         }
     },
     methods: {
+        buildExData(value){//构造组件需要保存的冗余数据
+            var exData={};
+            exData[constants.entityModelTitleKey]=value;
+            return exData;
+        },
+        getExData(id){//编辑模式获取当前表单数据字段id的冗余数据
+            if(!id){
+                return null;
+            }
+            var _data=this.model&&this.model[constants.entityModelRedundantKey];
+            _data=_data||{};
+            _data= _data[this.definition.dataField]||{};
+            return _data[id]&&_data[id][constants.entityModelTitleKey];
+        },
         validate() {
             if (this.definition.componentParams.required && this.value === undefined) {
                 this.$toast(`${this.definition.componentParams.title} 的输入不能为空`)

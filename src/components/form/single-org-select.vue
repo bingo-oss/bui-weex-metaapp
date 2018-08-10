@@ -79,10 +79,20 @@ export default {
                     this.$emit('filterInput', v);
                 } else {
                     this.$emit('input', result.id);
+                    if(this.valueText){
+                        let text = this.valueText
+                        this.emitExData(result.id,text);
+                    }
                 }
             }, (err) => {
                 this.$alert(err);
             })
+        },
+        emitExData:function(id,text){
+            var exData={};
+            exData[id]=this.buildExData(text);
+            let _dataField = this.definition.dataField;
+            this.$emit("exDataChanged",exData,_dataField);
         }
     },
 }

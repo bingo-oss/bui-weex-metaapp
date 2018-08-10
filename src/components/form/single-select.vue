@@ -48,9 +48,19 @@ export default {
                 if (res.result === 'success') {
                     let id = this.definition.componentParams.options[res.data].id;
                     this.$emit('input', id);
+                    if(this.valueText){
+                        let text = this.valueText
+                        this.emitExData(id,text);
+                    }
                 }
             })
         },
+        emitExData:function(id,text){
+            var exData={};
+            exData[id]=this.buildExData(text);
+            let _dataField = this.definition.dataField;
+            this.$emit("exDataChanged",exData,_dataField);
+        }
     },
 }
 </script>

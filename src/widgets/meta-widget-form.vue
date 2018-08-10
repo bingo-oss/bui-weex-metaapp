@@ -25,6 +25,8 @@
                            :field-setting="fieldSetting(o)"
                            @input="o.input"
                            :force-view="forceView"
+                           :model="result"
+                           @exDataChanged="exDataChanged"
                 ></component>
             </cell>
         </list>
@@ -286,6 +288,17 @@
                     }
                 });
                 return _opts;
+            },
+            //表单记录扩展数据填充，如选择用户之后用户名称存储、选项类型其他选项对应的填写值等
+            exDataChanged:function(newValue,dataField){
+                let model = this.result;
+                if(dataField){
+                    let rkey=this.entityModelRedundantKey;
+                    model[rkey]=model[rkey]||{};
+                    model[rkey][dataField]=model[rkey][dataField]||{};
+                    model[rkey][dataField]=newValue;
+                }
+
             }
         },
         data () {

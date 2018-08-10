@@ -21,7 +21,8 @@
 
 <script>
 import mixin from './component-mixin.js'
-const picker = weex.requireModule('PickerModule');
+//const picker = weex.requireModule('PickerModule');
+const picker = weex.requireModule('picker');
 
 export default {
     componentType: 'Date',

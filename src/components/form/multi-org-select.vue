@@ -32,12 +32,22 @@ export default {
                 return;
             }
             linkapi.startContactMulitSelector(this.definition.componentParams.title, 4, {}, (result) => {
-                // this.valueText = result.user.map(u => u.name).join(',');
-                // this.$emit('input', result.user);
-                this.$alert(result);
+                 this.valueText = result.user.map(u => u.name).join(',');
+                 this.$emit('input', result.user);
+                if(this.valueText){
+                    let text = this.valueText
+                    this.emitExData(result.user,text);
+                }
+                //this.$alert(result);
             }, (err) => {
                 this.$alert(err);
             })
+        },
+        emitExData:function(id,text){
+            var exData={};
+            exData[id]=this.buildExData(text);
+            let _dataField = this.definition.dataField;
+            this.$emit("exDataChanged",exData,_dataField);
         }
     },
 }
