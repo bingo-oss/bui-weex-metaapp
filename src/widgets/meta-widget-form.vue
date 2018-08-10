@@ -57,6 +57,8 @@
             </div>
         </actionsheet-wrapper>
 
+        <bui-loading v-if="!widgetParams.hideHeader" :show="isShowLoading" :loading-text="loadingText==''?'加载中...':loadingText"></bui-loading>
+
     </div>
 </template>
 <style lang="css">
@@ -219,6 +221,7 @@
                         reject();
                         return;
                     }
+                    this.isShowLoading = false;
                     // 编辑或保存成功后，直接 this.$pop() 返回上一页
                     // https://jira.bingosoft.net/browse/LINKSUITE-413
                     if (this.entityId) {
@@ -229,9 +232,11 @@
                             if(!this.widgetParams.embedded){
                                 this.$toast('编辑成功');
                             }
+                            this.isShowLoading = false;
                         }).catch(err => {
                             reject();
                             this.$alert(err);
+                            this.isShowLoading = false;
                         });
                     } else {
                         // 对于 this.queryParam 里的 query，遇到属于实体字段的 query 要在创建实体时带上
@@ -246,9 +251,11 @@
                             if(!this.widgetParams.embedded){
                                 this.$toast('创建成功');
                             }
+                            this.isShowLoading = false;
                         }).catch(err => {
                             reject();
                             this.$alert(err);
+                            this.isShowLoading = false;
                         });
                     }
                 });
@@ -324,8 +331,11 @@
                     cancel:true,//取消按钮
                     view:view
                 },
+                metaForm:"",
                 metaEntity:{},
-                showActionsheet: false
+                showActionsheet: false,
+                isShowLoading:false,
+                loadingText:""
             }
         },
         computed: {
@@ -478,12 +488,14 @@
                 return;
             }
             let contextPath = this.$getContextPath();
+            this.isShowLoading = true;
             readRuntimeConfigPromise = config.readRuntimeConfig(contextPath).then(runtimeConfig => {
                 service.init(runtimeConfig.configServerUrl)
                 console.log('fetch data')
                 // 获取表单定义
                 return service.getMetaFormDef(formId).then(formDef => {
                     this.data = formDef;
+                    this.metaForm = formDef;//用于暴露表单定义
                     this.entityName = formDef.metaEntityName.toLowerCase();
                     metabase.initMetabase(formDef.projectId,true).then(ddd=>{
                         this.metaEntity = metabase.findMetaEntity(formDef.metaEntityName);
@@ -517,6 +529,7 @@
                                 this.permObj = perm.parseBits(data.permVal);
                             })
                         }
+                        this.isShowLoading = false;
                     })
                 });
             });

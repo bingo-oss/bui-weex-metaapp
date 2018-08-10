@@ -83,6 +83,9 @@
                 @cancel="showPopup = false">
             </filter-view>
         </bui-popup>
+
+        <bui-loading :show="isShowLoading" :loading-text="loadingText==''?'加载中...':loadingText"></bui-loading>
+
     </div>
 </template>
 
@@ -139,6 +142,8 @@ module.exports = {
             currentPage: 1,
             pageSize: 10,
             remainingPageParam: {},
+            isShowLoading:false,
+            loadingText:""
         }
     },
     computed: {
@@ -273,6 +278,7 @@ module.exports = {
             }
             this.queryParam.filters = filtersParts.join(' and ');
             return ajax.get(this.dataUrlPath, this.queryParam).then(resp => {
+                this.isShowLoading = false;
                 return resp.data;
             })
         },
@@ -520,6 +526,10 @@ module.exports = {
     },
     components: {
         'filter-view': require('../views/filter.vue')
+    },
+    mounted(){
+        this.isShowLoading = true;
+
     }
 }
 </script>

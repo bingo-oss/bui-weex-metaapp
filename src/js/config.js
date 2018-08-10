@@ -12,25 +12,22 @@ var configData=null;
 export default {
     debug: true,
     // debug: false,
-
     //debugViewId: 'ybKtnxaBKbBTL5NNf2tbZW', // 警力报备
     // debugViewId: 'BxuEmvqNSHahVM5gudEC2H', // 大事记
     //debugViewId: 'n34Zs9i2qAeEeqnZvfwUnW', // 行动列表
     // debugViewId: 'JJUzCgvZQzgxBuytyKmz8e', // test
-
     // debugFormId: 'Q7BjDyu92EkGenAL6zcfhb', // 大事记
     //debugFormId: 'ssyreSd', // 行动
-
     //debugEntityId: 'O1PRfnK1A',
-
-    token: 'b7d271ef-b6c3-48e3-9627-99750ae3ed36',
+    token: '7a741cc1-87af-4b65-ac2f-b288dfc30c71',
     configFilename: 'config.json',
-
+    serverConfig:{},
     // 读取与 list.weex.js、form.weex.js 同级的配置文件
     readRuntimeConfig(contextPath) {
         contextPath=contextPath||buiweex.getContextPath();
         return new Promise((resolve, reject) => {
             if(configData){
+                this.serverConfig = configData;
                 resolve(configData);
             }else{
                 contextPath = contextPath.replace('file://', ''); // 消除 file:
@@ -40,7 +37,12 @@ export default {
                         if(data.configServerUrl){
                             //获取服务端的配置
                             ajax.get(data.configServerUrl).then((resp) => {
-                                configData=Object.assign(data,resp.data);
+                                configData=Object.assign(data,resp.data,{
+                                    "blogApi": resp.data["service.blog.endpoint"],
+                                    "uamUrl": resp.data["service.link.endpoint"],
+                                    "engineService": resp.data["service.gateway.endpoint"]+"/services"
+                                });
+                                this.serverConfig = configData;
                                 resolve(configData);
                             })
                         }else{
@@ -73,7 +75,6 @@ export default {
     getApiBaseUrl(){
         return new Promise((resolve, reject) => {
             this.readRuntimeConfig().then((c)=>{
-                debugger
                 var url=c['apiBaseUrl'];
                 if(url){
                     resolve(url);

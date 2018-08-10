@@ -160,12 +160,50 @@ function save(){
   return operation;
 }
 
+//跳入数据主页
+function goHomePage(){
+  //返回
+  var operation= {
+    onclick:function(ctx,$optInst){
+      var id=getIdFromContext(ctx);
+      if(!id){
+        $optInst.mustStopRepeatedClick = false;
+        buiweex.alert(i18n.dataIdNotSet);
+        return;
+      }
+      let pageId=$optInst.operation.page&&$optInst.operation.page.id;
+      if(!pageId){
+        $optInst.mustStopRepeatedClick = false;
+        buiweex.alert(i18n.pageIdNotSet);
+        return;
+      }
+      let _formDetailParam={pageId:pageId};//主页详情点击跳入的pageId
+      let procDefKey = $optInst.operation.page&&$optInst.operation.page.procDefKey;
+      if(procDefKey){
+        //判断是否需要关联流程--是的话-带入
+        _formDetailParam = JSON.stringify(Object.assign(_formDetailParam,{procDefKey:procDefKey,businessKey:id}));
+      }
+      let metaSuiteId = (ctx.grid&&ctx.grid.viewDef)||(ctx.form&&ctx.form.metaForm);
+      if(metaSuiteId){
+        metaSuiteId = metaSuiteId.metaSuiteId
+      }else{
+        buiweex.alert(`跳入主页需要传入metaSuiteId`);
+        return;
+      }
+      var _query=_.extend({dataId:id,metaSuiteId:metaSuiteId,formDetailParam:_formDetailParam});
+      buiweex.push(`${buiweex.getContextPath()}/home.weex.js`, _query)
+    }
+  }
+  return operation
+}
+
 var operations={
   create:operationForCreate,
   edit:operationForEdit,
   view:operationForView,
   del:operationForDel,
-  save:save
+  save:save,
+  goHomePage:goHomePage
 }
 
 export default {

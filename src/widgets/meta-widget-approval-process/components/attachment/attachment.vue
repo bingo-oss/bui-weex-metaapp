@@ -136,9 +136,9 @@
                     }else if(["xls","xlsx"].indexOf(suffix)!=-1){
                         _icon = "xls"
                     }
-                    return "/images/filetypes/" + _icon +".png";
+                    return "/image/filetypes/" + _icon +".png";
                 } else {
-                    return "/images/filetypes/other.png";
+                    return "/image/filetypes/other.png";
                 }
             },
             emitValue() {

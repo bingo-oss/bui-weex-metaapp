@@ -56,6 +56,8 @@
             </div>
         </actionsheet-wrapper>
 
+        <bui-loading :show="isShowLoading" :loading-text="loadingText==''?'加载中...':loadingText"></bui-loading>
+
     </div>
 </template>
 
@@ -89,13 +91,19 @@
                     oList:[]//存储附件数据,用于过滤新数据结构
                 },
                 formalArticleObject:{},//正文对象
-                showActionsheet: false
+                showActionsheet: false,
+                isShowLoading:false,
+                loadingText:""
             }
         },
         created(){
             //EventBus.$emit("widget-push-title",this.title);
         },
         computed: {
+            metaForm(){
+                //读取formPage内的视图配置
+                return this.$refs.formPage.$refs.childWidgets.filter((cw)=>{return cw.metaForm})[0].metaForm;
+            },
             subParams(){
                 let _t = this;
                 return {
@@ -115,18 +123,22 @@
         methods:{
             getWidgetContext(item){
                 return {
-                    processLauncher:this
-                }
+                    processLauncher:this,
+                    selectedId:this.params.dataId,
+                    form:this
+                 }
             },
             approveProcess(param){
                 let formPromise=this.$refs.formPage.submit();
                 let _t=this;
+                _t.isShowLoading = true;
                 return new Promise((resolve,reject)=>{
                     formPromise.then((data)=>{
                         var formData=data&&data[0];
                         if(_t.abstract.processInstance) {
                             service.taskComplete(param).then((res) => {
                                 resolve(res);
+                                _t.isShowLoading = false;
                                 _t.$toast('提交成功');
                                 _t.back();
                             })
@@ -136,6 +148,7 @@
                             param.procDefKey = _t.widgetParams.procDefKey;
                             param.payloadType = "StartProcessPayload";
                             service.startProcessInstanceCmd(param).then((res)=> {
+                                _t.isShowLoading = false;
                                 resolve();
                                 _t.$toast('提交成功');
                                 _t.back();
@@ -143,17 +156,20 @@
                         }
                     },(erro)=>{
                         reject();
+                        _t.isShowLoading = false;
                         _this.$toast(erro);
                     })
                 },(erro)=>{
                     reject();
                     _this.$toast(erro);
+                    _t.isShowLoading = false;
                 })
             },
             dismissProcess(){
                 //驳回流程
                 let formPromise=this.$refs.formPage.submit();
                 let _t=this;
+                _t.isShowLoading = true;
                 return new Promise((resolve,reject)=>{
                     formPromise.then((data)=>{
                         var formData=data&&data[0];
@@ -161,7 +177,9 @@
                             resolve(res);
                             _t.$toast('驳回成功');
                             _t.back();
+                            _t.isShowLoading = false;
                         },(erro)=>{
+                            _t.isShowLoading = false;
                             buiweex.alert(erro)
                         });
                     });
@@ -171,17 +189,21 @@
                 //表单保存
                 let formPromise=this.$refs.formPage.submit();
                 let _this=this;
+                _this.isShowLoading = true;
                 return new Promise((resolve,reject)=>{
                     formPromise.then((data)=>{
                         resolve();
                         _this.$toast('编辑成功');
+                        _this.isShowLoading = false;
                     },(erro)=>{
                         reject();
                         _this.$toast(erro);
+                        _this.isShowLoading = false;
                     });
                 },(erro)=>{
                     reject();
                     _this.$toast(erro);
+                    _this.isShowLoading = false;
                 });
             },
             back:function(){
@@ -231,6 +253,7 @@
             let _this = this,_params = this.params,_businessKey,_procDefKey;
             if(_this.widgetParams.taskId=="undefined"){_this.widgetParams.taskId=""}
             if(_this.widgetParams.businessKey=="undefined"){_this.widgetParams.businessKey=""}
+            _this.isShowLoading = true;
             service.getTaskInfo(_this.widgetParams.taskId,_this.widgetParams.businessKey).then((res) =>{
                 //任务信息
                 _this.abstract = Object.assign(res,{"procInstId":res.processInstanceId});
@@ -263,10 +286,10 @@
                             _attachment.push(item)
                         }
                     });
+                    _this.isShowLoading = false;
                     //_this.attachmentObject.oList = Object.assign([],_attachment);
                     _this.attachmentObject.list = _attachment;
-                })
-
+                });
             });
         },
         components: {

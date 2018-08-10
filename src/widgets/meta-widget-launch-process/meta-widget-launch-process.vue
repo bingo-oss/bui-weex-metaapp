@@ -29,6 +29,9 @@
                 <meta-operation class="full-column" btn-type="dropdown" :operation="actionsheetStyle(commonOpt,index)" :widget-context="getWidgetContext()" @triggered="actionsheetTriggered" @successed="actionsheetSuccessed"></meta-operation>
             </div>
         </actionsheet-wrapper>
+
+        <bui-loading :show="isShowLoading" :loading-text="loadingText==''?'加载中...':loadingText"></bui-loading>
+
     </div>
 </template>
 
@@ -54,12 +57,17 @@
                     hideHeader:true//隐藏内嵌的部件头部
                 },
                 showActionsheet: false,
+                isShowLoading:false,
+                loadingText:""
             }
         },
         created(){
             //EventBus.$emit("widget-push-title","");
         },
         computed: {
+            metaForm(){
+                return this.$refs.formPage&&this.$refs.formPage.metaForm;
+            },
             subParams(){
                 let _t = this;
                 return {
@@ -82,6 +90,7 @@
             startProcess(){//启动流程
                 let formPromise=this.$refs.formPage.submit();
                 let _this=this;
+                _this.isShowLoading = true;
                 return new Promise((resolve,reject)=>{
                     formPromise.then((data)=>{
                         var formData=data&&data[0];
@@ -92,22 +101,26 @@
                         }
                         service.startProcessInstanceCmd(_this.subParams).then((res)=> {
                             resolve();
+                            _this.isShowLoading = false;
                             _this.$toast('发起流程成功');
                             _this.back();
                         })
                      },(erro)=>{
                         reject();
+                        _this.isShowLoading = false;
                         _this.$toast(erro);
                     });
                 },(erro)=>{
                     reject();
                     _this.$toast(erro);
+                    _this.isShowLoading = false;
                 });
             },
             processFormSave(){
                 //表单保存
                 let formPromise=this.$refs.formPage.submit();
                 let _this = this;
+                _this.isShowLoading = true;
                 return new Promise((resolve,reject)=>{
                     formPromise.then((data)=>{
                         var formData=data&&data[0];
@@ -119,12 +132,15 @@
                         _this.params = Object.assign({},_this.params);
                         resolve();
                         _this.$toast('保存成功');
+                        _this.isShowLoading = false;
                     },(erro)=>{
                         reject();
                         _this.$toast(erro);
+                        _this.isShowLoading = false;
                     });
                 },(erro)=>{
                     reject();
+                    _this.isShowLoading = false;
                 });
             },
             back(){
