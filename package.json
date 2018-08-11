@@ -23,19 +23,19 @@
   "scripts": {
     "start": "npm run serve & npm run dev & npm run debug",
     "dev": "webpack --watch",
-    "serve": "serve -p  $npm_package_ports_serverPort",
-    "debug": "weex debug -p  $npm_package_ports_debugPort",
+    "serve": "serve -p 8686",
+    "debug": "weex-devtool -p 8878",
     "publish": "node build/publish.js",
     "build": "webpack"
   },
   "dependencies": {
     "bui-weex": "^0.3.7",
+    "co": "^4.6.0",
     "linkapi": "^0.3.2",
-    "url-template": "^2.0.8",
-    "vue": "^2.4.2",
-    "path-to-regexp" : "1.7.0",
     "lodash": "^4.17.4",
-    "co": "^4.6.0"
+    "path-to-regexp": "1.7.0",
+    "url-template": "^2.0.8",
+    "vue": "^2.4.2"
   },
   "devDependencies": {
     "punycode": "^2.1.0",
@@ -62,6 +62,9 @@
     "webpack": "^1.14.0",
     "weex-devtool": "^0.2.64",
     "weex-loader": "^0.4.1",
-    "webpack-bundle-analyzer": "^2.0.0"
+    "webpack-bundle-analyzer": "^2.0.0",
+    "moment": "^2.20.1",
+    "axios": "^0.17.1",
+    "weex-vue-loader": "^0.2.5"
   }
 }
