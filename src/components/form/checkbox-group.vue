@@ -23,6 +23,11 @@ import _ from '../../js/tool/lodash.js'
 export default {
     componentType: 'Boolean',
     extends: mixin,
+    props: {
+        "value":{type:Array,default:function(){
+            return [];
+        }}
+    },
     data() {
         return {
             valueText:""
@@ -51,9 +56,56 @@ export default {
     },
     methods: {
         input(value) {
-            this.$emit('input', value);
+            var emitValue=Object.assign([],this.value);
+            this.$emit('input',emitValue);
+            this.emitExData();
+        },
+        initDefault:function(){
+            let _defaultSelected=[];
+            if(this.definition.componentParams.options){
+                _.each(this.definition.componentParams.options,function(option){
+                    if(option.checked){
+                        _defaultSelected.push(option.id);
+                    }
+                });
+            }
+            //如果当前选中的值和默认值不一样才变更
+            if(this.value!=_defaultSelected){
+                this.value=Object.assign([],_defaultSelected);
+                this.$emit('input',_defaultSelected);
+                this.emitExData();
+            }
+        },
+        emitOthersValue:function(othersValue){
+            this.emitExData(othersValue);
+        },
+        emitExData:function(othersValue){
+            var _this=this;
+            var exData={};
+            var optionsMap= {};
+            if(this.definition.componentParams.options){
+                _.each(this.definition.componentParams.options,function(option){
+                    optionsMap[option.id] = option.text;
+                });
+            }
+            var othersId=this.definition.componentParams.otherOptions.id;
+            _.each(this.value,function(selectedId){
+                if(othersId!==selectedId){
+                    exData[selectedId]=_this.buildExData(optionsMap[selectedId]);
+                }
+            });
+            if(othersValue){
+                exData[othersId]=_this.buildExData(othersValue);
+            }
+            this.$emit("exDataChanged",exData,this.definition.dataField);
         }
     },
+    mounted:function(){
+        if(_.isEmpty(this.value)){
+            this.$emit('input',[]);
+            this.initDefault();
+        }
+    }
 }
 </script>
 
