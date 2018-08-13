@@ -4,6 +4,21 @@ import buiweex from 'bui-weex';
 const linkapi = require('linkapi');
 
 const service={
+    getfirstSteps(procDefKey){
+        //没有发起流程时获取下一步信息
+        return new Promise(function(resolve,reject){
+            config.readRuntimeConfig().then(runtimeConfig => {
+                ax.get(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/process-definitions/${procDefKey}/first_steps`)
+                    .then(function ({data}) {
+                        resolve(data);
+                    },(err)=>{
+                        reject(err);
+                    });
+            },(err)=>{
+                reject(err);
+            });
+        });
+    },
     startProcessInstanceCmd(param){
         //启动流程
         return new Promise(function(resolve,reject){

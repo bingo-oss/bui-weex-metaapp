@@ -274,7 +274,7 @@
                         Object.assign(_params, res.settings);
                     }
                     _this.params = Object.assign({} ,_this.widgetParams,_params);
-                })
+                });
                 service.getAttachment(_params.taskId,_businessKey).then((res) =>{
                     //获取对应任务下的附件
                     let _attachment=[];

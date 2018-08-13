@@ -52,6 +52,7 @@
         },
         data() {
             return {
+                abstract:{},
                 title:"发起流程",
                 params:{
                     hideHeader:true//隐藏内嵌的部件头部
@@ -90,7 +91,7 @@
                     form:this
                 }
             },
-            startProcess(){//启动流程
+            startProcess(param){//启动流程
                 let formPromise=this.$refs.formPage.submit();
                 let _this=this;
                 _this.isShowLoading = true;
@@ -98,11 +99,11 @@
                     formPromise.then((data)=>{
                         var formData=data&&data[0];
                         if(formData&&formData.id) {
-                            _this.params.businessKey = formData.id
+                            param.businessKey = formData.id
                             _this.params.dataId = formData.id;
                             //_this.params.variables.name = formData.title;
                         }
-                        service.startProcessInstanceCmd(_this.subParams).then((res)=> {
+                        service.startProcessInstanceCmd(param).then((res)=> {
                             resolve();
                             _this.isShowLoading = false;
                             _this.$toast('发起流程成功');
@@ -196,6 +197,11 @@
                 }
                 _this.$refs.formPage.title="";
             });
+
+            /*service.getfirstSteps(_this.subParams.processDefinitionKey).then((res)=>{
+                //获取流程第一步信息
+                _this.abstract = res;
+            });*/
 
             this.$refs.formPage.hideHeader = true;
         }
