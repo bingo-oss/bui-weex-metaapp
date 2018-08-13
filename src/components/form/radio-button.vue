@@ -93,6 +93,17 @@ export default {
             //     })
             // }
         },
+        initDefault:function(){
+            var _this=this;
+            _.each(this.definition.componentParams.options,function(option){
+                if(option.checked){
+                    _this.value=option.id;
+                    _this.$emit('input',_this.value);
+                    _this.emitExData(option.id,option.text);
+                    return false;
+                }
+            });
+        },
         emitExData:function(id,text){
             var exData={};
             exData[id]=this.buildExData(text);
@@ -100,6 +111,12 @@ export default {
             this.$emit("exDataChanged",exData,_dataField);
         }
     },
+    mounted:function(){
+        if(_.isEmpty(this.value)){
+            this.$emit('input',"");
+            this.initDefault();
+        }
+    }
 }
 </script>
 

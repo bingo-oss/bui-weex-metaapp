@@ -87,8 +87,20 @@
                 if(_vals.length){
                     this.$emit('input',this.issuedObjcet);
                 }else{
-                    this.$emit('input',"");
+                    this.$emit('input',{});
                 }
+            },
+            initDefault:function(){
+                var _this=this;
+                if(this.definition.componentParams.standard!="standard2")return false;
+                _this.issuedObjcet.code = "";
+                _.each(this.definition.componentParams.options,function(option){
+                    if(option.checked){
+                        _this.issuedObjcet.code=option.id;
+                        _this.$emit('input',_this.issuedObjcet);
+                        return false;
+                    }
+                });
             }
         },
         computed: {
@@ -101,6 +113,10 @@
             }
         },
         mounted:function(){
+            if(_.isEmpty(this.value)){
+                this.$emit('input',{});
+                this.initDefault();
+            }
         }
     }
 </script>
