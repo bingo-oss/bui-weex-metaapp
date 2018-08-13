@@ -100,6 +100,7 @@ import _ from '../js/tool/lodash';
 import Utils from '../js/tool/utils';
 import OperationUtils from '../components/meta_operation/js/operation_utils';
 import commonOperation from '../components/meta_operation/js/common_operation.js';
+import EventBus from '../js/bus';
 
 const linkapi = require('linkapi');
 const buiweex = require('bui-weex');
@@ -522,6 +523,7 @@ module.exports = {
         if(this.widgetParams.defaultView) {
             this.selectedFilter = this.widgetParams.defaultView;
         }
+        EventBus.$emit("widget-push-title","");
         this.getView();//获取视图配置和数据
     },
     components: {

@@ -21,9 +21,7 @@ export default {
     },
     created(){
         EventBus.$on("widget-push-title",(data) =>{
-            if(!this.title){
-                this.title=data;
-            }
+            this.title=data;
         });
     },
     mounted(){
