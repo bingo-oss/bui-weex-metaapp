@@ -355,6 +355,7 @@ module.exports = {
             swipeCell&&swipeCell.close();
         },
         getView() {
+                this.isShowLoading = true;
                 this.contextPath = this.$getContextPath();
                 globalEvent.addEventListener("androidback", e => {
                     this.$pop();
@@ -364,7 +365,7 @@ module.exports = {
                 });
                 let pageParam = this.$getPageParams();
 
-                let viewId = this.selectedFilter.id;
+                let viewId = this.selectedFilter.viewId;
                 // 以下变量由外部配置
                 // 获取这些变量之后，将其从 pageParam 里删除，pageParam 剩下的参数将会被透传
                 //let viewId = pageParam.viewId;
@@ -442,10 +443,14 @@ module.exports = {
                      params.viewId = this.selectedFilter.viewId;
                      }
                      }*/
+                    if(this.selectedFilter.filterId){
+                        params.viewId = this.selectedFilter.filterId;
+                    }
+
                     metabase.initMetabase(viewDef.projectId,true).then(ddd=>{
                         var mentity=metabase.findMetaEntity(viewDef.metaEntityName/*'Activity'*/);
                         this.metaEntity = mentity
-                    })
+                    });
 
                     return service.getEngineUrl(viewDef.projectId)
                     .catch(err => {
@@ -485,8 +490,8 @@ module.exports = {
                         }
                     })
                     .catch(err => {
-                            this.$toast('getSwagger error')
-                        this.$alert(err)
+                        this.$toast('getSwagger error');
+                        this.$alert(err);
                     })
                     .then(() => {
                             // 转成小写，否则不认
@@ -530,8 +535,6 @@ module.exports = {
         'filter-view': require('../views/filter.vue')
     },
     mounted(){
-        this.isShowLoading = true;
-
     }
 }
 </script>
