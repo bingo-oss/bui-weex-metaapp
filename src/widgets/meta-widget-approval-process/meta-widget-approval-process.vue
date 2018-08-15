@@ -264,7 +264,7 @@
                 }else if(_this.widgetParams.businessKey){
                     _businessKey = _this.widgetParams.businessKey
                 }
-                if(res.processDefinitionId) {
+                if(res.processInstance) {
                     _procDefKey = res.processInstance.processDefinitionKey
                 }else {
                     _procDefKey = _this.widgetParams.procDefKey;
