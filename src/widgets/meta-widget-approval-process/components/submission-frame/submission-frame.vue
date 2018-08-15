@@ -5,18 +5,18 @@
                 <meta-opt-btn :btn-type="btnType" :operation="operation"></meta-opt-btn>
             </slot>
         </div>
-        <bui-dialog v-model="showDialog" @btnClick="onDialogCallback" :title="title">
-            <text class="form-label mb10" v-if="taskInfor.name">当前环节：{{taskInfor.name}}</text>
-            <text class="form-label mb10" @click="selectNext">下一环节：{{selectNode.name}}</text>
-            <text class="form-label mb10" v-if="selectNode.processingPerson&&selectNode.processingPerson.length">处理人：{{selectNode.processingPerson.join(",")}}</text>
+        <bui-dialog v-model="showDialog" :height="500" :top="200" @btnClick="onDialogCallback" :title="title">
+            <text class="form-label mb25" v-if="taskInfor.name">当前环节：{{taskInfor.name}}</text>
+            <text class="form-label mb25" @click="selectNext">下一环节：{{selectNode.name}}</text>
+            <text class="form-label mb25" v-if="selectNode.processingPerson&&selectNode.processingPerson.length">处理人：{{selectNode.processingPerson.join(",")}}</text>
             <template v-if="taskInfor.formProperties" v-for="(formItem,index) in taskInfor.formProperties" :key="">
                 <!--读取环节上设置的自定义字段-->
-                <div v-if="defaultFormDate(formItem)&&formItem.type=='enum'" class="mb10">
+                <div v-if="defaultFormDate(formItem)&&formItem.type=='enum'" class="mb25">
                     <text class="form-label">{{formItem.name}}</text>
                         <bui-radio v-model="formDate[formItem.id]" :items="formItem.options" direction="horizontal" @change="radioChange" ></bui-radio>
                 </div>
             </template>
-            <div class="mb10">
+            <div class="mb25">
                 <text class="form-label">审批意见:</text>
                 <textarea v-model="formDate.opinion" class="textarea form-label" @input="" @change="" @focus="" @blur=""></textarea>
             </div>
@@ -68,6 +68,8 @@
                                     _.each(item.groupUsers,(item,index)=>{
                                         selectNode_userName.processingPerson.push(item.name)
                                     });
+                                }else{
+                                    selectNode_userName.processingPerson.push(item.name)
                                 }
                             }else{
                                 selectNode_userName.processingPerson.push(item.name)
@@ -186,5 +188,5 @@
 </script>
 <style src="../../../../styles/common.css"></style>
 <style>
-    .mb10{ margin-bottom: 15px;}
+    .mb25{ margin-bottom: 25px;}
 </style>

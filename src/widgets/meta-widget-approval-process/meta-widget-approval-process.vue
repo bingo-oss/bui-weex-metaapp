@@ -270,7 +270,7 @@
                     _procDefKey = _this.widgetParams.procDefKey;
                     service.getfirstSteps(_this.widgetParams.procDefKey).then((res)=>{
                         //获取流程第一步信息
-                        _this.abstract = Obect.assign(_this.abstract,res);
+                        _this.abstract = Object.assign({},_this.abstract,{nextNodes:res});
                     });
                 }
                 Object.assign(_params,{"dataId":_businessKey,"taskId":res.id});//设置下数据id--表单部件接受的参数
@@ -298,14 +298,16 @@
                     _this.attachmentObject.list = _attachment;
                 });
 
-                service.isApproval(_params.taskId).then((res)=>{
-                    //获取当前登录用户是否具备审批权限
-                    _this.abstract.isApproval = res;
-                    _this.hideOperations(!res)
-                },(erro)=>{
-                    //_this.abstract.isApproval = true;
-                    //_this.hideOperations(true)
-                });
+                if(_params.taskId){
+                    service.isApproval(_params.taskId).then((res)=>{
+                        //获取当前登录用户是否具备审批权限
+                        _this.abstract.isApproval = res;
+                        _this.hideOperations(!res)
+                    },(erro)=>{
+                        //_this.abstract.isApproval = true;
+                        //_this.hideOperations(true)
+                    });
+                }
 
             });
         },

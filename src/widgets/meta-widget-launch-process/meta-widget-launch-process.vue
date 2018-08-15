@@ -104,10 +104,10 @@
                             //_this.params.variables.name = formData.title;
                         }
                         service.startProcessInstanceCmd(param).then((res)=> {
-                            resolve();
                             _this.isShowLoading = false;
                             _this.$toast('发起流程成功');
                             _this.back();
+                            resolve();
                         })
                      },(erro)=>{
                         reject();
@@ -201,7 +201,7 @@
 
             service.getfirstSteps(_this.subParams.processDefinitionKey).then((res)=>{
                 //获取流程第一步信息
-                _this.abstract = Obect.assign(_this.abstract,res);
+                _this.abstract = Object.assign({},{nextNodes:res});
             });
 
             this.$refs.formPage.hideHeader = true;
