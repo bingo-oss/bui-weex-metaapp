@@ -108,6 +108,10 @@
                             _this.$toast('发起流程成功');
                             _this.back();
                             resolve();
+                        },(err)=>{
+                            _this.isShowLoading = false;
+                            _this.$toast('发起流程失败');
+                            reject()
                         })
                      },(erro)=>{
                         reject();

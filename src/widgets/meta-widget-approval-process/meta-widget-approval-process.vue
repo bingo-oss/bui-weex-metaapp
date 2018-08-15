@@ -141,6 +141,10 @@
                                 _t.isShowLoading = false;
                                 _t.$toast('提交成功');
                                 _t.back();
+                            },(err)=>{
+                                _t.isShowLoading = false;
+                                _t.$toast('提交失败');
+                                reject()
                             })
                         }else{
                             //需要对没有关联任务的数据进行初始化信息
@@ -152,6 +156,10 @@
                                 resolve(res);
                                 _t.$toast('提交成功');
                                 _t.back();
+                            },(err)=>{
+                                _t.isShowLoading = false;
+                                _t.$toast('提交失败');
+                                reject()
                             })
                         }
                     },(erro)=>{
