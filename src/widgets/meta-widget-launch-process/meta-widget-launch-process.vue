@@ -198,10 +198,10 @@
                 _this.$refs.formPage.title="";
             });
 
-            /*service.getfirstSteps(_this.subParams.processDefinitionKey).then((res)=>{
+            service.getfirstSteps(_this.subParams.processDefinitionKey).then((res)=>{
                 //获取流程第一步信息
-                _this.abstract = res;
-            });*/
+                _this.abstract = Obect.assign(_this.abstract,res);
+            });
 
             this.$refs.formPage.hideHeader = true;
         }

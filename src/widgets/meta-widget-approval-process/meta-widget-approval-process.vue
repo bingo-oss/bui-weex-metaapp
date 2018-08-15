@@ -269,7 +269,7 @@
                     _procDefKey = _this.widgetParams.procDefKey;
                     service.getfirstSteps(_this.widgetParams.procDefKey).then((res)=>{
                         //获取流程第一步信息
-                        _this.abstract = res;
+                        _this.abstract = Obect.assign(_this.abstract,res);
                     });
                 }
                 Object.assign(_params,{"dataId":_businessKey,"taskId":res.id});//设置下数据id--表单部件接受的参数
