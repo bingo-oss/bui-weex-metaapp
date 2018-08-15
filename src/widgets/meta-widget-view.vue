@@ -483,11 +483,11 @@ module.exports = {
                         }
                         this.swaggerEntiyDef = entityDef;
                         // 对于 pageParam 里的 query，遇到属于字段的 query 要在获取实体数据时带上
-                        for (let k in this.swaggerEntiyDef.properties) {
+                        /*for (let k in this.swaggerEntiyDef.properties) {
                             if (pageParam[k]) {
                                 params[k] = pageParam[k];
                             }
-                        }
+                        }*/
                     })
                     .catch(err => {
                         this.$toast('getSwagger error');

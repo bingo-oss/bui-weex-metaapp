@@ -4,10 +4,10 @@
             <div slot="right" class="header-right-wrapper">
                 <div class="header-button">
                     <!--头部为上拉菜单操作区域-->
-                    <template v-if="mobileHeaderOperations().length===1">
-                        <meta-operation  btn-type="icon" :operation="mobileHeaderOperations()[0]" :widget-context="getWidgetContext()"></meta-operation>
+                    <template v-if="this.widgetParams.actionsheetOperation.length===1">
+                        <meta-operation  btn-type="icon" :operation="this.widgetParams.actionsheetOperation[0]" :widget-context="getWidgetContext()"></meta-operation>
                     </template>
-                    <bui-icon v-if="mobileHeaderOperations().length>1" name="ion-ios-more" color="white" @click="titleOperationClicked"></bui-icon>
+                    <bui-icon v-if="this.widgetParams.actionsheetOperation.length>1" name="ion-ios-more" color="white" @click="titleOperationClicked"></bui-icon>
                 </div>
             </div>
         </bui-header>
@@ -51,7 +51,7 @@
                 ref="actionsheet"
                 v-model="showActionsheet"
         >
-            <div v-for="(commonOpt,index) in mobileHeaderOperations()" :key="index">
+            <div v-for="(commonOpt,index) in this.widgetParams.actionsheetOperation" :key="index">
                 <meta-operation class="full-column" btn-type="dropdown" :operation="actionsheetStyle(commonOpt,index)" :widget-context="getWidgetContext()" @triggered="actionsheetTriggered" @successed="actionsheetSuccessed"></meta-operation>
             </div>
         </actionsheet-wrapper>
@@ -149,7 +149,7 @@
                             param.payloadType = "StartProcessPayload";
                             service.startProcessInstanceCmd(param).then((res)=> {
                                 _t.isShowLoading = false;
-                                resolve();
+                                resolve(res);
                                 _t.$toast('提交成功');
                                 _t.back();
                             })
@@ -213,18 +213,6 @@
                 let d = new Date(obj);
                 return Utils.formatDate(d);
             },
-            mobileHeaderOperations(){
-                var opts=(this.widgetParams&&this.widgetParams.actionsheetOperation);
-                //下拉菜单操作
-                var _opts=[];
-                _.each(opts,function(opt){
-                    var terminalType=opt[Utils.operationTermimalTypeField];
-                    if(terminalType!==1){
-                        _opts.push(opt);
-                    }
-                });
-                return _opts;
-            },
             titleOperationClicked(){
                 this.showActionsheet = true;
             },
@@ -247,6 +235,19 @@
                     "font-size":"30px"
                 }
                 return item;
+            },
+            hideOperations(isApproval){
+                //移除操作处理
+                _.each(this.widgetParams.commonOperations,(opt,index)=>{
+                    if(opt.props.widget&&opt.props.widget.value=="submission-frame"&&isApproval){
+                        this.widgetParams.commonOperations.splice(index,1);
+                    }
+                });
+                _.each(this.widgetParams.actionsheetOperation,(opt,index)=>{
+                    if(opt.props.widget&&opt.props.widget.value=="submission-frame"&&isApproval){
+                        this.widgetParams.commonOperations.splice(index,1);
+                    }
+                });
             }
         },
         mounted(){
@@ -266,6 +267,10 @@
                     _procDefKey = res.processInstance.processDefinitionKey
                 }else {
                     _procDefKey = _this.widgetParams.procDefKey;
+                    service.getfirstSteps(_this.widgetParams.procDefKey).then((res)=>{
+                        //获取流程第一步信息
+                        _this.abstract = res;
+                    });
                 }
                 Object.assign(_params,{"dataId":_businessKey,"taskId":res.id});//设置下数据id--表单部件接受的参数
                 service.getProcdefSetting(_procDefKey,res.taskDefinitionKey).then(function (res) {
@@ -275,7 +280,8 @@
                     }
                     _this.params = Object.assign({} ,_this.widgetParams,_params);
                 });
-                service.getAttachment(_params.taskId,_businessKey).then((res) =>{
+
+                service.getAttachment(_params.taskId,_businessKey).then((res)=>{
                     //获取对应任务下的附件
                     let _attachment=[];
                     _.each(res.data,(item,index)=>{
@@ -290,6 +296,16 @@
                     //_this.attachmentObject.oList = Object.assign([],_attachment);
                     _this.attachmentObject.list = _attachment;
                 });
+
+                service.isApproval(_params.taskId).then((res)=>{
+                    //获取当前登录用户是否具备审批权限
+                    _this.abstract.isApproval = res;
+                    _this.hideOperations(!res)
+                },(erro)=>{
+                    //_this.abstract.isApproval = true;
+                    //_this.hideOperations(true)
+                });
+
             });
         },
         components: {

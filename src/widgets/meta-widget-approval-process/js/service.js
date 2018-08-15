@@ -102,6 +102,23 @@ const service={
                 reject(err);
             })
         });
+    },
+    isApproval(taskId){
+        //当前用户是否可以审核该任务
+        return new Promise(function(resolve,reject){
+            config.readRuntimeConfig().then(runtimeConfig => {
+                ax.get(`${runtimeConfig["service.activiti.runtime.endpoint"]}//v1/tasks/${taskId}/permission/approval`)
+                    .then(function ({data}) {
+                        resolve(data);
+                    },(err)=>{
+                        reject(err);
+                    });
+            },(err)=>{
+                reject(err);
+            });
+        });
     }
+
+
 };
 export default service;
