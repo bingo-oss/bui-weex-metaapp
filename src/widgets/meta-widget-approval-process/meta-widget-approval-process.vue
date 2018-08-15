@@ -195,6 +195,7 @@
                         resolve();
                         _this.$toast('编辑成功');
                         _this.isShowLoading = false;
+                        _this.back();
                     },(erro)=>{
                         reject();
                         _this.$toast(erro);

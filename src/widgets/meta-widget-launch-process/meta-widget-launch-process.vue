@@ -136,6 +136,7 @@
                         _this.params = Object.assign({},_this.params);
                         resolve();
                         _this.$toast('保存成功');
+                        _this.back();
                         _this.isShowLoading = false;
                     },(erro)=>{
                         reject();
