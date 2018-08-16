@@ -6,7 +6,7 @@
                 <bui-icon v-if="presetFilters.length" name="ion-chevron-down" color="white" size=39 @click="titleClicked"></bui-icon>
             </div>
             <div slot="right" class="header-right-wrapper">
-                <div class="header-button" @click="filterClicked">
+                <div class="header-button" @click="filterClicked" v-if="showFilterView">
                     <bui-icon name="ion-funnel" color="white" @click="filterClicked"></bui-icon>
                 </div>
                 <div class="header-button">
@@ -144,7 +144,8 @@ module.exports = {
             pageSize: 10,
             remainingPageParam: {},
             isShowLoading:false,
-            loadingText:""
+            loadingText:"",
+            showFilterView:false
         }
     },
     computed: {
@@ -411,6 +412,9 @@ module.exports = {
                         fields.add(col.name)
                         if (col.quicksearchable) {
                             this.quickSearchableField.push(col.name);
+                        }
+                        if(col.searchable){
+                            this.showFilterView = true;//存在高级筛选 显示按钮
                         }
                     });
                     if (viewDef.config.mLayout) {
