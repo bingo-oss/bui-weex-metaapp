@@ -11,7 +11,7 @@
                 <text class="form-label">{{definition.componentParams.title}}</text>
                 <text class="required-mark" v-if="definition.componentParams.required">*</text>
             </div>
-            <div class="from-input-wrapper" @click="inputClicked" v-if="definition.componentParams.standard=='standard2'">
+            <div class="from-input-wrapper" @click="inputClicked" v-if="definition.componentParams.standard=='standard2'" :style="{flex: 3}">
                 <text class="form-input" :style="inputStyle">{{valueText || '选择选项...'}}</text>
                 <bui-icon slot="action" name="ion-ios-arrow-right"></bui-icon>
             </div>
@@ -37,6 +37,7 @@
         },
         data () {
             return {
+                valueText:"",
                 issuedObjcet:{
                     fullText:"",
                     code:"",
@@ -51,6 +52,9 @@
                 if(typeof(newV)=="sting"){newV = eval('('+newV+')')}
                 if(newV){
                     this.issuedObjcet = newV;
+                    let opt = this.definition.componentParams.options.find(o => o.id === this.issuedObjcet.code);
+                    this.valueText = opt && opt.text;
+
                 }
             }
         },
@@ -68,6 +72,7 @@
                     if (res.result === 'success') {
                         let id = this.definition.componentParams.options[res.data].id;
                         this.issuedObjcet.code = id;
+                        this.valueText = this.definition.componentParams.options[res.data].text;
                         this.input();
                     }
                 })
@@ -97,6 +102,7 @@
                 _.each(this.definition.componentParams.options,function(option){
                     if(option.checked){
                         _this.issuedObjcet.code=option.id;
+                        _this.valueText = option.text;
                         _this.$emit('input',_this.issuedObjcet);
                         return false;
                     }
@@ -106,11 +112,11 @@
         computed: {
             upper () {
                 return this.msg.toUpperCase();
-            },
+            }/*,
             valueText() {
                 let opt = this.definition.componentParams.options.find(o => o.id === this.issuedObjcet.code);
                 return opt && opt.text;
-            }
+            }*/
         },
         mounted:function(){
             if(_.isEmpty(this.value)){

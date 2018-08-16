@@ -445,6 +445,8 @@ module.exports = {
                      }*/
                     if(this.selectedFilter.filterId){
                         params.viewId = this.selectedFilter.filterId;
+                    }else if(this.selectedFilter.filterVal){
+
                     }
 
                     metabase.initMetabase(viewDef.projectId,true).then(ddd=>{
@@ -585,6 +587,7 @@ module.exports = {
     font-size: 33px;
     margin-bottom: 5px;
     flex: 1;
+    lines:1;
 }
 
 .sub-text {
@@ -594,6 +597,7 @@ module.exports = {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+    lines:1;
 }
 
 .empty-tips {

@@ -905,6 +905,15 @@
                     this.$refs.blog.requestData(this.activityInfo, this.currLabeId)
                 } else if (index == 5) {
                     this.openDropdown(event);
+                } else if(item.target=="filter"){
+                    let _array = this.metaSuite.relations.filter(item => {
+                         return item.createBlog;
+                    });
+                    let params = {
+                        data: JSON.stringify(_array)
+                    };
+                    let url = this.$getContextPath() + "/filterBlog.weex.js";
+                    this.$push(url, params);
                 } else {
                     this.currLabeId = item.target;
                     this.$refs.blog.requestData(this.activityInfo, this.currLabeId)

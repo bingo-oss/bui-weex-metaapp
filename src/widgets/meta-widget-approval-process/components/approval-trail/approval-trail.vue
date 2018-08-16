@@ -30,6 +30,8 @@
 import _ from '../../../../js/tool/lodash.js'
 import service from './js/service';
 import utils from '../../../../js/tool/utils';
+import buiweex from 'bui-weex';
+
 export default {
     props: {
         widgetParams: {
@@ -69,8 +71,8 @@ export default {
                         return {
                             name:item.name,
                             assigneeName:item.assigneeName,
-                            createTime:item.createTime?utils.formatDate(item.createTime):"",
-                            endTime:item.endTime?utils.formatDate(item.endTime):"",
+                            createTime:item.createTime?utils.formatDate(item.createTime.replace(/T/g,' ').replace(/\.[\d]{3}Z/,'')):"",
+                            endTime:item.endTime?utils.formatDate(item.endTime.replace(/T/g,' ').replace(/\.[\d]{3}Z/,'')):"",
                             opinion:item.variables?item.variables.opinion:"",
                             color:"#DFDFDF",
                             textColor:"#000"
