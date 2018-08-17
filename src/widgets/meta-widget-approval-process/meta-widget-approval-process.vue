@@ -248,12 +248,12 @@
             hideOperations(isApproval){
                 //移除操作处理
                 _.each(this.widgetParams.commonOperations,(opt,index)=>{
-                    if(opt.props.widget&&opt.props.widget.value=="submission-frame"&&isApproval){
+                    if(opt&&opt.props&&opt.props.widget&&opt.props.widget.value=="submission-frame"&&isApproval){
                         this.widgetParams.commonOperations.splice(index,1);
                     }
                 });
                 _.each(this.widgetParams.actionsheetOperation,(opt,index)=>{
-                    if(opt.props.widget&&opt.props.widget.value=="submission-frame"&&isApproval){
+                    if(opt&&opt.props&&opt.props.widget&&opt.props.widget.value=="submission-frame"&&isApproval){
                         this.widgetParams.commonOperations.splice(index,1);
                     }
                 });
@@ -266,15 +266,14 @@
             _this.isShowLoading = true;
             service.getTaskInfo(_this.widgetParams.taskId,_this.widgetParams.businessKey).then((res) =>{
                 //任务信息
-                _this.abstract = Object.assign(res,{"procInstId":res.processInstanceId});
+                _this.abstract = res;
                 if(res.processInstance){
                     _businessKey = res.processInstance.businessKey
+                    _procDefKey = res.processInstance.processDefinitionKey
+                    if(res.processInstance.finished){_this.hideOperations(true);}//流程结束隐藏审核按钮
+                    _this.abstract = Object.assign({},res,{"procInstId":res.processInstance.id});
                 }else if(_this.widgetParams.businessKey){
                     _businessKey = _this.widgetParams.businessKey
-                }
-                if(res.processInstance) {
-                    _procDefKey = res.processInstance.processDefinitionKey
-                }else {
                     _procDefKey = _this.widgetParams.procDefKey;
                     service.getfirstSteps(_this.widgetParams.procDefKey).then((res)=>{
                         //获取流程第一步信息
