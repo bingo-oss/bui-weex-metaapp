@@ -135,7 +135,7 @@
                 return new Promise((resolve,reject)=>{
                     formPromise.then((data)=>{
                         var formData=data&&data[0];
-                        if(_t.abstract.processInstance) {
+                        if(param.taskId) {
                             service.taskComplete(param).then((res) => {
                                 resolve(res);
                                 _t.isShowLoading = false;
@@ -267,7 +267,7 @@
             service.getTaskInfo(_this.widgetParams.taskId,_this.widgetParams.businessKey).then((res) =>{
                 //任务信息
                 _this.abstract = res;
-                if(res.processInstance){
+                if(res.processInstance&&res.processInstance.businessKey){
                     _businessKey = res.processInstance.businessKey
                     _procDefKey = res.processInstance.processDefinitionKey
                     if(res.processInstance.finished){_this.hideOperations(true);}//流程结束隐藏审核按钮
