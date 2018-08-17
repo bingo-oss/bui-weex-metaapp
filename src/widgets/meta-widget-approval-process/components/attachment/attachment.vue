@@ -225,7 +225,7 @@
                     } else {
                         previewUrl = downloadUrl;
                     }
-                    linkapi.openLinkBroswer("预览",previewUrl);
+                    linkapi.openLinkBroswer(file.name?file.name:"预览",previewUrl);
                 });
             },
             handleEdit(file) {
@@ -236,7 +236,7 @@
                 /*let downloadUrl = this.downloadUrl(file.downloadUrl);
                 window.open(downloadUrl, "_blank");*/
                 this.downloadUrl(file.downloadUrl,(downloadUrl)=>{
-                    linkapi.openLinkBroswer("预览",previewUrl);
+                    linkapi.openLinkBroswer(file.name?file.name:"预览",previewUrl);
                 });
             },
             moreShow(){
