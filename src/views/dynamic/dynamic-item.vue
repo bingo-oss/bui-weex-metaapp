@@ -424,12 +424,26 @@
                     return;
                 }
                 let id = JSON.parse(item.extraInfo).id;
-                let actionParams = JSON.parse(item.resourceUrl).android;
+                let actionParams;
+                if(weex.config.env.deviceModel.indexOf("iPhone")==-1){
+                    actionParams = JSON.parse(item.resourceUrl).ios;
+                }else{
+                    actionParams = JSON.parse(item.resourceUrl).android;
+                }
                 let params = {
                     url: Config.serverConfig.uamUrl + '/esService/canBeUse/' + id,
                     data: {}
                 };
-                linkapi.get(params).then((result) => {
+                if (!Util.isEmpty(actionParams)) {
+                    actionParams = actionParams.replace("{parentId}", this.activityInfo.sourceId);
+                    actionParams = actionParams.replace("{parentEntityName}", this.activityInfo.suiteId);
+                    actionParams = actionParams.replace("{parentText}", this.activityInfo.name);
+                    actionParams = actionParams.replace("{closePage}", true);
+                    link.launchLinkService([actionParams], null, null);
+                } else {
+                    this.$toast("不支持打开此应用!");
+                }
+/*                linkapi.get(params).then((result) => {
                     if (result.success && result.result) {
                         if (!Util.isEmpty(actionParams)) {
                             actionParams = actionParams.replace("{parentId}", this.activityInfo.sourceId);
@@ -445,7 +459,7 @@
                     }
                 }, error => {
                     this.$toast(Util.handleException(error))
-                });
+                });*/
             },
             blogContentExpand(content){
                 let count = (weex.config.env.deviceWidth - 140) / 28;
