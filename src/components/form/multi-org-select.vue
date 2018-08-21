@@ -26,6 +26,33 @@ import SingleUserSelect from './single-user-select.vue'
 export default {
     componentType: 'MultiOrgSelect',
     extends: SingleUserSelect,
+    value: {
+        immediate: true,
+        handler(v) {
+            if (!this.filterMode) {
+                linkapi.getDeptInfoById(v, (result) => {
+                    this.valueText = result.map(u => u.userName).join(',');
+                }, err => {
+                        console.log(err)
+                })
+            }
+        }
+    },
+    filterValue: {
+        immediate: true,
+        handler(val) {
+            if (this.filterMode) {
+                let ret = /eq\s(\S*)$/.exec(val);
+                if (ret) {
+                    linkapi.getDeptInfoById(ret[1], (result) => {
+                        this.valueText = result.name;
+                    }, err => {
+                            console.log(err)
+                    })
+                }
+            }
+        }
+    },
     methods: {
         inputClicked(e) {
             if(this.readonly){

@@ -22,10 +22,35 @@
 <script>
 const linkapi = require("linkapi");
 import SingleUserSelect from './single-user-select.vue'
-
+import buiweex from "bui-weex";
 export default {
     componentType: 'MultiUserSelect',
     extends: SingleUserSelect,
+    watch: {
+        value: {
+            immediate: true,
+            handler(v) {
+                if (!this.filterMode&&v) {
+                    linkapi.getUserInfo(v, (result) => {
+                        this.valueText = result.map(u => u.userName).join(',');
+                    })
+                }
+            }
+        },
+        filterValue: {
+            immediate: true,
+            handler(val) {
+                if (this.filterMode) {
+                    let ret = /eq\s(\S*)$/.exec(val);
+                    if (ret) {
+                        linkapi.getUserInfo(ret[1], (result) => {
+                            this.valueText = result.userName;
+                        })
+                    }
+                }
+            }
+        }
+    },
     methods: {
         inputClicked(e) {
             if(this.readonly){
