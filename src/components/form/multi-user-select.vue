@@ -22,7 +22,6 @@
 <script>
 const linkapi = require("linkapi");
 import SingleUserSelect from './single-user-select.vue'
-import buiweex from "bui-weex";
 export default {
     componentType: 'MultiUserSelect',
     extends: SingleUserSelect,
@@ -58,11 +57,11 @@ export default {
             }
             linkapi.startContactMulitSelector(this.definition.componentParams.title, 1, {}, (result) => {
                 this.valueText = result.user.map(u => u.name).join(',');
-                this.$emit('input', result.user);
-                // this.$alert(result);
+                this.$emit('input', result.user.map(u => u.userId));
+                //this.$alert(result);
                 if(this.valueText){
                     let text = this.valueText
-                    this.emitExData(result.user,text);
+                    this.emitExData(result.user.map(u => u.userId),text);
                 }
             }, (err) => {
                 this.$alert(err);

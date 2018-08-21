@@ -12,7 +12,7 @@
                 <text class="required-mark" v-if="definition.componentParams.required">*</text>
             </div>
             <div class="from-input-wrapper" @click="inputClicked">
-                <text class="form-input" :style="inputStyle">{{valueText || '请选择'}}</text>
+                <text class="form-input" :style="inputStyle">{{valueText.join(",") || '请选择'}}</text>
                 <bui-icon slot="action" name="ion-ios-arrow-right"></bui-icon>
             </div>
         </template>
@@ -22,33 +22,45 @@
 <script>
 const linkapi = require("linkapi");
 import SingleUserSelect from './single-user-select.vue'
+import buiweex from "bui-weex";
+import _ from '../../js/tool/lodash';
 
 export default {
     componentType: 'MultiOrgSelect',
     extends: SingleUserSelect,
-    value: {
-        immediate: true,
-        handler(v) {
-            if (!this.filterMode) {
-                linkapi.getDeptInfoById(v, (result) => {
-                    this.valueText = result.map(u => u.userName).join(',');
-                }, err => {
-                        console.log(err)
-                })
-            }
+    data() {
+        return {
+            valueText: [],
         }
     },
-    filterValue: {
-        immediate: true,
-        handler(val) {
-            if (this.filterMode) {
-                let ret = /eq\s(\S*)$/.exec(val);
-                if (ret) {
-                    linkapi.getDeptInfoById(ret[1], (result) => {
-                        this.valueText = result.name;
-                    }, err => {
+    watch:{
+        value: {
+            immediate: true,
+            handler(v) {
+                if (!this.filterMode&&v) {
+                    this.valueText = [];
+                    _.each(v,(e,index)=>{
+                        linkapi.getDeptInfoById(e, (result) => {
+                            this.valueText.push(result.name);
+                        }, err => {
                             console.log(err)
+                        })
                     })
+                }
+            }
+        },
+        filterValue: {
+            immediate: true,
+            handler(val) {
+                if (this.filterMode) {
+                    let ret = /eq\s(\S*)$/.exec(val);
+                    if (ret) {
+                        linkapi.getDeptInfoById(ret[1], (result) => {
+                            this.valueText = result.name;
+                        }, err => {
+                                console.log(err)
+                        })
+                    }
                 }
             }
         }
@@ -59,11 +71,11 @@ export default {
                 return;
             }
             linkapi.startContactMulitSelector(this.definition.componentParams.title, 4, {}, (result) => {
-                 this.valueText = result.user.map(u => u.name).join(',');
-                 this.$emit('input', result.user);
+                 this.valueText = result.organization.map(u => u.name).join(',');
+                 this.$emit('input', result.organization.map(u => u.orgId));
                 if(this.valueText){
-                    let text = this.valueText
-                    this.emitExData(result.user,text);
+                    let text = this.valueText;
+                    this.emitExData(result.organization.map(u => u.orgId),text);
                 }
                 //this.$alert(result);
             }, (err) => {
@@ -76,7 +88,7 @@ export default {
             let _dataField = this.definition.dataField;
             this.$emit("exDataChanged",exData,_dataField);
         }
-    },
+    }
 }
 </script>
 
