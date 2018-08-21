@@ -245,18 +245,32 @@
                 }
                 return item;
             },
-            hideOperations(isApproval){
-                //移除操作处理
-                _.each(this.widgetParams.commonOperations,(opt,index)=>{
-                    if(opt&&opt.props&&opt.props.widget&&opt.props.widget.value=="submission-frame"&&isApproval){
-                        this.widgetParams.commonOperations.splice(index,1);
-                    }
-                });
-                _.each(this.widgetParams.actionsheetOperation,(opt,index)=>{
-                    if(opt&&opt.props&&opt.props.widget&&opt.props.widget.value=="submission-frame"&&isApproval){
-                        this.widgetParams.commonOperations.splice(index,1);
-                    }
-                });
+            hideOperations(isApproval,objArry){
+                //移除操作处理--目前控制操作的方法
+                if(objArry&&!_.isArray(objArry)){
+                    //传入的是json对象--作为单个对象
+                    objArry = [objArry];
+                }
+                if(objArry&&objArry.length){
+                    _.each(objArry,(obj,index)=>{
+                        if(obj.type=="widget"){
+                            _.each(this.widgetParams.commonOperations,(opt,index)=>{
+                                if(opt&&opt.props&&opt.props.widget&&opt.props.widget.value==obj.value&&isApproval){
+                                    if(!obj.name||(opt.name&&obj.name==opt.name)||!opt.name) {
+                                        this.widgetParams.commonOperations.splice(index, 1);
+                                    }
+                                }
+                            });
+                            _.each(this.widgetParams.actionsheetOperation,(opt,index)=>{
+                                if(opt&&opt.props&&opt.props.widget&&opt.props.widget.value==obj.value&&isApproval){
+                                    if(!obj.name||(opt.name&&obj.name==opt.name)||!opt.name) {
+                                        this.widgetParams.actionsheetOperation.splice(index, 1);
+                                    }
+                                }
+                            });
+                        }
+                    });
+                }
             }
         },
         mounted(){
@@ -270,8 +284,11 @@
                 if(res.processInstance&&res.processInstance.businessKey){
                     _businessKey = res.processInstance.businessKey
                     _procDefKey = res.processInstance.processDefinitionKey
-                    if(res.processInstance.finished){_this.hideOperations(true);}//流程结束隐藏审核按钮
+                    if(res.processInstance.finished){
+                        _this.hideOperations(true,[{type:"widget",value:"submission-frame"}]);
+                    }//流程结束隐藏审核按钮
                     _this.abstract = Object.assign({},res,{"procInstId":res.processInstance.id});
+                    _this.hideOperations(true,[{type:"widget",value:"submission-frame",name:"startProcess"}]);//发起流程--隐藏提交操作
                 }else if(_this.widgetParams.businessKey){
                     _businessKey = _this.widgetParams.businessKey
                     _procDefKey = _this.widgetParams.procDefKey;
@@ -279,6 +296,7 @@
                         //获取流程第一步信息
                         _this.abstract = Object.assign({},_this.abstract,{nextNodes:res});
                     });
+                    _this.hideOperations(true,[{type:"widget",value:"submission-frame",name:"approveProcess"}]);//没有发起流程--隐藏审批操作
                 }
                 Object.assign(_params,{"dataId":_businessKey,"taskId":res.id});//设置下数据id--表单部件接受的参数
                 service.getProcdefSetting(_procDefKey,res.taskDefinitionKey).then(function (res) {
@@ -309,7 +327,7 @@
                     service.isApproval(_params.taskId).then((res)=>{
                         //获取当前登录用户是否具备审批权限
                         _this.abstract.isApproval = res;
-                        _this.hideOperations(!res)
+                        _this.hideOperations(!res,[{type:"widget",value:"submission-frame"}])
                     },(erro)=>{
                         //_this.abstract.isApproval = true;
                         //_this.hideOperations(true)
