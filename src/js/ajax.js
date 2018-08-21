@@ -28,7 +28,7 @@ export default {
             // 暂时将其以纯文本的形式获取
             if (param.url.indexOf('swagger.json') != -1) param.type = 'text';
             param.headers = param.headers || {};
-
+            param.timeout = param.timeout || 30000;
             if (param.queryParam) {
                 param.url += object2query(param.queryParam);
             }
