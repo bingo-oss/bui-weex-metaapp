@@ -1295,7 +1295,18 @@
             },
             onSelectShareType(item){
                 let index = this.shareItems.indexOf(item);
-                let pcUrl = this.pcHomeUrl + '#/' + this.activityInfo.projectId + '/metasuite/' + this.activityInfo.suiteId + '/' + this.activityInfo.sourceId + '/apply';
+                /*let pcUrl = this.pcHomeUrl + '#/' + this.activityInfo.projectId + '/metasuite/' + this.activityInfo.suiteId + '/' + this.activityInfo.sourceId + '/apply';*/
+                let params = this.$getPageParams();
+                if(params.formDetailParam){
+                    //读取指定的详情调整参数
+                    params.formDetailParam = JSON.parse(params.formDetailParam);
+                }
+                let pcUrl = this.pcHomeUrl.substring(0,this.pcHomeUrl.indexOf("cddc_web")) +"app-factory/index.html#/" + this.activityInfo.projectId + '/metasuite/' + this.activityInfo.suiteId + '/' + this.activityInfo.sourceId + '/page/' + params.formDetailParam.pageId +"/1?";
+                var arr = [];
+                for (let i in params.formDetailParam) {
+                    arr.push(i+"="+params.formDetailParam[i]); //属性
+                }
+                pcUrl+=arr.join("&");
                 if (index == 0) {//邀请成员
                     this.selectMembers();
                 } else if (index == 1) {//分享聊天
@@ -1306,7 +1317,7 @@
                         }]
                     };
                     let content = {
-                        action_params: "[OpenApp]\nappCode=linksuite\nappUrl=actionIndex.weex.js?metaSuiteId=" + this.activityInfo.suiteId + "&id=" + this.activityInfo.sourceId + '\npcHomeUrl=' + pcUrl + "\npcNoTitleWindow=1",
+                        action_params: "[OpenApp]\nappCode=metaapp\nappUrl=home.weex.js?metaSuiteId=" + this.activityInfo.suiteId + "&dataId=" + this.activityInfo.sourceId + "&formDetailParam="+ JSON.stringify(params.formDetailParam) + '\npcHomeUrl=' + pcUrl+"\npcNoTitleWindow=1",/*"[OpenApp]\nappCode=linksuite\nappUrl=actionIndex.weex.js?metaSuiteId=" + this.activityInfo.suiteId + "&id=" + this.activityInfo.sourceId + '\npcHomeUrl=' + pcUrl + "\npcNoTitleWindow=1,"*/
                         icon: this.activityInfo.icon,
                         dsec: this.activityInfo.name,
                         title: this.activityInfo.name,
