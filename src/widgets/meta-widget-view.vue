@@ -434,7 +434,7 @@ module.exports = {
                             fields.add(this.p5);
                         }
                     }
-                    params.select = Array.from(fields).join(',');
+                    //params.select = Array.from(fields).join(',');
                     // 排序
                     if (viewDef.config.orderby) {
                         params.orderby = viewDef.config.orderby.map(o => `${o.name} ${o.type}`).join(',')
