@@ -38,7 +38,7 @@
                     </div>
                     <text class="head_content_title" :value="activityInfo.name"></text>
                 </div>
-                <div class="flex-row">
+                <div class="flex-row"  @click="openActivityDetail">
                     <text v-if="activityInfo.startTime" class="head_content_subTitle" value="开始时间:"></text>
                     <text class="head_content_subTitle" :value="activityInfo.startTime"></text>
                     <text v-if="activityInfo.channelName" class="head_content_subTitle" style="margin-left: 30px" value="所属频道:"></text>
