@@ -12,7 +12,7 @@
                 <text class="required-mark" v-if="definition.componentParams.required">*</text>
             </div>
             <div class="from-input-wrapper" @click="inputClicked">
-                <text class="form-input" :style="inputStyle">{{valueText.join(",") || '请选择'}}</text>
+                <text class="form-input" :style="inputStyle" :value="valueText"></text>
                 <bui-icon slot="action" name="ion-ios-arrow-right"></bui-icon>
             </div>
         </template>
@@ -22,26 +22,34 @@
 <script>
 const linkapi = require("linkapi");
 import SingleUserSelect from './single-user-select.vue'
-import buiweex from "bui-weex";
 import _ from '../../js/tool/lodash';
+import buiweex from "bui-weex";
 
 export default {
     componentType: 'MultiOrgSelect',
     extends: SingleUserSelect,
     data() {
         return {
-            valueText: [],
+            orgNameArry:[],
+            valueText:"请选择"
+        }
+    },
+    computed: {
+        inputStyle() {
+            return {
+                color: this.orgNameArry.length ? '' : '#BEBCBC'
+            }
         }
     },
     watch:{
         value: {
             immediate: true,
             handler(v) {
+                this.orgNameArry = []
                 if (!this.filterMode&&v) {
-                    this.valueText = [];
                     _.each(v,(e,index)=>{
                         linkapi.getDeptInfoById(e, (result) => {
-                            this.valueText.push(result.name);
+                            this.orgNameArry.push(result.name)
                         }, err => {
                             console.log(err)
                         })
@@ -58,10 +66,17 @@ export default {
                         linkapi.getDeptInfoById(ret[1], (result) => {
                             this.valueText = result.name;
                         }, err => {
-                                console.log(err)
+                            console.log(err);
                         })
                     }
                 }
+            }
+        },
+        orgNameArry(newData){
+            if(newData.length) {
+                this.valueText = newData.join(",");
+            }else{
+                this.valueText = "请选择"
             }
         }
     },
@@ -71,11 +86,11 @@ export default {
                 return;
             }
             linkapi.startContactMulitSelector(this.definition.componentParams.title, 4, {}, (result) => {
-                 this.valueText = result.organization.map(u => u.name).join(',');
+                 this.valueText = result.organization.map(u => u.name).join(",");
                  this.$emit('input', result.organization.map(u => u.orgId));
                 if(this.valueText){
-                    let text = this.valueText;
-                    this.emitExData(result.organization.map(u => u.orgId),text);
+                    let _text  = this.valueText
+                    this.emitExData(result.organization.map(u => u.orgId),_text);
                 }
                 //this.$alert(result);
             }, (err) => {
