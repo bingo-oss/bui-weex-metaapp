@@ -75,6 +75,7 @@ export default {
         orgArry(newData){
             if(newData.length) {
                 this.valueText = newData.map(obj=>obj.name).join(",");
+                this.emitExData(newData);
             }else{
                 this.valueText = "请选择"
             }
@@ -88,9 +89,9 @@ export default {
             linkapi.startContactMulitSelector(this.definition.componentParams.title, 4, {}, (result) => {
                  this.valueText = result.organization.map(u => u.name).join(",");
                  this.$emit('input', result.organization.map(u => u.orgId));
-                 if(this.valueText){
+                 /*if(this.valueText){
                     this.emitExData(result.organization);
-                 }
+                 }*/
                 //this.$alert(result);
             }, (err) => {
                 this.$alert(err);

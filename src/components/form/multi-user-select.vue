@@ -35,6 +35,7 @@ export default {
                 if (!this.filterMode&&v) {
                     linkapi.getUserInfo(v, (result) => {
                         this.valueText = result.map(u => u.userName).join(',');
+                        this.emitExData(result);
                     });
                 }
             }
@@ -61,19 +62,18 @@ export default {
             linkapi.startContactMulitSelector(this.definition.componentParams.title, 1, {}, (result) => {
                 this.valueText = result.user.map(u => u.name).join(',');
                 this.$emit('input', result.user.map(u => u.userId));
-                if(this.valueText) {
+                /*if(this.valueText) {
                     this.emitExData(result.user);
-                }
+                }*/
             }, (err) => {
                 this.$alert(err);
             })
         },
         emitExData:function(items){
-            if(!items[0].name)return
-            buiweex.alert(items)
+            if(!items[0].userName)return
             var exData={};
             _.each(items,(item)=>{
-                exData[item.userId]=this.buildExData(item.name);
+                exData[item.userId]=this.buildExData(item.userName);
             });
             let _dataField = this.definition.dataField;
             this.$emit("exDataChanged",exData,_dataField);
