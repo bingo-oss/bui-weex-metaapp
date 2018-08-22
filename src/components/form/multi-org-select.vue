@@ -37,7 +37,7 @@ export default {
     computed: {
         inputStyle() {
             return {
-                color: this.orgNameArry.length ? '' : '#BEBCBC'
+                color: this.orgArry.length ? '' : '#BEBCBC'
             }
         }
     },
@@ -45,8 +45,8 @@ export default {
         value: {
             immediate: true,
             handler(v) {
-                this.orgArry = []
                 if (!this.filterMode&&v) {
+                    this.orgArry = []
                     _.each(v,(e,index)=>{
                         linkapi.getDeptInfoById(e, (result) => {
                             this.orgArry.push(result)
