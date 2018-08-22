@@ -36,7 +36,7 @@
                          style="background-color: #ff840c;padding-left: 10px;padding-right: 10px;padding-top: 5px;padding-bottom: 5px;margin-right: 20px;border-radius: 10px">
                         <text style="color: #ffffff;font-size: 32px">已归档</text>
                     </div>
-                    <text class="head_content_title" :value="activityInfo.name"></text>
+                    <text class="head_content_title" :value="activityInfo.name" @click="openActivityDetail"></text>
                 </div>
                 <div class="flex-row"  @click="openActivityDetail">
                     <text v-if="activityInfo.startTime" class="head_content_subTitle" value="开始时间:"></text>
