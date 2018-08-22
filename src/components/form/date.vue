@@ -24,17 +24,19 @@ import mixin from './component-mixin.js'
 //const picker = weex.requireModule('PickerModule');
 const picker = weex.requireModule('picker');
 import utils from '../../js/tool/utils';
+import buiweex from 'bui-weex'
 
 export default {
     componentType: 'Date',
     extends: mixin,
     data() {
         return {
+            datetimeFormat:'yyyy-MM-dd'
         }
     },
     watch:{
         value(newVal){
-            return utils.formatDate(newVal)
+            this.value =  utils.formatDate(newVal,this.datetimeFormat)
         }
     },
     computed: {
