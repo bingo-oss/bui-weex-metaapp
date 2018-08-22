@@ -23,12 +23,18 @@
 import mixin from './component-mixin.js'
 //const picker = weex.requireModule('PickerModule');
 const picker = weex.requireModule('picker');
+import utils from '../../js/tool/utils';
 
 export default {
     componentType: 'Date',
     extends: mixin,
     data() {
         return {
+        }
+    },
+    watch:{
+        value(newVal){
+            return utils.formatDate(newVal)
         }
     },
     computed: {
