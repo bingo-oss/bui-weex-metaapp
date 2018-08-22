@@ -21,7 +21,10 @@
 
 <script>
 const linkapi = require("linkapi");
-import SingleUserSelect from './single-user-select.vue'
+import SingleUserSelect from './single-user-select.vue';
+import _ from '../../js/tool/lodash';
+import buiweex from "bui-weex";
+
 export default {
     componentType: 'MultiUserSelect',
     extends: SingleUserSelect,
@@ -32,8 +35,7 @@ export default {
                 if (!this.filterMode&&v) {
                     linkapi.getUserInfo(v, (result) => {
                         this.valueText = result.map(u => u.userName).join(',');
-                        this.emitExData(v,this.valueText);
-                    })
+                    });
                 }
             }
         },
@@ -59,18 +61,20 @@ export default {
             linkapi.startContactMulitSelector(this.definition.componentParams.title, 1, {}, (result) => {
                 this.valueText = result.user.map(u => u.name).join(',');
                 this.$emit('input', result.user.map(u => u.userId));
-                //this.$alert(result);
-                if(this.valueText){
-                    let text = this.valueText
-                    this.emitExData(result.user.map(u => u.userId),text);
+                if(this.valueText) {
+                    this.emitExData(result.user);
                 }
             }, (err) => {
                 this.$alert(err);
             })
         },
-        emitExData:function(id,text){
+        emitExData:function(items){
+            if(!items[0].name)return
+            buiweex.alert(items)
             var exData={};
-            exData[id]=this.buildExData(text);
+            _.each(items,(item)=>{
+                exData[item.userId]=this.buildExData(item.name);
+            });
             let _dataField = this.definition.dataField;
             this.$emit("exDataChanged",exData,_dataField);
         }

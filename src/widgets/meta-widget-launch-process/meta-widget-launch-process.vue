@@ -1,5 +1,5 @@
 <template>
-    <div class="container">
+    <div class="full-column">
         <bui-header :leftItem="{icon: 'ion-chevron-left'}" :title="title" @leftClick="() =>{this.$pop()}">
             <div slot="right" class="header-right-wrapper">
                 <div class="header-button">
@@ -12,9 +12,11 @@
             </div>
         </bui-header>
 
-        <div class="container">
+        <scroller class="container" style="background-color: #F8F8F8;">
+            <div class="panel">
             <meta-widget-page ref="formPage" :query="{dataId:params.dataId}" :widget-params="params"></meta-widget-page>
-        </div>
+             </div>
+        </scroller>
         <!--表单底部为公共操作区域-->
         <div class="action-bar">
             <meta-operation v-for="(toolbarBtn,index) in widgetParams.commonOperations" :operation="toolbarBtn" :widget-context="getWidgetContext(toolbarBtn)" :key="index" class="full-column"></meta-operation>

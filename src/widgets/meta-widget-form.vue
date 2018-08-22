@@ -14,8 +14,10 @@
                 </div>
             </div>
         </bui-header>
-        <list class="scroller" >
-            <cell class="scrollerDiv" v-for="o in data.layout" :key="o.id" v-if="['SingleUserSelect','MultiUserSelect','SingleOrgSelect'].indexOf(o.componentType)==-1">
+
+        <!--未嵌套到其他部件内需要滚动-->
+        <list class="scroller" v-if="!widgetParams.hideHeader">
+            <cell class="scrollerDiv" v-for="o in data.layout" :key="o.id">
                 <component :is="'Meta'+o.componentType"
                            :ref = "o.id"
                            :definition = "o"
@@ -30,6 +32,24 @@
                 ></component>
             </cell>
         </list>
+
+        <!--嵌套到部件内不需要滚动-->
+        <div class="scroller" v-if="widgetParams.hideHeader">
+            <div class="scrollerDiv" v-for="o in data.layout" :key="o.id">
+                <component :is="'Meta'+o.componentType"
+                           :ref = "o.id"
+                           :definition = "o"
+                           :value =  "result[o.dataField]"
+                           :wholeDefinition =  "data"
+                           :entityResourceUrl =  "o.componentParams.entityResourceUrl"
+                           :field-setting="fieldSetting(o)"
+                           @input="o.input"
+                           :force-view="forceView"
+                           :model="result"
+                           @exDataChanged="exDataChanged"
+                ></component>
+            </div>
+        </div>
 
         <!--表单底部为公共操作区域-->
         <div class="action-bar" v-if="widgetParams.editOperations||widgetParams.viewOperations">
@@ -448,7 +468,7 @@
                 this.data.layout && this.data.layout.forEach((o) => {
                     o.input = (v)=>{
                         this.$set(this.result, o.dataField, v);
-                        this.$forceUpdate();//更新下视图
+                        //this.$forceUpdate();//更新下视图
                     }
                 });
             }

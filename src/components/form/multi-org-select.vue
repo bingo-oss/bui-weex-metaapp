@@ -30,7 +30,7 @@ export default {
     extends: SingleUserSelect,
     data() {
         return {
-            orgNameArry:[],
+            orgArry:[],
             valueText:"请选择"
         }
     },
@@ -45,11 +45,11 @@ export default {
         value: {
             immediate: true,
             handler(v) {
-                this.orgNameArry = []
+                this.orgArry = []
                 if (!this.filterMode&&v) {
                     _.each(v,(e,index)=>{
                         linkapi.getDeptInfoById(e, (result) => {
-                            this.orgNameArry.push(result.name)
+                            this.orgArry.push(result)
                         }, err => {
                             console.log(err)
                         })
@@ -72,10 +72,9 @@ export default {
                 }
             }
         },
-        orgNameArry(newData){
+        orgArry(newData){
             if(newData.length) {
-                this.valueText = newData.join(",");
-                this.emitExData(result.value,this.valueText);
+                this.valueText = newData.map(obj=>obj.name).join(",");
             }else{
                 this.valueText = "请选择"
             }
@@ -89,18 +88,20 @@ export default {
             linkapi.startContactMulitSelector(this.definition.componentParams.title, 4, {}, (result) => {
                  this.valueText = result.organization.map(u => u.name).join(",");
                  this.$emit('input', result.organization.map(u => u.orgId));
-                if(this.valueText){
-                    let _text  = this.valueText
-                    this.emitExData(result.organization.map(u => u.orgId),_text);
-                }
+                 if(this.valueText){
+                    this.emitExData(result.organization);
+                 }
                 //this.$alert(result);
             }, (err) => {
                 this.$alert(err);
             })
         },
-        emitExData:function(id,text){
+        emitExData:function(items){
+            if(!items[0].name)return
             var exData={};
-            exData[id]=this.buildExData(text);
+            _.each(items,(item)=>{
+                exData[item.orgId]=this.buildExData(item.name);
+            });
             let _dataField = this.definition.dataField;
             this.$emit("exDataChanged",exData,_dataField);
         }

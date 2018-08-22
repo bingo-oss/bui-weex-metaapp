@@ -76,10 +76,10 @@ export default {
                     this.$emit('filterInput', v);
                 } else {
                     this.$emit('input', result.id);
-                    if(this.valueText){
+                    /*if(this.valueText){
                         let text = this.valueText
                         this.emitExData(result.id,text);
-                    }
+                    }*/
                 }
             }, (err) => {
                 this.$alert(err);
