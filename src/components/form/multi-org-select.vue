@@ -75,6 +75,7 @@ export default {
         orgNameArry(newData){
             if(newData.length) {
                 this.valueText = newData.join(",");
+                this.emitExData(result.value,this.valueText);
             }else{
                 this.valueText = "请选择"
             }

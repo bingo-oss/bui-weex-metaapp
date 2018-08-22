@@ -32,6 +32,7 @@ export default {
                 if (!this.filterMode&&v) {
                     linkapi.getUserInfo(v, (result) => {
                         this.valueText = result.map(u => u.userName).join(',');
+                        this.emitExData(v,this.valueText);
                     })
                 }
             }

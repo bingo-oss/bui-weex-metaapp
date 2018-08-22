@@ -45,6 +45,7 @@ export default {
                 if (!this.filterMode) {
                     linkapi.getDeptInfoById(v, (result) => {
                         this.valueText = result.name;
+                        this.emitExData(v,this.valueText);
                     }, err => {
                         console.log(err)
                     })
