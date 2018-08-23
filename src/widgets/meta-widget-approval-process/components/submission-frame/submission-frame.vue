@@ -5,23 +5,38 @@
                 <meta-opt-btn :btn-type="btnType" :operation="operation"></meta-opt-btn>
             </slot>
         </div>
-        <bui-dialog v-model="showDialog" :height="500" :top="200" @btnClick="onDialogCallback" :title="title">
-            <text class="form-label mb25" v-if="taskInfor.name">当前环节：{{taskInfor.name}}</text>
-            <text class="form-label mb25" @click="selectNext">下一环节：{{selectNode.name}}</text>
-            <text class="form-label mb25" v-if="selectNode.processingPerson&&selectNode.processingPerson.length">处理人：{{selectNode.processingPerson.join(",")}}</text>
-            <template v-if="taskInfor.formProperties" v-for="(formItem,index) in taskInfor.formProperties" :key="">
-                <!--读取环节上设置的自定义字段-->
-                <div v-if="defaultFormDate(formItem)&&formItem.type=='enum'" class="mb25">
-                    <text class="form-label">{{formItem.name}}</text>
-                        <bui-radio v-model="formDate[formItem.id]" :items="formItem.options" direction="horizontal" @change="radioChange" ></bui-radio>
+
+
+        <div v-if="showDialog">
+            <bui-mask @click="showDialog=!showDialog"></bui-mask>
+            <div class="bui-dialog" :style="{top:taskInfor.formProperties?200:300}">
+                <div class="bui-dialog-title">
+                    <text class="dialog-title-text">{{title}}</text>
                 </div>
-            </template>
-            <div class="mb25">
-                <text class="form-label">审批意见:</text>
-                <textarea v-model="formDate.opinion" class="textarea form-label" @input="" @change="" @focus="" @blur=""></textarea>
+                <div class="bui-dialog-content" :style="{height:taskInfor.formProperties?500:300}">
+                    <scroller>
+                        <text class="form-label mb25" v-if="taskInfor.name">当前环节：{{taskInfor.name}}</text>
+                        <text class="form-label mb25" @click="selectNext">下一环节：{{selectNode.name}}</text>
+                        <text class="form-label mb25" v-if="selectNode.processingPerson&&selectNode.processingPerson.length">处理人：{{selectNode.processingPerson.join(",")}}</text>
+                        <template v-if="taskInfor.formProperties" v-for="(formItem,index) in taskInfor.formProperties" :key="">
+                            <!--读取环节上设置的自定义字段-->
+                            <div v-if="defaultFormDate(formItem)&&formItem.type=='enum'" class="mb25">
+                                <text class="form-label">{{formItem.name}}</text>
+                                <bui-radio v-model="formDate[formItem.id]" :items="formItem.options" direction="horizontal" @change="radioChange" ></bui-radio>
+                            </div>
+                        </template>
+                        <div class="mb25 hr_b"></div>
+                        <div class="mb25">
+                            <textarea v-model="formDate.opinion" class="textarea form-label" @input="" @change="" @focus="" @blur="" placeholder="填写审批意见"></textarea>
+                        </div>
+                    </scroller>
+                </div>
+                <div class="bui-dialog-footer">
+                    <text class="dialog-action-text" style="color: #949494" @click="onDialogCallback(false)">取消</text>
+                    <text class="dialog-action-text" @click="onDialogCallback(true)">确定</text>
+                </div>
             </div>
-            <!--<div v-if="modalView!='return'" @click="addPeople()"><text>添加抄送人？</text></div>-->
-        </bui-dialog>
+        </div>
     </div>
 </template>
 <script>
@@ -106,7 +121,7 @@
             },
             onDialogCallback (text) {
                 this.showDialog = false;
-                if(text=="确定"){
+                if(text){
                     this.handleSubmit(true)
                 }
                 this.$emit("successed","widget");
@@ -189,4 +204,87 @@
 <style src="../../../../styles/common.css"></style>
 <style>
     .mb25{ margin-bottom: 25px;}
+    .hr_b{
+        border-bottom-color: #e6e4e4;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+    }
+    .textarea{
+        padding-left: 15px;
+        padding-right: 15px;
+        padding-top: 15px;
+        padding-bottom: 15px;
+        height: 80px;
+
+        background-color: #fff;
+        border-bottom-color: #e6e4e4;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+
+        border-top-color: #e6e4e4;
+        border-top-width: 1px;
+        border-top-style: solid;
+
+        border-left-color: #e6e4e4;
+        border-left-width: 1px;
+        border-left-style: solid;
+
+        border-right-color: #e6e4e4;
+        border-right-width: 1px;
+        border-tight-style: solid;
+    }
+
+    .bui-dialog1 {
+        background-color: #F6F6F6;
+        border-radius: 20px;
+        height: 200px;
+        top: 300px;
+        left: 50px;
+        right: 50px;
+        flex: 1;
+    }
+    .bui-dialog {
+        position: fixed;
+        background-color: #F6F6F6;
+        border-radius: 20px;
+        top: 300px;
+        left: 50px;
+        right: 50px; }
+    .bui-dialog-title {
+        justify-content: center;
+        height: 80px;
+        padding-left: 40px;
+        padding-right: 40px;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        align-items: center;
+    }
+    .dialog-title-text {
+        color: #000000;
+        font-size: 35px;
+    }
+    .bui-dialog-content {
+        height: 220px;
+        padding-left: 40px;
+        padding-right: 40px;
+        padding-bottom: 32px; }
+    .bui-dialog-footer {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        height: 90px;
+        border-top-width: 1px;
+        border-top-style: solid;
+        border-top-color: #d7dde4; }
+
+    .dialog-action-text {
+        flex: 1;
+        text-align: center;
+        font-size: 32px;
+        color: #3399ff;
+        border-right-width: 1px;
+        border-right-style: solid;
+        border-right-color: #d7dde4; }
+    .dialog-action-text:active {
+        color: #000000; }
 </style>
