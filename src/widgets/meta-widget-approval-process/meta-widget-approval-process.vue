@@ -4,10 +4,10 @@
             <div slot="right" class="header-right-wrapper">
                 <div class="header-button">
                     <!--头部为上拉菜单操作区域-->
-                    <template v-if="this.widgetParams.actionsheetOperation.length===1">
+                    <template v-if="this.widgetParams.actionsheetOperation&&this.widgetParams.actionsheetOperation.length===1">
                         <meta-operation  btn-type="icon" :operation="this.widgetParams.actionsheetOperation[0]" :widget-context="getWidgetContext()"></meta-operation>
                     </template>
-                    <bui-icon v-if="this.widgetParams.actionsheetOperation.length>1" name="ion-ios-more" color="white" @click="titleOperationClicked"></bui-icon>
+                    <bui-icon v-if="this.widgetParams.actionsheetOperation&&this.widgetParams.actionsheetOperation.length>1" name="ion-ios-more" color="white" @click="titleOperationClicked"></bui-icon>
                 </div>
             </div>
         </bui-header>
@@ -21,15 +21,15 @@
                     </div>
                 </div>
                 <div class="panel">
-                    <text class="panel-header">附件</text>
-                    <div class="panel-body">
-                        <attachment v-model="attachmentObject.list"></attachment>
-                    </div>
-                </div>
-                <div class="panel">
                     <text class="panel-header">正文</text>
                     <div class="panel-body">
                         <attachment v-model="formalArticleObject"></attachment>
+                    </div>
+                </div>
+                <div class="panel">
+                    <text class="panel-header">附件</text>
+                    <div class="panel-body">
+                        <attachment v-model="attachmentObject.list"></attachment>
                     </div>
                 </div>
                 <div class="panel">
@@ -126,48 +126,48 @@
                     processLauncher:this,
                     selectedId:this.params.dataId,
                     form:this
-                 }
+                }
             },
             approveProcess(param){
                 let formPromise=this.$refs.formPage.submit();
                 let _t=this;
                 _t.isShowLoading = true;
                 return new Promise((resolve,reject)=>{
-                    formPromise.then((data)=>{
-                        var formData=data&&data[0];
-                        if(param.taskId) {
-                            service.taskComplete(param).then((res) => {
-                                resolve(res);
-                                _t.isShowLoading = false;
-                                _t.$toast('提交成功');
-                                _t.back();
-                            },(err)=>{
-                                _t.isShowLoading = false;
-                                _t.$toast('提交失败');
-                                reject()
-                            })
-                        }else{
-                            //需要对没有关联任务的数据进行初始化信息
-                            param.businessKey = _t.widgetParams.businessKey;
-                            param.procDefKey = _t.widgetParams.procDefKey;
-                            param.payloadType = "StartProcessPayload";
-                            service.startProcessInstanceCmd(param).then((res)=> {
-                                _t.isShowLoading = false;
-                                resolve(res);
-                                _t.$toast('提交成功');
-                                _t.back();
-                            },(err)=>{
-                                _t.isShowLoading = false;
-                                _t.$toast('提交失败');
-                                reject()
-                            })
-                        }
-                    },(erro)=>{
-                        reject();
+                            formPromise.then((data)=>{
+                            var formData=data&&data[0];
+                if(param.taskId) {
+                    service.taskComplete(param).then((res) => {
+                        resolve(res);
+                    _t.isShowLoading = false;
+                    _t.$toast('提交成功');
+                    _t.back();
+                },(err)=>{
                         _t.isShowLoading = false;
-                        _this.$toast(erro);
+                        _t.$toast('提交失败');
+                        reject()
                     })
-                },(erro)=>{
+                }else{
+                    //需要对没有关联任务的数据进行初始化信息
+                    param.businessKey = _t.widgetParams.businessKey;
+                    param.procDefKey = _t.widgetParams.procDefKey;
+                    param.payloadType = "StartProcessPayload";
+                    service.startProcessInstanceCmd(param).then((res)=> {
+                        _t.isShowLoading = false;
+                    resolve(res);
+                    _t.$toast('提交成功');
+                    _t.back();
+                },(err)=>{
+                        _t.isShowLoading = false;
+                        _t.$toast('提交失败');
+                        reject()
+                    })
+                }
+            },(erro)=>{
+                    reject();
+                    _t.isShowLoading = false;
+                    _this.$toast(erro);
+                })
+            },(erro)=>{
                     reject();
                     _this.$toast(erro);
                     _t.isShowLoading = false;
@@ -179,19 +179,19 @@
                 let _t=this;
                 _t.isShowLoading = true;
                 return new Promise((resolve,reject)=>{
-                    formPromise.then((data)=>{
-                        var formData=data&&data[0];
-                        service.taskReject(_t.subParams).then((res)=>{
-                            resolve(res);
-                            _t.$toast('驳回成功');
-                            _t.back();
-                            _t.isShowLoading = false;
-                        },(erro)=>{
-                            _t.isShowLoading = false;
-                            buiweex.alert(erro)
-                        });
-                    });
-                })
+                            formPromise.then((data)=>{
+                            var formData=data&&data[0];
+                service.taskReject(_t.subParams).then((res)=>{
+                    resolve(res);
+                _t.$toast('驳回成功');
+                _t.back();
+                _t.isShowLoading = false;
+            },(erro)=>{
+                    _t.isShowLoading = false;
+                    buiweex.alert(erro)
+                });
+            });
+            })
             },
             processFormSave(){
                 //表单保存
@@ -199,17 +199,17 @@
                 let _this=this;
                 _this.isShowLoading = true;
                 return new Promise((resolve,reject)=>{
-                    formPromise.then((data)=>{
-                        resolve();
-                        _this.$toast('编辑成功');
-                        _this.isShowLoading = false;
-                        _this.back();
-                    },(erro)=>{
-                        reject();
-                        _this.$toast(erro);
-                        _this.isShowLoading = false;
-                    });
-                },(erro)=>{
+                            formPromise.then((data)=>{
+                            resolve();
+                _this.$toast('编辑成功');
+                _this.isShowLoading = false;
+                _this.back();
+            },(erro)=>{
+                    reject();
+                    _this.$toast(erro);
+                    _this.isShowLoading = false;
+                });
+            },(erro)=>{
                     reject();
                     _this.$toast(erro);
                     _this.isShowLoading = false;
@@ -253,23 +253,21 @@
                 }
                 if(objArry&&objArry.length){
                     _.each(objArry,(obj,index)=>{
-                        if(obj.type=="widget"){
-                            _.each(this.widgetParams.commonOperations,(opt,index)=>{
-                                if(opt&&opt.props&&opt.props.widget&&opt.props.widget.value==obj.value&&isApproval){
-                                    if(!obj.name||(opt.name&&obj.name==opt.name)||!opt.name) {
-                                        this.widgetParams.commonOperations.splice(index, 1);
-                                    }
-                                }
-                            });
-                            _.each(this.widgetParams.actionsheetOperation,(opt,index)=>{
-                                if(opt&&opt.props&&opt.props.widget&&opt.props.widget.value==obj.value&&isApproval){
-                                    if(!obj.name||(opt.name&&obj.name==opt.name)||!opt.name) {
-                                        this.widgetParams.actionsheetOperation.splice(index, 1);
-                                    }
-                                }
-                            });
+                        _.each(this.widgetParams.commonOperations,(opt,index)=>{
+                        if(opt&&((obj.type=="widget"&&opt.props&&opt.props.widget&&opt.props.widget.value==obj.value&&isApproval)||obj.type=="common")){
+                        if(!obj.name||(opt.name&&obj.name==opt.name)||!opt.name) {
+                            this.widgetParams.commonOperations.splice(index, 1);
                         }
-                    });
+                    }
+                });
+                    _.each(this.widgetParams.actionsheetOperation,(opt,index)=>{
+                        if(opt&&((obj.type=="widget"&&opt.props&&opt.props.widget&&opt.props.widget.value==obj.value&&isApproval)||obj.type=="common")){
+                        if(!obj.name||(opt.name&&obj.name==opt.name)||!opt.name) {
+                            this.widgetParams.actionsheetOperation.splice(index, 1);
+                        }
+                    }
+                });
+                });
                 }
             }
         },
@@ -281,60 +279,60 @@
             service.getTaskInfo(_this.widgetParams.taskId,_this.widgetParams.businessKey).then((res) =>{
                 //任务信息
                 _this.abstract = res;
-                if(res.processInstance&&res.processInstance.businessKey){
-                    _businessKey = res.processInstance.businessKey
-                    _procDefKey = res.processInstance.processDefinitionKey
-                    if(res.processInstance.finished){
-                        _this.hideOperations(true,[{type:"widget",value:"submission-frame"}]);
-                    }//流程结束隐藏审核按钮
-                    _this.abstract = Object.assign({},res,{"procInstId":res.processInstance.id});
-                    _this.hideOperations(true,[{type:"widget",value:"submission-frame",name:"startProcess"}]);//发起流程--隐藏提交操作
-                }else if(_this.widgetParams.businessKey){
-                    _businessKey = _this.widgetParams.businessKey
-                    _procDefKey = _this.widgetParams.procDefKey;
-                    service.getfirstSteps(_this.widgetParams.procDefKey).then((res)=>{
-                        //获取流程第一步信息
-                        _this.abstract = Object.assign({},_this.abstract,{nextNodes:res});
-                    });
-                    _this.hideOperations(true,[{type:"widget",value:"submission-frame",name:"approveProcess"}]);//没有发起流程--隐藏审批操作
-                }
-                Object.assign(_params,{"dataId":_businessKey,"taskId":res.id});//设置下数据id--表单部件接受的参数
-                service.getProcdefSetting(_procDefKey,res.taskDefinitionKey).then(function (res) {
-                    //获取流程配置
-                    if (res.settings) {
-                        Object.assign(_params, res.settings);
-                    }
-                    _this.params = Object.assign({} ,_this.widgetParams,_params);
-                });
-
-                service.getAttachment(_params.taskId,_businessKey).then((res)=>{
-                    //获取对应任务下的附件
-                    let _attachment=[];
-                    _.each(res.data,(item,index)=>{
-                        if(item.attachmentType==1){
-                            //正文
-                            _this.formalArticleObject = [item];
-                        }else{
-                            _attachment.push(item)
-                        }
-                    });
-                    _this.isShowLoading = false;
-                    //_this.attachmentObject.oList = Object.assign([],_attachment);
-                    _this.attachmentObject.list = _attachment;
-                });
-
-                if(_params.taskId){
-                    service.isApproval(_params.taskId).then((res)=>{
-                        //获取当前登录用户是否具备审批权限
-                        _this.abstract.isApproval = res;
-                        _this.hideOperations(!res,[{type:"widget",value:"submission-frame"}])
-                    },(erro)=>{
-                        //_this.abstract.isApproval = true;
-                        //_this.hideOperations(true)
-                    });
-                }
-
+            if(res.processInstance&&res.processInstance.businessKey){
+                _businessKey = res.processInstance.businessKey
+                _procDefKey = res.processInstance.processDefinitionKey
+                if(res.processInstance.finished){
+                    _this.hideOperations(true,[{type:"widget",value:"submission-frame"}]);
+                }//流程结束隐藏审核按钮
+                _this.abstract = Object.assign({},res,{"procInstId":res.processInstance.id});
+                _this.hideOperations(true,[{type:"widget",value:"submission-frame",name:"startProcess"}]);//发起流程--隐藏提交,保存操作
+            }else if(_this.widgetParams.businessKey){
+                _businessKey = _this.widgetParams.businessKey
+                _procDefKey = _this.widgetParams.procDefKey;
+                service.getfirstSteps(_this.widgetParams.procDefKey).then((res)=>{
+                    //获取流程第一步信息
+                    _this.abstract = Object.assign({},_this.abstract,{nextNodes:res});
             });
+                _this.hideOperations(true,[{type:"widget",value:"submission-frame",name:"approveProcess"}]);//没有发起流程--隐藏审批操作
+            }
+            Object.assign(_params,{"dataId":_businessKey,"taskId":res.id});//设置下数据id--表单部件接受的参数
+            service.getProcdefSetting(_procDefKey,res.taskDefinitionKey).then(function (res) {
+                //获取流程配置
+                if (res.settings) {
+                    Object.assign(_params, res.settings);
+                }
+                _this.params = Object.assign({} ,_this.widgetParams,_params);
+            });
+
+            service.getAttachment(_params.taskId,_businessKey).then((res)=>{
+                //获取对应任务下的附件
+                let _attachment=[];
+            _.each(res.data,(item,index)=>{
+                if(item.attachmentType==1){
+                //正文
+                _this.formalArticleObject = [item];
+            }else{
+                _attachment.push(item)
+            }
+        });
+            _this.isShowLoading = false;
+            //_this.attachmentObject.oList = Object.assign([],_attachment);
+            _this.attachmentObject.list = _attachment;
+        });
+
+            if(_params.taskId){
+                service.isApproval(_params.taskId).then((res)=>{
+                    //获取当前登录用户是否具备审批权限
+                    _this.abstract.isApproval = res;
+                _this.hideOperations(!res,[{type:"widget",value:"submission-frame"}])
+            },(erro)=>{
+                    //_this.abstract.isApproval = true;
+                    //_this.hideOperations(true)
+                });
+            }
+
+        });
         },
         components: {
             //流程处理轨迹部件
