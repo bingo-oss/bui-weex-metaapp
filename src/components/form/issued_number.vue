@@ -1,26 +1,30 @@
 <template>
-    <div v-if="showComponent" class="form-group">
+    <div v-if="showComponent" class="">
         <template v-if="viewMode||forceView">
-            <div class="label-wrapper">
-                <text class="form-label view-label">{{definition.componentParams.title}}</text>
-                <text class="view-text" :value="issuedObjcet.fullText"></text>
+            <div class="form-group">
+                <div class="label-wrapper">
+                    <text class="form-label view-label">{{definition.componentParams.title}}</text>
+                    <text class="view-text" :value="issuedObjcet.fullText"></text>
+                </div>
             </div>
         </template>
         <template v-else>
-            <div class="label-wrapper-vertical">
-                <text class="form-label">{{definition.componentParams.title}}</text>
-                <text class="required-mark" v-if="definition.componentParams.required">*</text>
+            <div class="form-group form-hrb">
+                <div class="label-wrapper-vertical">
+                    <text class="form-label">{{definition.componentParams.title}}</text>
+                    <text class="required-mark" v-if="definition.componentParams.required">*</text>
+                </div>
+                <div class="from-input-wrapper" @click="inputClicked" v-if="definition.componentParams.standard=='standard2'" :style="{flex: 3}">
+                    <text class="form-input" :style="inputStyle">{{valueText || '选择选项...'}}</text>
+                    <bui-icon slot="action" name="ion-ios-arrow-right"></bui-icon>
+                </div>
+                <input @input="input" :disabled="readonly" class="form-input-native" type="text" v-model="issuedObjcet.code" :placeholder="definition.componentParams.placeholder" v-if="definition.componentParams.standard!='standard2'" />
+                <text class="view-text" style="margin-right: 5px; margin-left: 5px;">[</text>
+                <input @input="input" :disabled="readonly" class="form-input-native" type="text" v-model="issuedObjcet.year" :placeholder="definition.componentParams.placeholder" style="text-align: center;" />
+                <text class="view-text" style="margin-right: 5px; margin-left: 5px;">]</text>
+                <input @input="input" :disabled="readonly" class="form-input-native" type="text" v-model="issuedObjcet.number" :placeholder="definition.componentParams.placeholder" style="text-align: center;" />
+                <text class="view-text">号</text>
             </div>
-            <div class="from-input-wrapper" @click="inputClicked" v-if="definition.componentParams.standard=='standard2'" :style="{flex: 3}">
-                <text class="form-input" :style="inputStyle">{{valueText || '选择选项...'}}</text>
-                <bui-icon slot="action" name="ion-ios-arrow-right"></bui-icon>
-            </div>
-            <input @input="input" :disabled="readonly" class="form-input-native" type="text" v-model="issuedObjcet.code" :placeholder="definition.componentParams.placeholder" v-if="definition.componentParams.standard!='standard2'" />
-            <text class="view-text" style="margin-right: 5px; margin-left: 5px;">[</text>
-            <input @input="input" :disabled="readonly" class="form-input-native" type="text" v-model="issuedObjcet.year" :placeholder="definition.componentParams.placeholder" style="text-align: center;" />
-            <text class="view-text" style="margin-right: 5px; margin-left: 5px;">]</text>
-            <input @input="input" :disabled="readonly" class="form-input-native" type="text" v-model="issuedObjcet.number" :placeholder="definition.componentParams.placeholder" style="text-align: center;" />
-            <text class="view-text">号</text>
         </template>
     </div>
 </template>

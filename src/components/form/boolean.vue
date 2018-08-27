@@ -1,5 +1,5 @@
 <template lang="html">
-    <div v-if="showComponent" class="form-group">
+    <div v-if="showComponent" class="form-group form-hrb">
         <div class="label-wrapper">
             <text class="form-label">{{definition.componentParams.title}}</text>
             <text class="required-mark" v-if="definition.componentParams.required">*</text>

@@ -1,31 +1,35 @@
 <template lang="html">
     <div v-if="showComponent" class="form-group">
         <template v-if="viewMode||forceView">
-            <div class="label-wrapper">
-                <text class="form-label view-label">{{definition.componentParams.title}}</text>
-                <text class="view-text" :value="filterPointStartText+''"></text>
+            <div class="form-group">
+                <div class="label-wrapper">
+                    <text class="form-label view-label">{{definition.componentParams.title}}</text>
+                    <text class="view-text" :value="filterPointStartText+''"></text>
+                </div>
             </div>
         </template>
         <template v-else>
-            <div class="label-wrapper">
-                <text class="form-label">{{definition.componentParams.title}}</text>
-                <text class="required-mark" v-if="definition.componentParams.required">*</text>
-            </div>
-            <div v-if="filterMode">
-                <div>
-                    <div class="from-input-wrapper date-border-picker" @click="pickStart">
-                        <text class="form-input" :style="inputStyle">{{filterPointStartText || '请选择'}}</text>
-                        <bui-icon slot="action" name="ion-ios-arrow-right"></bui-icon>
-                    </div>
-                    <div class="from-input-wrapper date-border-picker" @click="pickEnd">
-                        <text class="form-input" :style="inputStyle">{{filterPointEndText || '请选择'}}</text>
-                        <bui-icon slot="action" name="ion-ios-arrow-right"></bui-icon>
+            <div class="form-group form-hrb">
+                <div class="label-wrapper">
+                    <text class="form-label">{{definition.componentParams.title}}</text>
+                    <text class="required-mark" v-if="definition.componentParams.required">*</text>
+                </div>
+                <div v-if="filterMode">
+                    <div>
+                        <div class="from-input-wrapper date-border-picker" @click="pickStart">
+                            <text class="form-input" :style="inputStyle">{{filterPointStartText || '请选择'}}</text>
+                            <bui-icon slot="action" name="ion-ios-arrow-right"></bui-icon>
+                        </div>
+                        <div class="from-input-wrapper date-border-picker" @click="pickEnd">
+                            <text class="form-input" :style="inputStyle">{{filterPointEndText || '请选择'}}</text>
+                            <bui-icon slot="action" name="ion-ios-arrow-right"></bui-icon>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div v-if="!filterMode" class="from-input-wrapper" @click="inputClicked">
-                <text class="form-input" :style="inputStyle">{{valueText || '请选择'}}</text>
-                <bui-icon slot="action" name="ion-ios-arrow-right"></bui-icon>
+                <div v-if="!filterMode" class="from-input-wrapper" @click="inputClicked">
+                    <text class="form-input" :style="inputStyle">{{valueText || '请选择'}}</text>
+                    <bui-icon slot="action" name="ion-ios-arrow-right"></bui-icon>
+                </div>
             </div>
         </template>
     </div>

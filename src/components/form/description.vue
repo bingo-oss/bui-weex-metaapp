@@ -1,13 +1,17 @@
 <template>
-    <div class="form-group">
+    <div class="">
         <template v-if="viewMode||forceView">
-            <div class="label-wrapper">
-                <text class="form-label view-label">{{definition.componentParams.title}}</text>
-                <text class="view-text" :value="definition.componentParams.content"></text>
+            <div class="form-group">
+                <div class="label-wrapper">
+                    <text class="form-label view-label">{{definition.componentParams.title}}</text>
+                    <text class="view-text" :value="definition.componentParams.content"></text>
+                </div>
             </div>
         </template>
         <template v-else>
-            <text :style="contentStyle">{{definition.componentParams.content}}</text>
+            <div class="form-group form-hrb">
+                <text :style="contentStyle">{{definition.componentParams.content}}</text>
+            </div>
         </template>
     </div>
 </template>

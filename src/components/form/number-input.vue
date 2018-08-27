@@ -1,17 +1,21 @@
 <template lang="html">
     <div v-if="showComponent" class="form-group">
         <template v-if="viewMode||forceView">
-            <div class="label-wrapper">
-                <text class="form-label view-label">{{definition.componentParams.title}}</text>
-                <text class="view-text" :value="value"></text>
+            <div class="form-group">
+                <div class="label-wrapper">
+                    <text class="form-label view-label">{{definition.componentParams.title}}</text>
+                    <text class="view-text" :value="value"></text>
+                </div>
             </div>
         </template>
         <template v-else>
-            <div class="label-wrapper">
-                <text class="form-label">{{definition.componentParams.title}}</text>
-                <text class="required-mark" v-if="definition.componentParams.required">*</text>
+            <div class="form-group form-hrb">
+                <div class="label-wrapper">
+                    <text class="form-label">{{definition.componentParams.title}}</text>
+                    <text class="required-mark" v-if="definition.componentParams.required">*</text>
+                </div>
+                <input @input="input" :disabled="readonly" class="form-input-native" type="number" :value="value"/>
             </div>
-            <input @input="input" :disabled="readonly" class="form-input-native" type="number" :value="value"/>
         </template>
     </div>
 </template>
