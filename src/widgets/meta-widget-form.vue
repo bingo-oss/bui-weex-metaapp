@@ -255,7 +255,8 @@
                             this.isShowLoading = false;
                         }).catch(err => {
                             reject();
-                            this.$alert(err);
+                            //this.$alert(err);
+                            this.$toast("已归档,不可操作!")
                             this.isShowLoading = false;
                         });
                     } else {
@@ -468,7 +469,7 @@
                 this.data.layout && this.data.layout.forEach((o) => {
                     o.input = (v)=>{
                         this.$set(this.result, o.dataField, v);
-                        //this.$forceUpdate();//更新下视图
+                        this.$forceUpdate();//更新下视图
                     }
                 });
             }

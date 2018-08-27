@@ -536,7 +536,7 @@
             openGroupChat(){
                 if (!this.isAccessAuthority)return;
                 if (this.isArchive) {
-                    this.$toast("该行动已归档,不可操作!")
+                    this.$toast("已归档,不可操作!")
                     return;
                 }
                 if (this.groupId == '') {
@@ -720,7 +720,7 @@
             },
             onTopMessageClick(item, index){//置顶消息点击事件处理
                 if (this.isArchive) {
-                    this.$toast("该行动已归档,不可操作!")
+                    this.$toast("已归档,不可操作!")
                     return;
                 }
                 this.setRead(item.id);
@@ -804,7 +804,7 @@
             },
             add(){
                 if (this.isArchive) {
-                    this.$toast("该行动已归档,不可操作!")
+                    this.$toast("已归档,不可操作!")
                     return;
                 }
                 if (this.createMenuList.length == 1) {
@@ -830,7 +830,7 @@
             },
             onWriteClick(){//打开撰写菜单
                 if (this.isArchive) {
-                    this.$toast("该行动已归档,不可操作!")
+                    this.$toast("已归档,不可操作!")
                     return;
                 }
                 this.isShowWriteMenu = true;
@@ -896,7 +896,7 @@
             },
             onTabClick(index, item, event){
                 if (this.isArchive && !this.isAdmin) {
-                    this.$toast("该行动已归档,不可操作!")
+                    this.$toast("已归档,不可操作!")
                     return;
                 }
                 this.tabActive = index;
@@ -1005,7 +1005,7 @@
             openMemberList(){//成员管理页面
                 if (!this.isAccessAuthority)return;
                 if (this.isArchive && !this.isAdmin) {
-                    this.$toast("该行动已归档,不可操作!")
+                    this.$toast("已归档,不可操作!")
                     return;
                 }
 
@@ -1019,7 +1019,7 @@
             openNoticeList(){//公告列表
                 if (!this.isAccessAuthority)return;
                 if (this.isArchive) {
-                    this.$toast("该行动已归档,不可操作!")
+                    this.$toast("已归档,不可操作!")
                     return;
                 }
                 let params = {
@@ -1041,7 +1041,7 @@
             onRelatedBusiness(){//相关页面
                 if (!this.isAccessAuthority)return;
                 if (this.isArchive && !this.isAdmin) {
-                    this.$toast("该行动已归档,不可操作!")
+                    this.$toast("已归档,不可操作!")
                     return;
                 }
                 let params = {
@@ -1180,7 +1180,7 @@
             showAttentionDrop(event){
                 if (!this.isAccessAuthority)return;
                 if (this.isArchive) {
-                    this.$toast("该行动已归档,不可操作!")
+                    this.$toast("已归档,不可操作!")
                     return;
                 }
                 if (!this.isAdmin) {
@@ -1193,7 +1193,7 @@
             showShareAction(){
                 if (!this.isAccessAuthority)return;
                 if (this.isArchive) {
-                    this.$toast("该行动已归档,不可操作!")
+                    this.$toast("已归档,不可操作!")
                     return;
                 }
                 this.showShareActionSheet = true;
