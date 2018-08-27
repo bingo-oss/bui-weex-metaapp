@@ -62,6 +62,7 @@
                     return;
                 }
                 let properties = this.swaggerEntiyDef.properties[col.name];
+                if(!properties)return false;
                 let inputType = properties['x-input']
                 // 伪造 definition
                 let fakeDefinition = {
