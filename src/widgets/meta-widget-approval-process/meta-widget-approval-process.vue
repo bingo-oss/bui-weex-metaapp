@@ -42,7 +42,7 @@
         </div>
 
         <!--表单底部为公共操作区域-->
-        <div class="action-bar">
+        <div class="action-bar" v-if="widgetParams.commonOperations&&widgetParams.commonOperations.length">
             <meta-operation v-for="(toolbarBtn,index) in widgetParams.commonOperations" :operation="toolbarBtn" :widget-context="getWidgetContext(toolbarBtn)" :key="index" class="full-column" style="flex: 1"></meta-operation>
         </div>
 
