@@ -49,7 +49,7 @@ export default {
                     this.display = 'show';
                     setTimeout(()=>{
                         this.display='hide';
-                    },500);
+                    },200);
                     break;
                 }
             }

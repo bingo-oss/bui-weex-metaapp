@@ -462,6 +462,7 @@
     import buiweex from 'bui-weex'
     import _ from '../js/tool/lodash';
     import Utils from '../js/tool/utils';
+    import service from '../js/service.js';
 
     module.exports = {
         components: {'dynamic-item': dynamicItem, 'dialog': dialog, 'bui-popupshow': popupmenu},
@@ -1087,7 +1088,7 @@
                     }
                 }).catch((error)=> {
                     this.isShowLoading = false;
-                    this.$toast("获取套件信息失败：" + Util.handleException(error))
+                    //this.$toast("获取套件信息失败：" + Util.handleException(error))
                 });
             },
             getActivityInfo(){//获取活动信息
@@ -1104,10 +1105,20 @@
                         }
                         this.getLoginInfo();
                         this.isShowLoading = false;
-                    }
+                        if(!result.title){
+                            service.getSwaggerEntityDef(this.metaSuite.project.engine.externalUrl, this.metaSuite.metaEntityName).then(entityDef => {
+                                for (let k in entityDef.properties) {
+                                    let p = entityDef.properties[k];
+                                    if (p['x-meaning']=="title") {
+                                        this.activityInfo.name = result[k];//读取设置了语意为标题的字段显示
+                                    }
+                                }
+                            });
+                        }
+                     }
                 }).catch((error)=> {
                     this.isShowLoading = false;
-                    this.$toast("获取详情信息失败：" + Util.handleException(error))
+                    //this.$toast("获取详情信息失败：" + Util.handleException(error))
                 });
             },
             getTopicInfo(){//用于发送动态的数据
@@ -1550,7 +1561,6 @@
                         }
                         this.clearYwdtUnreadMsg();
                     } else {
-                        buiweex.alert(data);
                         this.isShowLoading = false;
                         this.getIsHasApplyJoin();
                         this.getActivityName();
