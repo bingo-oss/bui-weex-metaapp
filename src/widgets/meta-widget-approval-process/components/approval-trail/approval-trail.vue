@@ -111,7 +111,6 @@ export default {
                         select:true,
                         color:"#5099F4",//高亮dot
                         textColor:"#000",//高亮文字
-                        assigneeName:"审批中",
                         dotStyle:{"background-color":"#5099F4"}
                     })
                     _this.trail[(_this.trail.length-1)].borderLeftWidth = {"border-left-width":0};//不需要显示线条
