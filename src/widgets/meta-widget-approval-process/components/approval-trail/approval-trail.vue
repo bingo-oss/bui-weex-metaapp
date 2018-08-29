@@ -6,7 +6,7 @@
                 <div class="approval-trail-title">
                     <!--<text class="font28">{{item.name}}</text>-->
                     <div style="flex-direction: row;">
-                        <text class="font28" :style="{width:'300px',color:item.textColor}" v-if="item.name">{{item.name}}</text>
+                        <text class="font28" :style="{width:'320px',color:item.textColor}" v-if="item.name">{{item.name}}</text>
                         <text class="font28 color-sub" v-if="item.endTime" :style="{color:item.color}" style="text-align: right"> {{item.endTime}}</text>
                     </div>
                 </div>
@@ -14,7 +14,7 @@
                     <div class="approval-trail-info">
                         <template>
                             <text class="font28 color-sub" :style="{color:item.color}" v-if="item.assigneeName">{{item.assigneeName}}</text>
-                            <text class="font28 color-sub" :style="{color:item.color}" v-if="item.opinion">审批意见: {{item.opinion}}</text>
+                            <text class="font28 color-sub mt6" :style="{color:item.color}" v-if="item.opinion">审批意见: {{item.opinion}}</text>
                         </template>
                     </div>
                 </div>
@@ -128,6 +128,7 @@ export default {
     .scroller{
         flex:1;
     }
+    .mt6{ margin-top: 6px;}
     .font28{
         font-size:28px;
     }
