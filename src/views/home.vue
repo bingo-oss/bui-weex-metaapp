@@ -1074,6 +1074,7 @@
                 linkapi.get(params).then((result) => {
                     this.isShowLoading = false;
                     if (result.id) {
+                        if(fun){fun(result)}
                         this.metaSuite = result;
                         this.activityInfo.projectId = this.metaSuite.projectId;
                         this.activityInfo.formShortId = this.metaSuite.formShortId;
@@ -1084,7 +1085,6 @@
                         this.handleWriteMenu();
                         this.handleTabMenu();
                         this.handleCreateMenu();
-                        if(fun){fun(result)}
                     }
                 }).catch((error)=> {
                     this.isShowLoading = false;
@@ -1548,6 +1548,7 @@
                     }
                 };
                 linkapi.get(params).then((data) => {
+                    buiweex.alert(123123);
                     if (data.r) {
                         this.isAccessAuthority = true;
                         this.getActivityInfo();
