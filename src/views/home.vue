@@ -1548,7 +1548,6 @@
                     }
                 };
                 linkapi.get(params).then((data) => {
-                    buiweex.alert(123123);
                     if (data.r) {
                         this.isAccessAuthority = true;
                         this.getActivityInfo();
