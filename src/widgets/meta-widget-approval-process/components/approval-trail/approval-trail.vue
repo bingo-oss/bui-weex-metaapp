@@ -90,6 +90,25 @@ export default {
                     var variables =  resp.processInstance.variables;
                     var taskList = resp.tasks.content
                     _this.trail = taskList.map(item => {
+                        if(!item.assigneeName){
+                            if(item.currentNode&&item.currentNode.candidateInfo&&item.currentNode.candidateInfo.length){
+                                let processingPerson = [];
+                                _.each(item.currentNode.candidateInfo,(item,index)=>{
+                                    if(item.type==1){
+                                        if(item.groupUsers&&item.groupUsers.length){
+                                            _.each(item.groupUsers,(item,index)=>{
+                                                processingPerson.push(item.name)
+                                            });
+                                        }else{
+                                            processingPerson.push(item.name)
+                                        }
+                                    }else{
+                                        processingPerson.push(item.name)
+                                    }
+                                });
+                                item.assigneeName = processingPerson.join(",")
+                            }//处理下需要显示的处理人名称集
+                        }
                         return {
                             name:item.name,
                             assigneeName:item.assigneeName,
