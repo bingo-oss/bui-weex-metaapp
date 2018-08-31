@@ -258,7 +258,7 @@
 </script>
 <style lang="css">
     .page-title-wrapper{ flex-direction: row; flex: 1;}
-    .page-title{ flex: 1; height: 90px; text-align: center; line-height: 90px; font-size: 30px; color: #fff;}
+    .page-title{ flex: 1; height: 90px; text-align: center; line-height: 90px; font-size: 32px; color: #fff;}
     .action-bar {
         border-top-color: #e6e4e4;
         border-top-width: 1px;
