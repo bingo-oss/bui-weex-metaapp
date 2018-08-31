@@ -41,7 +41,7 @@ const service={
                     trail_data.content.push({
                         name:_name?_name.split(" ")[0]:"",
                         comm:_t.liftOff(_t.getXmlTagNameContent(content, "text").join(""),"text"),
-                        time:_name?(_name.split(" ")[1]+_name.split(" ")[2]):""
+                        time:_name?(_name.split(" ")[1]+" "+_name.split(" ")[2]):""
                     });//流程意见
                 });
                 _t.trail.push(trail_data);

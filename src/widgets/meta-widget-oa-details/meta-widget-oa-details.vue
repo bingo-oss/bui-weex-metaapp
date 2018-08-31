@@ -8,7 +8,7 @@
 
         <scroller class="container" style="background-color: #F8F8F8;">
             <div class="panel" v-if="fields.length" @appear="appear('form')" @disappear="disappear('form')" :ref="'form'">
-                <div class="panel-body">
+                <div class="panel-body-form">
                     <div class="form-group form-hrb" v-for="field in fields" v-if="field.text">
                         <text class="form-label view-label" style="flex: 1; text-align: right;">{{field["disname"]}}</text>
                         <text class="view-label">：</text>
@@ -44,7 +44,7 @@
                                             <template>
                                                 <div style="flex-direction: row;">
                                                     <text class="font28 color-sub" :style="{color:item.color}" v-if="content.name">{{content.name}}</text>
-                                                    <text class="font28 color-sub" v-if="content.time" :style="{color:item.color}" style="text-align: right"> {{content.time}}</text>
+                                                    <text class="font28 color-sub" v-if="content.time" :style="{color:item.color}" style="text-align: right; padding-right: 120px;"> {{content.time}}</text>
                                                 </div>
                                                 <text class="font28 color-sub mt6" :style="{color:item.color}" v-if="content.comm">审批意见: {{content.comm}}</text>
                                             </template>
@@ -313,7 +313,6 @@
         padding-right: 30px;
     }
     .panel-body-form{
-        padding-bottom: 20px;
         padding-left: 10px;
         padding-right: 10px;
     }
