@@ -182,7 +182,7 @@
                 _.each(this.titles,(title,index)=>{
                     if(title.type==type){
                         title.highlight = false;
-                        this.titles[index-1].highlight = true;//上一个为高亮
+                        this.titles[((index-1)<0)?(index+1):(index-1)].highlight = true;//上一个为高亮
                     }
                 });
             },
