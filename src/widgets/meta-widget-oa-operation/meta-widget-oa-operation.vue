@@ -2,7 +2,7 @@
     <div class="full-column">
         <bui-header :leftItem="{icon: 'ion-chevron-left'}" :title="title" @leftClick="() =>{this.$pop()}">
             <div slot="right" @click="dataPost" class="header-right-wrapper">
-                <bui-icon @click="dataPost" name="ion-checkmark" color="white" size=60></bui-icon>
+                <bui-icon @click="dataPost" name="ion-android-done" color="white" size=60></bui-icon>
             </div>
         </bui-header>
 
