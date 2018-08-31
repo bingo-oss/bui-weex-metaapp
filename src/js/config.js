@@ -2,6 +2,7 @@ const linkapi = require('linkapi');
 import i18n from '../js/i18n/index';
 import buiweex from 'bui-weex';
 import ajax from '../js/ajax.js';
+const configServerUrl = "https://developer.bingosoft.net:12100/services/tool/system/config";
 
 /**
  * 在开发调试时，可以将 debug 设为 true，并设置相应的 token，viewId 和 formId 来调试
@@ -11,15 +12,7 @@ import ajax from '../js/ajax.js';
 var configData=null;
 export default {
     debug: true,
-    // debug: false,
-    //debugViewId: 'ybKtnxaBKbBTL5NNf2tbZW', // 警力报备
-    // debugViewId: 'BxuEmvqNSHahVM5gudEC2H', // 大事记
-    //debugViewId: 'n34Zs9i2qAeEeqnZvfwUnW', // 行动列表
-    // debugViewId: 'JJUzCgvZQzgxBuytyKmz8e', // test
-    // debugFormId: 'Q7BjDyu92EkGenAL6zcfhb', // 大事记
-    //debugFormId: 'ssyreSd', // 行动
-    //debugEntityId: 'O1PRfnK1A',
-    token: '7a741cc1-87af-4b65-ac2f-b288dfc30c71',
+    token: 'c2Fhc3Nzbzo0NTg1MDk5Yy00ZmIxLTRlZjUtOTdkNy01ZmU5YzQ1NzAxODM',
     configFilename: 'config.json',
     serverConfig:{},
     // 读取与 list.weex.js、form.weex.js 同级的配置文件
@@ -30,9 +23,19 @@ export default {
                 this.serverConfig = configData;
                 resolve(configData);
             }else{
-                contextPath = contextPath.replace('file://', ''); // 消除 file:
-                let absPath = `${contextPath}/${this.configFilename}`;
-                linkapi.readTextFromFile(absPath, 'utf-8', data => {
+                ajax.get(configServerUrl).then((resp) => {
+                    configData=Object.assign(resp.data,{
+                        "configServerUrl":configServerUrl,
+                        "blogApi": resp.data["service.blog.endpoint"],
+                        "uamUrl": resp.data["service.link.endpoint"],
+                        "engineService": resp.data["service.gateway.endpoint"]+"/services"
+                    });
+                    this.serverConfig = configData;
+                    resolve(configData);
+                })
+                //contextPath = contextPath.replace('file://', ''); // 消除 file:
+                //let absPath = `${contextPath}/${this.configFilename}`;
+                 /*linkapi.readTextFromFile(absPath, 'utf-8', data => {
                     try {
                         if(data.configServerUrl){
                             //获取服务端的配置
@@ -54,7 +57,7 @@ export default {
                     }
                 }, err => {
                     reject(err);
-                })
+                })*/
             }
         })
 

@@ -21,6 +21,16 @@ Vue.component('meta-widget-approval-process',require("../widgets/meta-widget-app
 Vue.component('submission-frame',require("../widgets/meta-widget-approval-process/components/submission-frame/submission-frame.vue"));
 //附件组件
 Vue.component('attachment',require("../widgets/meta-widget-approval-process/components/attachment/attachment.vue"));
+
+//独立开发部件 通用性较差
+//oa-列表部件
+Vue.component('meta-widget-oa-list',require("../widgets/meta-widget-oa-list/meta-widget-oa-list.vue"));
+//oa-详情部件
+Vue.component('meta-widget-oa-details',require("../widgets/meta-widget-oa-details/meta-widget-oa-details.vue"));
+//oa-处理部件
+Vue.component('meta-widget-oa-operation',require("../widgets/meta-widget-oa-operation/meta-widget-oa-operation.vue"));
+
+Vue.component('meta-widget-navbar', {});
 App.el = '#root'
 
 new Vue(App)
