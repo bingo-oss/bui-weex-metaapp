@@ -8,8 +8,8 @@
 
         <scroller class="container" style="background-color: #F8F8F8;">
             <div class="panel" v-if="fields.length" @appear="appear('form')" @disappear="disappear('form')" :ref="'form'">
-                <div class="panel-body-form">
-                    <div class="form-group form-hrb" v-for="field in fields" v-if="field.text">
+                <div class="panel-body">
+                    <div class="form-group form-hrt" v-for="field in fields" v-if="field.text">
                         <text class="form-label view-label" style="flex: 1; text-align: right;">{{field["disname"]}}</text>
                         <text class="view-label">：</text>
                         <text class="view-text" style="flex: 2">{{field["text"]}}</text>
@@ -356,6 +356,11 @@
     }
     .view-text{
 
+    }
+    .form-hrt{
+        border-top-color: #e6e4e4;
+        border-top-width: 1px;
+        border-top-style: solid;
     }
 
 </style>
