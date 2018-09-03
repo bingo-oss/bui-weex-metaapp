@@ -4,8 +4,8 @@ import _ from '../../../js/tool/lodash';
 const linkapi = require('linkapi');
 
 const service={
-    myXml(vue,data){
-        //明源企业oa-xml解析;--操作解析
+    jzyXml(vue,data){
+        //佳兆业企业oa-xml解析;--操作解析
         if(vue.items.length==0){
             //不存在选项集需要重新渲染
             _.each(vue.getXmlTagNameContent(data,"gxoptions"),(gxatt)=>{
@@ -44,8 +44,8 @@ const service={
             });//获取下一环节信息
         });
     },
-    myXmlOption(vue,val){
-        //明源选项操作
+    jzyXmlOption(vue,val){
+        //佳兆业选项操作
         if(val=="同意"){
             vue.query.tag="tongyi"
         }else if(val=="不同意"){
@@ -61,8 +61,8 @@ const service={
             vue.getData();
         }
     },
-    myPost(vue){
-        //明源提交数据操作
+    jzyPost(vue){
+        //佳兆业提交数据操作
         let _userXml="",//选择的用户结构;
             users = vue.submission.sendtran.users;
         for(var user of users){

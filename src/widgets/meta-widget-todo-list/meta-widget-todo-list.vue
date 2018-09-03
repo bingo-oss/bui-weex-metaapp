@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <bui-header :leftItem="{icon: 'ion-chevron-left'}" @leftClick="pop">
+        <bui-header :leftItem="{icon: 'ion-ios-arrow-left'}" @leftClick="pop">
             <div slot="center" class="page-title-wrapper" @click="titleClicked">
                 <text class="page-title">{{title}}</text>
             </div>

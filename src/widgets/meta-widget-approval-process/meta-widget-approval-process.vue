@@ -1,6 +1,6 @@
 <template>
     <div class="full-column">
-        <bui-header :leftItem="{icon: 'ion-chevron-left'}" :title="title" @leftClick="() =>{this.$pop()}">
+        <bui-header :leftItem="{icon: 'ion-ios-arrow-left'}" :title="title" @leftClick="() =>{this.$pop()}">
             <div slot="right" class="header-right-wrapper">
                 <div class="header-button">
                     <!--头部为上拉菜单操作区域-->

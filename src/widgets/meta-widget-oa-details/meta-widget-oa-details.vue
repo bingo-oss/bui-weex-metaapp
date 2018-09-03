@@ -1,6 +1,6 @@
 <template>
     <div class="full-column">
-        <bui-header :leftItem="{icon: 'ion-chevron-left'}" @leftClick="() =>{this.$pop()}">
+        <bui-header :leftItem="{icon: 'ion-ios-arrow-left'}" @leftClick="() =>{this.$pop()}">
             <div slot="center" class="page-title-wrapper">
                 <text v-for="title in titles" class="page-title" :style="{color:(title.highlight?highlight.color:'#ccc')}" @click="goto(title.type)">{{title.name}}</text>
             </div>
@@ -12,7 +12,10 @@
                     <div class="form-group form-hrt" v-for="field in fields" v-if="field.text">
                         <text class="form-label view-label" style="flex: 1; text-align: right;">{{field["disname"]}}</text>
                         <text class="view-label">：</text>
-                        <text class="view-text" style="flex: 2">{{field["text"]}}</text>
+                        <rich-text :inner="field.text" :style="{flex:2}"></rich-text>
+                        <!--<div style="flex: 2">
+                            <text class="view-text">{{field["text"]}}</text>
+                        </div>-->
                     </div>
                 </div>
             </div>

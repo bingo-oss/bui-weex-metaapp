@@ -4,8 +4,8 @@ import _ from '../../../js/tool/lodash';
 const linkapi = require('linkapi');
 
 const service={
-    myXml(vue,data){
-        //明源企业oa-xml解析;
+    jzyXml(vue,data){
+        //佳兆业企业oa-xml解析;
         let _t  = vue;
         if(data.indexOf("<type")!=-1) {
             _t.state = _t.liftOff(_t.getXmlTagNameContent(data, "type").join(""), "type");
@@ -20,7 +20,8 @@ const service={
             _.each(_t.getXmlTagNameContent(gxatt,"att"),(att,index)=>{
                 _t.attachment.push({
                     name: _t.liftOff(_t.getXmlTagNameContent(att, "disname").join(""),"disname"),
-                    downloadUrl:_t.liftOff(_t.getXmlTagNameContent(att,"url").join(""),"text")
+                    downloadUrl:_t.liftOff(_t.getXmlTagNameContent(att,"url").join(""),"url"),
+                    download:true
                 });
             });//获取表单附件字段信息
         });

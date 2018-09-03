@@ -25,7 +25,9 @@ const tools={
     'refresh-wrapper': require('./common/refresh.vue'),
     'loading-wrapper': require('./common/loading.vue'),
     'actionsheet-wrapper':require('./common/actionsheet.vue'),
-     'bui-loading': require('./common/bui-loading.vue')
+     'bui-loading': require('./common/bui-loading.vue'),
+    'rich-text': require('./common/rich-text.vue')
+
 }
 function install(Vue, opts = {}){
     _.each(formComponents,function(v,k){
