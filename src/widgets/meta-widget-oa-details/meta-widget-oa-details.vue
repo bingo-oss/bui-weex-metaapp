@@ -201,13 +201,21 @@
             back(){
                 this.$pop();
             },
-            getXmlTagNameContent(data,tagName){
-                var reg = new RegExp(`<${tagName}>(.(?!${tagName}))+<\/${tagName}>|<${tagName}(.(?!${tagName}))+\/>`, "g");
-                return data.match(reg)
+            getXmlTagNameContent(data,tagName,type){
+                var reg = new RegExp(`<${tagName}(.(?!<${tagName}))+<\/${tagName}>|<${tagName}(.(?!<${tagName}))+\/>`, "g");
+                if(type==1){
+                    reg = new RegExp(`<${tagName}((\n|\s|.)(?!<${tagName}))+<\/${tagName}>|<${tagName}(.(?!<${tagName}))+\/>`, "g");
+                }
+                return data.match(reg);
+            },
+            getXmlAttr(data,tagName,attr){
+                //获取某个属性值
+                var reg = new RegExp(`<${tagName}[^>]+${attr}\\s*=\\s*['\"]([^'\"]+)['\"][^>]*`);
+                return data.match(reg)?data.match(reg):[""];
             },
             liftOff(str,tagName){
                 //提除多余字符
-                return str.replace("<"+tagName+">","").replace("</"+tagName+">","").replace("<![CDATA[","").replace("]]>","")
+                return str.replace("<![CDATA[","").replace("]]>","").replace(/<.*?>/g, '')
             },
             getData(queryParam){
                 let _t  = this;

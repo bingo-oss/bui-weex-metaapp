@@ -7,7 +7,7 @@
         </bui-header>
 
         <scroller class="container" style="background-color: #F8F8F8;">
-            <div class="" style="justify-content: center; align-items: center; padding-top: 20px; padding-bottom: 20px;">
+            <div class="" style="justify-content: center; align-items: center; padding-top: 20px; padding-bottom: 20px;flex-wrap:wrap;flex-direction:column">
                 <bui-radio v-model="submission.selectedItem" :items="items"></bui-radio>
             </div>
 
@@ -103,7 +103,7 @@
             },
             getXmlTagNameContent(data,tagName){
                 //获取xml内某标签信息
-                var reg = new RegExp(`(<${tagName}(.(?!${tagName}))+<\/${tagName}>)|(<${tagName}(.(?!${tagName}))+\/>)`, "g");
+                var reg = new RegExp(`(<${tagName}(.(?!<${tagName}))+<\/${tagName}>)|(<${tagName}(.(?!${tagName}))+\/>)`, "g");
                 return data.match(reg);
             },
             getXmlAttr(data,tagName,attr){
@@ -113,7 +113,7 @@
             },
             liftOff(str,tagName){
                 //提除多余字符
-                return str.replace("<"+tagName+">","").replace("</"+tagName+">","").replace("<![CDATA[","").replace("]]>","")
+                return str.replace(/<.*?>/g, '').replace("<![CDATA[","").replace("]]>","")
             },
             getData(){
                 //获取数据

@@ -15,6 +15,9 @@
     import config from '../../../../js/config';
     import linkapi from "linkapi";
     import buiweex from "bui-weex";
+    const fileTransfer = weex.requireModule('FileTransferModule');
+    const FileModule = weex.requireModule('FileModule');
+
     export default {
         props: {
             uploadAction: { //上传地址
@@ -219,13 +222,26 @@
             handlePreview(file) {
                 this.downloadUrl(file.downloadUrl,(downloadUrl)=>{
                     let suffix = file.name.split("."),previewUrl;
-                    suffix = suffix[suffix.length - 1].toLowerCase();
-                    if (this.officeSupport.indexOf(suffix) != -1) {
-                        previewUrl = this.officeViewUrl + encodeURIComponent(downloadUrl);
-                    } else {
+                    if(file.download){
                         previewUrl = downloadUrl;
+                        //执行的是下载操作--不是预览
+                        fileTransfer.download(previewUrl,{filename:file.name},function(res){
+                            /*buiweex.alert(res);*/
+                        },function(res){
+                            FileModule.openFile(res.savePath);
+                            /*buiweex.alert(res);*/
+                        },function(erro){
+                            buiweex.alert(erro);
+                        });
+                    }else{
+                        suffix = suffix[suffix.length - 1].toLowerCase();
+                        if (this.officeSupport.indexOf(suffix) != -1) {
+                            previewUrl = this.officeViewUrl + encodeURIComponent(downloadUrl);
+                        } else {
+                            previewUrl = downloadUrl;
+                        }
+                        linkapi.openLinkBroswer(file.name?file.name:"预览",previewUrl);
                     }
-                    linkapi.openLinkBroswer(file.name?file.name:"预览",previewUrl);
                 });
             },
             handleEdit(file) {
