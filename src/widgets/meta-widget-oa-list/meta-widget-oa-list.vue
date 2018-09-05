@@ -144,11 +144,11 @@
             refreshData() {
                 if (this.isRefreshing) return;
                 this.isRefreshing = true;
-                this.fetchData(1).then(data => {
+                this.fetchData(this.currentPage).then(data => {
                     this.dataInited = true; // 控制 viewAppear 时是否刷新页面，只有获取数据成功过才刷新
                     this.listData = data;
                     this.isRefreshing = false;
-                    this.currentPage = 1;
+                    //this.currentPage = 1;
                     this.loadingStatus = 'init';
                 }).catch(err => {
                     this.isRefreshing = false;
