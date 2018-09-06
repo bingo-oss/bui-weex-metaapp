@@ -94,10 +94,11 @@ const service={
                     queryParam.url +="&"+val+"="+_getPageParams[val];
                 }
             });
-            queryParam.url+="&UserID=oaadmin";
+            queryParam.url+=`&UserID=${vue.userInfo.loginId}`//"&UserID=oaadmin";
             queryParam.url  = queryParam.url;
             queryParam.body = _postXml;
             _t.isShowLoading = true;
+            linkapi.get
             ajax.request(queryParam).then(function(res){
                 _t.isShowLoading = false;
                 if(res.ok){
@@ -792,7 +793,7 @@ const service={
             });
             //提交接口
             /*MyWorkflow/WF_Engine_XmlHTTP.aspx?ywtype=ProcessHandle&ywonlyflag=&ywtxt=&rdnum=0.20379044057843704&MySessionState=0059fc5c-09b0-e811-80fc-005056b036bb*/
-            queryParam.url+="&UserID=oaadmin";
+            queryParam.url+=`&UserID=${vue.userInfo.loginId}`//"&UserID=oaadmin";
             queryParam.url  = queryParam.url;
             queryParam.body = _postXml;
             //_t.isShowLoading = true;

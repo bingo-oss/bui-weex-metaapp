@@ -83,7 +83,7 @@
     import ajax from '../../js/ajax.js';
     const dom = weex.requireModule('dom');
     const globalEvent = weex.requireModule('globalEvent');
-
+    const linkapi = require('linkapi');
     //import xml2js from "xml2js"
     export default {
         props: {
@@ -96,6 +96,7 @@
         data() {
             let _t = this;
             return {
+                userInfo:{},
                 titles:[
                     {
                         name:"详情",
@@ -249,7 +250,7 @@
                           _t.queryParam.url +="&"+val+"="+_getPageParams[val];
                         }
                     });
-                    _t.queryParam.url+='&userid=oaadmin';
+                    //_t.queryParam.url+='&userid=oaadmin';
                     //_t.queryParam.url +="&curpage="+page+"&pagesize="+_t.size;
                 }else{
                     //post请求
@@ -258,10 +259,27 @@
                             _t.queryParam.body[val]=_getPageParams[val];
                         }
                     });
-                    __t.queryParam.body["userid"]='oaadmin';
+                    //__t.queryParam.body["userid"]='oaadmin';
                 }
-                this.getData(this.queryParam);
-                /*_.each()*/
+
+                try{
+                    linkapi.getLoginInfo((res)=>{
+                        _t.userInfo = res;
+                        if(_t.queryParam.method=="GET"){
+                            _t.queryParam.url+=`&userid=${_t.userInfo.loginId}`;
+                        }else{
+                            _t.queryParam.body["userid"]=_t.userInfo.loginId;
+                        }
+                        _t.getData(_t.queryParam);
+                    });
+                }catch (erro){
+                    if(_t.queryParam.method=="GET"){
+                        _t.queryParam.url+=`&userid=oaadmin`;
+                    }else{
+                        _t.queryParam.body["userid"]=`oaadmin`;
+                    }
+                    this.getData(this.queryParam);
+                }
             }
 
         }

@@ -52,6 +52,8 @@
     import buiweex from 'bui-weex';
     import Utils from '../../js/tool/utils';
     import ajax from '../../js/ajax.js';
+    const linkapi = require('linkapi');
+
     //import xml2js from "xml2js"
     export default {
         props: {
@@ -63,6 +65,7 @@
         },
         data() {
             return {
+                userInfo:{},//用户信息
                 title:"处理",
                 items:[],
                 submission:{
@@ -139,8 +142,6 @@
                                 _t.queryParam.url +="&"+val+"="+_getPageParams[val];
                             }
                         });
-                        _t.queryParam.url+='&userid=oaadmin';
-                        //_t.queryParam.url +="&curpage="+page+"&pagesize="+_t.size;
                     }else{
                         //post请求
                         _.each(_queryParam,(val,index)=>{
@@ -152,15 +153,36 @@
                                 _t.queryParam.body[val]=_getPageParams[val];
                             }
                         });
-                        _t.queryParam.body["userid"]='oaadmin';
                     }
-                    /*_.each()*/
-                    _t.isShowLoading = true;
-                    ajax.request(_t.queryParam).then(function(res){
-                        _t.isShowLoading = false;
-                        _t.postXml = res.data;
-                        service[_t.code+"Xml"](_t,res.data);
-                    });
+                    try{
+                        linkapi.getLoginInfo((res)=>{
+                            _t.userInfo = res;
+                            if(_t.queryParam.method=="GET"){
+                                _t.queryParam.url+=`&userid=${_t.userInfo.loginId}`;
+                            }else{
+                                _t.queryParam.body["userid"]=_t.userInfo.loginId;
+                            }
+                            _t.isShowLoading = true;
+                            ajax.request(_t.queryParam).then(function(res){
+                                _t.isShowLoading = false;
+                                _t.postXml = res.data;
+                                service[_t.code+"Xml"](_t,res.data);
+                            });
+                        });
+                    }catch (erro){
+                        _t.isShowLoading = true;
+                        if(_t.queryParam.method=="GET"){
+                            _t.queryParam.url+=`&userid=oaadmin`;
+                        }else{
+                            _t.queryParam.body["userid"]=`oaadmin`;
+                        }
+                        ajax.request(_t.queryParam).then(function(res){
+                            _t.isShowLoading = false;
+                            _t.postXml = res.data;
+                            service[_t.code+"Xml"](_t,res.data);
+                        });
+                    }
+
                 }
             },
             dataPost(){
