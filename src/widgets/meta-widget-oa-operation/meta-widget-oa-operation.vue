@@ -116,7 +116,7 @@
             },
             liftOff(str,tagName){
                 //提除多余字符
-                return str.replace(/<.*?>/g, '').replace("<![CDATA[","").replace("]]>","")
+                return str.replace(`/<${tagName}>/g`, '').replace(`/</${tagName}>/g`, '').replace("<![CDATA[","").replace("]]>","").replace(/<.*?>/g, '')
             },
             getData(){
                 //获取数据

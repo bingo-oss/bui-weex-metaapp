@@ -12,6 +12,7 @@ const service={
                 _.each(vue.getXmlTagNameContent(gxatt,"gxoption"),(att)=>{
                     if(att.indexOf("<option")!=-1){
                         _.each(vue.getXmlTagNameContent(att,"option"),(content)=>{
+                            console.log(vue.liftOff(vue.getXmlTagNameContent(att, "disname").join(""),"disname"))
                             vue.items.push({
                                 disname:vue.liftOff(vue.getXmlTagNameContent(att, "disname").join(""),"disname"),
                                 value:vue.getXmlAttr(content,"option","value")[1],
@@ -94,7 +95,7 @@ const service={
                     queryParam.url +="&"+val+"="+_getPageParams[val];
                 }
             });
-            queryParam.url+=`&UserID=${vue.userInfo.loginId}`//"&UserID=oaadmin";
+            queryParam.url+=`&UserID=${vue.userInfo.loginId?vue.userInfo.loginId:"oaadmin"}`//"&UserID=oaadmin";
             queryParam.url  = queryParam.url;
             queryParam.body = _postXml;
             _t.isShowLoading = true;
