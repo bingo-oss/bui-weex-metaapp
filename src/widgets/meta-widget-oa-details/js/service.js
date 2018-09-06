@@ -13,7 +13,7 @@ const service={
             _t.state = _t.liftOff(_t.getXmlTagNameContent(data, "type").join(""), "type");
         };//获取文档状态
         _.each(_t.getXmlTagNameContent(data,"field"),(field,index)=>{
-            console.log(field);
+            if(vue.hideFields.length&&vue.hideFields.indexOf(_t.liftOff(_t.getXmlTagNameContent(field, "disname").join(""),"disname"))!=-1)return;
             _t.fields.push({
                 disname: _t.liftOff(_t.getXmlTagNameContent(field, "disname").join(""),"disname"),
                 text:_t.liftOff(_t.getXmlTagNameContent(field,"text").join(""),"text")
@@ -536,6 +536,7 @@ const service={
         }).then(function(res){
             var data = res.data;
             _.each(_t.getXmlTagNameContent(data,"Domain",1),(field,index)=>{
+                if(vue.hideFields.length&&vue.hideFields.indexOf(vue.getXmlAttr(field, "Domain", "name")[1])!=-1)return;
                 _t.fields.push({
                     disname: vue.getXmlAttr(field, "Domain", "name")[1],
                     text:_t.liftOff(field,"Domain")
@@ -659,6 +660,7 @@ const service={
 `//審批記錄
 
         _.each(_t.getXmlTagNameContent(data,"Domain",1),(field,index)=>{
+            if(vue.hideFields.length&&vue.hideFields.indexOf(vue.getXmlAttr(field, "Domain", "name")[1])!=-1)return;
             _t.fields.push({
                 disname: vue.getXmlAttr(field, "Domain", "name")[1],
                 text:_t.liftOff(field,"Domain")

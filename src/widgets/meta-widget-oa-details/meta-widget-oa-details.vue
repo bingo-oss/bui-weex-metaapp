@@ -148,6 +148,9 @@
             code(){
                 //企业code--目前对应企业的解析机制
                 return this.widgetParams.code;
+            },
+            hideFields(){
+                return this.widgetParams.oaInfo.hideFields||[]
             }
         },
         methods:{
@@ -160,6 +163,7 @@
             },
             goto(ref){
                 //滚到指定区域
+                this.gotoOpt = true;
                 _.each(this.titles,(title)=>{
                     if(title.type==ref){
                         title.highlight = true;
@@ -168,21 +172,23 @@
                     }
                 });
                 const el = this.$refs[ref];
-                dom.scrollToElement(el, {})
+                dom.scrollToElement(el, {});
+                this.gotoOpt = false;
             },
             appear(type){
                  //滚到特定区域触发
-                _.each(this.titles,(title)=>{
+                /*_.each(this.titles,(title)=>{
                    if(title.type==type){
                       title.highlight = true;
                    }else{
                       title.highlight = false;
                     }
-                });
+                });*/
                 //buiweex.alert(type);
             },
             disappear(type){
               //离开某个组件
+                if(this.gotoOpt)return
                 _.each(this.titles,(title,index)=>{
                     if(title.type==type){
                         title.highlight = false;
