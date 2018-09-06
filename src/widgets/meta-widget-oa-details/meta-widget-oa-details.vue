@@ -204,7 +204,7 @@
             getXmlTagNameContent(data,tagName,type){
                 var reg = new RegExp(`<${tagName}(.(?!<${tagName}))+<\/${tagName}>|<${tagName}(.(?!<${tagName}))+\/>`, "g");
                 if(type==1){
-                    reg = new RegExp(`<${tagName}((\n|\s|.)(?!<${tagName}))+<\/${tagName}>|<${tagName}(.(?!<${tagName}))+\/>`, "g");
+                    reg = new RegExp(`<${tagName}((\n|\s|.)(?!<${tagName}))*<\/${tagName}>|<${tagName}(.(?!<${tagName}))+\/>`, "g");
                 }
                 return data.match(reg);
             },
