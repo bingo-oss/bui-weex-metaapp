@@ -229,7 +229,6 @@
             },
             getData(queryParam){
                 let _t  = this;
-                _t.isShowLoading = true;
                 ajax.request(queryParam).then(function(res){
                     _t.isShowLoading = false;
                     service[_t.code+"Xml"](_t,res.data);
@@ -317,7 +316,7 @@
                     });
                     //__t.queryParam.body["userid"]='oaadmin';
                 }
-
+                _t.isShowLoading = true;
                 try{
                     linkapi.getLoginInfo((res)=>{
                         _t.userInfo = res;
