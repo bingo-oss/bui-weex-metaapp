@@ -237,7 +237,7 @@
             },
             getDisnames(disname){
                 let _length = disname.length,disnames = [];
-                if(_length<=5){
+                if(_length<=5||(!/[\u4e00-\u9fa5]/g.test(disname))){
                     disnames =  [disname];
                 }else{
                     //余数
