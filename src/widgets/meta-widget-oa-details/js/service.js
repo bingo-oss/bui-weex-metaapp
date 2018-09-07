@@ -24,7 +24,8 @@ const service={
                 _t.attachment.push({
                     name: _t.liftOff(_t.getXmlTagNameContent(att, "disname").join(""),"disname"),
                     downloadUrl:_t.liftOff(_t.getXmlTagNameContent(att,"url").join(""),"url"),
-                    download:true
+                    download:true,
+                    size:""
                 });
             });//获取表单附件字段信息
         });
@@ -563,7 +564,8 @@ const service={
                     _t.attachment.push({
                         name: _t.liftOff(a,"a"),
                         downloadUrl:`http://192.168.1.98:8301/Download/download.doc?filepath=/`+vue.getXmlAttr(a, "a", "Location")[1],
-                        download:true
+                        download:true,
+                        size:""
                     });
                     //获取表单附件字段信息
                 });
@@ -673,7 +675,8 @@ const service={
                 _t.attachment.push({
                     name: _t.liftOff(a,"a"),
                     downloadUrl:`http://192.168.1.98:8301/Download/download.doc?filepath=/`+vue.getXmlAttr(a, "a", "Location")[1],
-                    download:true
+                    download:true,
+                    size:""
                 });
                 //获取表单附件字段信息
             });

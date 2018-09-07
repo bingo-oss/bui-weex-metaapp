@@ -73,6 +73,6 @@
 </script>
 <style lang="css">
     .view-text{
-        font-size: 32px;
+        font-size: 30px;
     }
 </style>

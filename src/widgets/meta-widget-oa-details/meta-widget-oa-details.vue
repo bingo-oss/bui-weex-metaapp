@@ -9,9 +9,12 @@
         <scroller class="container" style="background-color: #F8F8F8;">
             <div class="panel" v-if="fields.length" @appear="appear('form')" @disappear="disappear('form')" :ref="'form'">
                 <div class="panel-body">
-                    <div class="form-group form-hrt" v-for="field in fields" v-if="field.text">
-                        <text class="form-label view-label" style="flex: 2; text-align: right;">{{field["disname"]}}</text>
-                        <text class="view-label">：</text>
+                    <div class="form-group form-div" v-for="field in fields" v-if="field.text">
+                        <div style="flex: 2; margin-right: 20px;">
+                            <div style="flex: 1;" v-for="disname in getDisnames(field.disname)">
+                                <text class="form-label view-label" style="text-align: right;">{{disname}}</text>
+                            </div>
+                        </div>
                         <rich-text :inner="field.text" :style="{flex:5}"></rich-text>
                         <!--<div style="flex: 2">
                             <text class="view-text">{{field["text"]}}</text>
@@ -21,14 +24,14 @@
             </div>
 
             <div class="panel" v-if="attachment.length" @appear="appear('attachment')" @disappear="disappear('attachment')" :ref="'attachment'">
-                <text class="panel-header">附件</text>
+                <!--<text class="panel-header">附件</text>-->
                 <div class="panel-body">
                     <attachment v-model="attachment"></attachment>
                 </div>
             </div>
 
             <div class="panel" v-if="trail.length" @appear="appear('trail')" @disappear="disappear('trail')" :ref="'trail'">
-                <text class="panel-header">审批轨迹</text>
+                <!--<text class="panel-header">审批轨迹</text>-->
                 <div class="panel-body">
                     <div class="approval-trail">
                         <div v-for="(item,index) in trail">
@@ -231,6 +234,54 @@
                     _t.isShowLoading = false;
                     service[_t.code+"Xml"](_t,res.data);
                 });
+            },
+            getDisnames(disname){
+                let _length = disname.length,disnames = [];
+                if(_length<=5){
+                    disnames =  [disname];
+                }else{
+                    //余数
+                    let remainderNumber="",remainderNumberArry = [5,3,2];//设置的余数
+                    _.each(remainderNumberArry,(num)=>{
+                        if(!_length%num){
+                           remainderNumber = num;
+                        }
+                    })
+                    if(!remainderNumber)remainderNumber=2;
+                    let remainder = _length%remainderNumber,num=0;
+                    if(remainder){
+                        num = _length-remainder;
+                    }else{
+                        //remainderNumber = 3;
+                        /*if(_length%3){
+                            remainderNumber = 3
+                            num = _length-_length%3
+                        }else{
+                            num = _length
+                        }*/
+                        num = _length
+                    }
+                    while (num>5){//2、判断循环条件;
+                        num=num/remainderNumber;//4、更新循环变量；
+                    }
+                    let _i = 0,_str="";
+                    _.each(disname,(dis,index)=>{
+                        _i++;
+                        _str=_str+dis;
+                        if(_i>=num){
+                           disnames.push(_str);
+                           _i = 0;
+                           _str= "";
+                        }
+                    });
+
+                    if(_str){
+                        disnames.push(_str);
+                        _str="";
+                    }
+                }
+                console.log(disnames);
+                return disnames
             }
         },
         mounted(){
@@ -343,6 +394,7 @@
         padding-right: 30px;
     }
     .panel-body{
+        padding-top: 30px;
         padding-bottom: 20px;
         padding-left: 30px;
         padding-right: 30px;
@@ -389,13 +441,19 @@
     ._dot{
         position: absolute; width:22px; height:22px; background-color: #5099F4; border-radius: 22px; left: 0;
     }
-    .view-text{
-
+    .view-label{
+        font-size: 30px;
     }
     .form-hrt{
         border-top-color: #e6e4e4;
         border-top-width: 1px;
         border-top-style: solid;
+    }
+    .form-div{
+        justify-content: flex-start;
+        align-items: flex-start;
+        padding-bottom: 20px;
+        padding-top: 20px;
     }
 
 </style>

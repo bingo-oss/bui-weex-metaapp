@@ -797,6 +797,7 @@ const service={
             queryParam.url  = queryParam.url;
             queryParam.body = _postXml;
             //_t.isShowLoading = true;
+            console.log(queryParam)
             /*ajax.request(queryParam).then(function(res){
                 _t.isShowLoading = false;
                 if(res.ok){
