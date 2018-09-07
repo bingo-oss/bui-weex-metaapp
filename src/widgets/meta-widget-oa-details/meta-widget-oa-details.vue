@@ -280,7 +280,6 @@
                         _str="";
                     }
                 }
-                console.log(disnames);
                 return disnames
             }
         },
