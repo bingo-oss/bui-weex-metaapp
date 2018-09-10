@@ -4,7 +4,7 @@ var buiweex=require("bui-weex"),
 var mixins = {
     data: function () {
         return {
-            themeBg:""//link主题颜色
+            themeBg:"#4CA4FE"//link主题颜色
         }
     },
     components: {},
