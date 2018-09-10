@@ -17,11 +17,15 @@ var mixins = {
         },
         "getThemeColor":function(){
             let t = this;
-            linkapi.getThemeColor(function(res){
-                if(res["background_color"]) {
-                    t.themeBg = res["background_color"];//获取系统主题色调
-                }
-            });
+            try {
+                //调试客户端内抛出异常
+                linkapi.getThemeColor(function (res) {
+                    if (res["background_color"]) {
+                        t.themeBg = res["background_color"];//获取系统主题色调
+                    }
+                });
+            }catch (e){
+            }
         }
     },
     created(){
