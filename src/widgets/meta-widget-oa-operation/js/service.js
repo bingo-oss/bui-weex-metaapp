@@ -555,6 +555,8 @@ const service={
 `;//先静态写入获取回来的html--方便解析
 
         let _inputs = data.match(new RegExp(`<input(.(?!<input))+>`, "ig")),ProcessGUID,BusinessGUID,___MYSESSIONSTATE,lastStationGUID,stepGUID,NodeGUID,ProcessNo,StationGUID,_t  = vue;//定义结构需要用到的参数
+        let domain = vue.widgetParams.domain//"http://192.168.1.98:8301";
+
         _.each(_inputs,(input,index)=> {
                 if (input.indexOf("ProcessGUID") != -1) {
                     ProcessGUID = vue.getXmlAttr(input, "input", "value")[1]
@@ -580,7 +582,7 @@ const service={
          MySessionState =>___MYSESSIONSTATE
          http://192.168.1.98:8301/MyWorkflow/WF_XmlHTTP.aspx?ywtype=SDBusinessE&ywonlyflag=fe5ae907-44af-e811-80fc-005056b036bb&ywtxt=e85ae907-44af-e811-80fc-005056b036bb&rdnum=0.5210671599574923&MySessionState=04bfc401-4faf-e811-80fc-005056b036bb*/
         ajax.request({
-            url:`http://192.168.1.98:8301/MyWorkflow/WF_XmlHTTP.aspx?ywtype=SDBusinessE&ywonlyflag=${ProcessGUID}&ywtxt=${BusinessGUID}&MySessionState=${___MYSESSIONSTATE}`,
+            url:`${domain}/MyWorkflow/WF_XmlHTTP.aspx?ywtype=SDBusinessE&ywonlyflag=${ProcessGUID}&ywtxt=${BusinessGUID}&MySessionState=${___MYSESSIONSTATE}`,
             method:'GET',
             body: {},
             type:"text"
@@ -595,7 +597,7 @@ const service={
         * */
         /*http://192.168.1.98:8301/MyWorkflow/WF_Engine_XmlHTTP.aspx?ywtype=GetSysActiveNumber&ywonlyflag=d5167091-0eb0-e811-80fc-005056b036bb&ywtxt=&rdnum=0.28587644058627&MySessionState=0059fc5c-09b0-e811-80fc-005056b036bb返回信息:*/
         ajax.request({
-            url:`http://192.168.1.98:8301/MyWorkflow/WF_Engine_XmlHTTP.aspx?ywtype=GetSysActiveNumber&ywonlyflag=${ProcessGUID}&ywtxt=&MySessionState=${___MYSESSIONSTATE}`,
+            url:`${domain}/MyWorkflow/WF_Engine_XmlHTTP.aspx?ywtype=GetSysActiveNumber&ywonlyflag=${ProcessGUID}&ywtxt=&MySessionState=${___MYSESSIONSTATE}`,
             method:'GET',
             body: {},
             type:"text"
@@ -607,7 +609,7 @@ const service={
              * */
             /*http://192.168.1.98:8301/MyWorkflow/WF_XmlHTTP.aspx?ywtype=GetDefaultOpinion&ywonlyflag=&ywtxt=&rdnum=0.5587772578003363&MySessionState=0059fc5c-09b0-e811-80fc-005056b036bb*/
             ajax.request({
-                url:`http://192.168.1.98:8301/MyWorkflow/WF_XmlHTTP.aspx?ywtype=GetDefaultOpinion&ywonlyflag=&ywtxt=&rdnum=0.5587772578003363&MySessionState=${___MYSESSIONSTATE}`,
+                url:`${domain}/MyWorkflow/WF_XmlHTTP.aspx?ywtype=GetDefaultOpinion&ywonlyflag=&ywtxt=&rdnum=0.5587772578003363&MySessionState=${___MYSESSIONSTATE}`,
                 method:'GET',
                 body: {},
                 type:"text"
@@ -641,7 +643,7 @@ const service={
         * */
         /*http://192.168.1.98:8301/MyWorkflow/WF_XMLHTTP.aspx?ywtype=GetUserStationXML&ywonlyflag=&ywtxt=&rdnum=0.7887944264296273&MySessionState=0059fc5c-09b0-e811-80fc-005056b036bb*/
         ajax.request({
-            url:`http://192.168.1.98:8301/MyWorkflow/WF_XMLHTTP.aspx?ywtype=GetUserStationXML&ywonlyflag=&ywtxt=&rdnum=0.7887944264296273&MySessionState=${___MYSESSIONSTATE}`,
+            url:`${domain}/MyWorkflow/WF_XMLHTTP.aspx?ywtype=GetUserStationXML&ywonlyflag=&ywtxt=&rdnum=0.7887944264296273&MySessionState=${___MYSESSIONSTATE}`,
             method:'GET',
             body: {},
             type:"text"
@@ -682,6 +684,8 @@ const service={
     myXmlOption(vue,val){
         //明源选项操作
         let _sendtrans;
+        let domain = vue.widgetParams.domain//"http://192.168.1.98:8301";
+        buiweex.alert(domain)
         if(vue.sendtrans[val]){
             vue.submission.sendtran = vue.sendtrans[val];
             //myXml(vue.sendtrans[val]);
@@ -699,7 +703,7 @@ const service={
                  * */
                 /*http://192.168.1.98:8301/MyWorkflow/WF_Engine_XmlHttp.aspx?stepGUID=9806bd2c-44af-e811-80fc-005056b036bb&lastStationGUID=ce34fd7b-4278-e311-974d-005056b04a97&nodeGUID=d5167091-0eb0-e811-80fc-005056b036bb&ywtype=GetStepPassGuideXML&ywonlyflag=&ywtxt=&rdnum=0.8724961088433156&MySessionState=0059fc5c-09b0-e811-80fc-005056b036bb*/
                 ajax.request({
-                    url:`http://192.168.1.98:8301/MyWorkflow/WF_Engine_XmlHttp.aspx?stepGUID=9806bd2c-44af-e811-80fc-005056b036bb&lastStationGUID=${vue.getXmlParam.lastStationGUID}&nodeGUID=${vue.getXmlParam.NodeGUID}&ywtype=GetStepPassGuideXML&ywonlyflag=&ywtxt=&MySessionState=${vue.getXmlParam.___MYSESSIONSTATE}`,
+                    url:`${domain}/MyWorkflow/WF_Engine_XmlHttp.aspx?stepGUID=${vue.getXmlParam.StepGUID}&lastStationGUID=${vue.getXmlParam.lastStationGUID}&nodeGUID=${vue.getXmlParam.NodeGUID}&ywtype=GetStepPassGuideXML&ywonlyflag=&ywtxt=&MySessionState=${vue.getXmlParam.___MYSESSIONSTATE}`,
                     method:'GET',
                     body: {},
                     type:"text"
@@ -717,7 +721,7 @@ const service={
                  * */
                 /*http://192.168.1.98:8301/MyWorkflow/WF_Engine_XmlHttp.aspx?ywtype=ProcessGuide_GetStepDisApproveGuide&ywonlyflag=419250b6-5faf-e811-80fc-005056b036bb&ywtxt=ce34fd7b-4278-e311-974d-005056b04a97&rdnum=0.257193983671291&MySessionState=0059fc5c-09b0-e811-80fc-005056b036bb*/
                 ajax.request({
-                    url:`http://192.168.1.98:8301/MyWorkflow/WF_Engine_XmlHttp.aspx?ywtype=ProcessGuide_GetStepDisApproveGuide&ywonlyflag=${vue.getXmlParam.ProcessGUID}&ywtxt=${vue.getXmlParam.BusinessGUID}&MySessionState=${vue.getXmlParam.___MYSESSIONSTATE}`,
+                    url:`${domain}/MyWorkflow/WF_Engine_XmlHttp.aspx?ywtype=ProcessGuide_GetStepDisApproveGuide&ywonlyflag=${vue.getXmlParam.ProcessGUID}&ywtxt=${vue.getXmlParam.BusinessGUID}&MySessionState=${vue.getXmlParam.___MYSESSIONSTATE}`,
                     method:'GET',
                     body: {},
                     type:"text"

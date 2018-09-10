@@ -513,8 +513,8 @@ const service={
 </script>
 `;//先静态写入获取回来的html--方便解析
         let _inputs = data.match(new RegExp(`<input(.(?!<input))+>`, "ig")),ProcessGUID,BusinessGUID,___MYSESSIONSTATE,_t  = vue;//定义结构需要用到的参数
+        let domain = vue.widgetParams.domain//"http://192.168.1.98:8301";
         vue.fields = [];vue.attachment = [];vue.trail = [];
-
         _.each(_inputs,(input,index)=>{
             if(input.indexOf("ProcessGUID")!=-1){
                 ProcessGUID = vue.getXmlAttr(input,"input","value")[1]
@@ -528,9 +528,9 @@ const service={
         /*ywonlyflag=> ProcessGUID
         ywtxt =>BusinessGUID
         MySessionState =>___MYSESSIONSTATE
-        http://192.168.1.98:8301/MyWorkflow/WF_XmlHTTP.aspx?ywtype=SDBusinessE&ywonlyflag=fe5ae907-44af-e811-80fc-005056b036bb&ywtxt=e85ae907-44af-e811-80fc-005056b036bb&rdnum=0.5210671599574923&MySessionState=04bfc401-4faf-e811-80fc-005056b036bb*/
+         dom/MyWorkflow/WF_XmlHTTP.aspx?ywtype=SDBusinessE&ywonlyflag=fe5ae907-44af-e811-80fc-005056b036bb&ywtxt=e85ae907-44af-e811-80fc-005056b036bb&rdnum=0.5210671599574923&MySessionState=04bfc401-4faf-e811-80fc-005056b036bb*/
         ajax.request({
-            url:`http://192.168.1.98:8301/MyWorkflow/WF_XmlHTTP.aspx?ywtype=SDBusinessE&ywonlyflag=${ProcessGUID}&ywtxt=${BusinessGUID}&MySessionState=${___MYSESSIONSTATE}`,
+            url:`${domain}/MyWorkflow/WF_XmlHTTP.aspx?ywtype=SDBusinessE&ywonlyflag=${ProcessGUID}&ywtxt=${BusinessGUID}&MySessionState=${___MYSESSIONSTATE}`,
             method:'GET',
             body: {},
             type:"text"
@@ -552,7 +552,7 @@ const service={
          http://192.168.1.98:8301/MyWorkflow/WF_XmlHTTP.aspx?ywtype=GetDocHTML&ywonlyflag=fe5ae907-44af-e811-80fc-005056b036bb&ywtxt=&rdnum=0.2579994478795364&MySessionState=04bfc401-4faf-e811-80fc-005056b036bb
          */
         ajax.request({
-            url:`http://192.168.1.98:8301/MyWorkflow/WF_XmlHTTP.aspx?ywtype=GetDocHTML&ywonlyflag=${ProcessGUID}&ywtxt=&MySessionState=${___MYSESSIONSTATE}`,
+            url:`${domain}/MyWorkflow/WF_XmlHTTP.aspx?ywtype=GetDocHTML&ywonlyflag=${ProcessGUID}&ywtxt=&MySessionState=${___MYSESSIONSTATE}`,
             method:'GET',
             body: {},
             type:"text"
@@ -563,7 +563,7 @@ const service={
                     //console.log(a);
                     _t.attachment.push({
                         name: _t.liftOff(a,"a"),
-                        downloadUrl:`http://192.168.1.98:8301/Download/download.doc?filepath=/`+vue.getXmlAttr(a, "a", "Location")[1],
+                        downloadUrl:`${domain}/Download/download.doc?filepath=/`+vue.getXmlAttr(a, "a", "Location")[1],
                         download:true,
                         size:""
                     });
@@ -580,7 +580,7 @@ const service={
          http://192.168.1.98:8301/MyWorkflow/WF_XmlHTTP.aspx?ywtype=GetProcessReply&ywonlyflag=&ywtxt=fe5ae907-44af-e811-80fc-005056b036bb&rdnum=0.3988560133219182&MySessionState=04bfc401-4faf-e811-80fc-005056b036bb
          */
         ajax.request({
-            url:`http://192.168.1.98:8301/MyWorkflow/WF_XmlHTTP.aspx?ywtype=GetProcessReply&ywonlyflag=&ywtxt=${ProcessGUID}&MySessionState=${___MYSESSIONSTATE}`,
+            url:`${domain}/MyWorkflow/WF_XmlHTTP.aspx?ywtype=GetProcessReply&ywonlyflag=&ywtxt=${ProcessGUID}&MySessionState=${___MYSESSIONSTATE}`,
             method:'GET',
             body: {},
             type:"text"
@@ -674,7 +674,7 @@ const service={
                 //console.log(a);
                 _t.attachment.push({
                     name: _t.liftOff(a,"a"),
-                    downloadUrl:`http://192.168.1.98:8301/Download/download.doc?filepath=/`+vue.getXmlAttr(a, "a", "Location")[1],
+                    downloadUrl:`${domain}/Download/download.doc?filepath=/`+vue.getXmlAttr(a, "a", "Location")[1],
                     download:true,
                     size:""
                 });
