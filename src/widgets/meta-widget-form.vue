@@ -3,7 +3,7 @@
 <style src="../styles/common.css"></style>
 <template>
     <div class="container">
-        <bui-header v-if="!widgetParams.hideHeader" :leftItem="{icon: 'ion-ios-arrow-left'}" :title="title" @leftClick="() =>{this.$pop()}">
+        <bui-header v-if="!widgetParams.hideHeader" :leftItem="{icon: 'ion-ios-arrow-left'}" :title="title" @leftClick="() =>{this.$pop()}" :backgroundColor="themeBg">
             <div slot="right" class="header-right-wrapper">
                 <div class="header-button">
                     <!--头部为上拉菜单操作区域-->

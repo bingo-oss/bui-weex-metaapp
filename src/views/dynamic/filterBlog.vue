@@ -2,7 +2,7 @@
 
     <div style="background-color: #efefef">
         <bui-header title="高级筛选" :leftItem="leftItem" :rightItem="rightItem" @rightClick="onSubmit"
-                    @leftClick="back">
+                    @leftClick="back" :style="{'backgroundColor':themeBg}">
         </bui-header>
 
         <div class="item-box" style="margin-top: 30px">

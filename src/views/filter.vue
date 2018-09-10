@@ -54,7 +54,6 @@
         },
         render(h) {
             console.log('rendering filters view');
-
             let forms = [];
             // 遍历 layout 里的所有表单项
             this.viewDef && this.swaggerEntiyDef && this.viewDef.config.columns.forEach((col) => {
@@ -131,6 +130,7 @@
             let titleDiv = h('bui-header', {
                 attrs: {
                     title: '筛选设置',
+                    backgroundColor:this.themeBg,
                     leftItem: {
                         text: '取消',
                     }

@@ -1,6 +1,8 @@
 import App from '../views/app_page/index.vue'
 import buiweex from 'bui-weex'
+import mixins from '../js/mixins.js'
 
+Vue.mixin(mixins);
 Vue.use(buiweex);
 
 Vue.component('meta-operation',require("../components/meta_operation/operation.vue"));

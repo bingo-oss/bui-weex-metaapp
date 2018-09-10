@@ -3,7 +3,7 @@
     <div class="flex-column" @viewappear="onViewAppear" @viewdisappear="onViewDisAppear">
 
         <!--头部导航区-->
-        <div class="header-color">
+        <div class="header-color" :style="{'backgroundColor':themeBg}">
             <div style="height: 40px;" v-if="iosFixed"></div>
             <div class="flex-row header-content">
                 <div class="flex1 row-center-top header-left">
@@ -29,7 +29,7 @@
         </div>
 
         <!--头部内容区-->
-        <div class="header-color" ref="header">
+        <div class="header-color" ref="header" :style="{'backgroundColor':themeBg}">
             <div class="head_content">
                 <div class="flex-row" style="align-items: center">
                     <div v-if="isArchive"

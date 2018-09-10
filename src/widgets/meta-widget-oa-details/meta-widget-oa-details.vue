@@ -1,6 +1,6 @@
 <template>
     <div class="full-column">
-        <bui-header :leftItem="{icon: 'ion-ios-arrow-left'}" @leftClick="() =>{this.$pop()}">
+        <bui-header :leftItem="{icon: 'ion-ios-arrow-left'}" @leftClick="() =>{this.$pop()}" :backgroundColor="themeBg">
             <div slot="center" class="page-title-wrapper">
                 <text v-for="title in titles" class="page-title" :style="{color:(title.highlight?highlight.color:'#ccc')}" @click="goto(title.type)">{{title.name}}</text>
             </div>

@@ -3,7 +3,7 @@
     <div class="flex-column" style="background-color: #f6f6f6" @viewappear="onViewAppear"
          @viewdisappear="onViewDisAppear">
         <bui-header :title="title" :leftItem="leftItem" :rightItem="rightItem"
-                    @leftClick="back" @rightClick="onSubmit">
+                    @leftClick="back" @rightClick="onSubmit" :style="{'backgroundColor':themeBg}">
         </bui-header>
         <scroller style="flex:1;">
             <div style="background-color: #fff;padding: 20px;">

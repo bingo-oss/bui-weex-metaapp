@@ -2,7 +2,7 @@
 
     <div>
         <bui-header title="相关业务" :leftItem="leftItem"
-                    @leftClick="back">
+                    @leftClick="back" :style="{'backgroundColor':themeBg}">
         </bui-header>
 
         <bui-searchbar-left @search="onSearch"></bui-searchbar-left>

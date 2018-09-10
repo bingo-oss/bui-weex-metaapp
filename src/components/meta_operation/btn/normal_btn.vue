@@ -17,7 +17,11 @@ export default {
             if(btnType&&btnStyle[btnType]){
                  return btnStyle[btnType]&&btnStyle[btnType].bgcolor
             }
-            return "#4CA4FE"
+            if(this.themeBg){
+                return this.themeBg;
+            }else{
+                return "#4CA4FE";
+            }
         }
     }
 }
