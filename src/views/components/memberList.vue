@@ -2,7 +2,7 @@
 
     <div style="background-color: #f5f5f5">
         <bui-header :title="'成员('+totalCount+'人)'" :leftItem="leftItem" :rightItem="rightItem"
-                    @leftClick="onBack" @rightClick="rightclick" :style="{'backgroundColor':themeBg}">
+                    @leftClick="onBack" @rightClick="rightclick" :backgroundColor="themeBg">
         </bui-header>
 
         <bui-searchbar-left @search="onSearch" ref="search"></bui-searchbar-left>

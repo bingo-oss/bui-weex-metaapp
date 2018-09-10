@@ -13,13 +13,13 @@ export default {
     },
     computed:{
         bgColor(){
-            var btnType=this.operation.btnType;
-            if(btnType&&btnStyle[btnType]){
-                 return btnStyle[btnType]&&btnStyle[btnType].bgcolor
-            }
             if(this.themeBg){
                 return this.themeBg;
             }else{
+                var btnType=this.operation.btnType;
+                if(btnType&&btnStyle[btnType]){
+                     return btnStyle[btnType]&&btnStyle[btnType].bgcolor
+                }
                 return "#4CA4FE";
             }
         }

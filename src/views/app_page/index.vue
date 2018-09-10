@@ -1,6 +1,6 @@
 <template>
     <div class="full-column">
-        <bui-header v-if="title&&!hideHeader" :leftItem="{icon: 'ion-ios-arrow-left'}" :title="title" @leftClick="() =>{this.$pop()}"></bui-header>
+        <bui-header v-if="title&&!hideHeader" :leftItem="{icon: 'ion-ios-arrow-left'}" :title="title" @leftClick="() =>{this.$pop()}" :backgroundColor="themeBg"></bui-header>
         <meta-widget-page :widget-params="params"></meta-widget-page>
     </div>
 </template>
