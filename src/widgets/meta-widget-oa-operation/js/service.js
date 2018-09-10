@@ -685,7 +685,6 @@ const service={
         //明源选项操作
         let _sendtrans;
         let domain = vue.widgetParams.domain//"http://192.168.1.98:8301";
-        buiweex.alert(domain)
         if(vue.sendtrans[val]){
             vue.submission.sendtran = vue.sendtrans[val];
             //myXml(vue.sendtrans[val]);
