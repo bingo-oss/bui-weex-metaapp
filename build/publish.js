@@ -27,7 +27,7 @@ var copyTask = function (src, dst) {
             if (!fs.existsSync(_dst)) {
                 fs.mkdirSync(_dst);
             }
-           return  copyTask(_src, _dst);
+            return  copyTask(_src, _dst);
         }
     });
     return true;
@@ -87,8 +87,8 @@ var zipTask = function () {
 
 
 var src = "./dist";
-var dst = "./publish";
-var zipFile = './publish.zip';
+var dst = "./metaapp";
+var zipFile = './metaapp.zip';
 
 //先删除publish目录，之后进行拷贝，最后进行压缩
 removeTask(dst, () => {
