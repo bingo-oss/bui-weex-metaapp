@@ -2,7 +2,8 @@ var fs = require('fs');
 var webpack = require('webpack');
 var glob = require("glob");
 var copy = require('copy-webpack-plugin');
-
+//压缩
+var  babiliPlugin = require('babili-webpack-plugin')
 //非常酷的插件，自动浏览器预览最后生成的js boundles的内容
 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 //非常酷的插件，自动浏览器预览最后生成的js boundles的内容
@@ -13,14 +14,14 @@ var bundleAnalyzerPlugin=new BundleAnalyzerPlugin({
 var bannerPlugin = new webpack.BannerPlugin(
     '// { "framework": "Vue" }\n',
     {raw: true}
-)
+);
 
 //  文件拷贝插件,将图片和字体拷贝到dist目录
 var copyPlugin = new copy([
     {from: './static/test_page', to: "./test_page"},
     {from: './static/config.json', to: "./"},//复制静态配置文件到dist目录
     {from: './node_modules/bui-weex/src/font', to: "./font"}
-])
+]);
 
 // 遍历文件入口,动态生成入口
 function getEntries () {
@@ -60,7 +61,7 @@ function getBaseConfig() {
             ]
         },
         vue: {},
-        plugins: [bannerPlugin, copyPlugin]
+        plugins: [copyPlugin,new babiliPlugin(),bannerPlugin]
     }
 }
 
