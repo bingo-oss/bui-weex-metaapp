@@ -1,11 +1,12 @@
 import App from '../views/app_page/index.vue'
 import buiweex from 'bui-weex'
 import mixins from '../js/mixins.js'
-
+import register from "../widgets/register"
 Vue.mixin(mixins);
 Vue.use(buiweex);
+register(Vue);
 
-Vue.component('meta-operation',require("../components/meta_operation/operation.vue"));
+/*Vue.component('meta-operation',require("../components/meta_operation/operation.vue"));
 Vue.component('meta-opt-btn',require("../components/meta_operation/btn/opt_btn.vue"));
 //demo
 Vue.component('meta-widget-w1',require("../widgets/demo/page/w1.vue"));
@@ -32,7 +33,7 @@ Vue.component('meta-widget-oa-details',require("../widgets/meta-widget-oa-detail
 //oa-处理部件
 Vue.component('meta-widget-oa-operation',require("../widgets/meta-widget-oa-operation/meta-widget-oa-operation.vue"));
 
-Vue.component('meta-widget-navbar', {});
+Vue.component('meta-widget-navbar', {});*/
 App.el = '#root'
 
 new Vue(App)
