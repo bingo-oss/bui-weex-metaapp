@@ -60,5 +60,7 @@ export default function(Vue) {
     Vue.component('meta-widget-member', require("./meta-widget-member/meta-widget-member.vue"));
     //相关部件
     Vue.component('meta-widget-relative', require("./meta-widget-relative/meta-widget-relative.vue"));
+    //轨迹部件
+    Vue.component('meta-widget-approval-trail', require("./meta-widget-approval-trail/meta-widget-approval-trail.vue"));
 
 }
