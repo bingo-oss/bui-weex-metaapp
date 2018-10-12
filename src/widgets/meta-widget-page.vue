@@ -2,7 +2,7 @@
     <div class="full-column" v-if="pageConfig">
         <div class="full-column" v-for="(col,colIndex) in pageConfig.style.columns" :key="colIndex">
             <template v-for="(widget,index) in pageConfig.widgets[colIndex]">
-                <component ref="childWidgets" :is="widget.tagName" :key="index" :widget-params="widget.params"></component>
+                <component class="full-column" ref="childWidgets" :is="widget.tagName" :key="index" :widget-params="widget.params"></component>
             </template>
         </div>
     </div>
