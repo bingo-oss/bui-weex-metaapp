@@ -101,7 +101,6 @@ import Utils from '../js/tool/utils';
 import OperationUtils from '../components/meta_operation/js/operation_utils';
 import commonOperation from '../components/meta_operation/js/common_operation.js';
 import EventBus from '../js/bus';
-
 const linkapi = require('linkapi');
 const buiweex = require('bui-weex');
 
@@ -131,7 +130,7 @@ module.exports = {
             p3: '3',
             p4: '4',
             p5: '5',
-            //presetFilters: [],
+            presetFilters: [],
             filters: {}, // 高级搜索 filter
             quickSearchFilters: '', // 快捷搜索 filter
             selectedFilter: null, // 预设 filter
@@ -155,9 +154,9 @@ module.exports = {
             }
             return '全部'; // 无可用分类时，默认显示‘全部’
         },
-        presetFilters(){
+        /*presetFilters(){
             return this.widgetParams.views;
-        },
+        },*/
         grid(){
             return this;
         },
@@ -531,11 +530,44 @@ module.exports = {
         }
     },
     created(){
-        if(this.widgetParams.defaultView) {
+
+        if(this.widgetParams.views){
+            let contextPath = this.$getContextPath(),
+                _views = this.widgetParams.views, _getMetaViewDefNumber = 0,_t = this,
+                readRuntimeConfigPromise = config.readRuntimeConfig(contextPath).catch(err => {
+                        this.$alert(err);
+                        this.$toast('读取运行时配置失败');
+                }).then(runtimeConfig => {
+                        service.init(runtimeConfig.configServerUrl)
+                        _.each(_views,(view)=>{
+                            // 获取视图定义
+                            service.getMetaViewDef(view.viewId).then(viewDef => {
+                                _getMetaViewDefNumber++;
+                                if (viewDef.config.multipleFilters.support&&viewDef.config.multipleFilters.filters.length) {
+                                    let _v = viewDef.config.multipleFilters.filters.map((obj)=>{
+                                        _t.presetFilters.push({id:obj.id,viewId:view.viewId,filterId:obj.viewId,title:viewDef.title.replace("default view for ","")+obj.title})
+                                    });
+                                }else{
+                                    _t.presetFilters.push(view);
+                                }
+                                if(_views.length==_getMetaViewDefNumber){
+                                    //请求完成后
+                                    if(_t.widgetParams.defaultView) {
+                                        _t.selectedFilter = _t.widgetParams.defaultView;
+                                    }
+                                    EventBus.$emit("widget-push-title","");
+                                    _t.getView();//获取视图配置和数据
+                                }
+                            });
+                        });
+                });
+            }//获取对应视图下的过滤条件
+
+/*        if(this.widgetParams.defaultView) {
             this.selectedFilter = this.widgetParams.defaultView;
         }
         EventBus.$emit("widget-push-title","");
-        this.getView();//获取视图配置和数据
+        this.getView();//获取视图配置和数据*/
     },
     components: {
         'filter-view': require('../views/filter.vue')

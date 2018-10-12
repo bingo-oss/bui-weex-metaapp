@@ -1,12 +1,12 @@
 import App from '../views/app_page/index.vue'
 import buiweex from 'bui-weex'
 import mixins from '../js/mixins.js'
-import register from "../widgets/register"
+/*import register from "../widgets/register"*/
 Vue.mixin(mixins);
 Vue.use(buiweex);
-register(Vue);
+/*register(Vue);*/
 
-/*Vue.component('meta-operation',require("../components/meta_operation/operation.vue"));
+Vue.component('meta-operation',require("../components/meta_operation/operation.vue"));
 Vue.component('meta-opt-btn',require("../components/meta_operation/btn/opt_btn.vue"));
 //demo
 Vue.component('meta-widget-w1',require("../widgets/demo/page/w1.vue"));
@@ -32,8 +32,23 @@ Vue.component('meta-widget-oa-list',require("../widgets/meta-widget-oa-list/meta
 Vue.component('meta-widget-oa-details',require("../widgets/meta-widget-oa-details/meta-widget-oa-details.vue"));
 //oa-处理部件
 Vue.component('meta-widget-oa-operation',require("../widgets/meta-widget-oa-operation/meta-widget-oa-operation.vue"));
+//导航部件
+Vue.component('meta-widget-navbar', {});
+//动态部件
+Vue.component('meta-widget-dynamic', require("../widgets/meta-widget-dynamic/meta-widget-dynamic.vue"));
+//成员部件
+Vue.component('meta-widget-member', require("../widgets/meta-widget-member/meta-widget-member.vue"));
+//相关部件
+Vue.component('meta-widget-relative', require("../widgets/meta-widget-relative/meta-widget-relative.vue"));
+//轨迹部件
+Vue.component('meta-widget-approval-trail', require("../widgets/meta-widget-approval-trail/meta-widget-approval-trail.vue"));
+//主页部件
+Vue.component('meta-widget-home', require("../widgets/meta-widget-home/meta-widget-home.vue"));
+//webview部件
+Vue.component('meta-widget-webview', require("../widgets/meta-widget-webview/meta-widget-webview.vue"));
 
-Vue.component('meta-widget-navbar', {});*/
+
+
 App.el = '#root'
 
 new Vue(App)
