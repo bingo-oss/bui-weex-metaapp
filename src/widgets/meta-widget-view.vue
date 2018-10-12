@@ -32,13 +32,13 @@
                         </meta-operation>
                     </template>
                     <!-- 布局 0 默认 -->
-                    <div class="list-item" v-if="layoutType == '0'" slot="content">
+<!--                    <div class="list-item" v-if="layoutType == '0'" slot="content">
                         <div class="list-item-row">
                             <text class="title-text">{{o.id}}</text>
                         </div>
-                    </div>
+                    </div>-->
                     <!-- 布局 1 -->
-                    <div class="list-item" v-if="layoutType == '1'" slot="content">
+                    <div class="list-item" slot="content">
                         <div class="list-item-row">
                             <text class="title-text">{{getFieldValue(o, p1)}}</text>
                         </div>
@@ -416,7 +416,7 @@ module.exports = {
                             this.showFilterView = true;//存在高级筛选 显示按钮
                         }
                     });
-                    if (viewDef.config.mLayout) {
+                    /*if (viewDef.config.mLayout) {
                         // 处理手机端布局
                         this.layoutType = viewDef.config.mLayout.template;
                         if (this.layoutType == '1') {
@@ -432,7 +432,20 @@ module.exports = {
                             fields.add(this.p4);
                             fields.add(this.p5);
                         }
-                    }
+                    }*/
+
+                    let layout = viewDef.config.columns;
+                    this.p1 = layout[0].name;
+                    this.p2 = layout[1].name;
+                    this.p3 = layout[2].name;
+                    this.p4 = layout[3].name;
+                    this.p5 = layout[4].name;
+                    fields.add(this.p1);
+                    fields.add(this.p2);
+                    fields.add(this.p3);
+                    fields.add(this.p4);
+                    fields.add(this.p5);
+
                     //params.select = Array.from(fields).join(',');
                     // 排序
                     if (viewDef.config.orderby) {
