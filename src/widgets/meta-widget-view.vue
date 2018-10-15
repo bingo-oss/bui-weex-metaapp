@@ -28,7 +28,7 @@
                     :ref="o.id"
                     >
                     <template slot="action">
-                        <meta-operation class="bui-list-swipe-btn-custom" v-for="(commonOpt,index) in widgetParams.singleOperations" :key="index" @triggered="closeSwipeCell(o.id)" @successed="onrefresh" btn-type="swipe-cell" :operation="commonOpt" :widget-context="getWidgetContext(o)">
+                        <meta-operation class="bui-list-swipe-btn-custom" v-for="(commonOpt,index) in widgetParams.listOperations" :key="index" @triggered="closeSwipeCell(o.id)" @successed="onrefresh" btn-type="swipe-cell" :operation="commonOpt" :widget-context="getWidgetContext(o)">
                         </meta-operation>
                     </template>
                     <!-- 布局 0 默认 -->
@@ -191,7 +191,7 @@ module.exports = {
         },
         //单击行执行
         rowSingleClick(rowData) {
-            var _rowSingleClick=this.widgetParams.rowSingleClick;
+            var _rowSingleClick=this.widgetParams.listOperations[0]//rowSingleClick;
             var _widgetCtx=this.getWidgetContext(rowData);
             var operation=OperationUtils.expandOperation(_rowSingleClick,{
                 operation:_rowSingleClick,
