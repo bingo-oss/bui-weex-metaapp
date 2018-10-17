@@ -212,6 +212,33 @@ module.exports = {
                     var onclick=Function('"use strict";return ' + operation.onclick  )();
                     onclick(Object.assign(_widgetCtx,operation),{operation:operation});
                 }
+            }else if(operation.operationType=="toPage"){
+                function getIdFromContext(){
+                    var context = _.extend(_widgetCtx, operation.operation);
+                    var id=context.selectedId;
+                    var metaEntity=context.metaEntity;
+                    if(!context.selectedItem&&context.selectedItems){
+                        //按钮放置的是在工具栏
+                        context.selectedItem = context.selectedItems[(context.selectedItems.length-1)]
+                        context.selectedId = context.selectedItem.id;
+                        id = context.selectedId;
+                    }
+                    if(!id){
+                        var selectedItem=context.selectedItem;
+                        if(selectedItem){
+                            //计算id字段
+                            var idField=null;
+                            if( !_.isEmpty(metaEntity)){
+                                idField=metaEntity.getIdField();
+                            }
+                            id=selectedItem[idField];
+                        }
+                    }
+                    return {dataId:id,entity:metaEntity.metaEntityId};
+                }
+                var pageId=operation.page.id;
+                var queryParam=_.extend({pageId:pageId},getIdFromContext());
+                this.$push(Utils.pageEntry(),queryParam);
             }
         },
         titleClicked(e) {
@@ -468,6 +495,7 @@ module.exports = {
                     metabase.initMetabase(viewDef.projectId,true).then(ddd=>{
                         var mentity=metabase.findMetaEntity(viewDef.metaEntityName/*'Activity'*/);
                         this.metaEntity = mentity
+                        this.metaEntity.metaEntityId = viewDef.metaEntityId
                     });
 
                     return service.getEngineUrl(viewDef.projectId)
