@@ -588,14 +588,26 @@ module.exports = {
                                     let _v = viewDef.config.multipleFilters.filters.map((obj)=>{
                                         _t.presetFilters.push({id:obj.id,viewId:view.viewId,filterId:obj.viewId,title:viewDef.title.replace("default view for ","")+obj.title})
                                     });
+                                    if(view.default){
+                                        //默认选择的视图
+                                        if(_v.length){
+                                            _t.selectedFilter = _v[0];
+                                        }else{
+                                            _t.selectedFilter = view;
+                                        }
+                                    }
                                 }else{
                                     _t.presetFilters.push(view);
+                                    if(view.default){
+                                        //默认选择的视图
+                                        _t.selectedFilter = view;
+                                    }
                                 }
                                 if(_views.length==_getMetaViewDefNumber){
                                     //请求完成后
-                                    if(_t.widgetParams.defaultView) {
+                                    /*if(_t.widgetParams.defaultView) {
                                         _t.selectedFilter = _t.widgetParams.defaultView;
-                                    }
+                                    }*/
                                     EventBus.$emit("widget-push-title","");
                                     _t.getView();//获取视图配置和数据
                                 }

@@ -300,16 +300,18 @@
                 //审批按钮
                 service.getTaskInfo("",this.widgetParams.dataId).then((res) => {
                     //任务信息
-                    _t.taskInfor = res;
-                    _t.procRelation = res.processInstance
                     if(res.id){
-                        service.isApproval(res.id).then((res)=>{
-                            //获取当前登录用户是否具备审批权限
-                            _t.abstract.isApproval = res;
-                            if(!res){
-                                _t.$toast('不具备权限审批');
-                            }
-                        },(erro)=>{});
+                        _t.taskInfor = res;
+                        _t.procRelation = res.processInstance
+                        if(res.id){
+                            service.isApproval(res.id).then((res)=>{
+                                //获取当前登录用户是否具备审批权限
+                                _t.abstract.isApproval = res;
+                                if(!res){
+                                    _t.$toast('不具备权限审批');
+                                }
+                            },(erro)=>{});
+                        }
                     }
                 });
             }
