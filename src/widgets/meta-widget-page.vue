@@ -2,7 +2,7 @@
     <div class="full-column" v-if="pageConfig">
         <div class="full-column" v-for="(col,colIndex) in pageConfig.style.columns" :key="colIndex">
             <template v-for="(widget,index) in pageConfig.widgets[colIndex]">
-                <component class="full-column" ref="childWidgets" :is="widget.tagName" :key="index" :widget-params="widget.params"></component>
+                <component class="full-column" ref="childWidgets" :is="widget.tagName" :key="index" :widget-params="widget.params" :vue-modal="vueModal"></component>
             </template>
         </div>
     </div>
@@ -19,6 +19,12 @@
                 required: true
             },
             query:{//模拟页面的query参数，页面部件比较特殊
+                type:Object,
+                default(){
+                    return {};
+                }
+            },
+            vueModal:{//弹窗模式传入的是存在弹窗的自身--方便控制弹窗的一些显隐
                 type:Object,
                 default(){
                     return {};

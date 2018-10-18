@@ -46,8 +46,12 @@ Vue.component('meta-widget-approval-trail', require("../widgets/meta-widget-appr
 Vue.component('meta-widget-home', require("../widgets/meta-widget-home/meta-widget-home.vue"));
 //webview部件
 Vue.component('meta-widget-webview', require("../widgets/meta-widget-webview/meta-widget-webview.vue"));
-
-
+//附件部件
+Vue.component('meta-widget-attachment',require("../widgets/meta-widget-attachment/meta-widget-attachment.vue"));
+//正文部件
+Vue.component('meta-widget-form-article',require("../widgets/meta-widget-form-article/meta-widget-form-article.vue"));
+//审批部件
+Vue.component('meta-widget-submission-frame',require("../widgets/meta-widget-submission-frame/meta-widget-submission-frame.vue"));
 
 App.el = '#root'
 

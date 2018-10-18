@@ -20,7 +20,7 @@
         </div>&ndash;&gt;
 
         <div :style="{position:'fixed',width:modalWidth,height:modalHeight,top:(1000-modalHeight)/2,left:(750-(modalWidth>=750?modalWidth:0))/2}">
-            <meta-widget-page v-if="pageShow" ref="page" :query="pageParams" :widget-params="pageParams"></meta-widget-page>
+            <meta-widget-page v-if="pageShow" ref="page" :query="pageParams" :widget-params="pageParams" :vue-modal="this"></meta-widget-page>
         </div>
 
         <div @click="toggleModal" class="full-column" v-if="operation.isPopup">
