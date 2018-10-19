@@ -95,7 +95,8 @@ const service={
                     queryParam.url +="&"+val+"="+_getPageParams[val];
                 }
             });
-            queryParam.url+=`&UserID=${vue.userInfo.loginId?vue.userInfo.loginId:"oaadmin"}`//"&UserID=oaadmin";
+            /*queryParam.url+=`&UserID=${vue.userInfo.loginId?vue.userInfo.loginId:"oaadmin"}`//"&UserID=oaadmin";*/
+            queryParam.url+=`&UserID=oaadmin`;
             queryParam.url  = queryParam.url;
             queryParam.body = _postXml;
             _t.isShowLoading = true;
@@ -581,14 +582,14 @@ const service={
          ywtxt =>BusinessGUID
          MySessionState =>___MYSESSIONSTATE
          http://192.168.1.98:8301/MyWorkflow/WF_XmlHTTP.aspx?ywtype=SDBusinessE&ywonlyflag=fe5ae907-44af-e811-80fc-005056b036bb&ywtxt=e85ae907-44af-e811-80fc-005056b036bb&rdnum=0.5210671599574923&MySessionState=04bfc401-4faf-e811-80fc-005056b036bb*/
-        ajax.request({
+/*        ajax.request({
             url:`${domain}/MyWorkflow/WF_XmlHTTP.aspx?ywtype=SDBusinessE&ywonlyflag=${ProcessGUID}&ywtxt=${BusinessGUID}&MySessionState=${___MYSESSIONSTATE}`,
             method:'GET',
             body: {},
             type:"text"
         }).then(function(res){
             vue.postXml = res.data;
-        });
+        });*/
 
         //需要请求操作权限xml
         /*
@@ -596,7 +597,7 @@ const service={
         *MySessionState=>___MYSESSIONSTATE
         * */
         /*http://192.168.1.98:8301/MyWorkflow/WF_Engine_XmlHTTP.aspx?ywtype=GetSysActiveNumber&ywonlyflag=d5167091-0eb0-e811-80fc-005056b036bb&ywtxt=&rdnum=0.28587644058627&MySessionState=0059fc5c-09b0-e811-80fc-005056b036bb返回信息:*/
-        ajax.request({
+/*        ajax.request({
             url:`${domain}/MyWorkflow/WF_Engine_XmlHTTP.aspx?ywtype=GetSysActiveNumber&ywonlyflag=${ProcessGUID}&ywtxt=&MySessionState=${___MYSESSIONSTATE}`,
             method:'GET',
             body: {},
@@ -604,10 +605,10 @@ const service={
         }).then(function(res){
             var _optionShow = res.data;
             //需要请求操作xml
-            /*
+            /!*
              * MySessionState=>___MYSESSIONSTATE
-             * */
-            /*http://192.168.1.98:8301/MyWorkflow/WF_XmlHTTP.aspx?ywtype=GetDefaultOpinion&ywonlyflag=&ywtxt=&rdnum=0.5587772578003363&MySessionState=0059fc5c-09b0-e811-80fc-005056b036bb*/
+             * *!/
+            /!*http://192.168.1.98:8301/MyWorkflow/WF_XmlHTTP.aspx?ywtype=GetDefaultOpinion&ywonlyflag=&ywtxt=&rdnum=0.5587772578003363&MySessionState=0059fc5c-09b0-e811-80fc-005056b036bb*!/
             ajax.request({
                 url:`${domain}/MyWorkflow/WF_XmlHTTP.aspx?ywtype=GetDefaultOpinion&ywonlyflag=&ywtxt=&rdnum=0.5587772578003363&MySessionState=${___MYSESSIONSTATE}`,
                 method:'GET',
@@ -634,7 +635,7 @@ const service={
                 }
             });
 
-        });
+        });*/
 
 
         //获取部门信息
@@ -642,7 +643,7 @@ const service={
         * MySessionState=>___MYSESSIONSTATE
         * */
         /*http://192.168.1.98:8301/MyWorkflow/WF_XMLHTTP.aspx?ywtype=GetUserStationXML&ywonlyflag=&ywtxt=&rdnum=0.7887944264296273&MySessionState=0059fc5c-09b0-e811-80fc-005056b036bb*/
-        ajax.request({
+/*        ajax.request({
             url:`${domain}/MyWorkflow/WF_XMLHTTP.aspx?ywtype=GetUserStationXML&ywonlyflag=&ywtxt=&rdnum=0.7887944264296273&MySessionState=${___MYSESSIONSTATE}`,
             method:'GET',
             body: {},
@@ -652,7 +653,7 @@ const service={
             //<Stations><Station guid="ce34fd7b-4278-e311-974d-005056b04a97" name="集团控股网络信息部职员 (佳兆业集团控股&gt;&gt;集团控股网络信息部)" /></Stations>
             lastStationGUID = vue.getXmlAttr(res.data,"Station","guid")[1]
             _t.getXmlParam.lastStationGUID = lastStationGUID;
-        });
+        });*/
 
 
         let Station = `<Stations><Station guid="ce34fd7b-4278-e311-974d-005056b04a97" name="集团控股网络信息部职员 (佳兆业集团控股&gt;&gt;集团控股网络信息部)" /></Stations>`
@@ -796,12 +797,15 @@ const service={
             });
             //提交接口
             /*MyWorkflow/WF_Engine_XmlHTTP.aspx?ywtype=ProcessHandle&ywonlyflag=&ywtxt=&rdnum=0.20379044057843704&MySessionState=0059fc5c-09b0-e811-80fc-005056b036bb*/
-            queryParam.url+=`&UserID=${vue.userInfo.loginId}`//"&UserID=oaadmin";
+            //queryParam.url+=`&UserID=${vue.userInfo.loginId}`//"&UserID=oaadmin";
+            queryParam.url+=`&UserID=oaadmin`;
             queryParam.url  = queryParam.url;
             queryParam.body = _postXml;
-            //_t.isShowLoading = true;
-            console.log(queryParam)
-            /*ajax.request(queryParam).then(function(res){
+/*
+            console.log(queryParam);
+*/
+/*            _t.isShowLoading = true;
+            ajax.request(queryParam).then(function(res){
                 _t.isShowLoading = false;
                 if(res.ok){
                     buiweex.alert("提交成功！");
@@ -810,6 +814,8 @@ const service={
                     buiweex.alert("异常处理")
                 }
             });*/
+            buiweex.alert("提交成功！");
+            buiweex.pop();
         }
     }
 };

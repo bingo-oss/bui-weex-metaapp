@@ -325,6 +325,8 @@
     import loading from '../../components/common/bui-loading.vue'
     import dialog from '../../components/common/dialog.vue'
     import buiweex from "bui-weex"
+    import factoryApi from '../libs/factory-api.js';
+
     module.exports = {
         props: {
             widgetParams: {

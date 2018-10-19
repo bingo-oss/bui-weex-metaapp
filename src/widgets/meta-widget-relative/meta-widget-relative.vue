@@ -66,6 +66,7 @@
     import Util from '../../js/utils'
     import Config from '../../js/config'
     import buiweex from "bui-weex";
+    import factoryApi from '../libs/factory-api.js';
 
     module.exports = {
         props: {

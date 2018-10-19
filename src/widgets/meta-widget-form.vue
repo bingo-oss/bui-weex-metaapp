@@ -297,6 +297,7 @@
     import allComponents from '../components/all-components';
     import metabase from '../js/metadata/metabase.js';
     import Utils from '../js/tool/utils';
+    import factoryApi from './libs/factory-api.js';
 
     Vue.use(allComponents);
     Vue.use(buiweex);

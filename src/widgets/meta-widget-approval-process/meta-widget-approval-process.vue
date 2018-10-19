@@ -67,6 +67,7 @@
     import EventBus from '../../js/bus';
     import Utils from '../../js/tool/utils';
     import _ from '../../js/tool/lodash.js'
+    import factoryApi from '../libs/factory-api.js';
 
     export default {
         props: {

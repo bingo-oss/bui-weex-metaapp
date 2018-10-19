@@ -43,6 +43,7 @@
     import EventBus from '../../js/bus';
     import buiweex from 'bui-weex';
     import Utils from '../../js/tool/utils';
+    import factoryApi from '../libs/factory-api.js';
 
     export default {
         props: {

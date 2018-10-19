@@ -469,6 +469,7 @@
     import _ from '../../js/tool/lodash';
     import Utils from '../../js/tool/utils';
     import service from '../../js/service.js';
+    import factoryApi from '../libs/factory-api.js';
 
     module.exports = {
         components: {'dialog': dialog, 'bui-popupshow': popupmenu},

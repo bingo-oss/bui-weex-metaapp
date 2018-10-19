@@ -529,7 +529,7 @@ const service={
         ywtxt =>BusinessGUID
         MySessionState =>___MYSESSIONSTATE
          dom/MyWorkflow/WF_XmlHTTP.aspx?ywtype=SDBusinessE&ywonlyflag=fe5ae907-44af-e811-80fc-005056b036bb&ywtxt=e85ae907-44af-e811-80fc-005056b036bb&rdnum=0.5210671599574923&MySessionState=04bfc401-4faf-e811-80fc-005056b036bb*/
-        ajax.request({
+        /*ajax.request({
             url:`${domain}/MyWorkflow/WF_XmlHTTP.aspx?ywtype=SDBusinessE&ywonlyflag=${ProcessGUID}&ywtxt=${BusinessGUID}&MySessionState=${___MYSESSIONSTATE}`,
             method:'GET',
             body: {},
@@ -543,7 +543,7 @@ const service={
                     text:_t.liftOff(field,"Domain")
                 });//获取表单字段信息
             });
-        });
+        });*/
 
         //获取附件xml
         /*
@@ -551,7 +551,7 @@ const service={
          MySessionState=>___MYSESSIONSTATE
          http://192.168.1.98:8301/MyWorkflow/WF_XmlHTTP.aspx?ywtype=GetDocHTML&ywonlyflag=fe5ae907-44af-e811-80fc-005056b036bb&ywtxt=&rdnum=0.2579994478795364&MySessionState=04bfc401-4faf-e811-80fc-005056b036bb
          */
-        ajax.request({
+        /*ajax.request({
             url:`${domain}/MyWorkflow/WF_XmlHTTP.aspx?ywtype=GetDocHTML&ywonlyflag=${ProcessGUID}&ywtxt=&MySessionState=${___MYSESSIONSTATE}`,
             method:'GET',
             body: {},
@@ -570,7 +570,7 @@ const service={
                     //获取表单附件字段信息
                 });
             });
-        });
+        });*/
 
 
         //流程轨迹xml
@@ -579,7 +579,7 @@ const service={
          MySessionState=>___MYSESSIONSTATE
          http://192.168.1.98:8301/MyWorkflow/WF_XmlHTTP.aspx?ywtype=GetProcessReply&ywonlyflag=&ywtxt=fe5ae907-44af-e811-80fc-005056b036bb&rdnum=0.3988560133219182&MySessionState=04bfc401-4faf-e811-80fc-005056b036bb
          */
-        ajax.request({
+/*        ajax.request({
             url:`${domain}/MyWorkflow/WF_XmlHTTP.aspx?ywtype=GetProcessReply&ywonlyflag=&ywtxt=${ProcessGUID}&MySessionState=${___MYSESSIONSTATE}`,
             method:'GET',
             body: {},
@@ -587,20 +587,20 @@ const service={
         }).then(function(res){
             var _trail = res.data;
             let spanIndex = 0;
-            _.each(/*_trail.match(/<td([\s\S]*?)<\/td>/gi)*/_t.getXmlTagNameContent(_trail,"td",1),(td,index)=>{
+            _.each(/!*_trail.match(/<td([\s\S]*?)<\/td>/gi)*!/_t.getXmlTagNameContent(_trail,"td",1),(td,index)=>{
                 _.each(_t.getXmlTagNameContent(td,"span",1),(span,index)=>{
                     if(/(\d{4})-(\d{2})-(\d{2})/g.test(span)){
                         if(_t.trail[spanIndex-1]){
-                            span = span/*.replace(/\n/g,"")*/.replace(/&gt;/g,">").replace(/\s+/g, " ").replace(/<.*?>/g, '');
+                            span = span/!*.replace(/\n/g,"")*!/.replace(/&gt;/g,">").replace(/\s+/g, " ").replace(/<.*?>/g, '');
                             let _span = span.split(" ");
                             _t.trail[spanIndex-1]["content"].push({
                                 name:_span[0],
                                 time:_span[3]+" "+_span[4]
                             })
                         }
-                        /*span = _t.liftOff(span,"span").replace(/" "/g, '');
+                        /!*span = _t.liftOff(span,"span").replace(/" "/g, '');
                          let _span = span.split(/\n/g);
-                         console.log(_span);*/
+                         console.log(_span);*!/
                     }else{
                         let trail_data = {
                             name:_t.liftOff(span,"span"),
@@ -614,14 +614,14 @@ const service={
                         spanIndex = spanIndex+1;
                     }
 
-                    /*_.each(_t.getXmlTagNameContent(att,"content"),(content,index)=>{
+                    /!*_.each(_t.getXmlTagNameContent(att,"content"),(content,index)=>{
                      let _name = _t.liftOff(_t.getXmlTagNameContent(content, "disname").join(""),"disname");
                      trail_data.content.push({
                      name:_name?_name.split(" ")[0]:"",
                      comm:_t.liftOff(_t.getXmlTagNameContent(content, "text").join(""),"text"),
                      time:_name?(_name.split(" ")[1]+" "+_name.split(" ")[2]):""
                      });//流程意见
-                     });*/
+                     });*!/
                 });//获取表单流程轨迹信息
             });
 
@@ -636,7 +636,7 @@ const service={
             }else{
                 _t.trail = [];
             }
-        });
+        });*/
 
 
 

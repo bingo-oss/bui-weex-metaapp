@@ -11,6 +11,8 @@
     import pageService from '../js/page/page_service';
     import propParser from '../js/tool/prop_parser';
     import _ from '../js/tool/lodash';
+    import pageMethods from './libs/page-methods';
+
     var co = require('co');
     export default {
         props: {
@@ -33,7 +35,8 @@
         },
         data(){
             return {
-                pageConfig:null
+                pageConfig:null,
+                isWidgetPage:true
             };
         },
         watch:{
@@ -41,7 +44,7 @@
                 this.loadPageConfig();
             }
         },
-        methods:{
+        methods: _.extend({},pageMethods,{
             loadPageConfig(){
                 var _this=this;
                 if(this.widgetParams&&this.widgetParams.pageId){
@@ -50,7 +53,6 @@
                     });
                 }
             },
-           
             convert(pageConfig){
                 var _this=this;
                 //每一列有自己的部件集合
@@ -80,7 +82,7 @@
                     });
                 });
                 return pageConfig;
-            },
+            }/*,
             submit(){
                 var submitWidgets=[];
                 _.each(this.$refs.childWidgets,function(cw){
@@ -104,8 +106,8 @@
                     return yield toYield;
                 }
                 return co(nextSubmit);
-            }
-        }
+            }*/
+        })
     }
 </script>
 <style src="../styles/common.css"></style>

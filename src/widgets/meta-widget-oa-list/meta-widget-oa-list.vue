@@ -51,6 +51,7 @@
     import OperationUtils from '../../components/meta_operation/js/operation_utils';
     import commonOperation from '../../components/meta_operation/js/common_operation.js';
     import EventBus from '../../js/bus';
+    import factoryApi from '../libs/factory-api.js';
 
     const linkapi = require('linkapi');
     const buiweex = require('bui-weex');

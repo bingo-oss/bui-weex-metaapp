@@ -84,6 +84,7 @@
     import buiweex from 'bui-weex';
     import Utils from '../../js/tool/utils';
     import ajax from '../../js/ajax.js';
+    import factoryApi from '../libs/factory-api.js';
     const dom = weex.requireModule('dom');
     const globalEvent = weex.requireModule('globalEvent');
     const linkapi = require('linkapi');
@@ -229,10 +230,19 @@
             },
             getData(queryParam){
                 let _t  = this;
-                ajax.request(queryParam).then(function(res){
+                if(_t.code=="my"){
                     _t.isShowLoading = false;
-                    service[_t.code+"Xml"](_t,res.data);
-                });
+                    service[_t.code+"Xml"](_t,"");
+                }else {
+                    ajax.request(queryParam).then(function (res) {
+                        _t.isShowLoading = false;
+                        if(res.data&&(res.data.indexOf("field")==-1)){
+                            //无数据
+                            buiweex.pop();
+                        }
+                        service[_t.code + "Xml"](_t, res.data);
+                    });
+                }
             },
             getDisnames(disname){
                 let _length = disname.length,disnames = [];

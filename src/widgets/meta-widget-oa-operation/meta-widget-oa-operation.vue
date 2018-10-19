@@ -53,6 +53,7 @@
     import Utils from '../../js/tool/utils';
     import ajax from '../../js/ajax.js';
     const linkapi = require('linkapi');
+    import factoryApi from '../libs/factory-api.js';
 
     //import xml2js from "xml2js"
     export default {
@@ -162,12 +163,16 @@
                             }else{
                                 _t.queryParam.body["userid"]=_t.userInfo.loginId;
                             }
-                            _t.isShowLoading = true;
-                            ajax.request(_t.queryParam).then(function(res){
-                                _t.isShowLoading = false;
-                                _t.postXml = res.data;
-                                service[_t.code+"Xml"](_t,res.data);
-                            });
+                            if(_t.code=="my"){
+                                service[_t.code+"Xml"](_t,"");
+                            }else{
+                                _t.isShowLoading = true;
+                                ajax.request(_t.queryParam).then(function(res){
+                                    _t.isShowLoading = false;
+                                    _t.postXml = res.data;
+                                    service[_t.code+"Xml"](_t,res.data);
+                                });
+                            }
                         });
                     }catch (erro){
                         _t.isShowLoading = true;
