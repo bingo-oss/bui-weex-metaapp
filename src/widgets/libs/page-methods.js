@@ -1,5 +1,6 @@
 //注册page的一些通用方法--调用各个部件的内部方法-需要和factory-api的方法对应以及部件内存在这个方法的实现 才有效
 import _ from '../../js/tool/lodash';
+var co = require('co');
 var pageMethods = {
     submit(){
         var submitWidgets=[];
