@@ -157,6 +157,8 @@
             </div>
             <div class="panel" v-if="attachment.length" @appear="appear('attachment')" @disappear="disappear('attachment')" :ref="'attachment'">
                 <!--<text class="panel-header">附件</text>-->
+                <meta-widget-attachment :widget-params="{dataId:entityId}"></meta-widget-attachment>
+                <meta-widget-form-article :widget-params="{dataId:entityId}"></meta-widget-form-article>
             </div>
 
             <div class="panel" v-if="trail.length" @appear="appear('trail')" @disappear="disappear('trail')" :ref="'trail'"></div>
@@ -200,6 +202,8 @@
 
             <div class="panel" v-if="attachment.length" @appear="appear('attachment')" @disappear="disappear('attachment')" :ref="'attachment'">
                 <!--<text class="panel-header">附件</text>-->
+                <meta-widget-attachment :widget-params="{dataId:entityId}"></meta-widget-attachment>
+                <meta-widget-form-article :widget-params="{dataId:entityId}"></meta-widget-form-article>
             </div>
 
             <div class="panel" v-if="trail.length" @appear="appear('trail')" @disappear="disappear('trail')" :ref="'trail'">
@@ -535,32 +539,32 @@
                     }
                 }
                 return validated;
+            },
+            getAttachment(dataId){
+                //获取附件
+                let _t = this;
+                config.readRuntimeConfig().then(runtimeConfig => {
+                    ajax.get(`${runtimeConfig["service.metad.api.endpoint"]}/mp_attachment`, {filters: `businessKey eq ${dataId}`, orderby: "displayOrder asc"}).then(res=>{
+                            if(res.data&&res.data.length){
+                                _t.attachment = res.data;
+                                _t.titles.push({name:"附件", type:"attachment", highlight:false, data:"attachment"})
+                            }
+                        });
+                    })
             }
         },
         data () {
             let view = this.widgetParams.mode || "";
             return {
                 fields:[1],
-                attachment:[1],
-                trail:[1],//流程轨迹
+                attachment:[],
+                trail:[],//流程轨迹
                 titles:[
                     {
                         name:"详情",
                         type:"form",
                         highlight:true,
                         data:"fields"
-                    },
-                    {
-                        name:"附件",
-                        type:"attachment",
-                        highlight:false,
-                        data:"attachment"
-                    },
-                    {
-                        name:"轨迹",
-                        type:"trail",
-                        highlight:false,
-                        data:"trail"
                     }
                 ],
                 highlight:{
@@ -726,6 +730,7 @@
             // Below are optional
             if(this.widgetParams.dataId) {
                 this.entityId = this.widgetParams.dataId.from||this.widgetParams.dataId//this.widgetParams.dataId//pageParam.entityId;
+                this.getAttachment(this.entityId)
             }
             //delete pageParam.entityId;
             if (pageParam.readOnly
