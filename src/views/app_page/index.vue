@@ -26,7 +26,8 @@ export default {
     },
     mounted(){
         var pageId=this.$getPageParams()['pageId'];
-        this.params=Object.assign({pageId:pageId},this.params);
+        var byOperation=this.$getPageParams()['byOperation'];
+        this.params=Object.assign({pageId:pageId,byOperation:byOperation},this.params);
     }
 }
 </script>

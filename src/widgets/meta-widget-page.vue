@@ -48,18 +48,42 @@
             loadPageConfig(){
                 var _this=this;
                 if(this.widgetParams&&this.widgetParams.pageId){
-                    pageService.get(this.widgetParams.pageId).then(function(pageConfig){
+                    pageService.get(this.widgetParams.pageId,this.widgetParams.byOperation).then(function(pageConfig){
                         _this.pageConfig=_this.convert(pageConfig);
                     });
                 }
             },
             convert(pageConfig){
                 var _this=this;
+                let _layout;
+                if(pageConfig.layout){
+                    _layout = pageConfig.layout
+                }else{
+                    _layout = pageConfig
+                }
                 //每一列有自己的部件集合
-                _.each(pageConfig.widgets,function(columnWidgets){
+                _.each(_layout.widgets,function(columnWidgets){
                     //遍历每一列的所有部件
                     _.each(columnWidgets,function(w){
-                        var props=w.props,operations=w.operations;
+                        var props={},operations={};
+                        if(pageConfig.widgetParams&&pageConfig.widgetParams.length&&w.widgetId){
+                            //存在对应部件参数的数据
+                            pageConfig.widgetParams.filter((obj)=>{
+                                if(w.widgetId==obj.widgetId){
+                                //读取对应的部件参数进行设置
+                                props = obj.params;
+                                //操作
+                                _.each(obj.buttons,(e)=>{
+                                    if(!operations[e.location]){
+                                        operations[e.location] = [];//不存在操作区域则声明
+                                    }
+                                    operations[e.location].push(e)
+                                })
+                                }
+                            });
+                        }else{
+                            props=w.props,operations=w.operations;
+                        }
                         w.params={};
                         //遍历每一个部件的属性
                         _.each(props,function(propValue,propKey){
@@ -81,7 +105,7 @@
                         }
                     });
                 });
-                return pageConfig;
+                return _layout;
             }/*,
             submit(){
                 var submitWidgets=[];

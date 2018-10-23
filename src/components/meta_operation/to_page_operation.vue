@@ -36,6 +36,8 @@
 <script>
 import _ from '../../js/tool/lodash.js';
 import Utils from '../../js/tool/utils';
+import OperationUtils from './js/operation_utils';
+
 export default {
     props:{
         widgetContext:{//由使用操作的部件传入的部件上下文
@@ -51,7 +53,7 @@ export default {
         }
     },
     data(){
-        if(!this.operation.page){
+        if(!this.operation.pageId){
             this.$toast("page参数缺失");
         }
         return {
@@ -88,22 +90,30 @@ export default {
             return {dataId:id,entity:metaEntity.metaEntityId};
         },
         gotoPage(){
-            if(!this.operation.page){
-                return;
-            }
-            var pageId=this.operation.page.id;
-            var queryParam=_.extend({pageId:pageId},this.getIdFromContext(),this.operation.queryParams);
-            this.$push(Utils.pageEntry(),queryParam);
-            this.$emit("triggered","toPage");
+            var _widgetCtx = Object.assign(this.widgetContext, this.operation);
+            OperationUtils.execution(this.operation,_widgetCtx,"beforeExecCode").then((res)=>{
+                if(!this.operation.pageId){
+                    return;
+                }
+                var pageId=this.operation.pageId;
+                var queryParam=_.extend({pageId:pageId,byOperation:false},this.getIdFromContext(),this.operation.queryParams);
+                this.$push(Utils.pageEntry(),queryParam);
+                this.$emit("triggered","toPage");
+                OperationUtils.execution(this.operation,_widgetCtx,"afterExecCode")//执行后
+            });
         },
         toggleModal(){
-            this.pageParams = _.extend({pageId:this.operation.page.id},this.getIdFromContext());
-            /*this.webUrl = Utils.pageEntry()+"?pageId="+this.pageParams.pageId+"&dataId="+this.pageParams.dataId+"&entity="+this.pageParams.entity;*/
-            /*this.$refs
-            debugger*/
-            this.popupWidgetModal=!this.popupWidgetModal;
-            this.$emit("triggered","popup");
-            this.pageShow = true;
+            var _widgetCtx = Object.assign(this.widgetContext, this.operation);
+            OperationUtils.execution(this.operation,_widgetCtx,"beforeExecCode").then((res)=>{
+                this.pageParams = _.extend({pageId:this.operation.pageId,byOperation:false},this.getIdFromContext());
+                /*this.webUrl = Utils.pageEntry()+"?pageId="+this.pageParams.pageId+"&dataId="+this.pageParams.dataId+"&entity="+this.pageParams.entity;*/
+                /*this.$refs
+                debugger*/
+                this.popupWidgetModal=!this.popupWidgetModal;
+                this.$emit("triggered","popup");
+                this.pageShow = true;
+                OperationUtils.execution(this.operation,_widgetCtx,"afterExecCode")//执行后
+            });
         },
         toggleClose(){
             this.popupWidgetModal = false;

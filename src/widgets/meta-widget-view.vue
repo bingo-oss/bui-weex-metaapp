@@ -588,8 +588,9 @@ module.exports = {
                                 _getMetaViewDefNumber++;
                                 if (viewDef.config.multipleFilters.support&&viewDef.config.multipleFilters.filters.length) {
                                     let _v = viewDef.config.multipleFilters.filters.map((obj)=>{
-                                        _t.presetFilters.push({id:obj.id,viewId:view.viewId,filterId:obj.viewId,title:viewDef.title.replace("default view for ","")+obj.title})
+                                        return {id:obj.id,viewId:view.viewId,filterId:obj.viewId,title:viewDef.title.replace("default view for ","")+obj.title}
                                     });
+                                    _t.presetFilters = _t.presetFilters.concat(_v)
                                     if(view.default){
                                         //默认选择的视图
                                         if(_v.length){

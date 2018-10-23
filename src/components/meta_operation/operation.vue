@@ -1,5 +1,5 @@
 <template>
-    <div class="widget-operation" v-if="showOperation">
+    <div class="widget-operation">
         <component @triggered="triggered" @successed="successed" :btn-type="btnType" :is="operationComponent" :operation="extendedOperation" :widget-context="extendedWidgetContext">
             <slot></slot>
         </component>
@@ -11,7 +11,7 @@ import _ from '../../js/tool/lodash';
 import Utils from '../../js/tool/utils';
 import OperationUtils from './js/operation_utils';
 //操作类型定义
-var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script',openApp:'openApp'};
+var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script',openApp:'openApp',toOperation:"to_operation"};
 var permParser={
     //来自表单的取消、开启编辑、编辑、删除权限
     "formCancel":function(widgetContext){
@@ -136,6 +136,9 @@ export default {
         toPageOperation:require('./to_page_operation.vue'),
         popupOperation:require('./popup_operation.vue'),
         scriptOperation:require('./script_operation.vue'),
+        execOperationOperation:require('./script_operation.vue'),
+        toOperationOperation:require('./to_operation_operation.vue'),
+
     }
 }
 </script>
