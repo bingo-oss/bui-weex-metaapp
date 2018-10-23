@@ -39,16 +39,30 @@ export default {
             if(this.mustStopRepeatedClick){
                 return;
             }
-            if(_t.implCode){
-                _t.cellExecScript();
-            }else {
-                //获取执行代码
-                config.readRuntimeConfig().then(runtimeConfig => {
-                    ax.get(runtimeConfig["service.metad.api.endpoint"]+`/meta_operation/${_t.operation.operationId}`).then(({data})=>{
-                        _t.implCode=data.implCode;
-                        _t.cellExecScript();
+
+            if(this.operation.onclick) {
+                if (_.isFunction(this.operation.onclick)) {
+                    this.mustStopRepeatedClick = true;
+                    this.operation.onclick(Object.assign(this.widgetContext, this.operation), this);
+                } else {
+                    this.mustStopRepeatedClick = true;
+                    var onclick = Function('"use strict";return ' + this.operation.onclick)();
+                    onclick(Object.assign(this.widgetContext, this.operation), this);
+                }
+                this.mustStopRepeatedClick = false;
+                this.$emit("triggered", "script");
+            }else{
+                if(_t.implCode){
+                    _t.cellExecScript();
+                }else {
+                    //获取执行代码
+                    config.readRuntimeConfig().then(runtimeConfig =>{
+                        ax.get(runtimeConfig["service.metad.api.endpoint"]+`/meta_operation/${_t.operation.operationId}`).then(({data})=>{
+                            _t.implCode=data.implCode;
+                            _t.cellExecScript();
+                        });
                     });
-                });
+                }
             }
         },
         cellExecScript(){
