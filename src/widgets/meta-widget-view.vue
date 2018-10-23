@@ -210,19 +210,22 @@ module.exports = {
             }else if(operation.operationType=="execOperation"){//脚本操作
                 let _t = this;
                 function cellExecScript() {
-                    if (_.isFunction(_t.implCode)) {
-                        _t.implCode(Object.assign(_widgetCtx, operation), {operation: operation});
-                    } else {
-                        var onclick = Function('"use strict";return ' + _t.implCode)();
-                        onclick(Object.assign(_widgetCtx, operation), {operation: operation});
-                    }
+                    OperationUtils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
+                        if (_.isFunction(_t.implCode)) {
+                            _t.implCode(Object.assign(_widgetCtx, operation), {operation: operation});
+                        } else {
+                            var onclick = Function('"use strict";return ' + _t.implCode)();
+                            onclick(Object.assign(_widgetCtx, operation), {operation: operation});
+                        }
+                        OperationUtils.execution(operation,_widgetCtx,"afterExecCode")//执行后
+                    });
                 }
                 if(_t.implCode){
                     cellExecScript();
                 }else {
                     //获取执行代码
                     config.readRuntimeConfig().then(runtimeConfig => {
-                        ax.get(runtimeConfig["service.metad.api.endpoint"]+`/meta_operation/${_t.operation.operationId}`).then(({data})=>{
+                        ajax.get(runtimeConfig["service.metad.api.endpoint"]+`/meta_operation/${operation.operationId}`).then(({data})=>{
                             _t.implCode=data.implCode;
                             cellExecScript();
                         });
@@ -256,8 +259,11 @@ module.exports = {
                 if(operation.operationType=="toOperation"){
                     byOperation = true;
                 }
-                var queryParam=_.extend({pageId:pageId,byOperation:byOperation},getIdFromContext());
-                this.$push(Utils.pageEntry(),queryParam);
+                OperationUtils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
+                    var queryParam=_.extend({pageId:pageId,byOperation:byOperation},getIdFromContext());
+                    this.$push(Utils.pageEntry(),queryParam);
+                    OperationUtils.execution(operation,_widgetCtx,"afterExecCode")//执行后
+                });
             }
         },
         titleClicked(e) {
