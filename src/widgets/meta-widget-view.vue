@@ -201,22 +201,36 @@ module.exports = {
             });
             //目前支持通用操作和脚本操作
             let commonOptName=operation.name;
-            if(commonOptName){
+            if(commonOptName&&commonOperation.createOperation(commonOptName)){
                 let commonOpt=commonOperation.createOperation(commonOptName);
                 if(commonOpt){
                     operation= _.extend(operation,commonOpt);
                     operation.onclick(_widgetCtx,{operation:operation});
                 }
-            }else if(operation.onclick){//脚本操作
-                if(_.isFunction(operation.onclick)){
-                    operation.onclick(Object.assign(_widgetCtx,operation),{operation:operation});
-                }else{
-                    var onclick=Function('"use strict";return ' + operation.onclick  )();
-                    onclick(Object.assign(_widgetCtx,operation),{operation:operation});
+            }else if(operation.operationType=="execOperation"){//脚本操作
+                let _t = this;
+                function cellExecScript() {
+                    if (_.isFunction(_t.implCode)) {
+                        _t.implCode(Object.assign(_widgetCtx, operation), {operation: operation});
+                    } else {
+                        var onclick = Function('"use strict";return ' + _t.implCode)();
+                        onclick(Object.assign(_widgetCtx, operation), {operation: operation});
+                    }
                 }
-            }else if(operation.operationType=="toPage"){
+                if(_t.implCode){
+                    cellExecScript();
+                }else {
+                    //获取执行代码
+                    config.readRuntimeConfig().then(runtimeConfig => {
+                        ax.get(runtimeConfig["service.metad.api.endpoint"]+`/meta_operation/${_t.operation.operationId}`).then(({data})=>{
+                            _t.implCode=data.implCode;
+                            cellExecScript();
+                        });
+                    });
+                }
+            }else if(operation.operationType=="toPage"||operation.operationType=="toOperation"){
                 function getIdFromContext(){
-                    var context = _.extend(_widgetCtx, operation.operation);
+                    var context = _.extend(_widgetCtx, operation);
                     var id=context.selectedId;
                     var metaEntity=context.metaEntity;
                     if(!context.selectedItem&&context.selectedItems){
@@ -238,8 +252,11 @@ module.exports = {
                     }
                     return {dataId:id,entity:metaEntity.metaEntityId};
                 }
-                var pageId=operation.page.id;
-                var queryParam=_.extend({pageId:pageId},getIdFromContext());
+                var pageId=operation.pageId,byOperation= false;
+                if(operation.operationType=="toOperation"){
+                    byOperation = true;
+                }
+                var queryParam=_.extend({pageId:pageId,byOperation:byOperation},getIdFromContext());
                 this.$push(Utils.pageEntry(),queryParam);
             }
         },
