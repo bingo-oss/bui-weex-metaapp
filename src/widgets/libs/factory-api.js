@@ -6,7 +6,7 @@ import buiweex from "bui-weex";
 var factoryApi = {
     goback(context, $optInst) {
         //返回
-        buiweex.$pop();
+        buiweex.pop();
     },
     del(context,$optInst){
         //删除
