@@ -205,24 +205,24 @@ module.exports = {
                 let commonOpt=commonOperation.createOperation(commonOptName);
                 if(commonOpt){
                     operation= _.extend(operation,commonOpt);
-                    operation.onclick(_widgetCtx,{operation:operation});
+                    operation.onclick(_widgetCtx,{operation:operation},factoryApi);
                 }
             }else if(operation.onclick){//脚本操作
                 if(_.isFunction(operation.onclick)){
-                    operation.onclick(Object.assign(_widgetCtx,operation),{operation:operation});
+                    operation.onclick(Object.assign(_widgetCtx,operation),{operation:operation},factoryApi);
                 }else{
                     var onclick=Function('"use strict";return ' + operation.onclick  )();
-                    onclick(Object.assign(_widgetCtx,operation),{operation:operation});
+                    onclick(Object.assign(_widgetCtx,operation),{operation:operation},factoryApi);
                 }
             }else if(operation.operationType=="execOperation"){//脚本操作
                 let _t = this;
                 function cellExecScript() {
                     OperationUtils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
                         if (_.isFunction(_t.implCode)) {
-                            _t.implCode(Object.assign(_widgetCtx, operation), {operation: operation});
+                            _t.implCode(Object.assign(_widgetCtx, operation), {operation: operation},factoryApi);
                         } else {
                             var onclick = Function('"use strict";return ' + _t.implCode)();
-                            onclick(Object.assign(_widgetCtx, operation), {operation: operation});
+                            onclick(Object.assign(_widgetCtx, operation), {operation: operation},factoryApi);
                         }
                         OperationUtils.execution(operation,_widgetCtx,"afterExecCode")//执行后
                     });

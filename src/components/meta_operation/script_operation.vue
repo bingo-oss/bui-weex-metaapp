@@ -11,8 +11,7 @@ import ax from '../../js/ajax.js';
 import config from '../../js/config.js';
 import buiweex from 'bui-weex';
 import OperationUtils from './js/operation_utils';
-
-
+import factoryApi from '../../widgets/libs/factory-api.js';
 export default {
     props:{
         widgetContext:{//由使用操作的部件传入的部件上下文
@@ -39,15 +38,14 @@ export default {
             if(this.mustStopRepeatedClick){
                 return;
             }
-
             if(this.operation.onclick) {
                 if (_.isFunction(this.operation.onclick)) {
                     this.mustStopRepeatedClick = true;
-                    this.operation.onclick(Object.assign(this.widgetContext, this.operation), this);
+                    this.operation.onclick(Object.assign(this.widgetContext, this.operation), this,factoryApi);
                 } else {
                     this.mustStopRepeatedClick = true;
                     var onclick = Function('"use strict";return ' + this.operation.onclick)();
-                    onclick(Object.assign(this.widgetContext, this.operation), this);
+                    onclick(Object.assign(this.widgetContext, this.operation), this,factoryApi);
                 }
                 this.mustStopRepeatedClick = false;
                 this.$emit("triggered", "script");
@@ -70,11 +68,11 @@ export default {
             OperationUtils.execution(this.operation,_widgetCtx,"beforeExecCode").then((res)=>{
                 if(_.isFunction(this.implCode)){
                     this.mustStopRepeatedClick=true;
-                    this.implCode(Object.assign(this.widgetContext,this.operation),this);
+                    this.implCode(Object.assign(this.widgetContext,this.operation),this,factoryApi);
                 }else{
                     this.mustStopRepeatedClick=true;
                     var onclick=Function('"use strict";return ' + this.implCode  )();
-                    onclick(Object.assign(this.widgetContext,this.operation),this);
+                    onclick(Object.assign(this.widgetContext,this.operation),this,factoryApi);
                 }
                 this.mustStopRepeatedClick=false;
                 this.$emit("triggered","script");

@@ -3,14 +3,26 @@
 //注意 执行的是所有有对同名方法的实现的部件import _ from '../../js/tool/lodash';
 import i18n from '../../js/i18n/index';
 import buiweex from "bui-weex";
-var  factoryApi = {
+var factoryApi = {
     goback(context, $optInst) {
         //返回
         buiweex.$pop();
     },
-    del:function(context,$optInst){
+    del(context,$optInst){
         //删除
-        var id=getIdFromContext(context);
+        var id=context.selectedId;
+        var metaEntity=context.metaEntity;
+        if(!id){
+            var selectedItem=context.selectedItem;
+            if(selectedItem){
+                //计算id字段
+                var idField=null;
+                if( !_.isEmpty(metaEntity)){
+                    idField=metaEntity.getIdField();
+                }
+                id=selectedItem[idField];
+            }
+        }
         if(!id){
             $optInst.mustStopRepeatedClick = false;
             buiweex.alert(i18n.dataIdNotSet);
