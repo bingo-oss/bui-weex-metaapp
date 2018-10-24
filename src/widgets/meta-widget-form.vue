@@ -228,8 +228,7 @@
                 </meta-operation>
             </template>
         </div>-->
-        <!--表单底部为公共操作区域-->
-        <div class="action-bar" v-if="widgetParams.bottomOperations">
+<!--        <div class="action-bar" v-if="widgetParams.bottomOperations">
             <template v-for="(commonOpt,index) in [].concat(widgetParams.bottomOperations)">
                 <meta-operation :key="index" class="full-column" :operation="commonOpt" :widget-context="getWidgetContext">
                     <div class="action-button">
@@ -237,6 +236,10 @@
                     </div>
                 </meta-operation>
             </template>
+        </div>-->
+        <!--表单底部为公共操作区域-->
+        <div class="action-bar" v-if="widgetParams.bottomOperations&&widgetParams.bottomOperations.length">
+            <meta-operation v-for="(commonOpt,index) in widgetParams.bottomOperations" :operation="commonOpt" :widget-context="getWidgetContext" :key="index" class="full-column" style="flex: 1"></meta-operation>
         </div>
 
 
@@ -251,45 +254,6 @@
 
     </div>
 </template>
-<style lang="css">
-    .container {
-        flex:1;
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .scroller {
-        padding-left: 20px;
-        padding-right: 20px;
-        flex: 1;
-    }
-    .action-bar {
-        flex-direction: row;
-    }
-    .action-button {
-        height: 100px;
-        flex-direction: row;
-        align-items: center;
-        flex: 1;
-        background-color: #F9F9F9;
-        border-top-style: solid;
-        border-top-width: 2px;
-        border-top-color: #CCCCCC;
-    }
-    .action-button-text{
-        flex: 1;
-        text-align: center;
-        font-size: 34px;
-        color: #86868D;
-        border-left-color: #BEBCBC;
-        border-left-width: 1px;
-        border-left-style: solid;
-    }
-    .widget-operation{
-        background-color: #000;
-    }
-
-</style>
 
 <script>
     import ajax from '../js/ajax.js'
