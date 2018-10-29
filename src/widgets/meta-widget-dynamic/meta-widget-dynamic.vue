@@ -763,7 +763,8 @@
                 showUp:false,
                 metaSuite:{},
                 isAdmin:null,
-                tools:[]
+                tools:[],
+                tabActive:0//默认选择动态的tap1
             }
         },
         methods: {
@@ -1418,6 +1419,9 @@
                             sourceType: 2,//（1、分享动态，2、工作动态）
                         }
                     }
+                    if(this.filterParams.labelId){
+                        this.currLabeId = this.filterParams.labelId;
+                    }
                 }
                 linkapi.get(params).then((result) => {
                     this.isShowLoading = false;
@@ -1528,6 +1532,8 @@
             },
             clearFilterData(){
                 this.isSearching = false;
+                this.onTabClick(0,this.tabItems[0]);//默认选择第一个tap
+                //this.currLabeId = "";
                 this.pageNo = 1;
                 this.blogList = [];
                 this.initData(1);
