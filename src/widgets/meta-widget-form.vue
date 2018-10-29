@@ -137,8 +137,7 @@
         </bui-header>
 
 
-        <!--未嵌套到其他部件内需要滚动-->
-        <scroller v-if="!widgetParams.hideHeader" class="container" style="background-color: #F8F8F8;" >
+        <scroller class="container" style="background-color: #F8F8F8;" >
             <div class="panel" v-if="fields.length" @appear="appear('form')" @disappear="disappear('form')" :ref="'form'">
                 <div class="scrollerDiv" v-for="o in data.layout" :key="o.id" style="padding-right:15px; padding-left: 15px;">
                     <component :is="'Meta'+o.componentType"
@@ -180,35 +179,6 @@
                 ></component>
             </cell>
         </list>-->
-
-        <!--嵌套到部件内不需要滚动-->
-        <div class="scroller" v-if="widgetParams.hideHeader">
-            <div class="panel" v-if="fields.length" @appear="appear('form')" @disappear="disappear('form')" :ref="'form'">
-                <div class="scrollerDiv" v-for="o in data.layout" :key="o.id">
-                    <component :is="'Meta'+o.componentType"
-                               :ref = "o.id"
-                               :definition = "o"
-                               :value =  "result[o.dataField]"
-                               :wholeDefinition =  "data"
-                               :entityResourceUrl =  "o.componentParams.entityResourceUrl"
-                               :field-setting="fieldSetting(o)"
-                               @input="o.input"
-                               :force-view="forceView"
-                               :model="result"
-                               @exDataChanged="exDataChanged"
-                    ></component>
-                </div>
-            </div>
-
-            <div class="panel" v-if="attachment.length" @appear="appear('attachment')" @disappear="disappear('attachment')" :ref="'attachment'">
-                <!--<text class="panel-header">附件</text>-->
-                <meta-widget-attachment :widget-params="{dataId:entityId}"></meta-widget-attachment>
-                <meta-widget-form-article :widget-params="{dataId:entityId}"></meta-widget-form-article>
-            </div>
-
-            <div class="panel" v-if="trail.length" @appear="appear('trail')" @disappear="disappear('trail')" :ref="'trail'">
-            </div>
-        </div>
 
         <!--表单底部为公共操作区域-->
 <!--        <div class="action-bar" v-if="widgetParams.editOperations||widgetParams.viewOperations">

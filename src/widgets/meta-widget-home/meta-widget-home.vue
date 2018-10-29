@@ -70,9 +70,9 @@
                                     <text class="option_font" :value="getRelatedCount"></text>
                                 </div>-->
                 <div v-for="(tab, index) in tabs" class="flex1 flex-row center" @click="jumpPage(tab)">
-                    <bui-image class="members-img" width="26px" height="26px"
-                               src="/image/related.png"></bui-image>
-                    <text class="option_font" :value="tab.name"></text>
+                    <!--<bui-image class="members-img" width="26px" height="26px"
+                               src="/image/related.png"></bui-image>-->
+                    <text class="option_font" :value="tab.title"></text>
                 </div>
 
             </div>
@@ -81,7 +81,8 @@
         <div class="flex1">
             <!--默认页面-->
             <div style="flex: 1;">
-                <meta-widget-page :query="{dataId:activityInfo.sourceId}" :widget-params="{pageId:tabs[0].id,dataId:widgetParams.dataId,entity:widgetParams.entity}"></meta-widget-page>
+                <!--<meta-widget-page :query="{dataId:activityInfo.sourceId}" :widget-params="{pageId:tabs[0].id,dataId:widgetParams.dataId,entity:widgetParams.entity}"></meta-widget-page>-->
+                <meta-widget-page :query="{dataId:activityInfo.sourceId}" :widget-params="{pageId:(defaultTab.type=='toOperation'&&defaultTab.operationId)?defaultTab.operationId:defaultTab.pageId,dataId:widgetParams.dataId,entity:widgetParams.entity,byOperation:(defaultTab.type=='toOperation'&&defaultTab.operationId)?true:false,hideHeader:true}"></meta-widget-page>
             </div>
 
             <dialog v-model="showDialog" @btnClick="onDialogCallback" title="提示" :buttonArray="buttonArray"
@@ -345,6 +346,7 @@
     import Utils from '../../js/tool/utils';
     import service from '../../js/service.js';
     import factoryApi from '../libs/factory-api.js';
+    import widgetService from './js/service.js';
 
     module.exports = {
         components: {'dialog': dialog, 'bui-popupshow': popupmenu},
@@ -356,29 +358,8 @@
         },
         data () {
             return {
-                //存的是栏目
-                tabs:[
-                    {
-                        name: '动态',
-                        link: 'Dynamic',
-                        id:"dynamic"
-                    },
-                    {
-                        name: '成员',
-                        link: 'Member',
-                        id:"4ef12422-8289-4ab9-88f4-0aabf8905bf8"
-                    },
-                    {
-                        name: '详情',
-                        link: 'Detail',
-                        id:"4ef12422-8289-4ab9-88f4-0aabf8905bf8"
-                    },
-                    {
-                        name: '相关',
-                        link: 'Relative',
-                        id:"4ef12422-8289-4ab9-88f4-0aabf8905bf8"
-                    }
-                ],
+                tabs:[],//栏目
+                defaultTab:{},//默认栏目对象
                 testColor: 'red',
                 header: {
                     leftItem: {
@@ -1233,7 +1214,7 @@
             },
             jumpPage(tap){
                 let _t  =this;
-                _t.toPage({pageId:tap.id,dataId:_t.activityInfo.sourceId,entity:_t.activityInfo.suiteId})
+                _t.toPage({pageId:(tap.type=='toOperation'&&tap.operationId)?tap.operationId:tap.pageId,dataId:_t.widgetParams.dataId,entity:_t.widgetParams.entity,byOperation:(tap.type=='toOperation'&&tap.operationId)?true:false,homePageId:tap.homePageId})
             },
             getTopMessage(){//置顶消息数据
                 let params = {
@@ -1278,6 +1259,44 @@
                 this.activityInfo.suiteId = params.entity;
                 this.getMetaEntity(function(res){
                     _t.isHasAccessAuthority();
+                })
+                widgetService.getHomePage(this.widgetParams.homePageId).then((res)=>{
+                    let _tabs = res.mpHomePageColumnList//主页配置栏目
+                    let tabNames = _tabs.map((obj)=>{
+                        return obj.title
+                    });
+                    let dels = []
+                    if(tabNames.indexOf("详情")!=-1){
+                        let _infoId = "",_default = false;
+                        _.each(_tabs,(tab,i)=>{
+                            if(tab&&["正文","轨迹","附件"].indexOf(tab.title)!=-1){
+                                if(tab.id == res.defaultColumnId){
+                                    _default = true;
+                                }
+                                if(tab.title=="详情"){
+                                    _infoId = tab.id;
+                                }
+                                //_t.tabs.splice(i,1);
+                                dels.push(i);
+                            //_t.defaultTab = tab
+                            }//默认栏目
+                        });
+
+                        if(_default){
+                            res.defaultColumnId = _infoId;//附件,正文,轨迹任意一个为默认栏目的话都归为详情
+                        }
+                    }
+                    _.each(_tabs,(tab,i)=>{
+                        if(dels.indexOf(i)==-1){
+                            _t.tabs.push(tab);
+                            if(tab.id == res.defaultColumnId){
+                                _t.defaultTab = tab
+                            }//默认栏目
+                        }
+                    });
+
+                    //_t.defaultTab = _t.tabs.res.defaultColumnId//默认栏目
+
                 })
                 if (params.fromGroup){
                     this.isShowGroup=false

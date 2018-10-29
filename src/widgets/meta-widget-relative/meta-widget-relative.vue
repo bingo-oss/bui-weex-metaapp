@@ -1,7 +1,7 @@
 <template>
 
     <div>
-        <bui-header title="相关业务" :leftItem="leftItem"
+        <bui-header v-if="!widgetParams.hideHeader" title="相关业务" :leftItem="leftItem"
                     @leftClick="back" :backgroundColor="themeBg">
         </bui-header>
 
@@ -67,6 +67,8 @@
     import Config from '../../js/config'
     import buiweex from "bui-weex";
     import factoryApi from '../libs/factory-api.js';
+    import service from './js/service';
+    import _ from '../../js/tool/lodash';
 
     module.exports = {
         props: {
@@ -302,6 +304,18 @@
                         this.isShowLoading = false;
                     //this.$toast("获取套件信息失败：" + Util.handleException(error))
                 });
+            },
+            getSubset(){
+                let params =this.widgetParams,_t = this;
+                service.getHomePage(params.homePageId||this.$getPageParams().homePageId).then((res)=> {
+                    _.each(res,(e,i)=>{
+                        e.target = e.collaborationToolId;//转换下字段--方便旧组件使用
+                        if(!e.urlForCount){
+                            e.urlForCount = "";
+                        }
+                    })
+                    _t.dataList = res;
+                });
             }
         },
         mounted(){
@@ -327,6 +341,8 @@
                 this.getMetaSuite();
                 this.handleCount();
                 this.getEsServiceList();
+                this.getSubset()
+
             } else {
                 this.$toast("参数未传递");
                 this.$pop();

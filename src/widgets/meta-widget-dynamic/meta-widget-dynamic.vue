@@ -1,7 +1,9 @@
 <template>
 
     <div class="flex-column">
-
+        <bui-header v-if="!widgetParams.hideHeader" title="动态" :leftItem="leftItem"
+                    @leftClick="back" :backgroundColor="themeBg">
+        </bui-header>
         <div class="flex1">
             <!--筛选-->
             <div v-if="isShowFilter" class="flex-row filter">
@@ -322,14 +324,14 @@
         <div v-if="isShowWriteMenu" @click="onWriteMenuClick"
              class="write-menu-box">
 
-            <div class="center" v-for="(item,index) in writeMenuList" :style="{'width': 750/4+'px'}"
+<!--            <div class="center" v-for="(item,index) in writeMenuList" :style="{'width': 750/4+'px'}"
                  @click="onWriteMenuItemClick(item.target)">
                 <bui-image style="margin: 20px" width="120px" height="120px"
                            @click="onWriteMenuItemClick(item.target)"
                            :src="getWriteMenuImage(item.target)"></bui-image>
                 <text style="font-size: 28px" :value="item.title"></text>
-            </div>
-            <!--<div style="flex-direction: row;flex-wrap: wrap;opacity:0" ref="writeMenu">
+            </div>-->
+            <div style="flex-direction: row;flex-wrap: wrap;">
                 <div class="center" v-for="(item,index) in writeMenuList" :style="{'width': 750/4+'px'}"
                      @click="onWriteMenuItemClick(item.target)">
                     <bui-image style="margin: 20px" width="120px" height="120px"
@@ -337,7 +339,7 @@
                                :src="getWriteMenuImage(item.target)"></bui-image>
                     <text style="font-size: 28px" :value="item.title"></text>
                 </div>
-            </div>-->
+            </div>
 
             <div class="write-menu-close">
                 <bui-icon name="ion-ios-close-outline" size="45px" color="#818181"
@@ -672,6 +674,8 @@
     import buiweex from "bui-weex"
     import factoryApi from '../libs/factory-api.js';
     import popupmenu from './components/bui-popupmenu.vue'
+    import service from './js/service'
+    import _ from '../../js/tool/lodash';
 
     module.exports = {
         props: {
@@ -758,7 +762,8 @@
                 writeMenuList: [],
                 showUp:false,
                 metaSuite:{},
-                isAdmin:null
+                isAdmin:null,
+                tools:[]
             }
         },
         methods: {
@@ -1728,7 +1733,7 @@
                 } else if (index == 5) {
                     this.openDropdown(event);
                 } else if(item.target=="filter"){
-                    let _array = this.metaSuite.relations.filter(item => {
+                    let _array = this.tools.filter(item => {
                         return item.createBlog;
                     });
                     let params = {
@@ -1838,7 +1843,7 @@
                 });
             },
             handleWriteMenu(){
-                let _array = this.metaSuite.settings.tools;
+                let _array = this.tools//this.metaSuite.settings.tools;
                 this.writeMenuList = _array.filter(item => {//过滤需要显示tab菜单的数据
                     return item.terminal == 2 || item.terminal == 3;
                 });
@@ -1852,7 +1857,7 @@
                 this.writeMenuList.unshift(commentItem);//固定第一个菜单为评论
             },
             handleTabMenu(){//初始化tab菜单数据与更多菜单数据
-                let val = this.metaSuite.relations;
+                let val = this.tools//this.metaSuite.relations;
                 //获取通用协作的过滤条件--------------------------------
                 let _array = val.filter(item => {//过滤需要显示tab菜单的数据
                     return item.createBlog;
@@ -1876,7 +1881,7 @@
                 }
             },
             handleCreateMenu(){
-                let _array = this.metaSuite.operations;
+                let _array = this.tools;
                 this.createMenuList = _array.filter(item => {//过滤需要显示tab菜单的数据
                     return item.terminalType == 2 || item.terminalType == 3;
                 });
@@ -1903,9 +1908,9 @@
                         this.metaSuite.relations = [];//用于动态过滤
                         this.metaSuite.settings= {tools:[]};//存快捷
                         this.getTopicInfo();
-                        this.handleTabMenu();
-                        this.handleWriteMenu();
-                        this.handleCreateMenu();
+                        //this.handleTabMenu();
+                        //this.handleWriteMenu();
+                        //this.handleCreateMenu();
                     }
                 }).catch((error)=> {
                         this.isShowLoading = false;
@@ -1955,9 +1960,27 @@
             if (params != null && !Util.isEmpty(params.dataId) && !Util.isEmpty(params.entity)) {
                 this.activityInfo.sourceId = params.dataId;
                 this.activityInfo.suiteId = params.entity;
-                this.getMetaEntity(function(){
+                _t.getMetaEntity(function(){
                     _t.refreshData();
                 })
+                service.getHomePage(params.homePageId||this.$getPageParams().homePageId).then((res)=>{
+                    //获取主页配置
+                    //快捷操作
+                    _.each(res.mpHomePageOprationList,(e,i)=>{
+                        e.target = e.collaborationToolId;
+                        e.title = e.name;
+                        if(e.type==1){
+                            e.terminalType = 2;
+                        }else{
+                            e.terminal = 2;
+                            e.createBlog = true;//支持过滤
+                        }//0:通用,1:快捷
+                    });
+                    _t.tools = res.mpHomePageOprationList;
+                    _t.handleTabMenu();
+                    _t.handleCreateMenu();
+                    _t.handleWriteMenu();
+                });
             } else {
                 this.$toast("参数未传递");
                 this.$pop();
