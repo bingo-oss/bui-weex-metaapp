@@ -436,9 +436,21 @@ module.exports = {
                 this.remainingPageParam = pageParam;
 
                 let readRuntimeConfigPromise;
-                if (!viewId) {
+                /*if (!viewId) {
                     this.$alert('缺少参数 viewId');
                     return;
+                }*/
+                let mobileType = "";
+                if((weex.config.env.deviceModel.indexOf("iPhone")!=-1)){
+                    mobileType = 2
+                }else if((weex.config.env.deviceModel.indexOf("iPhone")==-1)){
+                    mobileType = 1
+                }
+                let setData={terminalType:mobileType};
+                if(!viewId&&pageParam.entity){
+                    //不存在视图id--则存入实体id
+                    setData.getDefaultForm = true;
+                    viewId = pageParam.entity;
                 }
                 let contextPath = this.$getContextPath();
                 readRuntimeConfigPromise = config.readRuntimeConfig(contextPath)
@@ -452,11 +464,15 @@ module.exports = {
 
                 readRuntimeConfigPromise.then(() => {
                     // 获取视图定义
-                    return service.getMetaViewDef(viewId).catch((err) => {
+                    return service.getMetaViewDef(viewId,setData).catch((err) => {
                         this.$toast('getMetaViewDef error')
                         this.$alert(err)
                 })
                 .then(viewDef => {
+                    if(setData.getDefaultForm&&viewDef.viewFields){
+                        //取的是默认视图
+                        viewDef = viewDef.viewFields
+                    }
                     this.viewDef = viewDef;
                     this.formId = viewDef.metaFormShortId;
                     let params = {

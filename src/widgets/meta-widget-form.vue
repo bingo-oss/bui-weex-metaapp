@@ -679,17 +679,29 @@
 
             let readRuntimeConfigPromise;
 
-            if (!formId) {
+            let mobileType = "";
+            if((weex.config.env.deviceModel.indexOf("iPhone")!=-1)){
+                mobileType = 2
+            }else if((weex.config.env.deviceModel.indexOf("iPhone")==-1)){
+                mobileType = 1
+            }
+            let setData={terminalType:mobileType};
+            if(!formId&&pageParam.entity){
+                //不存在视图id--则存入实体id
+                setData.getDefaultForm = true;
+                formId = pageParam.entity;
+            }
+            /*if (!formId) {
                 this.$alert('缺少参数 formId');
                 return;
-            }
+            }*/
             let contextPath = this.$getContextPath();
             this.isShowLoading = true;
             readRuntimeConfigPromise = config.readRuntimeConfig(contextPath).then(runtimeConfig => {
                         service.init(runtimeConfig.configServerUrl)
             console.log('fetch data')
             // 获取表单定义
-            return service.getMetaFormDef(formId).then(formDef => {
+            return service.getMetaFormDef(formId,setData).then(formDef => {
                 this.data = formDef;
             this.metaForm = formDef;//用于暴露表单定义
             this.entityName = formDef.metaEntityName.toLowerCase();

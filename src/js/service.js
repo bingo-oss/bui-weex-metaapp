@@ -100,11 +100,11 @@ export default {
      * @param  {string} formId  表单 ID
      * @return {Promise} Promise 对象，成功返回定义对象，失败返回 error
      */
-    getMetaFormDef(formId) {
+    getMetaFormDef(formId,data) {
         return this._getConfig().then((data) => {
             let metaApiEndpoint = data[keyMetaBaseEndpoint]
             let url = `${metaApiEndpoint}/meta_form/short/${formId}?resolve=true`
-            return ajax.get(url).then((resp) => {
+            return ajax.get(url,data?{}:data).then((resp) => {
                 return Promise.resolve(resp.data);
             })
         })
@@ -114,11 +114,11 @@ export default {
      * 获取视图定义
      * @return {Promise} Promise 对象，成功返回定义对象，失败返回 error
      */
-    getMetaViewDef(viewId) {
+    getMetaViewDef(viewId,data) {
         return this._getConfig().then((data) => {
             let metaApiEndpoint = data[keyMetaBaseEndpoint];
             let url = `${metaApiEndpoint}/meta_view/short/${viewId}`
-            return ajax.get(url).then((resp) => {
+            return ajax.get(url,data?{}:data).then((resp) => {
                 return Promise.resolve(resp.data);
             })
         })
