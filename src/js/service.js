@@ -103,7 +103,7 @@ export default {
     getMetaFormDef(formId,data) {
         return this._getConfig().then((data) => {
             let metaApiEndpoint = data[keyMetaBaseEndpoint]
-            let url = `${metaApiEndpoint}/meta_form/short/${formId}?resolve=true`
+            let url = `${metaApiEndpoint}/meta_form/default/short/${formId}?resolve=true`
             return ajax.get(url,data?{}:data).then((resp) => {
                 return Promise.resolve(resp.data);
             })
@@ -117,7 +117,7 @@ export default {
     getMetaViewDef(viewId,data) {
         return this._getConfig().then((data) => {
             let metaApiEndpoint = data[keyMetaBaseEndpoint];
-            let url = `${metaApiEndpoint}/meta_view/short/${viewId}`
+            let url = `${metaApiEndpoint}/meta_view/default/short/${viewId}`
             return ajax.get(url,data?{}:data).then((resp) => {
                 return Promise.resolve(resp.data);
             })
