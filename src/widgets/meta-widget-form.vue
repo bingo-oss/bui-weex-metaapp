@@ -662,9 +662,11 @@
             }
             //delete pageParam.formId;
             // Below are optional
-            if(this.widgetParams.dataId) {
+            if(!_.isEmpty(this.widgetParams.dataId)&&this.widgetParams.dataId!="undefined") {
                 this.entityId = this.widgetParams.dataId.from||this.widgetParams.dataId//this.widgetParams.dataId//pageParam.entityId;
                 this.getAttachment(this.entityId)
+            }else{
+                this.titles[0].name="新建"
             }
             //delete pageParam.entityId;
             if (pageParam.readOnly
