@@ -1151,7 +1151,7 @@
                     url: Config.serverConfig.engineService + '/metaservice/meta_suite_data_setting/archive',
                     data: Util.toHttpRequestParams({
                         dataId: this.activityInfo.sourceId,
-                        suiteId: this.activityInfo.suiteId,
+                        metaEntityId: this.activityInfo.suiteId,
                     })
                 };
                 linkapi.post(params).then(result => {
