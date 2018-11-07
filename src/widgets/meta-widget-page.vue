@@ -66,10 +66,10 @@
                     //遍历每一列的所有部件
                     _.each(columnWidgets,function(w){
                         var props={},operations={};
-                        if(pageConfig.widgetParams&&pageConfig.widgetParams.length&&w.widgetId){
+                        if(pageConfig.widgetParams&&pageConfig.widgetParams.length&&(w.widgetParamId||w.widgetId)){
                             //存在对应部件参数的数据
                             pageConfig.widgetParams.filter((obj)=>{
-                                if(w.widgetId==obj.widgetId){
+                                if((w.widgetParamId==obj.id)||(w.widgetId==obj.widgetId)){
                                 //读取对应的部件参数进行设置
                                 props = obj.params;
                                 //操作
