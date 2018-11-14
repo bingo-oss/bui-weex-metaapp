@@ -3,7 +3,8 @@
 //注意 执行的是所有有对同名方法的实现的部件import _ from '../../js/tool/lodash';
 import i18n from '../../js/i18n/index';
 import buiweex from "bui-weex";
-var factoryApi = {
+import linkapi from "linkapi";
+var factoryApi = Object.assign({
     goback(context, $optInst) {
         //返回
         buiweex.pop();
@@ -97,6 +98,6 @@ var factoryApi = {
         //检测全局部件获取数据表单数据方法
         return factoryApi.submitPromise(t,[],"getData");
     }
-}
+},linkapi,buiweex);
 
 export default factoryApi

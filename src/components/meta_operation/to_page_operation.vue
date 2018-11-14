@@ -87,7 +87,7 @@ export default {
                     id=selectedItem[idField];
                 }
             }
-            return {dataId:id,entity:metaEntity.metaEntityId};
+            return /*{dataId:id,entity:metaEntity.metaEntityId}*/;
         },
         gotoPage(){
             var _widgetCtx = Object.assign(this.widgetContext, this.operation);
@@ -96,10 +96,11 @@ export default {
                     return;
                 }
                 var pageId=this.operation.pageId;
-                var queryParam=_.extend({pageId:pageId,byOperation:false},this.getIdFromContext(),this.operation.queryParams);
+                var queryParam=_.extend({pageId:pageId,byOperation:false}/*,this.getIdFromContext(),this.operation.queryParams*/);
+                OperationUtils.setUrlParam(this.operation,this);//按钮输入参数处理
+                OperationUtils.execution(this.operation,_widgetCtx,"afterExecCode")//执行后
                 this.$push(Utils.pageEntry(),queryParam);
                 this.$emit("triggered","toPage");
-                OperationUtils.execution(this.operation,_widgetCtx,"afterExecCode")//执行后
             });
         },
         toggleModal(){

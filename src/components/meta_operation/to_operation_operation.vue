@@ -41,10 +41,11 @@
                         return;
                     }
                     var pageId=this.operation.operationId;
-                    var queryParam=_.extend({pageId:pageId,byOperation:true},this.getIdFromContext(),this.operation.queryParams);
+                    var queryParam=_.extend({pageId:pageId,byOperation:true}/*,this.getIdFromContext(),this.operation.queryParams*/);
+                    OperationUtils.setUrlParam(this.operation,this);//按钮输入参数处理
+                    OperationUtils.execution(this.operation,_widgetCtx,"afterExecCode")//执行后
                     this.$push(Utils.pageEntry(),queryParam);
                     this.$emit("triggered","toPage");
-                    OperationUtils.execution(this.operation,_widgetCtx,"afterExecCode")//执行后
                 });
             }
         }

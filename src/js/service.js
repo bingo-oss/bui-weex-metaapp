@@ -150,5 +150,17 @@ export default {
             return resp.data;
         })
     },
+    /*获取过滤条件信息*/
+    getMetaViewFilter(filtersId) {
+        return this._getConfig().then((data) => {
+            let metabaseUrl = data[keyMetaBaseEndpoint]
+            return ajax.get(`${metabaseUrl}/meta_view_filters/${filtersId}`).then(resp => {
+                // Capitalize
+                return resp.data;
+            })
+        })
+
+    },
+
 
 }

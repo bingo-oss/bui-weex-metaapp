@@ -133,12 +133,13 @@ export default {
     components:{
         commonOperation:require('./common_operation.vue'),
         widgetOperation:require('./widget_operation.vue'),
-        toPageOperation:require('./to_page_operation.vue'),
-        popupOperation:require('./popup_operation.vue'),
-        scriptOperation:require('./script_operation.vue'),
+        toPageOperation:require('./to_page_operation.vue'),//跳转页面
+        popupOperation:require('./popup_operation.vue'),//弹窗
+        scriptOperation:require('./script_operation.vue'),//执行脚本
         execOperationOperation:require('./script_operation.vue'),
-        toOperationOperation:require('./to_operation_operation.vue'),
-
+        toOperationOperation:require('./to_operation_operation.vue'),//跳入操作
+        //columnOperation:require('./column_operation.vue'),//二级菜单
+        toDynamicPageOperation:require('./to_dynamic_page_operation.vue')//动态跳入页面
     }
 }
 </script>

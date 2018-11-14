@@ -1,12 +1,12 @@
 <template>
     <div class="wrapper">
-        <bui-header :leftItem="{icon: 'ion-ios-arrow-left'}" @leftClick="pop" :backgroundColor="themeBg">
+        <bui-header v-if="widgetParams.showHeader" :leftItem="{icon: 'ion-ios-arrow-left'}" @leftClick="pop" :backgroundColor="themeBg">
             <div slot="center" class="page-title-wrapper" @click="titleClicked">
-                <text class="page-title" @click="titleClicked">{{title}}</text>
-                <bui-icon v-if="presetFilters.length" name="ion-chevron-down" color="white" size=39 @click="titleClicked"></bui-icon>
+                <text class="page-title" @click="titleClicked">{{widgetParams.isViewMode?widgetParams.headerTitle:title}}</text>
+                <bui-icon v-if="!widgetParams.isViewMode&&presetFilters.length" name="ion-chevron-down" color="white" size=39 @click="titleClicked"></bui-icon>
             </div>
             <div slot="right" class="header-right-wrapper">
-                <div class="header-button" @click="filterClicked" v-if="showFilterView">
+                <div class="header-button" @click="filterClicked" v-if="widgetParams.showFilterView">
                     <bui-icon name="ion-funnel" color="white" @click="filterClicked"></bui-icon>
                 </div>
                 <div class="header-button">
@@ -17,7 +17,10 @@
                 </div>
             </div>
         </bui-header>
-        <bui-searchbar-center @search="onSearch" @clear="onSearchClear" placeholder="请输入搜索内容"></bui-searchbar-center>
+        <bui-searchbar-center v-if="widgetParams.showSearchbar" @search="onSearch" @clear="onSearchClear" placeholder="请输入搜索内容"></bui-searchbar-center>
+
+        <bui-tabbar :titleSize="30" v-if="widgetParams.isViewMode" :tabItems="presetFilters" showSelectedLine=true @change="onItemChange" v-model="currentTab" :background="'#fff'" :selectedBackground="'#fff'" :containerStyle="{'border-bottom-color': '#F2F2F2','border-bottom-width': '1px','border-bottom-style':'solid'}" ></bui-tabbar>
+
         <list class="scroller">
             <refresh-wrapper @refresh="onrefresh" :isRefreshing="isRefreshing"></refresh-wrapper>
 
@@ -26,6 +29,7 @@
                     @click="rowSingleClick(o)"
                     @swipeleft="cellSwiped(o.id)"
                     :ref="o.id"
+                    :items="[]"
                     >
                     <template slot="action">
                         <meta-operation class="bui-list-swipe-btn-custom" v-for="(commonOpt,index) in widgetParams.listOperations" :key="index" @triggered="closeSwipeCell(o.id)" @successed="onrefresh" btn-type="swipe-cell" :operation="commonOpt" :widget-context="getWidgetContext(o)">
@@ -102,9 +106,9 @@ import OperationUtils from '../components/meta_operation/js/operation_utils';
 import commonOperation from '../components/meta_operation/js/common_operation.js';
 import EventBus from '../js/bus';
 import factoryApi from './libs/factory-api.js';
+import buiweex from "bui-weex";
 
 const linkapi = require('linkapi');
-const buiweex = require('bui-weex');
 
 const globalEvent = weex.requireModule('globalEvent');
 
@@ -146,7 +150,9 @@ module.exports = {
             remainingPageParam: {},
             isShowLoading:false,
             loadingText:"",
-            showFilterView:false
+            //showFilterView:false,
+            currentTab:0,//默认选择第一个
+            selectedItem:{}//记录选择对象--合并暴露对象
         }
     },
     computed: {
@@ -163,7 +169,7 @@ module.exports = {
             return this;
         },
         getDeviceHeight(){
-            return (750/(weex.config.env.deviceWidth))*weex.config.env.deviceHeight
+            return ((750/weex.config.env.deviceWidth*weex.config.env.deviceHeight)-70);
         },
         mobileHeaderOperations(){
             var opts=(this.widgetParams&&this.widgetParams.commonOperations);
@@ -193,7 +199,7 @@ module.exports = {
         },
         //单击行执行
         rowSingleClick(rowData) {
-            var _rowSingleClick=this.widgetParams.listOperations[0]//rowSingleClick;
+            var _rowSingleClick=this.widgetParams.rowSingleClick[0];
             var _widgetCtx=this.getWidgetContext(rowData);
             var operation=OperationUtils.expandOperation(_rowSingleClick,{
                 operation:_rowSingleClick,
@@ -232,44 +238,56 @@ module.exports = {
                 }else {
                     //获取执行代码
                     config.readRuntimeConfig().then(runtimeConfig => {
-                        ajax.get(runtimeConfig["service.metad.api.endpoint"]+`/meta_operation/${operation.operationId}`).then(({data})=>{
+                        ajax.get(runtimeConfig["service.metabase.endpoint"]+`/meta_operation/${operation.operationId}`).then(({data})=>{
                             _t.implCode=data.implCode;
                             cellExecScript();
                         });
                     });
                 }
-            }else if(operation.operationType=="toPage"||operation.operationType=="toOperation"){
-                function getIdFromContext(){
-                    var context = _.extend(_widgetCtx, operation);
-                    var id=context.selectedId;
-                    var metaEntity=context.metaEntity;
-                    if(!context.selectedItem&&context.selectedItems){
-                        //按钮放置的是在工具栏
-                        context.selectedItem = context.selectedItems[(context.selectedItems.length-1)]
-                        context.selectedId = context.selectedItem.id;
-                        id = context.selectedId;
-                    }
-                    if(!id){
-                        var selectedItem=context.selectedItem;
-                        if(selectedItem){
-                            //计算id字段
-                            var idField=null;
-                            if( !_.isEmpty(metaEntity)){
-                                idField=metaEntity.getIdField();
-                            }
-                            id=selectedItem[idField];
-                        }
-                    }
-                    return {dataId:id,entity:metaEntity.metaEntityId};
+            }else if(operation.operationType=="toPage"||operation.operationType=="toOperation"||operation.operationType=="toDynamicPage"){
+                //赋予选择值
+                var context = _.extend(_widgetCtx, operation);
+                if(!context.selectedItem&&context.selectedItems){
+                    //按钮放置的是在工具栏
+                    this.selectedItem = context.selectedItems[(context.selectedItems.length-1)]
+                }else{
+                    this.selectedItem=context.selectedItem;
                 }
+                OperationUtils.setUrlParam(operation,this);
                 var pageId=operation.pageId,byOperation= false;
                 if(operation.operationType=="toOperation"){
                     byOperation = true;
                 }
                 OperationUtils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
-                    var queryParam=_.extend({pageId:pageId,byOperation:byOperation},getIdFromContext());
-                    this.$push(Utils.pageEntry(),queryParam);
                     OperationUtils.execution(operation,_widgetCtx,"afterExecCode")//执行后
+                    if(operation.operationType=="toDynamicPage"){
+                        var pageParams={};
+                        if(this.operation.dynamicPageFunc){
+                            //进行数据解析
+                            if (_.isFunction(this.operation.dynamicPageFunc)) {
+                                this.mustStopRepeatedClick = true;
+                                pageParams = this.operation.dynamicPageFunc(_widgetCtx,this,factoryApi);
+                            } else {
+                                var dynamicPageFunc = Function('"use strict";return ' + this.operation.dynamicPageFunc)();
+                                pageParams = dynamicPageFunc(_widgetCtx, this,factoryApi);
+                            }
+                        }
+                        if(pageParams.type=="factoryApp"){
+                            //跳入的是应用工厂应用
+                            this.$push(Utils.pageEntry(),Object.assign({pageId:pageParams.pageId},pageParams.params));
+                        }else if(pageParams.type=="url"){
+                            //跳入的是第三方url
+                            let _urlParams = []
+                            _.each(pageParams.params,(val,key)=>{
+                                _urlParams.push(`${key}=${val}`);
+                            });
+                            if(pageParams.url.indexOf("?")==-1){pageParams.url+="?"}
+                            linkapi.openLinkBroswer(pageParams.url+_urlParams.join("&"));
+                        }
+                    }else{
+                        var queryParam=_.extend({pageId:pageId,byOperation:byOperation}/*,getIdFromContext()*/);
+                        this.$push(Utils.pageEntry(),queryParam);
+                    }
                 });
             }
         },
@@ -291,6 +309,11 @@ module.exports = {
             this.getView();//获取视图配置和数据
             //this.queryParam.viewId = filter.viewId;
             //this.refreshData();
+        },
+        onItemChange(index){
+            //tap标签模式的切换
+            this.selectedFilter = this.presetFilters[index];
+            this.getView();//获取视图配置和数据
         },
         // 一些字段的值是 id，通过这个方法将其转换为对应的用于显示的值
         getFieldValue(obj, field) {
@@ -334,13 +357,20 @@ module.exports = {
                 filtersParts.push(this.quickSearchFilters);
             }
             if (this.selectedFilter && this.selectedFilter.value) {
-                filtersParts.push(this.selectedFilter.value)
+                filtersParts.push(this.selectedFilter.value);
             }
             this.queryParam.filters = filtersParts.join(' and ');
+            this.queryParam.total=true;
             return ajax.get(this.dataUrlPath, this.queryParam).then(resp => {
                 this.isShowLoading = false;
+                if(this.presetFilters[this.currentTab]){
+                    if(this.presetFilters[this.currentTab].showCount) {//是否显示数字
+                        this.presetFilters[this.currentTab].count = `(${resp.headers["X-Total-Count"]})`;
+                        this.presetFilters[this.currentTab].title = `${this.presetFilters[this.currentTab].text}${this.presetFilters[this.currentTab].count}`;
+                    }
+                }
                 return resp.data;
-            })
+            });
         },
         refreshData() {
             if (this.isRefreshing) return;
@@ -348,14 +378,14 @@ module.exports = {
             this.fetchData(1).then(data => {
                 this.dataInited = true; // 控制 viewAppear 时是否刷新页面，只有获取数据成功过才刷新
                 this.listData = data;
-                console.log(data);
+                //console.log(data);
                 this.isRefreshing = false;
                 this.currentPage = 1;
                 this.loadingStatus = 'init';
             }).catch(err => {
                 this.isRefreshing = false;
                 this.$alert(err);
-            })
+            });
         },
         loadMore() {
             if (this.loadingStatus == 'loading') return;
@@ -413,6 +443,67 @@ module.exports = {
             let swipeCell = this.$refs[id][0];
             swipeCell&&swipeCell.close();
         },
+        getViewTotal(){
+            //只用于获取数据总数
+            _.each(this.presetFilters,(selectedFilter,_index)=>{
+                if(!selectedFilter.showCount)return false;//是否显示数字
+                let _selectedFilter = selectedFilter;
+                let pageParam = this.$getPageParams();
+                let viewId = _selectedFilter.viewId;
+                let readRuntimeConfigPromise;
+                let mobileType = "";
+                if((weex.config.env.deviceModel.indexOf("iPhone")!=-1)){
+                    mobileType = 2
+                }else if((weex.config.env.deviceModel.indexOf("iPhone")==-1)){
+                    mobileType = 1
+                }
+                let setData={terminalType:mobileType};
+                if(!viewId&&pageParam.entity){
+                    //不存在视图id--则存入实体id
+                    setData.getDefaultForm = true;
+                    viewId = pageParam.entity;
+                }
+                let contextPath = this.$getContextPath();
+                readRuntimeConfigPromise = config.readRuntimeConfig(contextPath).catch(err => {
+                }).then(() => {
+                    // 获取视图定义
+                    service.getMetaViewDef(viewId,setData).then(viewDef => {
+                        if(setData.getDefaultForm&&viewDef.viewFields){
+                            //取的是默认视图
+                            viewDef = viewDef.viewFields
+                        }
+                        this.viewDef = viewDef;
+                        this.formId = viewDef.metaFormShortId;
+                        let params = {
+                            filters: viewDef.config.filters, // 过滤
+                        };
+                        // 排序
+                        if (viewDef.config.orderby) {
+                            params.orderby = viewDef.config.orderby.map(o => `${o.name} ${o.type}`).join(',')
+                        }
+                        if(_selectedFilter.filterId){
+                            params.viewId = _selectedFilter.filterId;
+                        }
+                        params.page_size = 1;
+                        params.page = 1;
+                        let filtersParts = [];
+                        if (_selectedFilter && _selectedFilter.value) {
+                            filtersParts.push(_selectedFilter.value);
+                        }
+                        params.filters = filtersParts.join('and');
+                        params.total=true;
+                        service.getEngineUrl(viewDef.projectId).then(engineUrl => {
+                                ajax.get(`${engineUrl}/${viewDef.metaEntityName.toLowerCase()}`, params).then(resp => {
+                                    this.presetFilters[_index].count = `(${resp.headers["X-Total-Count"]})`;//对应标签的总数
+                                    this.presetFilters[_index].title =  `${this.presetFilters[_index].text}${this.presetFilters[_index].count}`;
+                                });
+                        });
+                    });
+
+                });
+            });
+
+        },
         getView() {
                 this.isShowLoading = true;
                 this.contextPath = this.$getContextPath();
@@ -467,8 +558,7 @@ module.exports = {
                     return service.getMetaViewDef(viewId,setData).catch((err) => {
                         this.$toast('getMetaViewDef error')
                         this.$alert(err)
-                })
-                .then(viewDef => {
+                }).then(viewDef => {
                     if(setData.getDefaultForm&&viewDef.viewFields){
                         //取的是默认视图
                         viewDef = viewDef.viewFields
@@ -488,7 +578,7 @@ module.exports = {
                             this.quickSearchableField.push(col.name);
                         }
                         if(col.searchable){
-                            this.showFilterView = true;//存在高级筛选 显示按钮
+                            //this.showFilterView = true;//存在高级筛选 显示按钮
                         }
                     });
                     /*if (viewDef.config.mLayout) {
@@ -508,13 +598,12 @@ module.exports = {
                             fields.add(this.p5);
                         }
                     }*/
-
-                    let layout = viewDef.config.columns;
-                    this.p1 = layout[0].name;
-                    this.p2 = layout[1].name;
-                    this.p3 = layout[2].name;
-                    this.p4 = layout[3].name;
-                    this.p5 = layout[4].name;
+                    let layout = viewDef.viewFields;
+                    if(layout[0])this.p1 = layout[0].fieldName;
+                    if(layout[1])this.p2 = layout[1].fieldName;
+                    if(layout[2])this.p3 = layout[2].fieldName;
+                    if(layout[3])this.p4 = layout[3].fieldName;
+                    if(layout[4])this.p5 = layout[4].fieldName;
                     fields.add(this.p1);
                     fields.add(this.p2);
                     fields.add(this.p3);
@@ -600,7 +689,7 @@ module.exports = {
                 });
             })
             }).catch(err => {
-                    console.log(err)
+                console.log(err)
                 this.$alert(err);
             });
             },
@@ -616,10 +705,13 @@ module.exports = {
         },
         reload(){
             this.refreshData();
+        },
+        getExportParams(){
+            //暴露的参数
+            return Object.assign({},this.widgetParams,this.selectedItem)
         }
     },
     created(){
-
         if(this.widgetParams.views){
             let contextPath = this.$getContextPath(),
                 _views = this.widgetParams.views, _getMetaViewDefNumber = 0,_t = this,
@@ -627,49 +719,41 @@ module.exports = {
                         this.$alert(err);
                         this.$toast('读取运行时配置失败');
                 }).then(runtimeConfig => {
-                        service.init(runtimeConfig.configServerUrl)
-                        _.each(_views,(view)=>{
+                        service.init(runtimeConfig.configServerUrl);
+                        _t.presetFilters = _views;
+                        _t.selectedFilter = _views[0];
+                        _.each(_views,(view,_i)=>{
                             // 获取视图定义
-                            service.getMetaViewDef(view.viewId).then(viewDef => {
+                            view.text = view.title;//用于记录一下tap文字拼接
+                            if(view.default){
+                                //默认选择的视图
+                                _t.selectedFilter = view;
+                                _t.currentTab = _i;
+                            }
+                            /*if((_i+1)==_views.length){
+                                EventBus.$emit("widget-push-title","");
+                                _t.getView();//获取视图配置和数据
+                            }*/
+                            service.getMetaViewFilter(view.filterId).then((res)=>{
                                 _getMetaViewDefNumber++;
-                                if (viewDef.config.multipleFilters.support&&viewDef.config.multipleFilters.filters.length) {
-                                    let _v = viewDef.config.multipleFilters.filters.map((obj)=>{
-                                        return {id:obj.id,viewId:view.viewId,filterId:obj.viewId,title:viewDef.title.replace("default view for ","")+obj.title}
-                                    });
-                                    _t.presetFilters = _t.presetFilters.concat(_v)
-                                    if(view.default){
-                                        //默认选择的视图
-                                        if(_v.length){
-                                            _t.selectedFilter = _v[0];
-                                        }else{
-                                            _t.selectedFilter = view;
-                                        }
-                                    }
+                                if(res.type==1){
+                                    //系统过滤条件
+                                    view.filterId = res.queryViewId;
                                 }else{
-                                    _t.presetFilters.push(view);
-                                    if(view.default){
-                                        //默认选择的视图
-                                        _t.selectedFilter = view;
-                                    }
+                                    //自定义过滤条件
+                                    view.filterId = "";
+                                    view.value = res.value;
                                 }
                                 if(_views.length==_getMetaViewDefNumber){
                                     //请求完成后
-                                    /*if(_t.widgetParams.defaultView) {
-                                        _t.selectedFilter = _t.widgetParams.defaultView;
-                                    }*/
                                     EventBus.$emit("widget-push-title","");
+                                    _t.getViewTotal();//获取数字
                                     _t.getView();//获取视图配置和数据
                                 }
                             });
                         });
                 });
             }//获取对应视图下的过滤条件
-
-/*        if(this.widgetParams.defaultView) {
-            this.selectedFilter = this.widgetParams.defaultView;
-        }
-        EventBus.$emit("widget-push-title","");
-        this.getView();//获取视图配置和数据*/
     },
     components: {
         'filter-view': require('../views/filter.vue')
@@ -753,4 +837,5 @@ module.exports = {
 </style>
 <style lang="sass" src="bui-weex/src/css/list.scss"></style>
 <style src="../styles/common.css"></style>
+
 

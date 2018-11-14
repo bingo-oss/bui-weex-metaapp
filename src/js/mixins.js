@@ -1,6 +1,4 @@
-var buiweex=require("bui-weex"),
-    linkapi = require("linkapi"),
-    globalEvent = weex.requireModule('globalEvent');
+var linkapi = require("linkapi"), globalEvent = weex.requireModule('globalEvent');
 var mixins = {
     data: function () {
         return {

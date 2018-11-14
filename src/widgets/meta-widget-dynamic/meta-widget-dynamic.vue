@@ -1989,7 +1989,7 @@
                 });
             } else {
                 this.$toast("参数未传递");
-                this.$pop();
+                //this.$pop();
             }
 
             globalEvent.addEventListener("resume", e => {

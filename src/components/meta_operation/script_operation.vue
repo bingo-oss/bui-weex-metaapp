@@ -41,7 +41,7 @@ export default {
             if(this.operation.onclick) {
                 if (_.isFunction(this.operation.onclick)) {
                     this.mustStopRepeatedClick = true;
-                    this.operation.onclick(Object.assign(this.widgetContext, this.operation), this,factoryApi);
+                    this.operation.onclick(Object.assign(this.widgetContext, this.operation),this,factoryApi);
                 } else {
                     this.mustStopRepeatedClick = true;
                     var onclick = Function('"use strict";return ' + this.operation.onclick)();
@@ -55,7 +55,7 @@ export default {
                 }else {
                     //获取执行代码
                     config.readRuntimeConfig().then(runtimeConfig =>{
-                        ax.get(runtimeConfig["service.metad.api.endpoint"]+`/meta_operation/${_t.operation.operationId}`).then(({data})=>{
+                        ax.get(runtimeConfig["service.metabase.endpoint"]+`/meta_operation/${_t.operation.operationId}`).then(({data})=>{
                             _t.implCode=data.implCode;
                             _t.cellExecScript();
                         });

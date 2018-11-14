@@ -1,10 +1,13 @@
 <template>
-    <div class="full-column" v-if="pageConfig">
-        <div class="full-column" v-for="(col,colIndex) in pageConfig.style.columns" :key="colIndex">
-            <template v-for="(widget,index) in pageConfig.widgets[colIndex]">
-                <component class="full-column" ref="childWidgets" :is="widget.tagName" :key="index" :widget-params="widget.params" :vue-modal="vueModal"></component>
-            </template>
-        </div>
+    <div class="full-column" v-if="pageConfig" >
+        <scroller class="full-column">
+            <div :style="scrollerStyle">
+                <component v-for="(widget,index) in pageConfig.columnWidgets" @appear="appear(widget,index)" @disappear="disappear(widget,index)" ref="childWidgets" :is="widget.tagName" :key="index" :widget-params="widget.params" :vue-modal="vueModal" :tag-name="widget.tagName" :widget-name="widget.widgetName"></component>
+            </div>
+            <!--<div class="full-column" v-for="(col,colIndex) in pageConfig.style.columns" :key="colIndex">
+                <component class="full-column" v-for="(widget,index) in pageConfig.widgets[colIndex]" @appear="appear(widget,index)" @disappear="disappear(widget,index)" ref="childWidgets" :is="widget.tagName" :key="index" :widget-params="widget.params" :vue-modal="vueModal" :tag-name="widget.tagName" :widget-name="widget.widgetName"></component>
+            </div>-->
+        </scroller>
     </div>
 </template>
 <script>
@@ -12,6 +15,9 @@
     import propParser from '../js/tool/prop_parser';
     import _ from '../js/tool/lodash';
     import pageMethods from './libs/page-methods';
+    import buiweex from 'bui-weex';
+    const dom = weex.requireModule('dom');
+    const storage = weex.requireModule('storage');
 
     var co = require('co');
     export default {
@@ -34,9 +40,13 @@
             }
         },
         data(){
+            var scrollerHeight = (750/weex.config.env.deviceWidth*weex.config.env.deviceHeight);
             return {
                 pageConfig:null,
-                isWidgetPage:true
+                isWidgetPage:true,
+                dom:dom,//方便其他部件调用滚动
+                urlParam:{},//存储的页面参数
+                scrollerStyle:{"flex":1,height:scrollerHeight}//ios的scroller标签内的flex不生效-需要做个兼容
             };
         },
         watch:{
@@ -44,12 +54,35 @@
                 this.loadPageConfig();
             }
         },
-        methods: _.extend({},pageMethods,{
+        created(){
+            let _this = this;
+            storage.getItem("urlParam", (res)=>{
+                if(res.data&&res.data!="undefined"){
+                    _this.urlParam = JSON.parse(res.data);
+                }
+            });//存储起来需要传递的参数
+        },
+        methods:{
             loadPageConfig(){
                 var _this=this;
                 if(this.widgetParams&&this.widgetParams.pageId){
                     pageService.get(this.widgetParams.pageId,this.widgetParams.byOperation).then(function(pageConfig){
                         _this.pageConfig=_this.convert(pageConfig);
+
+
+                        //特殊处理-暂时先这样定义高度的变化--不然没法兼容
+                        setTimeout(function(){
+                            let _widgetHeights = 0;
+                            _.each(_this.$refs.childWidgets,(cw)=>{
+                                dom.getComponentRect(cw,function(res){
+                                    //计算下当前部件的总高--若超出则不需要定制高度
+                                    _widgetHeights+=res.size.height
+                                    if(_widgetHeights>_this.scrollerStyle.height){
+                                        _this.scrollerStyle = {};
+                                    }
+                                });
+                            });
+                        },1000);
                     });
                 }
             },
@@ -61,6 +94,7 @@
                 }else{
                     _layout = pageConfig
                 }
+                _layout.columnWidgets = []//合并到一行内,布局处理
                 //每一列有自己的部件集合
                 _.each(_layout.widgets,function(columnWidgets){
                     //遍历每一列的所有部件
@@ -84,7 +118,7 @@
                         }else{
                             props=w.props,operations=w.operations;
                         }
-                        w.params={};
+                        w.params={widgetCode: w.widgetCode};//传入部件code--用于读取页面参数
                         //遍历每一个部件的属性
                         _.each(props,function(propValue,propKey){
                             var parsedValue=propParser.parse(propValue,_this);
@@ -99,14 +133,48 @@
                         if(_this.widgetParams.widgetSettings){
                             Object.assign(w.params,_this.widgetParams.widgetSettings[w.id]);
                         }
-                        //移动端处理是否隐藏头部
+                        /*//移动端处理是否隐藏头部
                         if(_this.widgetParams.hideHeader){
                             Object.assign(w.params,{hideHeader:true});
-                        }
+                        }*/
+
+                        _.each(_this.urlParam,function(propValue,propKey){
+                            if(((propKey.indexOf(".")!=-1)&&(propKey.indexOf(w.widgetCode)!=-1))||propKey.indexOf(".")==-1){
+                                //特定code的组件参数 以及 code.key标符的就直接都传入
+                                let _key = propKey;
+                                if(_key.indexOf(".")!=-1){
+                                    _key = _key.slice((_key.indexOf(".")+1))
+                                }
+                                if(!_.isEmpty(w.params[_key])){
+                                    w.params[_key] = propValue;
+                                }
+                            }
+                        });
+                        _layout.columnWidgets.push(w);//添加组装好的部件
                     });
                 });
+                storage.removeItem("urlParam");//取出后立即清除-防止参数错乱
                 return _layout;
-            }/*,
+            },
+            appear(widget,index){
+                //进入--导航部件自身不进行变化
+                if(widget.tagName=="meta-widget-navbar")return false;
+                _.each(this.$refs.childWidgets,(cw)=>{
+                    if(_.isFunction(cw.appear)){
+                        cw.appear(this.$refs.childWidgets[index],index);
+                    }
+                });
+            },
+            disappear(widget,index){
+                //离开--导航部件自身不进行变化
+                if(widget.tagName=="meta-widget-navbar")return false;
+                _.each(this.$refs.childWidgets,(cw)=>{
+                    if(_.isFunction(cw.disappear)){
+                        cw.disappear(this.$refs.childWidgets[index],index);
+                    }
+                });
+            }
+            /*,
             submit(){
                 var submitWidgets=[];
                 _.each(this.$refs.childWidgets,function(cw){
@@ -131,7 +199,7 @@
                 }
                 return co(nextSubmit);
             }*/
-        })
+        }
     }
 </script>
 <style src="../styles/common.css"></style>

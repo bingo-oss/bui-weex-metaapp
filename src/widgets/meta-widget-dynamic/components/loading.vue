@@ -75,7 +75,7 @@
 </style>
 
 <script>
-    var buiweex = require("bui-weex"), animation = weex.requireModule('animation');
+    var animation = weex.requireModule('animation');
     module.exports = {
         data () {
             return {

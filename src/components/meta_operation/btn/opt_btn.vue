@@ -21,7 +21,8 @@ export default {
         "normal-btn":require('./normal_btn.vue'),
         "swipe-cell-btn":require('./swipe_cell_btn.vue'),
         "icon-btn":require('./icon_btn.vue'),
-        "dropdown-btn":require('./dropdown_btn.vue')
+        "dropdown-btn":require('./dropdown_btn.vue'),
+        "img-btn":require('./img_btn.vue')
     }
 }
 </script>
