@@ -46,8 +46,8 @@ function getBaseConfig() {
             loaders: [
                 {
                     test: /\.js$/,
-                    loader: 'babel',
-                    exclude: /node_modules/
+                    loader: 'babel'/*,
+                    exclude: /node_modules/*/
                 }, {
                     test: /\.vue(\?[^?]+)?$/,
                     loaders: []
@@ -61,7 +61,7 @@ function getBaseConfig() {
             ]
         },
         vue: {},
-        plugins: [copyPlugin,new babiliPlugin(),bannerPlugin]
+        plugins: [copyPlugin,bannerPlugin]
     }
 }
 
