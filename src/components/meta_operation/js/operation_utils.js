@@ -4,6 +4,7 @@ const storage = weex.requireModule('storage');
 import factoryApi from '../../../widgets/libs/factory-api.js';
 import Utils from '../../../js/tool/utils';
 const linkapi = require('linkapi');
+import commonOperation from './common_operation.js';
 
 var utils={
     expandOperation:function(operation,ctx){

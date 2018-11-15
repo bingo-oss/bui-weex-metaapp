@@ -202,7 +202,7 @@ module.exports = {
         rowSingleClick(rowData) {
             var _rowSingleClick=this.widgetParams.rowSingleClick[0];
             var _widgetCtx=this.getWidgetContext(rowData);
-            if(!_rowSingleClick.show||!_rowSingleClick.hide)return false;
+            if(!_rowSingleClick.show||_rowSingleClick.hide)return false;
             OperationUtils.operationClick(_rowSingleClick,_widgetCtx,this);
 /*
             //目前支持通用操作和脚本操作
