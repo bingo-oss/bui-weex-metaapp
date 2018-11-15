@@ -1,6 +1,7 @@
 import _ from '../../../js/tool/lodash';
 import propParser from '../../../js/tool/prop_parser';
 const storage = weex.requireModule('storage');
+import factoryApi from '../../../widgets/libs/factory-api.js';
 
 var utils={
     expandOperation:function(operation,ctx){
@@ -26,9 +27,9 @@ var utils={
             let value=true;
             if(operation[before_after]) {
                 if (_.isFunction(operation[before_after])) {
-                    value = operation[before_after](_widgetCtx, this)
+                    value = operation[before_after](_widgetCtx,factoryApi)
                 } else {
-                    value = Function('"use strict";return ' + operation[before_after])(_widgetCtx, this);
+                    value = Function('"use strict";return ' + operation[before_after])(_widgetCtx, factoryApi);
                 }
                 resolve(value);
             }else{
@@ -41,8 +42,8 @@ var utils={
         let _childWidgets = _t.$root.$children[0].$refs.childWidgets;//遍历下所有引入的部件
         let returnVal = "";
         _.each(_childWidgets,(cw)=>{
-            if(_.isFunction(cw.getExportParams)){
-                let _data = cw.getExportParams();//部件自身暴露的参数
+            if(_.isFunction(cw.exportParams)){
+                let _data = cw.exportParams();//部件自身暴露的参数
                 if((widgetCode&&widgetCode==_data.widgetCode)||widgetCode==""){
                     returnVal = _data[key]
                 }
@@ -67,13 +68,22 @@ var utils={
                     urlParam[key] = utils.getWidgetExportParams(_t,_key,prop.widgetCode)
                 }else if(prop.type=="script"){
                     let _script = prop.script;//执行的代码
-                    let _prop = _script.match(/\{\{(.+?)\}\}/g);//解析需要提取的参数
-                    debugger
-                    //let _key = prop.reflectedField;
-                    /*if(_key.indexOf(".")!=-1){
-                        _key = _key.slice((_key.indexOf(".")+1))
-                    }*/
-                    //urlParam[key] = utils.getWidgetExportParams(_t,_key,prop.widgetCode)
+                    let _props = _script.match(/\{\{(.+?)\}\}/g);//解析需要提取的参数
+                    let _vals = [];
+                    _.each(_props,(_prop)=>{
+                        _prop = _prop.replace("{{","").replace("}}","");
+                        let _widgetCode = "",_key = ""
+                        if(_prop.indexOf(".")!=-1){
+                            _widgetCode = _prop.slice(0,(_prop.indexOf(".")));
+                            _key = _prop.slice((_prop.indexOf("."))+1);
+                        }
+                        _vals.push(utils.getWidgetExportParams(_t,_key,_widgetCode));//添加匹配到的值
+                    });
+                    var test = /\{\{(.+?)\}\}/g,_vals_index = -1;
+                    urlParam[key] = _script.replace(test,function($0,$1,$2,$3) {
+                        _vals_index+=1;
+                        return _vals[_vals_index];
+                    });
                 }
             });
             storage.setItem("urlParam", JSON.stringify(urlParam));//存储起来需要传递的参数

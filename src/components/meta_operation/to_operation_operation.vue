@@ -35,7 +35,7 @@
         },
         methods:{
             gotoPage(){
-                var _widgetCtx = Object.assign(this.widgetContext, this.operation);
+                var _widgetCtx = Object.assign(this.widgetContext, {"buttonData":this.operation});
                 OperationUtils.execution(this.operation,_widgetCtx,"beforeExecCode").then((res)=>{
                     if(!this.operation.pageId){
                         return;

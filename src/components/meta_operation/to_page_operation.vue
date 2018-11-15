@@ -90,7 +90,7 @@ export default {
             return /*{dataId:id,entity:metaEntity.metaEntityId}*/;
         },
         gotoPage(){
-            var _widgetCtx = Object.assign(this.widgetContext, this.operation);
+            var _widgetCtx = Object.assign(this.widgetContext, {"buttonData":this.operation});
             OperationUtils.execution(this.operation,_widgetCtx,"beforeExecCode").then((res)=>{
                 if(!this.operation.pageId){
                     return;
@@ -104,7 +104,7 @@ export default {
             });
         },
         toggleModal(){
-            var _widgetCtx = Object.assign(this.widgetContext, this.operation);
+            var _widgetCtx = Object.assign(this.widgetContext, {"buttonData":this.operation});
             OperationUtils.execution(this.operation,_widgetCtx,"beforeExecCode").then((res)=>{
                 this.pageParams = _.extend({pageId:this.operation.pageId,byOperation:false},this.getIdFromContext());
                 /*this.webUrl = Utils.pageEntry()+"?pageId="+this.pageParams.pageId+"&dataId="+this.pageParams.dataId+"&entity="+this.pageParams.entity;*/

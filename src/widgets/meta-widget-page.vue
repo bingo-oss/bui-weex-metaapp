@@ -118,7 +118,7 @@
                         }else{
                             props=w.props,operations=w.operations;
                         }
-                        w.params={widgetCode: w.widgetCode};//传入部件code--用于读取页面参数
+                        w.params={widgetCode: w.widgetCode?w.widgetCode:""};//传入部件code--用于读取页面参数
                         //遍历每一个部件的属性
                         _.each(props,function(propValue,propKey){
                             var parsedValue=propParser.parse(propValue,_this);
@@ -137,7 +137,6 @@
                         if(_this.widgetParams.hideHeader){
                             Object.assign(w.params,{hideHeader:true});
                         }*/
-
                         _.each(_this.urlParam,function(propValue,propKey){
                             if(((propKey.indexOf(".")!=-1)&&(propKey.indexOf(w.widgetCode)!=-1))||propKey.indexOf(".")==-1){
                                 //特定code的组件参数 以及 code.key标符的就直接都传入
@@ -145,7 +144,8 @@
                                 if(_key.indexOf(".")!=-1){
                                     _key = _key.slice((_key.indexOf(".")+1))
                                 }
-                                if(!_.isEmpty(w.params[_key])){
+                                if(_.isEmpty(w.params[_key])){
+                                    //过滤已经在部件上定值和从url上取到值的部件参数
                                     w.params[_key] = propValue;
                                 }
                             }

@@ -19,7 +19,7 @@
         </bui-header>
         <bui-searchbar-center v-if="widgetParams.showSearchbar" @search="onSearch" @clear="onSearchClear" placeholder="请输入搜索内容"></bui-searchbar-center>
 
-        <bui-tabbar :titleSize="30" v-if="widgetParams.isViewMode" :tabItems="presetFilters" showSelectedLine=true @change="onItemChange" v-model="currentTab" :background="'#fff'" :selectedBackground="'#fff'" :containerStyle="{'border-bottom-color': '#F2F2F2','border-bottom-width': '1px','border-bottom-style':'solid'}" ></bui-tabbar>
+        <bui-tabbar :titleSize="30" v-if="widgetParams.isViewMode&&(presetFilters.length>1)" :tabItems="presetFilters" showSelectedLine=true @change="onItemChange" v-model="currentTab" :background="'#fff'" :selectedBackground="'#fff'" :containerStyle="{'border-bottom-color': '#F2F2F2','border-bottom-width': '1px','border-bottom-style':'solid'}" ></bui-tabbar>
 
         <list class="scroller">
             <refresh-wrapper @refresh="onrefresh" :isRefreshing="isRefreshing"></refresh-wrapper>
@@ -57,11 +57,10 @@
                     </div>
                 </bui-swipe-cell>
             </cell>
-
             <cell class="list-item no-data" v-if="listData.length === 0">
                 <text class="empty-tips">暂无数据</text>
             </cell>
-            <loading-wrapper @loading="onloading" :status="loadingStatus">
+            <loading-wrapper v-if="!isloadingHide" @loading="onloading" :status="loadingStatus">
             </loading-wrapper>
         </list>
 
@@ -126,6 +125,7 @@ module.exports = {
             dataUrlPath: '', // 获取 listData 的 url 路径，不包含 queryParam
             queryParam: {}, // 获取 listData 的 queryParam
             listData: [],
+            dataCount:0,//数据总数
             viewDef: {},
             selectFields: [],
             quickSearchableField: [],
@@ -152,7 +152,8 @@ module.exports = {
             loadingText:"",
             //showFilterView:false,
             currentTab:0,//默认选择第一个
-            selectedItem:{}//记录选择对象--合并暴露对象
+            selectedItem:{},//记录选择对象--合并暴露对象
+            isloadingHide:false//是否隐藏加载更新
         }
     },
     computed: {
@@ -211,24 +212,24 @@ module.exports = {
                 let commonOpt=commonOperation.createOperation(commonOptName);
                 if(commonOpt){
                     operation= _.extend(operation,commonOpt);
-                    operation.onclick(_widgetCtx,{operation:operation},factoryApi);
+                    operation.onclick(_widgetCtx,factoryApi);
                 }
             }else if(operation.onclick){//脚本操作
                 if(_.isFunction(operation.onclick)){
-                    operation.onclick(Object.assign(_widgetCtx,operation),{operation:operation},factoryApi);
+                    operation.onclick(_widgetCtx,factoryApi);
                 }else{
                     var onclick=Function('"use strict";return ' + operation.onclick  )();
-                    onclick(Object.assign(_widgetCtx,operation),{operation:operation},factoryApi);
+                    onclick(_widgetCtx,factoryApi);
                 }
             }else if(operation.operationType=="execOperation"){//脚本操作
                 let _t = this;
                 function cellExecScript() {
                     OperationUtils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
                         if (_.isFunction(_t.implCode)) {
-                            _t.implCode(Object.assign(_widgetCtx, operation), {operation: operation},factoryApi);
+                            _t.implCode(Object.assign(_widgetCtx, operation),factoryApi);
                         } else {
                             var onclick = Function('"use strict";return ' + _t.implCode)();
-                            onclick(Object.assign(_widgetCtx, operation), {operation: operation},factoryApi);
+                            onclick(Object.assign(_widgetCtx, operation),factoryApi);
                         }
                         OperationUtils.execution(operation,_widgetCtx,"afterExecCode")//执行后
                     });
@@ -261,15 +262,37 @@ module.exports = {
                 OperationUtils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
                     OperationUtils.execution(operation,_widgetCtx,"afterExecCode")//执行后
                     if(operation.operationType=="toDynamicPage"){
+                        this.selectedItem.actionParams={"ios":"[aaa] \n pageId=navbar \n entityId=abcdefgh","android":"[aaa] \n pageId=navber \n entityId=abcdefgh"}
+                        operation.dynamicPageFunc = function(obj,factoryApi){
+                            var _actionParams = {"type":"factoryApp", "pageId":"", "url":"", "params":{}}
+                            if(obj.selectedItem&&obj.selectedItem.actionParams){
+                                //存在跳入的配置页面
+                                var actionParams = ""
+                                if(weex.config.env.deviceModel.indexOf("iPhone")==-1){
+                                    actionParams = obj.selectedItem.actionParams.ios;
+                                }else{
+                                    actionParams = obj.selectedItem.actionParams.android;
+                                }
+                                actionParams = actionParams.split("\n");
+                                _.each(actionParams,function(param){
+                                    if(param.indexOf("=")!=-1){
+                                        param = param.split("=");
+                                        _actionParams.params[param[0].replace(/^\s+|\s+$/g,"")]= param[1].replace(/^\s+|\s+$/g,"");
+                                    }
+                                })
+                            }
+                            return _actionParams
+                        }//模拟校验方法
+
                         var pageParams={};
-                        if(this.operation.dynamicPageFunc){
+                        if(operation.dynamicPageFunc){
                             //进行数据解析
-                            if (_.isFunction(this.operation.dynamicPageFunc)) {
+                            if (_.isFunction(operation.dynamicPageFunc)) {
                                 this.mustStopRepeatedClick = true;
-                                pageParams = this.operation.dynamicPageFunc(_widgetCtx,this,factoryApi);
+                                pageParams = operation.dynamicPageFunc(_widgetCtx,factoryApi);
                             } else {
-                                var dynamicPageFunc = Function('"use strict";return ' + this.operation.dynamicPageFunc)();
-                                pageParams = dynamicPageFunc(_widgetCtx, this,factoryApi);
+                                var dynamicPageFunc = Function('"use strict";return ' + operation.dynamicPageFunc)();
+                                pageParams = dynamicPageFunc(_widgetCtx,factoryApi);
                             }
                         }
                         if(pageParams.type=="factoryApp"){
@@ -294,6 +317,7 @@ module.exports = {
         titleClicked(e) {
             // 没有分类则无动作
             if (!this.presetFilters.length) return;
+            if(this.widgetParams.isViewMode) return;
             this.$refs.dropdown.show(e);
             this.showDropdown = true;
         },
@@ -331,7 +355,18 @@ module.exports = {
                     switch (fieldDef.format) {
                         case 'date-time':
                             let d = new Date(obj[field]);
-                            return d.toLocaleString(undefined, {hour12: false})
+                            var year=d.getFullYear();
+                            var moth=d.getMonth()+1;
+                            if(moth<10){moth="0"+moth}
+                            let date=d.getDate();
+                            if(date<10){date="0"+date;}
+                            let hour=d.getHours();
+                            if(hour<10){hour="0"+hour;}
+                            let minute=d.getMinutes();
+                            if(minute<10){minute="0"+minute;}
+                            let second=d.getSeconds();
+                            if(second<10){second="0"+second;}
+                            return year+"-"+moth+"-"+date+" "+hour+":"+minute/*d.toLocaleString(undefined, {hour12: false})*/
                         default:
 
                     }
@@ -363,6 +398,7 @@ module.exports = {
             this.queryParam.total=true;
             return ajax.get(this.dataUrlPath, this.queryParam).then(resp => {
                 this.isShowLoading = false;
+                this.dataCount = resp.headers["X-Total-Count"]
                 if(this.presetFilters[this.currentTab]){
                     if(this.presetFilters[this.currentTab].showCount) {//是否显示数字
                         this.presetFilters[this.currentTab].count = `(${resp.headers["X-Total-Count"]})`;
@@ -382,6 +418,11 @@ module.exports = {
                 this.isRefreshing = false;
                 this.currentPage = 1;
                 this.loadingStatus = 'init';
+                if(this.dataCount>=this.listData.length){
+                    this.isloadingHide = true;
+                }else{
+                    this.isloadingHide = false;
+                }
             }).catch(err => {
                 this.isRefreshing = false;
                 this.$alert(err);
@@ -393,6 +434,11 @@ module.exports = {
             this.fetchData(this.currentPage + 1).then(data => {
                 if (data.length) {
                     this.listData = this.listData.concat(data);
+                    if(this.dataCount>=this.listData.length){
+                        this.isloadingHide = true;
+                    }else{
+                        this.isloadingHide = false;
+                    }
                     this.loadingStatus = 'init';
                     this.currentPage++;
                 } else {
@@ -643,6 +689,7 @@ module.exports = {
                     .then(engineUrl => {
                         this.engineUrl = engineUrl;
                         this.entityName = viewDef.metaEntityName;
+                        this.entityId = viewDef.metaEntityId;
                         service.getSwaggerEntityDef(engineUrl, this.entityName).then(entityDef => {
                             // 对于实体类型的字段，这里构造其 entityResourceUrl，参考以下 swagger.json 片段
                             // "channelId": {
@@ -692,22 +739,23 @@ module.exports = {
                 console.log(err)
                 this.$alert(err);
             });
-            },
+        },
         getWidgetContext(obj){
             //传入操作的上下文内容
             let _t = this,_obj = {};
             if(obj){
                 _obj.selectedId = obj.id;
-                _obj.selectedItem = obj;
-                _obj.grid = this
+                _obj.selectedItem = obj;//选择的数据对象
+                _obj.grid = this//模型自身
+                _obj.widgetParams = this.widgetParams;//部件参数
             }
-            return Object.assign({grid:_t,metaEntity:_t.metaEntity,entityName:_t.entityName},_obj);
+            return Object.assign({grid:_t,entity:_t.metaEntity,entityId:_t.entityId,entityName:_t.entityName},_obj);
         },
         reload(){
             this.refreshData();
         },
-        getExportParams(){
-            //暴露的参数
+        exportParams(){
+            //本部件暴露的参数
             return Object.assign({},this.widgetParams,this.selectedItem)
         }
     },
@@ -830,7 +878,8 @@ module.exports = {
     color: #BEBCBC;
 }
 .no-data{
-    flex: 1;
+    /*flex: 1;*/
+    height:400px;
     align-items: center;
     justify-content: center;
 }

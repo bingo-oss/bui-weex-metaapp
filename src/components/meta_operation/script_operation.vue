@@ -41,11 +41,11 @@ export default {
             if(this.operation.onclick) {
                 if (_.isFunction(this.operation.onclick)) {
                     this.mustStopRepeatedClick = true;
-                    this.operation.onclick(Object.assign(this.widgetContext, this.operation),this,factoryApi);
+                    this.operation.onclick(Object.assign(this.widgetContext,{"buttonData":this.operation}),factoryApi);
                 } else {
                     this.mustStopRepeatedClick = true;
                     var onclick = Function('"use strict";return ' + this.operation.onclick)();
-                    onclick(Object.assign(this.widgetContext, this.operation), this,factoryApi);
+                    onclick(Object.assign(this.widgetContext, {"buttonData":this.operation}),factoryApi);
                 }
                 this.mustStopRepeatedClick = false;
                 this.$emit("triggered", "script");
@@ -64,15 +64,15 @@ export default {
             }
         },
         cellExecScript(){
-            var _widgetCtx = Object.assign(this.widgetContext, this.operation);
+            var _widgetCtx = Object.assign(this.widgetContext,{"buttonData":this.operation});
             OperationUtils.execution(this.operation,_widgetCtx,"beforeExecCode").then((res)=>{
                 if(_.isFunction(this.implCode)){
                     this.mustStopRepeatedClick=true;
-                    this.implCode(Object.assign(this.widgetContext,this.operation),this,factoryApi);
+                    this.implCode(_widgetCtx,factoryApi);
                 }else{
                     this.mustStopRepeatedClick=true;
                     var onclick=Function('"use strict";return ' + this.implCode  )();
-                    onclick(Object.assign(this.widgetContext,this.operation),this,factoryApi);
+                    onclick(_widgetCtx,factoryApi);
                 }
                 this.mustStopRepeatedClick=false;
                 this.$emit("triggered","script");
