@@ -97,10 +97,10 @@ var utils={
         //具备校验函数--需要对按钮进行显隐控制
         if(operation.checkFunc){
             if (_.isFunction(operation.checkFunc)) {
-                operation.checkFunc(this,factoryApi);
+                operation.checkFunc(operation,factoryApi);
             } else {
                 var onclick = Function('"use strict";return ' + operation.checkFunc)();
-                onclick(this,factoryApi);
+                onclick(operation,factoryApi);
             }
         }
     },

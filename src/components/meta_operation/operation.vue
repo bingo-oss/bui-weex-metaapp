@@ -59,6 +59,7 @@ export default {
         "operation"(operation){
             operation.show = true;
             operation.hide = false;
+            operation.widgetContext = this.extendedWidgetContext;//暴露部件参数出去提供更多的校验手段
             OperationUtils.showOperation(operation);
         }
     },
