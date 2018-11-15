@@ -1963,9 +1963,9 @@
         },
         mounted(){
             let params =this.widgetParams,_t = this;//页面参
-            if (params != null && !Util.isEmpty(params.dataId) && !Util.isEmpty(params.entity)) {
+            if (params != null && !Util.isEmpty(params.dataId) && !Util.isEmpty(params.entityId)) {
                 this.activityInfo.sourceId = params.dataId;
-                this.activityInfo.suiteId = params.entity;
+                this.activityInfo.suiteId = params.entityId;
                 _t.getMetaEntity(function(){
                     _t.refreshData();
                 })

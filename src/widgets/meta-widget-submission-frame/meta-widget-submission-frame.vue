@@ -294,7 +294,7 @@
             this.formDate.nodeId = "default";
             if(this.widgetParams.launch) {
                 //是提交按钮
-                service.getMetaEntityProcRelation(this.widgetParams.entity).then((res)=>{
+                service.getMetaEntityProcRelation(this.widgetParams.entityId).then((res)=>{
                     _t.procRelations = res.data;
                 });
             }else{

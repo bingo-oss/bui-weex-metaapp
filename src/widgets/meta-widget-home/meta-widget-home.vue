@@ -82,7 +82,7 @@
             <!--默认页面-->
             <div style="flex: 1;">
                 <!--<meta-widget-page :query="{dataId:activityInfo.sourceId}" :widget-params="{pageId:tabs[0].id,dataId:widgetParams.dataId,entity:widgetParams.entity}"></meta-widget-page>-->
-                <meta-widget-page :query="{dataId:activityInfo.sourceId}" :widget-params="{pageId:(defaultTab.type=='toOperation'&&defaultTab.operationId)?defaultTab.operationId:defaultTab.pageId,dataId:widgetParams.dataId,entity:widgetParams.entity,byOperation:(defaultTab.type=='toOperation'&&defaultTab.operationId)?true:false,hideHeader:true}"></meta-widget-page>
+                <meta-widget-page :query="{dataId:activityInfo.sourceId}" :widget-params="{pageId:(defaultTab.type=='toOperation'&&defaultTab.operationId)?defaultTab.operationId:defaultTab.pageId,dataId:widgetParams.dataId,entityId:widgetParams.entityId,byOperation:(defaultTab.type=='toOperation'&&defaultTab.operationId)?true:false,hideHeader:true}"></meta-widget-page>
             </div>
 
             <dialog v-model="showDialog" @btnClick="onDialogCallback" title="提示" :buttonArray="buttonArray"
@@ -866,7 +866,7 @@
                     //读取指定的详情调整参数
                     params.formDetailParam = JSON.parse(params.formDetailParam);
                 }
-                let pcUrl = this.pcHomeUrl.substring(0,this.pcHomeUrl.indexOf("cddc_web")) +"app-factory/index.html#/" + this.activityInfo.projectId + '/page/' + params.pageId +"?dataId="+this.activityInfo.sourceId+"&entity="+this.activityInfo.suiteId;
+                let pcUrl = this.pcHomeUrl.substring(0,this.pcHomeUrl.indexOf("cddc_web")) +"app-factory/index.html#/" + this.activityInfo.projectId + '/page/' + params.pageId +"?dataId="+this.activityInfo.sourceId+"&entityId="+this.activityInfo.suiteId;
                 var arr = [];
                 for (let i in params.formDetailParam) {
                     arr.push(i+"="+params.formDetailParam[i]); //属性
@@ -882,7 +882,7 @@
                         }]
                     };
                     let content = {
-                        action_params: "[OpenApp]\nappCode=metaapp\nappUrl=index.weex.js?entity=" + this.activityInfo.suiteId + "&dataId=" + this.activityInfo.sourceId  + '\npcHomeUrl=' + pcUrl+"\npcNoTitleWindow=1",
+                        action_params: "[OpenApp]\nappCode=metaapp\nappUrl=index.weex.js?entityId=" + this.activityInfo.suiteId + "&dataId=" + this.activityInfo.sourceId  + '\npcHomeUrl=' + pcUrl+"\npcNoTitleWindow=1",
                         icon: this.activityInfo.icon,
                         dsec: this.activityInfo.name,
                         title: this.activityInfo.name,
@@ -1214,7 +1214,7 @@
             },
             jumpPage(tap){
                 let _t  =this;
-                _t.toPage({pageId:(tap.type=='toOperation'&&tap.operationId)?tap.operationId:tap.pageId,dataId:_t.widgetParams.dataId,entity:_t.widgetParams.entity,byOperation:(tap.type=='toOperation'&&tap.operationId)?true:false,homePageId:tap.homePageId})
+                _t.toPage({pageId:(tap.type=='toOperation'&&tap.operationId)?tap.operationId:tap.pageId,dataId:_t.widgetParams.dataId,entityId:_t.widgetParams.entityId,byOperation:(tap.type=='toOperation'&&tap.operationId)?true:false,homePageId:tap.homePageId})
             },
             getTopMessage(){//置顶消息数据
                 let params = {
@@ -1250,13 +1250,13 @@
                 //链接上不带上数据id,则读取部件配置上的
                 params.dataId = this.widgetParams.dataId
             }
-            if(!params.entity&&this.widgetParams.entity){
+            if(!params.entityId&&this.widgetParams.entityId){
                 //链接上不带上数据id,则读取部件配置上的
-                params.entity = this.widgetParams.entity
+                params.entityId = this.widgetParams.entityId
             }
-            if (params != null && !Util.isEmpty(params.dataId) && !Util.isEmpty(params.entity)) {
+            if (params != null && !Util.isEmpty(params.dataId) && !Util.isEmpty(params.entityId)) {
                 this.activityInfo.sourceId = params.dataId;
-                this.activityInfo.suiteId = params.entity;
+                this.activityInfo.suiteId = params.entityId;
                 this.getMetaEntity(function(res){
                     _t.isHasAccessAuthority();
                 })
