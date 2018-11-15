@@ -38,17 +38,20 @@ export default {
             if(this.mustStopRepeatedClick){
                 return;
             }
-            if(this.operation.onclick) {
-                if (_.isFunction(this.operation.onclick)) {
-                    this.mustStopRepeatedClick = true;
-                    this.operation.onclick(Object.assign(this.widgetContext,{"buttonData":this.operation}),factoryApi);
-                } else {
-                    this.mustStopRepeatedClick = true;
-                    var onclick = Function('"use strict";return ' + this.operation.onclick)();
-                    onclick(Object.assign(this.widgetContext, {"buttonData":this.operation}),factoryApi);
-                }
-                this.mustStopRepeatedClick = false;
-                this.$emit("triggered", "script");
+            if(this.operation.onClick) {
+                OperationUtils.execution(this.operation,_widgetCtx,"beforeExecCode").then((res)=>{
+                    if (_.isFunction(this.operation.onClick)) {
+                        this.mustStopRepeatedClick = true;
+                        this.operation.onClick(Object.assign(this.widgetContext,{"buttonData":this.operation}),factoryApi);
+                    } else {
+                        this.mustStopRepeatedClick = true;
+                        var onclick = Function('"use strict";return ' + this.operation.onClick)();
+                        onclick(Object.assign(this.widgetContext, {"buttonData":this.operation}),factoryApi);
+                    }
+                    this.mustStopRepeatedClick = false;
+                    this.$emit("triggered", "script");
+                    OperationUtils.execution(this.operation,_widgetCtx,"afterExecCode")//执行后
+                });
             }else{
                 if(_t.implCode){
                     _t.cellExecScript();

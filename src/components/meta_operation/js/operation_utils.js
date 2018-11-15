@@ -2,6 +2,8 @@ import _ from '../../../js/tool/lodash';
 import propParser from '../../../js/tool/prop_parser';
 const storage = weex.requireModule('storage');
 import factoryApi from '../../../widgets/libs/factory-api.js';
+import Utils from '../../../js/tool/utils';
+const linkapi = require('linkapi');
 
 var utils={
     expandOperation:function(operation,ctx){
@@ -27,9 +29,10 @@ var utils={
             let value=true;
             if(operation[before_after]) {
                 if (_.isFunction(operation[before_after])) {
-                    value = operation[before_after](_widgetCtx,factoryApi)
+                    operation[before_after](_widgetCtx,factoryApi)
                 } else {
-                    value = Function('"use strict";return ' + operation[before_after])(_widgetCtx, factoryApi);
+                    var onclick=Function('"use strict";return ' + operation[before_after]  )();
+                    onclick(_widgetCtx,factoryApi);
                 }
                 resolve(value);
             }else{
@@ -88,6 +91,134 @@ var utils={
             });
             storage.setItem("urlParam", JSON.stringify(urlParam));//存储起来需要传递的参数
         }
+    },
+    showOperation(_this){
+        //具备校验函数--需要对按钮进行显隐控制
+        if(operation.checkFunc){
+            if (_.isFunction(operation.checkFunc)) {
+                operation.checkFunc(this,factoryApi);
+            } else {
+                var onclick = Function('"use strict";return ' + operation.checkFunc)();
+                onclick(this,factoryApi);
+            }
+        }
+    },
+    operationClick(_rowSingleData,_widgetCtx,_t){
+        //部件按钮的对象,部件需要暴露给按钮操作的对象,_t自身模型
+        //模拟按钮组件的方法执行--适用于列表部件单击
+        var operation=utils.expandOperation(_rowSingleData,{
+            operation:_rowSingleData,
+            widgetContext:_widgetCtx
+        });
+        //目前支持通用操作和脚本操作
+        let commonOptName=operation.name;
+        if(commonOptName&&commonOperation.createOperation(commonOptName)){
+            let commonOpt=commonOperation.createOperation(commonOptName);
+            if(commonOpt){
+                operation= _.extend(operation,commonOpt);
+                operation.onclick(_widgetCtx,factoryApi);
+            }
+        }else if(operation.onClick){//脚本操作
+            utils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
+                if(_.isFunction(operation.onclick)){
+                    operation.onClick(_widgetCtx,factoryApi);
+                }else{
+                    var onclick=Function('"use strict";return ' + operation.onClick  )();
+                    onclick(_widgetCtx,factoryApi);
+                }
+                utils.execution(operation,_widgetCtx,"afterExecCode")//执行后
+            });
+        }else if(operation.operationType=="execOperation"){//脚本操作
+            function cellExecScript() {
+                utils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
+                    if (_.isFunction(_t.implCode)) {
+                        _t.implCode(Object.assign(_widgetCtx, operation),factoryApi);
+                    } else {
+                        var onclick = Function('"use strict";return ' + _t.implCode)();
+                        onclick(Object.assign(_widgetCtx, operation),factoryApi);
+                    }
+                    utils.execution(operation,_widgetCtx,"afterExecCode")//执行后
+                });
+            }
+            if(_t.implCode){
+                cellExecScript();
+            }else {
+                //获取执行代码
+                config.readRuntimeConfig().then(runtimeConfig => {
+                    ajax.get(runtimeConfig["service.metabase.endpoint"]+`/meta_operation/${operation.operationId}`).then(({data})=>{
+                        _t.implCode=data.implCode;
+                        cellExecScript();
+                    });
+                });
+            }
+        }else if(operation.operationType=="toPage"||operation.operationType=="toOperation"||operation.operationType=="toDynamicPage"){
+            //赋予选择值
+            var context = _.extend(_widgetCtx, operation);
+            if(!context.selectedItem&&context.selectedItems){
+                //按钮放置的是在工具栏
+                _t.selectedItem = context.selectedItems[(context.selectedItems.length-1)]
+            }else{
+                _t.selectedItem=context.selectedItem;
+            }
+            utils.setUrlParam(operation,_t);
+            var pageId=operation.pageId,byOperation= false;
+            if(operation.operationType=="toOperation"){
+                byOperation = true;
+            }
+            utils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
+                utils.execution(operation,_widgetCtx,"afterExecCode")//执行后
+                if(operation.operationType=="toDynamicPage"){
+                    _widgetCtx.selectedItem.actionParams={"ios":"[aaa] \n pageId=navbar \n entityId=abcdefgh","android":"[aaa] \n pageId=navber \n entityId=abcdefgh"}
+                    operation.dynamicPageFunc = function(obj,factoryApi){
+                        var _actionParams = {"type":"factoryApp", "pageId":"", "url":"", "params":{}}
+                        if(obj.selectedItem&&obj.selectedItem.actionParams){
+                            //存在跳入的配置页面
+                            var actionParams = ""
+                            if(weex.config.env.deviceModel.indexOf("iPhone")==-1){
+                                actionParams = obj.selectedItem.actionParams.ios;
+                            }else{
+                                actionParams = obj.selectedItem.actionParams.android;
+                            }
+                            actionParams = actionParams.split("\n");
+                            _.each(actionParams,function(param){
+                                if(param.indexOf("=")!=-1){
+                                    param = param.split("=");
+                                    _actionParams.params[param[0].replace(/^\s+|\s+$/g,"")]= param[1].replace(/^\s+|\s+$/g,"");
+                                }
+                            })
+                        }
+                        return _actionParams
+                    }//模拟校验方法
+                    var pageParams={};
+                    if(operation.dynamicPageFunc){
+                        //进行数据解析
+                        if (_.isFunction(operation.dynamicPageFunc)) {
+                            _t.mustStopRepeatedClick = true;
+                            pageParams = operation.dynamicPageFunc(_widgetCtx,factoryApi);
+                        } else {
+                            var dynamicPageFunc = Function('"use strict";return ' + operation.dynamicPageFunc)();
+                            pageParams = dynamicPageFunc(_widgetCtx,factoryApi);
+                        }
+                    }
+                    if(pageParams.type=="factoryApp"){
+                        //跳入的是应用工厂应用
+                        _t.$push(Utils.pageEntry(),Object.assign({pageId:pageParams.pageId},pageParams.params));
+                    }else if(pageParams.type=="url"){
+                        //跳入的是第三方url
+                        let _urlParams = []
+                        _.each(pageParams.params,(val,key)=>{
+                            _urlParams.push(`${key}=${val}`);
+                        });
+                        if(pageParams.url.indexOf("?")==-1){pageParams.url+="?"}
+                        linkapi.openLinkBroswer(pageParams.url+_urlParams.join("&"));
+                    }
+                }else{
+                    var queryParam=_.extend({pageId:pageId,byOperation:byOperation}/*,getIdFromContext()*/);
+                    _t.$push(Utils.pageEntry(),queryParam);
+                }
+            });
+        }
+
     }
 };
 export default utils;

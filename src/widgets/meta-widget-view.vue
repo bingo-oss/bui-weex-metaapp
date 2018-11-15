@@ -202,10 +202,8 @@ module.exports = {
         rowSingleClick(rowData) {
             var _rowSingleClick=this.widgetParams.rowSingleClick[0];
             var _widgetCtx=this.getWidgetContext(rowData);
-            var operation=OperationUtils.expandOperation(_rowSingleClick,{
-                operation:_rowSingleClick,
-                widgetContext:_widgetCtx
-            });
+            OperationUtils.operationClick(_rowSingleClick,_widgetCtx,this);
+/*
             //目前支持通用操作和脚本操作
             let commonOptName=operation.name;
             if(commonOptName&&commonOperation.createOperation(commonOptName)){
@@ -214,13 +212,16 @@ module.exports = {
                     operation= _.extend(operation,commonOpt);
                     operation.onclick(_widgetCtx,factoryApi);
                 }
-            }else if(operation.onclick){//脚本操作
-                if(_.isFunction(operation.onclick)){
-                    operation.onclick(_widgetCtx,factoryApi);
-                }else{
-                    var onclick=Function('"use strict";return ' + operation.onclick  )();
-                    onclick(_widgetCtx,factoryApi);
-                }
+            }else if(operation.onClick){//脚本操作
+                OperationUtils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
+                    if(_.isFunction(operation.onclick)){
+                        operation.onClick(_widgetCtx,factoryApi);
+                    }else{
+                        var onclick=Function('"use strict";return ' + operation.onClick  )();
+                        onclick(_widgetCtx,factoryApi);
+                    }
+                    OperationUtils.execution(operation,_widgetCtx,"afterExecCode")//执行后
+                });
             }else if(operation.operationType=="execOperation"){//脚本操作
                 let _t = this;
                 function cellExecScript() {
@@ -308,11 +309,12 @@ module.exports = {
                             linkapi.openLinkBroswer(pageParams.url+_urlParams.join("&"));
                         }
                     }else{
-                        var queryParam=_.extend({pageId:pageId,byOperation:byOperation}/*,getIdFromContext()*/);
+                        var queryParam=_.extend({pageId:pageId,byOperation:byOperation}/!*,getIdFromContext()*!/);
                         this.$push(Utils.pageEntry(),queryParam);
                     }
                 });
             }
+*/
         },
         titleClicked(e) {
             // 没有分类则无动作

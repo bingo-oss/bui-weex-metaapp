@@ -1,5 +1,5 @@
 <template>
-    <div class="widget-operation">
+    <div class="widget-operation" v-if="show||!hide">
         <component @triggered="triggered" @successed="successed" :btn-type="btnType" :is="operationComponent" :operation="extendedOperation" :widget-context="extendedWidgetContext">
             <slot></slot>
         </component>
@@ -10,8 +10,10 @@ import propParser from '../../js/tool/prop_parser';
 import _ from '../../js/tool/lodash';
 import Utils from '../../js/tool/utils';
 import OperationUtils from './js/operation_utils';
+import factoryApi from '../../widgets/libs/factory-api.js';
 //操作类型定义
 var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script',openApp:'openApp',toOperation:"to_operation"};
+/*
 var permParser={
     //来自表单的取消、开启编辑、编辑、删除权限
     "formCancel":function(widgetContext){
@@ -37,6 +39,7 @@ var permParser={
         return widgetContext.selectedItem&&Utils.hasPerm(widgetContext.selectedItem[Utils.dataPermField],Utils.permValues.del);
     }
 };
+*/
 //将不同的部件操作类型转成实际的操作
 export default {
     props:{
@@ -50,6 +53,11 @@ export default {
         },
         btnType:{//操作按钮的类型
             type:String
+        }
+    },
+    watch:{
+        "operation"(operation){
+            OperationUtils.showOperation(this);
         }
     },
     computed:{
@@ -120,7 +128,10 @@ export default {
         }
     },
     data(){
-        return {};
+        return {
+            show:true,//用于控制是否显示按钮
+            hide:false//用于控制是否显示按钮
+        };
     },
     methods:{
         triggered(optType){
