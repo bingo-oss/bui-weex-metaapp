@@ -1,5 +1,5 @@
 <template>
-    <div class="widget-operation" v-if="show||!hide">
+    <div class="widget-operation" v-if="operation.show||!operation.hide">
         <component @triggered="triggered" @successed="successed" :btn-type="btnType" :is="operationComponent" :operation="extendedOperation" :widget-context="extendedWidgetContext">
             <slot></slot>
         </component>
@@ -57,7 +57,9 @@ export default {
     },
     watch:{
         "operation"(operation){
-            OperationUtils.showOperation(this);
+            operation.show = true;
+            operation.hide = false;
+            OperationUtils.showOperation(operation);
         }
     },
     computed:{
@@ -89,7 +91,7 @@ export default {
                 }
             });
             return _.extend(this.widgetContext,params);
-        },
+        }/*,
         showOperation:function(){//根据自定义操作权限表达式计算操作是否需要隐藏
             //只显示当前端的操作，目前只区分移动端和pcweb端
             //terminalType 1：pcweb 2：android 4：ios
@@ -125,7 +127,7 @@ export default {
                 }
             }
             return false;
-        }
+        }*/
     },
     data(){
         return {

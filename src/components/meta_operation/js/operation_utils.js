@@ -92,7 +92,7 @@ var utils={
             storage.setItem("urlParam", JSON.stringify(urlParam));//存储起来需要传递的参数
         }
     },
-    showOperation(_this){
+    showOperation(operation){
         //具备校验函数--需要对按钮进行显隐控制
         if(operation.checkFunc){
             if (_.isFunction(operation.checkFunc)) {

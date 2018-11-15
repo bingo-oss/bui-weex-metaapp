@@ -202,6 +202,7 @@ module.exports = {
         rowSingleClick(rowData) {
             var _rowSingleClick=this.widgetParams.rowSingleClick[0];
             var _widgetCtx=this.getWidgetContext(rowData);
+            if(!_rowSingleClick.show||!_rowSingleClick.hide)return false;
             OperationUtils.operationClick(_rowSingleClick,_widgetCtx,this);
 /*
             //目前支持通用操作和脚本操作
@@ -804,6 +805,12 @@ module.exports = {
                         });
                 });
             }//获取对应视图下的过滤条件
+
+             _.each(this.widgetParams.rowSingleClick,(button)=>{
+                button.show = true;
+                button.hide = false;
+                OperationUtils.showOperation(button)
+            });//不是调用 meta-operation 渲染的按钮-需要单独执行校验函数 和显隐处理--会返回
     },
     components: {
         'filter-view': require('../views/filter.vue')
