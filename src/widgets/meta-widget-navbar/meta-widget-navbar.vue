@@ -4,7 +4,7 @@
         <div class="fixedStyle" :style="fixedStyle">
             <bui-header :leftItem="{icon: 'ion-ios-arrow-left'}" @leftClick="() =>{this.$pop()}" :backgroundColor="themeBg">
                 <div slot="center" class="page-title-wrapper">
-                    <text v-for="(tapLabel,index) in tapLabels" class="page-title" :style="{color:(tapLabel.highlight?highlight.color:'#ccc'),opacity:topY}" @click="goto(tapLabel,index)">{{tapLabel.name}}</text>
+                    <text v-for="(tapLabel,index) in tapLabels" class="page-title" :style="{color:(tapLabel.highlight?highlight.color:'#ccc'),opacity:gradualChangeOpacity}" @click="goto(tapLabel,index)">{{tapLabel.name}}</text>
                 </div>
 
                 <div slot="right" class="">
@@ -68,25 +68,12 @@
         },
         data(){
             return {
-                tapLabels:[
-                    {
-                        type:"form",
-                        highlight:true,
-                        data:"fields"
-                    },
-                    {
-                        type:"form",
-                        highlight:true,
-                        data:"fields"
-                    }
-                ],
                 highlight:{
                     //高亮属性
                     color:"#fff"
                 },
-                fixedStyle:{
-                },
-                topY:0,
+                fixedStyle:{},
+                gradualChangeOpacity:0,
                 operationsDropdown:false,
                 groupId:"",//群组id
                 unReadGroupMsgCount: 0//聊天未读数
@@ -222,7 +209,9 @@
             },
             pageScrollHandler(e){
                 //用于监听容器的滚动
-                this.topY = - e.contentOffset.y/100;//滚动渐显效果
+                if(this.widgetParams.isGradualChange){
+                    this.gradualChangeOpacity = - e.contentOffset.y/50;//滚动渐显效果
+                }
             }
         },
         created(){
@@ -232,6 +221,10 @@
             if(this.widgetParams.groupId)this.groupId = this.widgetParams.groupId;
         },
         mounted(){
+
+            this.tapLabels = (this.widgetParams.tapLabels?this.widgetParams.tapLabels:[]);//读取
+            this.gradualChangeOpacity = (this.widgetParams.isGradualChange?0:1);//是否开启渐变效果
+
             let _childWidgets = this.$parent.$refs.childWidgets.filter((obj)=>{
                 let _tagName = obj.$attrs.tagName;
                 if(_tagName!="meta-widget-navbar"){
@@ -252,6 +245,7 @@
                 tapLabel.highlight = false;
             });
             this.tapLabels[0].highlight =  true;
+
         }
     }
 </script>

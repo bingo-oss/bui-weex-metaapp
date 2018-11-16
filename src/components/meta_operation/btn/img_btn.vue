@@ -3,7 +3,7 @@
     <text>123123123</text>
 -->
     <div>
-        <image style="width: 40px; height: 40px;" :src="getImageUrl(operation.icon)"></image>
+        <bui-image width="38px" height="38px" :src="getImageUrl(operation.icon)"></bui-image>
     </div>
 </template>
 <script>

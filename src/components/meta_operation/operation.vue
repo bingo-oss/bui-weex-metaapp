@@ -1,5 +1,5 @@
 <template>
-    <div class="widget-operation" v-if="operation.show||!operation.hide">
+    <div class="widget-operation" v-if="operation.show&&!operation.hide">
         <component @triggered="triggered" @successed="successed" :btn-type="btnType" :is="operationComponent" :operation="extendedOperation" :widget-context="extendedWidgetContext">
             <slot></slot>
         </component>
@@ -55,13 +55,11 @@ export default {
             type:String
         }
     },
-    watch:{
-        "operation"(operation){
-            operation.show = true;
-            operation.hide = false;
-            operation.widgetContext = this.extendedWidgetContext;//暴露部件参数出去提供更多的校验手段
-            OperationUtils.showOperation(operation);
-        }
+    created(){
+            this.operation.show = true;
+            this.operation.hide = false;
+            this.operation.widgetContext = this.extendedWidgetContext;//暴露部件参数出去提供更多的校验手段
+            OperationUtils.showOperation(this.operation);
     },
     computed:{
         operationComponent:function(){

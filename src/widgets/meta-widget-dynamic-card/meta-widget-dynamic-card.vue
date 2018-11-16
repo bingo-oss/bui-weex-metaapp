@@ -199,7 +199,6 @@
                                 <div v-if="blogItem.commentList&&blogItem.commentList.length>0"
                                      style="padding-left: 10px;padding-bottom: 10px">
                                     <div class="flex-column" style="margin-top:15px;"
-                                         @click="onReplyClick(blogItem,commentItem)"
                                          v-for="(commentItem,i) in blogItem.commentList">
                                         <text class="comment-text">{{getCommentContent(commentItem)}}</text>
                                     </div>

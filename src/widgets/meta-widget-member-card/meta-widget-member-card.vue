@@ -85,7 +85,7 @@
         border-bottom-color: #ececec;
         border-bottom-width: 1px;
         border-bottom-style: solid;*/
-        padding-left: 15px;
+        padding-left: 20px;
 /*
         padding-right: 10px;
 */
