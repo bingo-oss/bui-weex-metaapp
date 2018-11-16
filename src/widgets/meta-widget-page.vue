@@ -1,6 +1,6 @@
 <template>
     <div class="full-column" v-if="pageConfig" >
-        <scroller class="full-column" style="background-color:#F8F8F8">
+        <scroller class="full-column" style="background-color:#F8F8F8" @scroll="scrollHandler">
             <div :style="scrollerStyle">
                 <component v-for="(widget,index) in pageConfig.columnWidgets" @appear="appear(widget,index)" @disappear="disappear(widget,index)" ref="childWidgets" :is="widget.tagName" :key="index" :widget-params="widget.params" :vue-modal="vueModal" :tag-name="widget.tagName" :widget-name="widget.widgetName"></component>
             </div>
@@ -171,6 +171,14 @@
                 _.each(this.$refs.childWidgets,(cw)=>{
                     if(_.isFunction(cw.disappear)){
                         cw.disappear(this.$refs.childWidgets[index],index);
+                    }
+                });
+            },
+            scrollHandler(e){
+                //滚动触发
+                _.each(this.$refs.childWidgets,(cw)=>{
+                    if(_.isFunction(cw.pageScrollHandler)){
+                        cw.pageScrollHandler(e);
                     }
                 });
             }

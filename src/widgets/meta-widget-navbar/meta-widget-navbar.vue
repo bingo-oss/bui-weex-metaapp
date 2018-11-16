@@ -4,7 +4,7 @@
         <div class="fixedStyle" :style="fixedStyle">
             <bui-header :leftItem="{icon: 'ion-ios-arrow-left'}" @leftClick="() =>{this.$pop()}" :backgroundColor="themeBg">
                 <div slot="center" class="page-title-wrapper">
-                    <text v-for="(tapLabel,index) in tapLabels" class="page-title" :style="{color:(tapLabel.highlight?highlight.color:'#ccc')}" @click="goto(tapLabel,index)">{{tapLabel.name}}</text>
+                    <text v-for="(tapLabel,index) in tapLabels" class="page-title" :style="{color:(tapLabel.highlight?highlight.color:'#ccc'),opacity:topY}" @click="goto(tapLabel,index)">{{tapLabel.name}}</text>
                 </div>
 
                 <div slot="right" class="">
@@ -84,7 +84,9 @@
                     //高亮属性
                     color:"#fff"
                 },
-                fixedStyle:{},
+                fixedStyle:{
+                },
+                topY:0,
                 operationsDropdown:false,
                 groupId:"",//群组id
                 unReadGroupMsgCount: 0//聊天未读数
@@ -217,6 +219,10 @@
             },
             disappear(widget,index){
                 //离开视图
+            },
+            pageScrollHandler(e){
+                //用于监听容器的滚动
+                this.topY = - e.contentOffset.y/100;//滚动渐显效果
             }
         },
         created(){
@@ -254,7 +260,7 @@
 <style src="../../styles/common.css"></style>
 <style lang="css">
     .fixedStyleDiv{ height: 90px;}
-    .fixedStyle{ top: 0; /*position: fixed;*/ width: 750px;}
+    .fixedStyle{ top: 0; /*position: fixed;*/ width: 750px; opacity:}
     .page-title-wrapper{ flex-direction: row; flex: 1;}
     .page-title{ flex: 1; height: 90px; text-align: center; line-height: 90px; font-size: 32px; color: #fff;}
 </style>

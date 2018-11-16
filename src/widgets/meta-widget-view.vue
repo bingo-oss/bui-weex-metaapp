@@ -750,7 +750,7 @@ module.exports = {
                 _obj.selectedId = obj.id;
                 _obj.selectedItem = obj;//选择的数据对象
               }
-              _obj.grid = this//模型自身
+              _obj.model = this//模型自身
               _obj.widgetParams = _t.widgetParams;//部件参数
             return Object.assign({grid:_t,entity:_t.metaEntity,entityId:_t.entityId,entityName:_t.entityName},_obj);
         },

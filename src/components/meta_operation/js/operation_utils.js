@@ -46,14 +46,25 @@ var utils={
         //读取对应部件暴露参数
         let _childWidgets = _t.$root.$children[0].$refs.childWidgets;//遍历下所有引入的部件
         let returnVal = "";
-        _.each(_childWidgets,(cw)=>{
-            if(_.isFunction(cw.exportParams)){
-                let _data = cw.exportParams();//部件自身暴露的参数
-                if((widgetCode&&widgetCode==_data.widgetCode)||widgetCode==""){
+        if(!widgetCode){
+            _.each(_childWidgets,(cw)=>{
+                if(_.isFunction(cw.exportParams)){
+                    let _data = cw.exportParams();//部件自身暴露的参数
+                    if((widgetCode&&widgetCode==_data.widgetCode)||widgetCode==""){
+                        returnVal = _data[key]
+                    }
+                }
+            })
+        }else{
+            //需要传入自身部件模型上暴露函数
+            let _exportParams = _t.exportParams||_t.$parent.exportParams
+            if(_.isFunction(_exportParams)){
+                let _data = _exportParams()
+                if (_data[key]) {
                     returnVal = _data[key]
                 }
             }
-        })
+        }
         return returnVal;
     },
     setUrlParam(operation,_t){
@@ -66,11 +77,12 @@ var utils={
                     //固定值
                     urlParam[key] = prop.value;
                 }else if(prop.type=="dynamicValue"){
-                    let _key = prop.reflectedField;
+                    let _key = prop.reflectedField,_widgetCode = "";
                     if(_key.indexOf(".")!=-1){
+                        _widgetCode = _key.slice(0,(_key.indexOf(".")));
                         _key = _key.slice((_key.indexOf(".")+1))
                     }
-                    urlParam[key] = utils.getWidgetExportParams(_t,_key,prop.widgetCode)
+                    urlParam[key] = utils.getWidgetExportParams(_t,_key,_widgetCode)
                 }else if(prop.type=="script"){
                     let _script = prop.script;//执行的代码
                     let _props = _script.match(/\{\{(.+?)\}\}/g);//解析需要提取的参数

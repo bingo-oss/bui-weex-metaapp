@@ -386,11 +386,9 @@
                 } else {
                     // 对于 this.queryParam 里的 query，遇到属于实体字段的 query 要在创建实体时带上
                     let postData = this.ignoreReadonlyFields();
-                    if(this.swaggerEntiyDef){
-                        for (let k in this.swaggerEntiyDef.properties) {
-                            if (this.queryParam[k]) {
-                                postData[k] = this.queryParam[k];
-                            }
+                    for (let k in this.swaggerEntiyDef.properties) {
+                        if (this.queryParam[k]) {
+                            postData[k] = this.queryParam[k];
                         }
                     }
                     service.createEntify(this.engineUrl, this.entityName, this.queryParam, postData).then(data => {
@@ -400,7 +398,7 @@
                     }
                     this.isShowLoading = false;
                 }).catch(err => {
-                        reject();
+                    reject();
                     this.$alert(err);
                     this.isShowLoading = false;
                 });
@@ -543,6 +541,7 @@
                 //传入操作的上下文内容
                 return {
                     "form": this,
+                    "model":this,
                     "metaEntity": this.metaEntity,
                     "selectedId": this.result.id,
                     "selectedItem": this.result,
@@ -736,7 +735,6 @@
 
             // 获取 swagger 定义
             service.getSwaggerEntityDef(engineUrl, this.entityName).then(entityDef => {
-                debugger
                 this.swaggerEntiyDef = entityDef;
             })
 
