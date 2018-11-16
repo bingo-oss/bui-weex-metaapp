@@ -26,15 +26,15 @@ var utils={
     },
     execution(operation,_widgetCtx,before_after){
         //操作执行前后逻辑
-        operation.widgetContext = _widgetCtx;
+        //operation.widgetContext = _widgetCtx;
         return new Promise(function(resolve, reject) {
             let value=true;
             if(operation[before_after]) {
                 if (_.isFunction(operation[before_after])) {
-                    operation[before_after](operation,factoryApi,resolve)
+                    operation[before_after](_widgetCtx,factoryApi,resolve)
                 } else {
                     var onclick=Function('"use strict";return ' + operation[before_after]  )();
-                    onclick(operation,factoryApi,resolve);
+                    onclick(_widgetCtx,factoryApi,resolve);
                 }
                 //resolve(value);
             }else{
@@ -120,6 +120,7 @@ var utils={
     operationClick(_rowSingleData,_widgetCtx,_t){
         //部件按钮的对象,部件需要暴露给按钮操作的对象,_t自身模型
         //模拟按钮组件的方法执行--适用于列表部件单击
+        _widgetCtx.buttonInfo = _rowSingleData//按钮信息
         var operation=utils.expandOperation(_rowSingleData,{
             operation:_rowSingleData,
             widgetContext:_widgetCtx
@@ -146,10 +147,10 @@ var utils={
             function cellExecScript() {
                 utils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
                     if (_.isFunction(_t.implCode)) {
-                        _t.implCode(Object.assign(_widgetCtx, operation),factoryApi);
+                        _t.implCode(_widgetCtx,factoryApi);
                     } else {
                         var onclick = Function('"use strict";return ' + _t.implCode)();
-                        onclick(Object.assign(_widgetCtx, operation),factoryApi);
+                        onclick(_widgetCtx,factoryApi);
                     }
                     utils.execution(operation,_widgetCtx,"afterExecCode")//执行后
                 });
@@ -167,7 +168,7 @@ var utils={
             }
         }else if(operation.operationType=="toPage"||operation.operationType=="toOperation"||operation.operationType=="toDynamicPage"){
             //赋予选择值
-            var context = _.extend(_widgetCtx, operation);
+            var context = _.extend({},_widgetCtx, operation);
             if(!context.selectedItem&&context.selectedItems){
                 //按钮放置的是在工具栏
                 _t.selectedItem = context.selectedItems[(context.selectedItems.length-1)]
@@ -182,7 +183,7 @@ var utils={
             utils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
                 utils.execution(operation,_widgetCtx,"afterExecCode")//执行后
                 if(operation.operationType=="toDynamicPage"){
-                    _widgetCtx.selectedItem.actionParams={"ios":"[aaa] \n pageId=navbar \n entityId=abcdefgh","android":"[aaa] \n pageId=navber \n entityId=abcdefgh"}
+                    /*_widgetCtx.selectedItem.actionParams={"ios":"[aaa] \n pageId=navbar \n entityId=abcdefgh","android":"[aaa] \n pageId=navber \n entityId=abcdefgh"}
                     operation.dynamicPageFunc = function(obj,factoryApi){
                         var _actionParams = {"type":"factoryApp", "pageId":"", "url":"", "params":{}}
                         if(obj.selectedItem&&obj.selectedItem.actionParams){
@@ -202,7 +203,7 @@ var utils={
                             })
                         }
                         return _actionParams
-                    }//模拟校验方法
+                    }//模拟校验方法*/
                     var pageParams={};
                     if(operation.dynamicPageFunc){
                         //进行数据解析

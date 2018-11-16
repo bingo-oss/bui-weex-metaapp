@@ -752,7 +752,7 @@ module.exports = {
               }
               _obj.model = this//模型自身
               _obj.widgetParams = _t.widgetParams;//部件参数
-            return Object.assign({grid:_t,entity:_t.metaEntity,entityId:_t.entityId,entityName:_t.entityName},_obj);
+            return _obj;
         },
         reload(){
             this.refreshData();
