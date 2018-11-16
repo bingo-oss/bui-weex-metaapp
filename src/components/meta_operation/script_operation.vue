@@ -39,6 +39,7 @@ export default {
                 return;
             }
             if(this.operation.onClick) {
+                var _widgetCtx = Object.assign(this.widgetContext,{"buttonData":this.operation});
                 OperationUtils.execution(this.operation,_widgetCtx,"beforeExecCode").then((res)=>{
                     if (_.isFunction(this.operation.onClick)) {
                         this.mustStopRepeatedClick = true;

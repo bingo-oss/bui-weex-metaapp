@@ -11,7 +11,7 @@
         <template v-else>
             <div class="form-group form-hrb">
                 <div class="label-wrapper">
-                    <text class="form-label">{{definition.c.title}}</text>
+                    <text class="form-label">{{definition.componentParams.title}}</text>
                     <text class="required-mark" v-if="definition.componentParams.required">*</text>
                 </div>
                 <div class="from-input-wrapper" @click="inputClicked">
@@ -25,7 +25,10 @@
 
 <script>
 import mixin from './component-mixin.js'
+/*
 const picker = weex.requireModule('PickerModule');
+*/
+const picker = weex.requireModule('picker');
 
 export default {
     componentType: 'Time',

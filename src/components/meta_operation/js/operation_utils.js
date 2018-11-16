@@ -26,16 +26,17 @@ var utils={
     },
     execution(operation,_widgetCtx,before_after){
         //操作执行前后逻辑
+        operation.widgetContext = _widgetCtx;
         return new Promise(function(resolve, reject) {
             let value=true;
             if(operation[before_after]) {
                 if (_.isFunction(operation[before_after])) {
-                    operation[before_after](_widgetCtx,factoryApi)
+                    operation[before_after](operation,factoryApi,resolve)
                 } else {
                     var onclick=Function('"use strict";return ' + operation[before_after]  )();
-                    onclick(_widgetCtx,factoryApi);
+                    onclick(operation,factoryApi,resolve);
                 }
-                resolve(value);
+                //resolve(value);
             }else{
                 resolve(value);
             }

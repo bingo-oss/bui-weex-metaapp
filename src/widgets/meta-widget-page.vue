@@ -1,6 +1,6 @@
 <template>
     <div class="full-column" v-if="pageConfig" >
-        <scroller class="full-column">
+        <scroller class="full-column" style="background-color:#F8F8F8">
             <div :style="scrollerStyle">
                 <component v-for="(widget,index) in pageConfig.columnWidgets" @appear="appear(widget,index)" @disappear="disappear(widget,index)" ref="childWidgets" :is="widget.tagName" :key="index" :widget-params="widget.params" :vue-modal="vueModal" :tag-name="widget.tagName" :widget-name="widget.widgetName"></component>
             </div>

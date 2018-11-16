@@ -1,5 +1,5 @@
 <template lang="html">
-    <div v-if="showComponent" class="form-group">
+    <div v-if="showComponent">
         <template v-if="viewMode||forceView">
             <div class="form-group">
                 <div class="label-wrapper">

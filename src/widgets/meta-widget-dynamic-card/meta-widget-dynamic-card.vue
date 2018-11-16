@@ -1,51 +1,12 @@
 <template>
-    <div class="flex-column" style="flex: 1;">
-        <bui-header v-if="!widgetParams.hideHeader" title="动态" :leftItem="leftItem"
-                    @leftClick="back" :backgroundColor="themeBg">
-        </bui-header>
-        <div class="flex1">
-            <!--筛选-->
-            <div v-if="isShowFilter" class="flex-row filter">
-                <div class="flex1" style="margin-left: 30px;">
-                    <text style="font-size: 25px;color: #9d9d9d">以下是根据条件筛选的结果</text>
-                </div>
-                <div>
-                    <bui-icon name="ion-close-circled" size="30px"
-                              style="margin-right: 20px" @click="clearFilter"></bui-icon>
-                </div>
-            </div>
-
-            <!--动态tab栏-->
-            <div v-if="!isShowFilter&&tabItems.length>0" class="flex-row tab_list">
-                <div class="flex-row flex1 center" v-for="(item,index) in tabItems" style=""
-                     @click="onTabClick(index,item,$event)">
-                    <div class="flex1 center flex-row">
-                        <div class="center flex-row"
-                             :style="{'margin-top':'4px','height': '80px','border-bottom-width': '6px','border-bottom-style': 'solid','padding-left': '5px','padding-right': '5px','border-bottom-color': tabActive==index?'#0088fb':'transparent'}">
-                            <text :class="[tabTextStyle(index)]">{{item.title}}</text>
-                        </div>
-                        <bui-icon v-if="index==5" name="ion-ios-arrow-down" size="30"></bui-icon>
-                        <!--index==5为更多菜单更多菜单时显示-->
-                    </div>
-                    <!--<div class="separator_line2"></div>-->
-                </div>
-            </div>
-
-            <!--更多-下拉菜单-->
-            <bui-dropdown v-model="showDropdown" ref="dropdown">
-                <div class="center dropDown-cell" v-for="(item,i) in tabMoreMenuList" @click="onMoreMenuClick(i)">
-                    <text class="dropDown-text" :value="item.title"></text>
-                </div>
-            </bui-dropdown>
-
-
-            <bui-actionsheet
-                    :items="shareItems"
-                    v-model="showShareActionSheet"
-                    title="请选择类型"
-                    @itemClick="onSelectShareType"
-                    ref="shareActionSheet"></bui-actionsheet>
-
+    <div class="dynamic_card">
+        <div  class="flex-row _title">
+            <div class="flex1 title_l"><text class="_title_text">最新动态</text></div>
+            <div class="flex-row flex1 title_r">
+                <text class="_title_text" style="color: #999999" @click="allMember">全部</text>
+                <bui-icon name="ion-ios-arrow-right" size="35" style="margin-right: 20px" color="#999" @click="allMember"></bui-icon></div>
+        </div>
+        <div class="">
             <!--置顶消息-->
             <div>
                 <scroller style="max-height: 450px">
@@ -103,20 +64,14 @@
                 </scroller>
             </div>
 
-            <list class="bui-list" loadmoreoffset="2" @scroll="onListScroll">
-                <refresh class="bui-refresh" @refresh="onRefresh" @pullingdown="onPullingdown($event)"
-                         :display="refreshing ? 'show' : 'hide'">
-                    <bui-icon :name="refreshIcon" size="40px" style="margin-right: 5px;"></bui-icon>
-                    <text class="bui-refresh-indicator" style="font-size: 30px;">{{refreshText}}</text>
-                </refresh>
-
-                <cell class="center" v-if="isShowEmpty">
+            <div class="bui-list">
+                <div class="center" v-if="isShowEmpty">
                     <div class="center">
                         <text style="color: #656565;font-size: 32px;margin-top: 50px" value="暂无数据!"></text>
                     </div>
-                </cell>
+                </div>
 
-                <cell class="cell-box" v-for="(blogItem,index) in blogList" :ref="blogItem.blogInfo.blogId"
+                <div class="cell-box" v-for="(blogItem,index) in blogList" :ref="blogItem.blogInfo.blogId"
                       @click="onBlogItemClick(blogItem.blogInfo.blogId)" v-if="blogList.length>0">
                     <div :class="['flex-row','blog-div',getItemLabelStyle(blogItem)!=''?'instructions-label':'']"
                     ><!--  :style="{'border-left-color':'#'+getItemLabelStyle(blogItem).color}"-->
@@ -129,9 +84,29 @@
                             <div class="row-center-left flex-row">
                                 <text class="blog-name"
                                       :value="blogItem.blogInfo.accountName"></text>
-                                <text class="position"
-                                      :value="blogItem.blogInfo&&blogItem.blogInfo.orgName?'('+blogItem.blogInfo.orgName+')':''"></text>
+                                <!--时间-->
+                                <text class="position time">{{handleTime(blogItem.blogInfo.publishTime)}}</text>
+
                             </div>
+
+                            <!--部门 -->
+                            <div class="flex-row center" style="margin-top: 20px;align-items: center;">
+                                <div class="flex1 flex-row row-center-left">
+                                    <text class="blog-orgName" :value="blogItem.blogInfo&&blogItem.blogInfo.orgName?blogItem.blogInfo.orgName:''"></text>
+                                    <!--<text class="time">{{handleTime(blogItem.blogInfo.publishTime)}}</text>-->
+                                    <!--         <text v-if="blogItem.blogInfo.accountId==currLoginInfo.userId" class="delete"
+                                                   @click="onBlogDelete(blogItem)"
+                                                   value="删除">
+                                             </text>-->
+                                </div>
+                                <!--暂不支持评论与点赞-->
+                                <!--<div v-if="!blogItem.blogInfo.isDeleted" class="image-box flex-row center"
+                                     @click="onCommentMenuClick(index,blogItem,$event,1)">
+                                    <bui-image style="width: 40px;height:25px;" src="/image/blog_ic_item_operate.png"
+                                               @click="onCommentMenuClick(index,blogItem,$event,2)"></bui-image>
+                                </div>-->
+                            </div>
+
                             <!--正文 -->
                             <!--<text class="body-content" :value="getBlogText(blogItem.blogInfo.content)"></text>-->
                             <!--        <text style="font-size: 28px;color: #7776b4;margin-top: 15px" value="收起"
@@ -176,23 +151,6 @@
                                            src="/image/location_mark_green.png"></bui-image>
                                 <text style="font-size: 25px;color: #898989"
                                       :value="blogItem.blogInfo.location.addr"></text>
-                            </div>
-
-
-                            <!--时间 -->
-                            <div class="flex-row center" style="margin-top: 20px;align-items: center;">
-                                <div class="flex1 flex-row row-center-left">
-                                    <text class="time">{{handleTime(blogItem.blogInfo.publishTime)}}</text>
-                                    <!--         <text v-if="blogItem.blogInfo.accountId==currLoginInfo.userId" class="delete"
-                                                   @click="onBlogDelete(blogItem)"
-                                                   value="删除">
-                                             </text>-->
-                                </div>
-                                <div v-if="!blogItem.blogInfo.isDeleted" class="image-box flex-row center"
-                                     @click="onCommentMenuClick(index,blogItem,$event,1)">
-                                    <bui-image style="width: 40px;height:25px;" src="/image/blog_ic_item_operate.png"
-                                               @click="onCommentMenuClick(index,blogItem,$event,2)"></bui-image>
-                                </div>
                             </div>
 
                             <div v-if="isShowPopupMenu&&currClickIndex==index">
@@ -256,13 +214,8 @@
                         <bui-image width="150px" height="110px"
                                    :src="getImageUrl(getItemLabelStyle(blogItem).pic)"></bui-image>
                     </div>
-                </cell>
-                <!--加载更多-->
-                <loading class="bui-loading" @loading="onLoading" :display="showLoading ? 'show' : 'hide'">
-                    <text class="bui-loading-indicator" v-if="showLoading">{{loadingText}}</text>
-                    <loading-indicator class="bui-indicator"></loading-indicator>
-                </loading>
-            </list>
+                </div>
+            </div>
 
             <div class="flex-row" style="padding: 10px;background-color: #f1f1f1;align-items: center"
                  v-if="isShowComment">
@@ -308,52 +261,11 @@
 
         <!--底部菜单-->
         <div class="flex-row bottom-box" v-if="isShowBottomMenu">
-            <div class="flex1 flex-row center" @click="onWriteClick">
-                <bui-icon name="ion-navicon" size="30"></bui-icon>
-                <text class="bottom-text">撰写</text>
-            </div>
-            <div class="separator_line3" v-if="createMenuList.length>0"></div>
-            <div class="flex1 flex-row center" @click="add" v-if="createMenuList.length>0">
-                <bui-icon name="ion-ios-arrow-right" size="30" v-if="createMenuList.length>1"></bui-icon>
-                <text class="bottom-text" :value="createMenuList.length==1?createMenuList[0].title:'更多'"></text>
+            <div class="flex1 flex-row center" @click="publishBlog">
+                <!--<bui-icon name="ion-navicon" size="30"></bui-icon>-->
+                <text class="bottom-text">发表新评论</text>
             </div>
         </div>
-
-        <!--撰写菜单-->
-        <div v-if="isShowWriteMenu" @click="onWriteMenuClick"
-             class="write-menu-box">
-
-<!--            <div class="center" v-for="(item,index) in writeMenuList" :style="{'width': 750/4+'px'}"
-                 @click="onWriteMenuItemClick(item.target)">
-                <bui-image style="margin: 20px" width="120px" height="120px"
-                           @click="onWriteMenuItemClick(item.target)"
-                           :src="getWriteMenuImage(item.target)"></bui-image>
-                <text style="font-size: 28px" :value="item.title"></text>
-            </div>-->
-            <div style="flex-direction: row;flex-wrap: wrap;">
-                <div class="center" v-for="(item,index) in writeMenuList" :style="{'width': 750/4+'px'}"
-                     @click="onWriteMenuItemClick(item.target)">
-                    <bui-image style="margin: 20px" width="120px" height="120px"
-                               @click="onWriteMenuItemClick(item.target)"
-                               :src="getWriteMenuImage(item.target)"></bui-image>
-                    <text style="font-size: 28px" :value="item.title"></text>
-                </div>
-            </div>
-
-            <div class="write-menu-close">
-                <bui-icon name="ion-ios-close-outline" size="45px" color="#818181"
-                          @click="onWriteMenuClose"></bui-icon>
-            </div>
-        </div>
-
-        <bui-popupshow v-model="showUp" ref="upshow" bottom="50" left="475">
-            <div class="center"
-                 style="padding-bottom: 20px;padding-top: 20px;padding-left: 20px;padding-right: 20px;border-bottom-style: solid;border-bottom-color: #e7e7e7;border-bottom-width: 1px;width: 200px"
-                 v-for="(item,i) in createMenuList" @click="onCreateMenuItemClick(item)">
-                <text style="font-size: 30px;color: #515151" :value="item.title"></text>
-            </div>
-        </bui-popupshow>
-
     </div>
 
 </template>
@@ -361,12 +273,29 @@
 <!--引入bui-weex样式文件-->
 <style lang="sass" src="bui-weex/src/css/buiweex.scss"></style>
 <style>
+    .dynamic_card{ /*height: 300px;*/ background-color: #fff; margin-top: 20px;
+        border-style: solid;
+        border-color: #ececec;
+        border-width: 1px;
+    }
+    ._title{
+        height:80px;
+        border-bottom-style: solid;
+        border-bottom-color: #ececec;
+        border-bottom-width: 1px;
+        align-items: center;
+        justify-content: center;
+    }
+    ._title_text{ font-size: 30px;}
+    .title_l{ flex: 1; padding-left: 15px;}
+    .title_r{ flex: 1; align-items: flex-end; justify-content: flex-end;}
     .blog-image-grid-item {
         margin: 5px;
         background-color: #cfcfcf;
     }
 
     .position {
+        text-align: right;
         font-size: 28px;
         color: #c4c4c4;
         margin-left: 5px;
@@ -429,7 +358,6 @@
         border-bottom-style: solid;
         border-bottom-color: #ececec;
         border-bottom-width: 1px;
-        border-bottom-style: solid;
         background-color: #ffffff;
     }
 
@@ -455,8 +383,12 @@
     }
 
     .blog-name {
-        color: #4f53b0;
+        color: #627CA7;
         font-size: 32px
+    }
+    .blog-orgName{
+        color: #627CA7;
+        font-size: 26px
     }
 
     .popup-item-text {
@@ -583,11 +515,11 @@
            bottom: 0px;
            left: 0px;
            right: 0px;*/
-        border-width: 2px;
+        /*border-width: 2px;*/
         height: 100px;
-        border-color: #eeeaeb;
+        /*border-color: #eeeaeb;*/
         margin-bottom: 1px;
-        background-color: #fcfcfc
+        /*background-color: #fcfcfc*/
     }
 
     .bottom-text {
@@ -666,15 +598,16 @@
     var moment = require('moment');
     const link = weex.requireModule("LinkModule");
     const stream = weex.requireModule('stream');
-    import Util from '../../js/utils'
+    import Util from '../../js/utils';
+    import Utils from '../../js/tool/utils';
     import Config from '../../js/config'
     import loading from '../../components/common/bui-loading.vue'
     import dialog from '../../components/common/dialog.vue'
     import buiweex from "bui-weex"
     import factoryApi from '../libs/factory-api.js';
-    import popupmenu from './components/bui-popupmenu.vue'
     import service from './js/service'
     import _ from '../../js/tool/lodash';
+    import ajax from '../../js/ajax.js';
 
     module.exports = {
         props: {
@@ -691,7 +624,7 @@
                 default: false
             }
         },
-        components: {'emoji-express': emojiExpression, 'bui-loading': loading, 'dialog': dialog,'bui-popupshow': popupmenu},
+        components: {'emoji-express': emojiExpression, 'bui-loading': loading, 'dialog': dialog},
         data () {
             return {
                 praiseList: [],
@@ -719,14 +652,7 @@
                 currClickIndex: -1,
                 replyCommentItem: null,
                 blogList: [],
-                pageSize: 10,
                 pageNo: 1,
-                showDropdown: false,
-                refreshing: false,
-                showLoading: false,
-                refreshIcon: "icon-todown",
-                refreshText: "下拉刷新...",
-                loadingText: "加载更多数据...",
                 currLoginInfo: {
                     userId: '',
                     userName: '',
@@ -759,7 +685,6 @@
                 //当前选择的tab
                 tabItems: [],
                 writeMenuList: [],
-                showUp:false,
                 metaSuite:{},
                 isAdmin:null,
                 tools:[],
@@ -878,15 +803,6 @@
                 let id = this.blogList[0].blogInfo.blogId;
                 let el = this.$refs[id][0];
                 weex.requireModule('dom').scrollToElement(el, {offset: 0});
-            },
-            onListScroll(event){
-                let offsetY = event.contentOffset.y;
-                if (Math.abs(offsetY) > 300) {
-                    this.isShowTopBottom = true;
-                } else {
-                    this.isShowTopBottom = false;
-                }
-//                     this.isShowComment = false;
             },
             onLocationClick(item){
             },
@@ -1357,7 +1273,8 @@
                 if (this.currLabeId != '') {
                     params.data.labelId = this.currLabeId;
                 }
-                linkapi.get(params).then((result) => {
+                ajax.get(params.url,params.data).then((result) => {
+                    result = result.data;
                     if (result.code == 200 && result.data.length > 0) {
                         let datas = result.data;
                         let _array = [];
@@ -1422,7 +1339,8 @@
                         this.currLabeId = this.filterParams.labelId;
                     }
                 }
-                linkapi.get(params).then((result) => {
+                ajax.get(params.url,params.data).then((result) => {
+                    result = result.data;
                     this.isShowLoading = false;
                     if (result.code == 200) {
                         if (result.labelStyle != null && JSON.stringify(result.labelStyle) != "{}") {
@@ -1438,9 +1356,6 @@
                                     this.isShowEmpty = false;
                                 }
                             }
-                            this.refreshIcon = "icon-checkbox-on";
-                            this.refreshText = "刷新成功";
-                            this.refreshing = false;
                         } else if (type == 2) {
                             this.showLoading = false;
                             const length = result.data.length;
@@ -1448,9 +1363,6 @@
                                 let datas = result.data
                                 this.blogList = this.blogList.concat(datas)
                             } else {
-                                this.refreshing = false;
-                                this.showLoading = false;
-                                this.loadingText = '没有更多数据了';
                                 this.$toast('没有更多数据了');
                             }
                         }
@@ -1471,34 +1383,6 @@
                     blogData[i].commentList = blogData[i].commentList.reverse();
                 }
                 return blogData;
-            },
-            //refresh下拉放手后的文字与图标
-            "onRefresh": function (e) {
-                this.refreshText = "刷新中...";
-                this.refreshing = true;
-                this.pageNo = 1;
-                this.initData(1);
-                this.$emit("refresh")
-            },
-            //refresh下拉放手前的文字与图标
-            "onPullingdown": function (e) {
-                //默认refresh文字与图标
-                this.refreshIcon = "icon-todown";
-                this.refreshText = "下拉可以刷新...";
-                //下拉一定距离时文字与图标
-                if (Math.abs(e.pullingDistance) > 60) {
-                    this.refreshIcon = "icon-toup";
-                    this.refreshText = "松开即可刷新...";
-                }
-            },
-            "onLoading": function (e) {
-                //  this.$toast("loading");
-                if (!this.showLoading) {
-                    this.showLoading = true;
-                    this.loadingText = '加载更多数据...';
-                    this.pageNo++;
-                    this.initData(2)
-                }
             },
             onReplyClick(blogItem, commentItem){
                 if (this.isArchive) {
@@ -1527,14 +1411,6 @@
                 this.blogList = [];
                 this.isSearching = true;
                 this.isShowLoading = true;
-                this.initData(1);
-            },
-            clearFilterData(){
-                this.isSearching = false;
-                this.onTabClick(0,this.tabItems[0]);//默认选择第一个tap
-                //this.currLabeId = "";
-                this.pageNo = 1;
-                this.blogList = [];
                 this.initData(1);
             },
             handleTime(time){
@@ -1575,25 +1451,6 @@
             onWriteMenuClick(){
                 this.isShowWriteMenu=false
             },
-            onCreateMenuItemClick(item){
-                this.showUp = false;
-                let target = item.settings.target;
-                switch (target) {
-                    case 'Milestone':
-                        var params = {
-                            activityId: this.activityInfo.sourceId
-                        };
-                        var url = this.$getContextPath() + "/milestoneForm.weex.js";
-                        this.$push(url, params);
-                        break;
-                    case 'Archive':
-                        this.confirmArchive();
-                        break;
-                    case 'ExtendPublicNotice':
-                        this.createBulletin();
-                        break;
-                }
-            },
             add(){
                 if (this.isArchive) {
                     this.$toast("已归档,不可操作!")
@@ -1620,96 +1477,13 @@
                     this.showUp = true;
                 }
             },
-            onWriteClick(){//打开撰写菜单
-                if (this.isArchive) {
-                    this.$toast("已归档,不可操作!")
-                    return;
-                }
-                this.isShowWriteMenu = true;
-                this.$nextTick(()=> {
-                this.$forceUpdate();
-                /*weex.requireModule('animation').transition(this.$refs.writeMenu, {
-                        styles: {
-                            opacity: 1
-                        },
-                        duration: 1000, //ms
-                        timingFunction: 'ease',
-                        needLayout: false,
-                        delay: 0 //ms
-                        }, ()=> {
-                        })*/
-                });
-
-            },
-            onWriteMenuClose(){//关闭撰写菜单
-                this.isShowWriteMenu = false;
-                this.$forceUpdate();
-            },
-            onWriteMenuItemClick(val){//撰写菜单item点击
-                this.isShowWriteMenu = false;
-                if (val === 'ExtendComment') {
-                    this.publishBlog()
-                } else if (val === 'ExtendQianDao') {
-                    let params = {
-                        appCode: 'crm',
-                        appUrl: 'LinkOl/Modular/quick/quickForm.html',
-                        data: {
-                            parentId: this.activityInfo.sourceId,
-                            parentEntityName: this.activityInfo.suiteId,
-                            parentText: this.activityInfo.name,
-                            quick: true,
-                            closePage: true,
-                            E: 'ExtendQianDao'
-                        }
-                    }
-                    linkapi.runApp(params, null, null)
-                } else {
-                    var params = {};
-                    var url = this.$getContextPath() + "/publishForm.weex.js";
-                    params.entityName = val;
-                    if (this.topicData != null) {
-                        params.sourceId = this.topicData.sourceId;
-                    }
-                    params.activityInfo = JSON.stringify(this.activityInfo)
-                    this.$push(url, params);
-                }
-            },
-            getWriteMenuImage(entityName){
-                let url = ""
-                switch (entityName) {
-                    case 'ExtendWorktask':
-                        url = '/image/publish_task.png';
-                        break;
-                    case 'ExtendSchedule':
-                        url = '/image/publish_schedule.png';
-                        break;
-                    case 'ExtendNotify':
-                        url = '/image/publish_notify.png';
-                        break;
-                    case 'ExtendDocument':
-                        url = '/image/publish_document.png';
-                        break;
-                    case 'ExtendQingShi':
-                        url = '/image/publish_qingshi.png';
-                        break;
-                    case 'ExtendHuiBao':
-                        url = '/image/publish_huibao.png';
-                        break;
-                    case 'ExtendQianDao':
-                        url = '/image/publish_qiaodao.png';
-                        break;
-                    case 'ExtendComment':
-                        url = '/image/publish_comment.png';
-                        break;
-                }
-                return url;
-            },
             getArchive(isQuit){//是否归档
                 let params = {
                     url: Config.serverConfig.engineService + '/metaservice/meta_suite_data_setting/' + this.activityInfo.sourceId,
                 };
-                linkapi.get(params).then((result) => {
+                ajax.get(params.url).then((result) => {
                     if (result) {
+                        result = result.data;
                         this.isArchive = result.isArchive;
                     }
                 }).catch((error)=> {
@@ -1726,31 +1500,6 @@
                     return 'tab_title_text';
                 }
             },
-            onTabClick(index, item, event){
-                if (this.isArchive && !this.isAdmin) {
-                    this.$toast("已归档,不可操作!")
-                    return;
-                }
-                this.tabActive = index;
-                if (index == 0) {
-                    this.currLabeId = ''
-                    this.requestData(this.activityInfo, this.currLabeId)
-                } else if (index == 5) {
-                    this.openDropdown(event);
-                } else if(item.target=="filter"){
-                    let _array = this.tools.filter(item => {
-                        return item.createBlog;
-                    });
-                    let params = {
-                        data: JSON.stringify(_array)
-                    };
-                    let url = this.$getContextPath() + "/filterBlog.weex.js";
-                    this.$push(url, params);
-                } else {
-                    this.currLabeId = item.target;
-                    this.requestData(this.activityInfo, this.currLabeId);
-                }
-            },
             getTopicInfo(){//用于发送动态的数据
                 let params = {
                     url: Config.serverConfig.uamUrl + '/extendApproval/getTopic',
@@ -1759,13 +1508,14 @@
                         sourceId: this.activityInfo.sourceId,
                     }
                 };
-                linkapi.get(params).then((result) => {
+                ajax.get(params.url,params.data).then((result) => {
+                    result = result.data;
                     if (result.success) {
-                    this.topicData = result.data;
-                } else {
-                    this.$toast("获取topic数据失败：" + JSON.stringify(result));
-                }
-            }).catch((error)=> {
+                        this.topicData = result.data;
+                    } else {
+                        this.$toast("获取topic数据失败：" + JSON.stringify(result));
+                    }
+                }).catch((error)=> {
                 });
             },
             publishBlog(){//发送评论
@@ -1807,40 +1557,25 @@
 //                    this.$alert(JSON.stringify(res))
                 }).catch(null);
             },
-            onMoreMenuClick(index){//tab更多菜单
-                this.showDropdown = false;
-                let _array = this.metaSuite.relations.filter(item => {
-                            return item.createBlog;
-            });
-                if (index == this.tabMoreMenuList.length - 1) {
-                    let params = {
-                        data: JSON.stringify(_array)
-                    };
-                    let url = this.$getContextPath() + "/filterBlog.weex.js";
-                    this.$push(url, params);
-                } else {
-                    this.currLabeId = this.tabMoreMenuList[index].target;
-                    this.requestData(this.activityInfo, this.currLabeId)
-                }
-            },
             clearFilter(){
                 this.isShowFilter = false;
-                this.clearFilterData();
                 storage.removeItem("filterParams");//删除记录的过滤条件
             },
             onViewAppear(){
-                storage.getItem("filterParams", event => {//不为空时，则为筛选条件页面回来的
+/*                storage.getItem("filterParams", event => {//不为空时，则为筛选条件页面回来的
                         if (event.result == "success" && event.data != null && event.data != '') {
                         this.filterParams = JSON.parse(event.data);
                         this.isShowFilter = true;
                         this.searchBlogData(this.filterParams);
                     }
-                });
-                storage.getItem("blogRefreshList", event => {//
+                });*/
+                /*storage.getItem("blogRefreshList", event => {//
                     if (event.result == "success" && event.data != null && event.data != '') {
                         this.requestData(this.activityInfo, this.currLabeId);
                     }
-                });
+                });*/
+                this.requestData(this.activityInfo, this.currLabeId);//resume激活时候触发刷新
+
                 storage.getItem("exit", event => {//
                     if (event.result == "success") {
                         this.$pop();
@@ -1904,7 +1639,8 @@
                 let params = {
                     url: Config.serverConfig.engineService + '/metaservice/meta_entity/' + this.activityInfo.suiteId,
                 };
-                linkapi.get(params).then((result) => {
+                ajax.get(params.url).then((result) => {
+                    result = result.data;
                     this.isShowLoading = false;
                     if (result.id) {
                         if(fun){fun(result)}
@@ -1997,6 +1733,15 @@
                     }, error=> {
                     });
                 }
+            },
+            allMember(){
+                //跳入操作--全部动态
+                this.$push(Utils.pageEntry(),{
+                    pageId:"029d6e92-626d-43e1-a1e4-eddeee17ec58",
+                    byOperation:false,
+                    dataId:this.widgetParams.dataId,
+                    entityId:this.widgetParams.entityId
+                });
             }
 
         },
@@ -2054,6 +1799,11 @@
                 }
             });
 
+        },
+        computed:{
+            pageSize() {
+                return this.widgetParams.lines?this.widgetParams.lines:10
+            }
         }
     }
 </script>

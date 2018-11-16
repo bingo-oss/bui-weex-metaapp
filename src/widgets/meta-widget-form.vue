@@ -385,10 +385,12 @@
                 });
                 } else {
                     // 对于 this.queryParam 里的 query，遇到属于实体字段的 query 要在创建实体时带上
-                    let postData = this.ignoreReadonlyFields();;
-                    for (let k in this.swaggerEntiyDef.properties) {
-                        if (this.queryParam[k]) {
-                            postData[k] = this.queryParam[k];
+                    let postData = this.ignoreReadonlyFields();
+                    if(this.swaggerEntiyDef){
+                        for (let k in this.swaggerEntiyDef.properties) {
+                            if (this.queryParam[k]) {
+                                postData[k] = this.queryParam[k];
+                            }
                         }
                     }
                     service.createEntify(this.engineUrl, this.entityName, this.queryParam, postData).then(data => {
@@ -485,6 +487,10 @@
                             }
                         });
                     })
+            },
+            exportParams(){
+                //本部件暴露的参数
+                return Object.assign({},this.widgetParams,this.result)
             }
         },
         data () {
@@ -539,7 +545,8 @@
                     "form": this,
                     "metaEntity": this.metaEntity,
                     "selectedId": this.result.id,
-                    "selectedItem": this.result
+                    "selectedItem": this.result,
+                    "widgetParams" : this.widgetParams//部件参数
                 }
             },
             getDeviceHeight(){
@@ -683,9 +690,9 @@
 
             let mobileType = "";
             if((weex.config.env.deviceModel.indexOf("iPhone")!=-1)){
-                mobileType = 2
+                mobileType = 2;
             }else if((weex.config.env.deviceModel.indexOf("iPhone")==-1)){
-                mobileType = 1
+                mobileType = 1;
             }
             let setData={terminalType:mobileType};
             if(!formId&&pageParam.entity){
@@ -729,8 +736,9 @@
 
             // 获取 swagger 定义
             service.getSwaggerEntityDef(engineUrl, this.entityName).then(entityDef => {
+                debugger
                 this.swaggerEntiyDef = entityDef;
-        })
+            })
 
             // 在编辑实体的情况下，才获取实体数据
             if (this.entityId) {
