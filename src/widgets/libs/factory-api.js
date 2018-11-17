@@ -47,7 +47,6 @@ var factoryApi = Object.assign({
     refresh:function(t){
         //全局部件刷新方法
         if(_.isFunction(t.refresh)&&t.isWidgetPage){
-            debugger
             t.refresh()
         }
         if(t.$parent){
@@ -98,6 +97,6 @@ var factoryApi = Object.assign({
         //检测全局部件获取数据表单数据方法
         return factoryApi.submitPromise(t,[],"getData");
     }
-},linkapi,buiweex);
+},buiweex,linkapi);
 
 export default factoryApi
