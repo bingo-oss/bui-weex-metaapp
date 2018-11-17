@@ -621,7 +621,7 @@ module.exports = {
                     let fields = new Set();
                     fields.add('_data'); // _data 字段里会有冗余信息
                     fields.add('id'); // id 是一定要获取的，否则删改操作都无法进行
-                    viewDef.config.columns.forEach(col => {
+                    viewDef.viewFields.forEach(col => {
                         fields.add(col.name)
                         if (col.quicksearchable) {
                             this.quickSearchableField.push(col.name);
