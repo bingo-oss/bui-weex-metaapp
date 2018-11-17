@@ -658,7 +658,7 @@
             //EventBus.$emit("widget-push-title",this.title);
             globalEvent.addEventListener("androidback", e => {
                 this.$pop();
-        });
+            });
 
             let pageParam = this.$getPageParams();
             //this.$alert(this.widgetParams);
@@ -720,34 +720,42 @@
 
             return service.getEngineUrl(formDef.projectId).then(engineUrl => {
                 this.engineUrl = engineUrl;
-            if (!this.entityId) {
-                // 在非编辑实体的情况下，才fetch defaultValues
-                this.data.layout.forEach(o => {
-                    if (o.componentParams.valueType === 'defaultValue') {
-                    this.requestDefaultValueParam = this.requestDefaultValueParam || {};
-                    this.requestDefaultValueParam[o.dataField] = null;
-                }
-            })
-                if (this.requestDefaultValueParam) {
-                    this.fetchCalcDefaultValues();
-                }
-            }
+                if (!this.entityId) {
+                    // 在非编辑实体的情况下，才fetch defaultValues
+                    this.data.layout.forEach(o => {
+                        if (o.componentParams.valueType === 'defaultValue') {
+                            this.requestDefaultValueParam = this.requestDefaultValueParam || {};
+                            this.requestDefaultValueParam[o.dataField] = null;
+                        }
+                    });
+                    if (this.requestDefaultValueParam) {
+                        this.fetchCalcDefaultValues();
+                    };
+                    let _formDefaultValues = this.widgetParams.formDefaultValues
+                    if(_formDefaultValues){
+                        if(_.isString(_formDefaultValues)){
+                            this.widgetParams.formDefaultValues = JSON.parse(_formDefaultValues);
+                        }
+                        this.defaultValues = _formDefaultValues;
+                    }//传入了表单默认值了
 
-            // 获取 swagger 定义
-            service.getSwaggerEntityDef(engineUrl, this.entityName).then(entityDef => {
-                this.swaggerEntiyDef = entityDef;
-            })
+                }
 
-            // 在编辑实体的情况下，才获取实体数据
-            if (this.entityId) {
-                this.result.id = this.entityId;
-                service.getEntityDataForId(engineUrl, this.entityName, this.entityId).then(data => {
-                    this.existedRecord = data;
-                this.permObj = perm.parseBits(data.permVal);
+                // 获取 swagger 定义
+                service.getSwaggerEntityDef(engineUrl, this.entityName).then(entityDef => {
+                    this.swaggerEntiyDef = entityDef;
+                })
+
+                // 在编辑实体的情况下，才获取实体数据
+                if (this.entityId) {
+                    this.result.id = this.entityId;
+                    service.getEntityDataForId(engineUrl, this.entityName, this.entityId).then(data => {
+                        this.existedRecord = data;
+                        this.permObj = perm.parseBits(data.permVal);
+                    })
+                }
+                this.isShowLoading = false;
             })
-            }
-            this.isShowLoading = false;
-        })
         });
         });
             /*readRuntimeConfigPromise.then(() => {
