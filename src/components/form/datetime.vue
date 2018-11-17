@@ -115,7 +115,7 @@ export default {
             }
             this.pickDateTime().then(dateStr => {
                 let date = this.parseDate(dateStr);
-                this.$emit('input', date.toISOString());
+                this.$emit('input', new Date(date).getTime()/*date.toISOString()*/);
             })
         },
         parseDate(str) {
