@@ -104,7 +104,12 @@ export default {
                     format: this.datetimeFormat,
                 }, (res) => {
                     if (res.result === 'success') {
-                        resolve(`${res.data}:00`);
+                        if(res.data.indexOf(":")!=-1){
+                            resolve(`${res.data}:00`);
+                        }else{
+                            //ios还不具备选择时分
+                            resolve(`${res.data} 00:00:00`);
+                        }
                     }
                 })
             })

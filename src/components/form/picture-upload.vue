@@ -124,7 +124,10 @@ export default {
             let _this = this;
             linkapi.selectFiles(1, (result) => {
                  if (result.resource) {
-                        _this.fileUpload(JSON.parse(result.resource),0);//执行上传
+                        if(_.isString(result.resource)){
+                            result.resource = JSON.parse(result.resource)
+                        }
+                        _this.fileUpload(result.resource,0);//执行上传
 /*                     linkapi.uploadFiles(result.resource, (res) => {
                          this.$alert(res);
                      }, (err) => {
