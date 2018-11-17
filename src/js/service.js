@@ -161,6 +161,35 @@ export default {
         })
 
     },
+    /**
+     * 获取实体信息
+     * @param  {string} projectId
+     * @return {Promise} 成功返回引擎地址，失败返回 error。
+     */
+    getMetaEntity(entityId){
+        return this._getConfig().then((data) => {
+            let metabaseUrl = data[keyMetaBaseEndpoint]
+            let url = `${metabaseUrl}/meta_entity/${entityId}`
+            return ajax.get(url).then((resp) => {
+                return resp.data;
+            })
+        })
+    },
+    /**
+     * 获取项目的引擎地址--通过实体id获取
+     * @param  {string} projectId
+     * @return {Promise} 成功返回引擎地址，失败返回 error。
+     */
+    getEngineUrlMeta(entityId){
+        return this._getConfig().then((data) => {
+            let metabaseUrl = data[keyMetaBaseEndpoint]
+            let url = `${metabaseUrl}/meta_entity/${entityId}`
+            return ajax.get(url).then((resp) => {
+                let engineUrl = resp.data.project.engine.externalUrl;
+                return Promise.resolve(engineUrl);
+            })
+        })
+    }
 
 
 }
