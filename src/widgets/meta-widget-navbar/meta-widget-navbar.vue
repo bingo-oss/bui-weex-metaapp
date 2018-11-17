@@ -53,6 +53,8 @@
     import buiweex from "bui-weex";
     const linkapi = require("linkapi");
     const dom = weex.requireModule('dom');
+    var globalEvent = weex.requireModule('globalEvent');
+
     export default {
         props: {
             widgetParams: {
@@ -93,6 +95,14 @@
             }
         },
         watch:{
+            groupId(curVal, oldVal){
+                linkapi.registerReceiver(2, curVal);
+                globalEvent.addEventListener(curVal, (e)=> {
+                    linkapi.getUnreadMessageCountById(curVal, res=> {
+                        this.unReadGroupMsgCount = res;
+                    })
+                });
+            },
             widgetParams(val){
             }
         },
