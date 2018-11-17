@@ -6,7 +6,7 @@
                 <text class="_title_text" style="color: #999999" @click="allMember">全部</text>
                 <bui-icon name="ion-ios-arrow-right" size="35" style="margin-right: 20px" color="#999" @click="allMember"></bui-icon></div>
         </div>
-        <div  class="flex-row user_w" :style="lineStyle">
+        <div  class="flex-row user_w">
             <div class="cell-box user add center" @click="selectMembers">
                 <div style="width: 100px;height:100px" @click="selectMembers">
                     <bui-image @click="selectMembers" width="100px" height="100px" :src="'/image/cy_new.png'" radius="50"></bui-image>
@@ -15,29 +15,14 @@
                     <text style="color: #434343;font-size: 26px; margin-top: 10px;">添加</text>
                 </div>
             </div>
-            <div class="user" v-for="(item,index) in memberDatas">
-                <!--<div v-if="index==0&&memberDatas[index].isAdmin"
-                     style="background-color: #f5f5f5;border-top-style: solid;border-top-color: #e9e9e9;border-top-width: 1px">
-                    <text style="font-size: 28px;margin-left: 10px;color: #5b5b5b;padding-top: 5px;padding-bottom: 5px"
-                          :value="'管理员（'+adminNumber+'人）'"></text>
-                </div>
-                <div v-if="(index==0&&!memberDatas[index].isAdmin)||(!memberDatas[index].isAdmin&&memberDatas[index-1].isAdmin)"
-                     style="background-color: #f5f5f5">
-                    <text style="font-size: 28px;margin-left: 10px;color: #5b5b5b;padding-top: 5px;padding-bottom: 5px"
-                          :value="'其他成员（'+otherNumber+'人）'"></text>
-                </div>-->
+            <div class="user" v-for="(item,index) in memberDatas" v-if="(lineNumber==-1)||(index<lineNumber)">
                 <div class="cell-box center">
                         <div style="width: 100px;height:100px">
                             <bui-image width="100px" height="100px" :src="getImageUrl(item.picture)" radius="50" @click="onAvatarClick(index,item)" placeholder="/image/usertp.png"></bui-image>
                         </div>
-                        <div class="flex1">
-                            <text style="color: #434343;font-size: 26px; margin-top: 10px;">{{item.userName}}</text>
-                            <!--<text style="margin-left: 15px;font-size: 28px;color: #919191">{{item.orgName}}</text>-->
+                        <div style="width:100px;">
+                            <text style="color:#434343;font-size: 26px; margin-top: 10px;lines :1; text-overflow:ellipsis; word-break: normal; white-space:nowrap; text-align: center; ">{{item.name}}</text>
                         </div>
-                        <!--<div v-if="item.approvalStatus==0"
-                             style="margin-left: 10px;margin-right: 20px;background-color: #c5c5c5;border-radius: 5px;padding-right: 10px;padding-left: 10px;">
-                            <text style="font-size: 30px;color: #fff">待审</text>
-                        </div>-->
                 </div>
             </div>
         </div>
@@ -81,17 +66,9 @@
         overflow: hidden;
     }
     .cell-box {
-        /*border-bottom-style: solid;
-        border-bottom-color: #ececec;
-        border-bottom-width: 1px;
-        border-bottom-style: solid;*/
         padding-left: 20px;
-/*
-        padding-right: 10px;
-*/
         padding-top: 20px;
         padding-bottom: 20px;
-        /*background-color: #fff;*/
     }
 </style>
 
@@ -108,6 +85,7 @@
     import factoryApi from '../libs/factory-api.js';
     import ajax from '../../js/ajax.js';
     import buiweex from 'bui-weex';
+    import service from '../../js/service.js';
 
     module.exports = {
         components: {'dialog': dialog},
@@ -119,6 +97,7 @@
         },
         data () {
             return {
+                externalUrl:"",//引擎地址
                 activityInfo: {},
                 memberDatas: [],
                 isSearching: false,
@@ -126,11 +105,6 @@
                 pageSize: 10,
                 pageNo: 1,
                 keyword: '',
-                isAdmin: false,
-                isShowSelected: false,
-                operationType: 0,
-                currUserId: '',
-                isArchive: false,
                 showDialog: false,
                 buttonArray: [],
                 dialogContent: '',
@@ -208,24 +182,26 @@
             onAvatarClick(index, item){
                 //跳入名片
                 linkapi.startUserChat(item.userId, null, null)
-            },
+            }/*,
             exitMember(){
                 //删除成员
                 this.deleteMembers(this.currUserId, true);
-            },
+            }*/,
             initData(type){//type1 刷新数据 2为加载更多
                 let keyword = '';
                 if (this.isSearching) {
                     keyword = this.keyword;
                 }
                 let params = {
-                    url: Config.serverConfig.uamUrl + '/extendApproval/getApprovalUserList',
+                    //url: Config.serverConfig.uamUrl + '/extendApproval/getApprovalUserList',
+                    url:this.externalUrl + '/meta_data_members/query_members',
                     data: {
-                        sourceModule: this.activityInfo.suiteId,
-                        sourceId: this.activityInfo.sourceId,
+                        /*sourceModule: this.activityInfo.entityId,
+                        sourceId: this.activityInfo.dataId,*/
                         page: this.pageNo,
                         pageSize: this.pageSize,
-                        keyword: keyword
+                        keyword: keyword,
+                        dataId:this.activityInfo.dataId
                     }
                 };
                 ajax.get(params.url,params.data).then((result)=> {
@@ -272,35 +248,13 @@
                     return url;
                 }
             },
-            getAdminInfo(){
-                let params = {
-                    url: Config.serverConfig.uamUrl + '/extendApproval/isAdmin',
-                    data: {
-                        entityName: this.activityInfo.suiteId,
-                        sourceId: this.activityInfo.sourceId,
-                    }
-                };
-                ajax.get(params.url,params.data).then((result)=> {
-                    result = result.data;
-                    if (result.success) {
-                        this.isAdmin = result.data;
-                        if (this.isAdmin) {
-                            this.optionItems = ['设置管理员', '取消管理员', '邀请新成员', '移除成员', '退出成员'];
-                        } else {//普通成员
-                            this.optionItems = ['邀请新成员', '退出成员'];
-                        }
-                    } else {
-                    }
-                }, error=> {
-                });
-            },
-            deleteMembers(ids, isSelf){
+            /*deleteMembers(ids, isSelf){
                 if (Util.isEmpty(ids)) {
                     return;
                 }
                 this.isShowLoading = true;
                 let datas = {
-                    entityName: this.activityInfo.suiteId,
+                    entityName: this.activityInfo.entityId,
                     sourceId: this.activityInfo.sourceId,
                     id: ids,
                 };
@@ -330,29 +284,34 @@
                     this.isShowLoading = false;
                     this.$toast(Util.handleException(error))
                 });
-            },
+            },*/
             inviteMembers(userId, orgId, groupId, isRemoveExistsMembers){
                 if (Util.isEmpty(userId) && Util.isEmpty(orgId) && Util.isEmpty(groupId)) {
                     return
                 }
                 this.isShowLoading = true;
                 let params = {
-                    url: Config.serverConfig.uamUrl + '/extendApproval/sendApproval',
+                    url:this.externalUrl + '/meta_data_members',
+                    //url: Config.serverConfig.uamUrl + '/extendApproval/sendApproval',
                     data: Util.toHttpRequestParams({
-                        entityName: this.activityInfo.suiteId,
-                        sourceId: this.activityInfo.sourceId,
-                        userId: userId,
+                        metaEntityId: this.activityInfo.entityId,
+                        dataId: this.activityInfo.dataId,
+                        userIds: userId,
+                        orgIds: orgId,
+                        groupIds: groupId,
+/*                        userId: userId,
                         userIds: userId,
                         orgId: orgId,
                         orgIds: orgId,
                         groupId: groupId,
                         groupIds: groupId,
-                        approvalUserIds: userId,
+                        approvalUserIds: userId,*/
                         isRemoveExistsMembers: isRemoveExistsMembers,
                         isCheckDuplicateUser:isRemoveExistsMembers
                     })
                 };
-                linkapi.post(params).then((result)=> {
+                ajax.post(params.url,params.data).then((result)=> {
+                    result = result.data;
                     this.isShowLoading = false;
                     if (result.success) {
                         if (result.data && JSON.stringify(result.data) != "{}" && result.data.existsUserIds) {
@@ -395,20 +354,32 @@
             }
         },
         computed:{
-            lineStyle(){
+            lineNumber(){
+                return (this.widgetParams.lines||this.widgetParams.lines===0)?((this.widgetParams.lines*6)-1):-1
+            }
+            /*lineStyle(){
                 //显示行数样式
                 return (this.widgetParams.lines||this.widgetParams.lines===0)?{"height":(Number(this.widgetParams.lines)*180)}:{}
-            }
+            }*/
         },
         mounted(){
             let params =this.widgetParams,_t = this;//页面参
             if (params != null && !Util.isEmpty(params.dataId) && !Util.isEmpty(params.entityId)) {
-                this.activityInfo.sourceId = params.dataId;
-                this.activityInfo.suiteId = params.entityId;
-                this.initData(1);
+                this.activityInfo.dataId = params.dataId;
+                this.activityInfo.entityId = params.entityId;
+                Config.readRuntimeConfig(this.$getContextPath()).then(runtimeConfig => {
+                    service.init(runtimeConfig.configServerUrl);//初始化请求到的地址
+                    service.getEngineUrlMeta(params.entityId).then(res=>{
+                        _t.externalUrl = res;
+                        _t.initData(1);
+                    });//获取引擎地址
+                });
             } else {
                 //this.$toast("参数未传递");
             }
+            globalEvent.addEventListener("resume", e => {
+                _t.initData(1);
+            });//监听应用激活 刷新
         }
     }
 </script>

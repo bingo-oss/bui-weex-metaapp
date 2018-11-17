@@ -90,6 +90,7 @@
                     if(terminalType!==1){
                         _opts.push(opt);
                     }
+                    JSON.stringify
                 });
                 return _opts;
             }
@@ -222,6 +223,10 @@
                 if(this.widgetParams.isGradualChange){
                     this.gradualChangeOpacity = - e.contentOffset.y/50;//滚动渐显效果
                 }
+            },
+            exportParams(){
+                //本部件暴露的参数
+                return Object.assign({},this.widgetParams)
             }
         },
         created(){

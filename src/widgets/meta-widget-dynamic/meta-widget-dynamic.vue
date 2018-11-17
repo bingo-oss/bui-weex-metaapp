@@ -699,7 +699,7 @@
                 isShowExpression: false,
                 inputButtonState: true,
                 leftItem: {
-                    icon: 'ion-chevron-left',
+                    icon: 'ion-ios-arrow-left',
                 },
                 activityInfo: {
                     sourceId: '',//活动id

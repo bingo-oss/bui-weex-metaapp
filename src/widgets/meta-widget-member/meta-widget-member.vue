@@ -45,7 +45,7 @@
                                            placeholder="/image/usertp.png"></bui-image>
                             </div>
                             <div class="flex1">
-                                <text style="margin-left: 15px;color: #434343;font-size: 32px">{{item.userName}}</text>
+                                <text style="margin-left: 15px;color: #434343;font-size: 32px">{{item.name}}</text>
                                 <text style="margin-left: 15px;font-size: 28px;color: #919191">{{item.orgName}}</text>
                             </div>
                             <div v-if="item.approvalStatus==0"
@@ -113,6 +113,8 @@
     import dialog from '../../components/common/dialog.vue'
     const storage = weex.requireModule('storage');
     import factoryApi from '../libs/factory-api.js';
+    import service from '../../js/service.js';
+    import ajax from '../../js/ajax.js';
 
     module.exports = {
         props: {
@@ -124,6 +126,7 @@
         components: {'dialog': dialog, 'bui-loading': loading},
         data () {
             return {
+                externalUrl:"",
                 leftItem: {
                     icon: 'ion-ios-arrow-left',
                 },
@@ -209,7 +212,7 @@
                 let _array = [];
                 for (let item of this.memberDatas) {
                     if (item.select) {
-                        _array.push(item.id)
+                        _array.push(item.userId);//这里添加了需要移除的成员userId
                     }
                 }
                 if (_array.length > 0) {
@@ -266,7 +269,8 @@
                         approvalIds: projectIds.join(",")
                     }
                 };
-                linkapi.get(params).then((result) => {
+                ajax.post(params.url,params.data).then((result) => {
+                    result = result.data;
                     if (result.s == 1) {
                         for (let item of result.r) {
                             if (userIds.indexOf(item.id) == -1) {
@@ -331,16 +335,16 @@
                     keyword = this.keyword;
                 }
                 let params = {
-                    url: Config.serverConfig.uamUrl + '/extendApproval/getApprovalUserList',
+                    url:this.externalUrl + '/meta_data_members/query_members',
                     data: {
-                        sourceModule: this.activityInfo.suiteId,
-                        sourceId: this.activityInfo.sourceId,
                         page: this.pageNo,
                         pageSize: this.pageSize,
-                        keyword: keyword
+                        keyword: keyword,
+                        dataId:this.activityInfo.dataId
                     }
                 };
-                linkapi.get(params).then((result)=> {
+                ajax.get(params.url,params.data).then((result)=> {
+                    result = result.data;
                     if (result.success) {
                         if (type == 1) {
                             this.memberDatas = result.data.resultSet;
@@ -424,15 +428,16 @@
             },
             getAdminInfo(){
                 let params = {
-                    url: Config.serverConfig.uamUrl + '/extendApproval/isAdmin',
+                    url: this.externalUrl + '/meta_data_members/is_admin',
                     data: {
-                        entityName: this.activityInfo.suiteId,
-                        sourceId: this.activityInfo.sourceId,
+                        metaEntityId: this.activityInfo.entityId,
+                        dataId: this.activityInfo.dataId,
                     }
                 };
-                linkapi.get(params).then((result)=> {
-                    if (result.success) {
-                        this.isAdmin = result.data;
+                ajax.get(params.url,params.data).then((result)=> {
+                    result = result.data;
+                    if (result) {
+                        this.isAdmin = result;
                         if (this.isAdmin) {
                             this.optionItems = ['设置管理员', '取消管理员', '邀请新成员', '移除成员', '退出成员'];
                         } else {//普通成员
@@ -461,17 +466,16 @@
                 }
                 this.isShowLoading = true;
                 let params = {
-                    url: Config.serverConfig.uamUrl + '/extendApproval/setMembersAdmin',
-                    data: Util.toHttpRequestParams({
-                        entityName: this.activityInfo.suiteId,
-                        sourceId: this.activityInfo.sourceId,
-                        setAdmin: type,
+                    url: this.externalUrl+(type?"/meta_data_members/setup_admin":"meta_data_members/deregister_admin"),
+                    data:Util.toHttpRequestParams({
+                        metaEntityId: this.activityInfo.entityId,
+                        dataId: this.activityInfo.dataId,
                         userId: userIds,
                     })
                 };
-                linkapi.post(params).then((result)=> {
+                ajax.patch(params.url,params.data).then((result)=> {
                     this.isShowLoading = false;
-                    if (result.success) {
+                    if (result) {
                         this.$toast("操作成功");
                         this.pageNo = 1;
                         this.initData(1);
@@ -484,26 +488,26 @@
                 });
             },
             deleteMembers(ids, isSelf){
+                this.$alert(ids)
                 if (Util.isEmpty(ids)) {
                     return;
                 }
                 this.isShowLoading = true;
-                let datas = {
+/*                let datas = {
                     entityName: this.activityInfo.suiteId,
                     sourceId: this.activityInfo.sourceId,
-                    id: ids,
+                    members: ids,
                 };
                 if (isSelf) {
                     datas.ignoreEcode = 1;
-                }
+                }*/
                 let params = {
-                    url: Config.serverConfig.uamUrl + '/extendApproval/deleteApprovalUser',
-                    data: Util.toHttpRequestParams(datas)
+                    url: this.externalUrl + `/meta_data_members?metaEntityId=${this.activityInfo.entityId}&dataId=${this.activityInfo.dataId}&members=${ids}`,
+                    /*data: datas*/
                 };
-
-                linkapi.post(params).then((result)=> {
+                ajax.delete(params.url).then((result)=> {
                     this.isShowLoading = false;
-                    if (result.success) {
+                    if (result) {
                         this.$toast("操作成功");
                         if (isSelf) {
                             storage.setItem("exit", true);
@@ -526,22 +530,20 @@
                 }
                 this.isShowLoading = true;
                 let params = {
-                    url: Config.serverConfig.uamUrl + '/extendApproval/sendApproval',
+                    url:this.externalUrl + '/meta_data_members',
                     data: Util.toHttpRequestParams({
-                        entityName: this.activityInfo.suiteId,
-                        sourceId: this.activityInfo.sourceId,
-                        userId: userId,
+                        metaEntityId: this.activityInfo.entityId,
+                        dataId: this.activityInfo.dataId,
                         userIds: userId,
-                        orgId: orgId,
                         orgIds: orgId,
-                        groupId: groupId,
                         groupIds: groupId,
                         approvalUserIds: userId,
                         isRemoveExistsMembers: isRemoveExistsMembers,
                         isCheckDuplicateUser:isRemoveExistsMembers
                     })
                 };
-                linkapi.post(params).then((result)=> {
+                ajax.post(params.url,params.data).then((result)=> {
+                    result = result.data;
                     this.isShowLoading = false;
                     if (result.success) {
                         if (result.data && JSON.stringify(result.data) != "{}" && result.data.existsUserIds) {
@@ -604,15 +606,22 @@
 */
             let params =this.widgetParams,_t = this;//页面参
             if (params != null && !Util.isEmpty(params.dataId) && !Util.isEmpty(params.entityId)) {
-                this.activityInfo.sourceId = params.dataId;
-                this.activityInfo.suiteId = params.entityId;
-                this.getLoginInfo();
-                this.initData(1);
+                this.activityInfo.dataId = params.dataId;
+                this.activityInfo.entityId = params.entityId;
+                //this.initData(1);
+                Config.readRuntimeConfig(this.$getContextPath()).then(runtimeConfig => {
+                    service.init(runtimeConfig.configServerUrl);//初始化请求到的地址
+                    service.getEngineUrlMeta(params.entityId).then(res=>{
+                        _t.externalUrl = res;
+                        _t.initData(1);
+                        _t.getAdminInfo();
+                    });//获取引擎地址
+                });
+
             } else {
                 this.$toast("参数未传递");
                 this.$pop();
             }
-
 
 
             globalEvent.addEventListener("androidback", e => {

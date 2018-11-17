@@ -2,8 +2,8 @@
 <!--
     <text>123123123</text>
 -->
-    <div>
-        <bui-image width="38px" height="38px" :src="getImageUrl(operation.icon)"></bui-image>
+    <div style="padding-left: 10px; padding-right: 10px;">
+        <image style="width:38px;height:38px;" :src="getImageUrl(operation.icon)"></image>
     </div>
 </template>
 <script>
