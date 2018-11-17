@@ -4,7 +4,8 @@
 import i18n from '../../js/i18n/index';
 import buiweex from "bui-weex";
 import linkapi from "linkapi";
-var factoryApi = Object.assign({
+import Util from '../../js/utils'
+var factoryApi = Object.assign({},buiweex,linkapi,{
     goback(context, $optInst) {
         //返回
         buiweex.pop();
@@ -96,7 +97,32 @@ var factoryApi = Object.assign({
     getData(t){
         //检测全局部件获取数据表单数据方法
         return factoryApi.submitPromise(t,[],"getData");
-    }
-},buiweex,linkapi);
+    },
+    //封装下linkapi--需要对参数特殊处理的接口
+    post(params){
+        if(params.data){
+            params.data = Util.toHttpRequestParams(params.data)
+        }
+        return linkapi.post(params);
+    },
+    get(params){
+        if(params.data){
+            params.data = Util.toHttpRequestParams(params.data)
+        }
+        return linkapi.get(params);
+    },
+    delete(params){
+        if(params.data){
+            params.data = Util.toHttpRequestParams(params.data)
+        }
+        return linkapi.delete(params);
+    },
+    put(params){
+        if(params.data){
+            params.data = Util.toHttpRequestParams(params.data)
+        }
+        return linkapi.put(params);
+    },
+});
 
 export default factoryApi
