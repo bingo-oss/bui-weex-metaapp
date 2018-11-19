@@ -59,8 +59,7 @@ export default {
     },
     created(){
         let _t = this;
-        _t.operation.show = true;
-        _t.operation.hide = false;
+        _t.operation.show = false;
         _t.operation.widgetContext = this.extendedWidgetContext;//暴露部件参数出去提供更多的校验手段
         OperationUtils.showOperation(this.operation).then(res=>{
             if(typeof(res) == "boolean"){

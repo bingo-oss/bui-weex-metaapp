@@ -69,19 +69,22 @@
                     pageService.get(this.widgetParams.pageId,this.widgetParams.byOperation).then(function(pageConfig){
                         _this.pageConfig=_this.convert(pageConfig);
 
-
                         //特殊处理-暂时先这样定义高度的变化--不然没法兼容
-                        setTimeout(function(){
+                        var _setTimeout = setTimeout(function(){
                             let _widgetHeights = 0;
-                            _.each(_this.$refs.childWidgets,(cw)=>{
-                                dom.getComponentRect(cw,function(res){
-                                    //计算下当前部件的总高--若超出则不需要定制高度
-                                    _widgetHeights+=res.size.height
-                                    if(_widgetHeights>_this.scrollerStyle.height){
-                                        _this.scrollerStyle = {};
-                                    }
+                            if(_this.pageConfig&&_this.$refs.childWidgets.length==_this.pageConfig.columnWidgets.length){
+                                _.each(_this.$refs.childWidgets,(cw)=>{
+                                    dom.getComponentRect(cw,function(res){
+                                        //计算下当前部件的总高--若超出则不需要定制高度
+                                        _widgetHeights+=res.size.height
+                                        if(_widgetHeights>(_this.scrollerStyle.height)){
+                                            _this.scrollerStyle = {};
+                                        }
+                                    });
                                 });
-                            });
+                            }else{
+                                _setTimeout();
+                            }
                         },1000);
                     });
                 }
