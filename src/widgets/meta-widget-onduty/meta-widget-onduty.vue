@@ -101,12 +101,11 @@
                 if(this.stopClick){
                     return false;
                 }
-
                 var curtime = new Date().getTime(); //当前的时间
                 var now = this.timeformat(curtime);
                 let params = {
                     "endTime": now,
-                    "duration": this.ondutytime,
+                    "duration": "值班历时时长:"+this.ondutytime,
                     "isOnDuty": 0
                 }
                 let _this = this;
@@ -174,7 +173,7 @@
                                         _this.hour = parseInt((timerdif % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                                         _this.min = parseInt((timerdif % (1000 * 60 * 60)) / (1000 * 60));
                                         var seconds = parseInt((timerdif % (1000 * 60)) / 1000);
-                                        _this.ondutytime = _this.hour + '小时:' + _this.min + '分钟:' + seconds + '秒'
+                                        _this.ondutytime = (this.hour?(this.hour + '小时:'):'') + (this.min?(this.min + '分钟:'):'') + seconds + '秒'
                                     }
 
                                     //循环计时
@@ -202,7 +201,7 @@
                     this.hour += 1;
                     this.min = 0;
                 }
-                this.ondutytime = this.hour + '小时:' + this.min + '分钟:' + seconds + '秒'
+                this.ondutytime = (this.hour?(this.hour + '小时:'):'') + (this.min?(this.min + '分钟:'):'') + seconds + '秒'
             },
             timeformat: function (curtime) { //参数为时间戳 转换时间格式为：“2018-11-17 13:58:02”
                 var date = new Date(curtime);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
