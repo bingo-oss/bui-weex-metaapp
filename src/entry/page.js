@@ -63,6 +63,9 @@ Vue.component('meta-widget-dynamic-card',require("../widgets/meta-widget-dynamic
 //文本部件
 Vue.component('meta-widget-text',require("../widgets/meta-widget-text/meta-widget-text.vue"));
 
+//值班部件
+Vue.component('meta-widget-onduty',require("../widgets/meta-widget-onduty/meta-widget-onduty.vue"));
+
 
 App.el = '#root'
 
