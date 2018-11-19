@@ -248,7 +248,7 @@
 <style lang="css">
     .wrapper {
         padding-top: 20px;
-        padding-bottom: 20px;
+        padding-bottom: 40px;
     }
 
     .mybtn_d{
