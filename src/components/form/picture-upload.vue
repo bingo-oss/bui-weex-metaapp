@@ -24,10 +24,18 @@
                 <bui-image  @click="handlePreview(file)" width="120px" height="120px" :src="getImageUrl(file.relativePath)"></bui-image>
                 <bui-icon @click="del(file,index)" class="image_del" name="ion-android-delete" size="40" color="red"></bui-icon>
             </div>
-            <div v-if="!viewMode&&!forceView" class="file_image" @click="inputClicked">
-                <bui-image width="120px" height="120px" src="/image/u85.png" @click="inputClicked">></bui-image>
+            <div v-if="!viewMode&&!forceView" class="file_image" @click="showOptionBar = !showOptionBar">
+                <bui-image width="120px" height="120px" src="/image/u85.png" @click="showOptionBar = !showOptionBar">></bui-image>
             </div>
         </div>
+
+        <bui-actionsheet
+                :items="optionItems"
+                v-model="showOptionBar"
+                title="请选择操作类型"
+                @itemClick="onSelectOptionType"
+                ref="optionActionSheet"></bui-actionsheet>
+
     </div>
 </template>
 
@@ -53,6 +61,8 @@ export default {
         return {
             valueText: '',
             files:[],
+            optionItems:["拍照上传","选择图片"],
+            showOptionBar: false,
             officeSupport: [
                 "ods",
                 "xls",
@@ -92,6 +102,17 @@ export default {
         }
     },
     methods: {
+        onSelectOptionType(item){
+            switch (item) {
+                case '拍照上传':
+                    this.inputClicked(0);
+                    break;
+                case '选择图片':
+                    this.inputClicked(1);
+                    break;
+            }
+            this.showOptionBar = false;
+        },
         fileUpload(files,filesIndex){
             let _this = this;
             if(!files[filesIndex]) {
@@ -117,30 +138,21 @@ export default {
                 _this.fileUpload(files,filesIndex)
             });
         },
-        inputClicked(e) {
+        inputClicked(type) {
             if(this.readonly){
                 return;
             }
             let _this = this;
-            linkapi.selectFiles(1, (result) => {
-                 if (result.resource) {
-                        if(_.isString(result.resource)){
-                            result.resource = JSON.parse(result.resource)
-                        }
-                        _this.fileUpload(result.resource,0);//执行上传
-/*                     linkapi.uploadFiles(result.resource, (res) => {
-                         this.$alert(res);
-                     }, (err) => {
-                         //this.$alert(err);
-                     })*/
-                 } else {
-                 // No resource selected.
-                 }
-                 // this.$emit('input', result.id)
-                 // this.valueText = result.name;
-             }, (err) => {
-                 //this.$alert(err);
-             })
+            linkapi.selectFiles(type, (result) => {
+                if (result.resource) {
+                    if(_.isString(result.resource)){
+                        result.resource = JSON.parse(result.resource)
+                    }
+                    _this.fileUpload(result.resource,0);//执行上传
+                }
+            }, (err) => {
+            })
+
 
             /*FileTransfer.upload("","",{},(e)=>{
                 this.$alert(e);
