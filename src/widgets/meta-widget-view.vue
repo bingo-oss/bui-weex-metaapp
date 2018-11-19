@@ -810,7 +810,9 @@ module.exports = {
                 button.show = true;
                 button.hide = false;
                 button.widgetContext = this.getWidgetContext();
-                OperationUtils.showOperation(button);
+                OperationUtils.showOperation(button).then(res=>{
+                    button.show = res;
+                })
             });//不是调用 meta-operation 渲染的按钮-需要单独执行校验函数 和显隐处理--会返回
     },
     components: {

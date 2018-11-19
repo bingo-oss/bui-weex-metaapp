@@ -5,7 +5,6 @@ import factoryApi from '../../../widgets/libs/factory-api.js';
 import Utils from '../../../js/tool/utils';
 const linkapi = require('linkapi');
 import commonOperation from './common_operation.js';
-
 var utils={
     expandOperation:function(operation,ctx){
         var params={};
@@ -108,14 +107,28 @@ var utils={
     },
     showOperation(operation){
         //具备校验函数--需要对按钮进行显隐控制
-        if(operation.checkFunc){
+/*        if(operation.checkFunc){
             if (_.isFunction(operation.checkFunc)) {
                 operation.checkFunc(operation,factoryApi);
             } else {
                 var onclick = Function('"use strict";return ' + operation.checkFunc)();
                 onclick(operation,factoryApi);
             }
-        }
+        }*/
+        return new Promise(function(resolve, reject) {
+            let value=true;
+            if(operation.checkFunc) {
+                if (_.isFunction(operation.checkFunc)) {
+                    operation.checkFunc(operation,factoryApi,resolve);
+                } else {
+                    var onclick = Function('"use strict";return ' + operation.checkFunc)();
+                    onclick(operation,factoryApi,resolve);
+                }
+                //resolve(value);
+            }else{
+                resolve(value);
+            }
+        });
     },
     operationClick(_rowSingleData,_widgetCtx,_t){
         //部件按钮的对象,部件需要暴露给按钮操作的对象,_t自身模型

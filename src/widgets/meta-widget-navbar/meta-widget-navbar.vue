@@ -221,7 +221,11 @@
             pageScrollHandler(e){
                 //用于监听容器的滚动
                 if(this.widgetParams.isGradualChange){
-                    this.gradualChangeOpacity = - e.contentOffset.y/50;//滚动渐显效果
+                    if(e&&(-e.contentOffset.y)<=50){
+                        this.gradualChangeOpacity = - e.contentOffset.y/50;//滚动渐显效果
+                    }else{
+                        this.gradualChangeOpacity = 1;
+                    }
                 }
             },
             exportParams(){

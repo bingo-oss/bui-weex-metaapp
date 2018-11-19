@@ -11,6 +11,8 @@ import _ from '../../js/tool/lodash';
 import Utils from '../../js/tool/utils';
 import OperationUtils from './js/operation_utils';
 import factoryApi from '../../widgets/libs/factory-api.js';
+const globalEvent = weex.requireModule('globalEvent');
+
 //操作类型定义
 var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script',openApp:'openApp',toOperation:"to_operation"};
 /*
@@ -56,10 +58,20 @@ export default {
         }
     },
     created(){
-            this.operation.show = true;
-            this.operation.hide = false;
-            this.operation.widgetContext = this.extendedWidgetContext;//暴露部件参数出去提供更多的校验手段
+        let _t = this;
+        _t.operation.show = true;
+        _t.operation.hide = false;
+        _t.operation.widgetContext = this.extendedWidgetContext;//暴露部件参数出去提供更多的校验手段
+        OperationUtils.showOperation(this.operation).then(res=>{
+            if(typeof(res) == "boolean"){
+              _t.operation.show = res;
+              _t.$forceUpdate();
+            }
+        })
+        //用于监听激活刷新校验
+        globalEvent.addEventListener("resume", e => {
             OperationUtils.showOperation(this.operation);
+        });
     },
     computed:{
         operationComponent:function(){
