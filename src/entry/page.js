@@ -60,6 +60,8 @@ Vue.component('meta-widget-footbar',require("../widgets/meta-widget-footbar/meta
 Vue.component('meta-widget-member-card',require("../widgets/meta-widget-member-card/meta-widget-member-card.vue"));
 //动态卡片部件
 Vue.component('meta-widget-dynamic-card',require("../widgets/meta-widget-dynamic-card/meta-widget-dynamic-card.vue"));
+//文本部件
+Vue.component('meta-widget-text',require("../widgets/meta-widget-text/meta-widget-text.vue"));
 
 
 App.el = '#root'
