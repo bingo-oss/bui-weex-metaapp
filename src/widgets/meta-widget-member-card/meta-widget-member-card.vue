@@ -199,9 +199,10 @@
                         /*sourceModule: this.activityInfo.entityId,
                         sourceId: this.activityInfo.dataId,*/
                         page: this.pageNo,
-                        pageSize: this.pageSize,
-                        keyword: keyword,
-                        dataId:this.activityInfo.dataId
+                        page_size: this.pageSize,
+                        keyWord: keyword,
+                        dataId:this.activityInfo.dataId,
+                        tota:true
                     }
                 };
                 ajax.get(params.url,params.data).then((result)=> {

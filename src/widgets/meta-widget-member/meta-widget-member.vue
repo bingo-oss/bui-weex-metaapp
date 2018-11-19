@@ -338,9 +338,10 @@
                     url:this.externalUrl + '/meta_data_members/query_members',
                     data: {
                         page: this.pageNo,
-                        pageSize: this.pageSize,
-                        keyword: keyword,
-                        dataId:this.activityInfo.dataId
+                        page_size: this.pageSize,
+                        keyWord: keyword,
+                        dataId:this.activityInfo.dataId,
+                        tota:true
                     }
                 };
                 ajax.get(params.url,params.data).then((result)=> {

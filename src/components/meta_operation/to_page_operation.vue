@@ -54,7 +54,7 @@ export default {
     },
     data(){
         if(!this.operation.pageId){
-            this.$toast("page参数缺失");
+            //this.$toast("page参数缺失");
         }
         return {
             modalWidth:this.operation.modalWidth||750,
