@@ -75,8 +75,8 @@
                       @click="onBlogItemClick(blogItem.blogInfo.blogId)" v-if="blogList.length>0">
                     <div :class="['flex-row','blog-div',getItemLabelStyle(blogItem)!=''?'instructions-label':'']"
                     ><!--  :style="{'border-left-color':'#'+getItemLabelStyle(blogItem).color}"-->
-                        <div style="width: 80px;height: 80px;border-radius: 50px">
-                            <bui-image width="80px" height="80px" radius="50px"
+                        <div style="width: 60px;height: 60px;border-radius: 30px">
+                            <bui-image width="60px" height="60px" radius="30px"
                                        :src="getImageUrl(blogItem.blogInfo.accountImage)"
                                        placeholder="/image/usertp.png"></bui-image>
                         </div>
@@ -90,22 +90,22 @@
                             </div>
 
                             <!--部门 -->
-                            <div class="flex-row center" style="margin-top: 20px;align-items: center;">
+                            <!--<div class="flex-row center" style="margin-top: 20px;align-items: center;">
                                 <div class="flex1 flex-row row-center-left">
                                     <text class="blog-orgName" :value="blogItem.blogInfo&&blogItem.blogInfo.orgName?blogItem.blogInfo.orgName:''"></text>
-                                    <!--<text class="time">{{handleTime(blogItem.blogInfo.publishTime)}}</text>-->
-                                    <!--         <text v-if="blogItem.blogInfo.accountId==currLoginInfo.userId" class="delete"
+                                    &lt;!&ndash;<text class="time">{{handleTime(blogItem.blogInfo.publishTime)}}</text>&ndash;&gt;
+                                    &lt;!&ndash;         <text v-if="blogItem.blogInfo.accountId==currLoginInfo.userId" class="delete"
                                                    @click="onBlogDelete(blogItem)"
                                                    value="删除">
-                                             </text>-->
+                                             </text>&ndash;&gt;
                                 </div>
-                                <!--暂不支持评论与点赞-->
-                                <!--<div v-if="!blogItem.blogInfo.isDeleted" class="image-box flex-row center"
+                                &lt;!&ndash;暂不支持评论与点赞&ndash;&gt;
+                                &lt;!&ndash;<div v-if="!blogItem.blogInfo.isDeleted" class="image-box flex-row center"
                                      @click="onCommentMenuClick(index,blogItem,$event,1)">
                                     <bui-image style="width: 40px;height:25px;" src="/image/blog_ic_item_operate.png"
                                                @click="onCommentMenuClick(index,blogItem,$event,2)"></bui-image>
-                                </div>-->
-                            </div>
+                                </div>&ndash;&gt;
+                            </div>-->
 
                             <!--正文 -->
                             <!--<text class="body-content" :value="getBlogText(blogItem.blogInfo.content)"></text>-->
@@ -139,7 +139,7 @@
                                     <bui-image width="60px" height="60px"
                                                :src="getImageUrl(attachmentItem.resourceThumb)"
                                                :placeholder="getAttachmentItemDefaultImage(attachmentItem.resourceType)"></bui-image>
-                                    <text style="font-size: 25px;color: #696969;margin-left: 10px;flex: 1"
+                                    <text style="font-size: 24px;color: #696969;margin-left: 10px;flex: 1"
                                           :value="attachmentItem.resourceDescription">
                                     </text>
                                 </div>
@@ -149,7 +149,7 @@
                                  @click="onLocationClick(blogItem)">
                                 <bui-image width="35px" height="35px"
                                            src="/image/location_mark_green.png"></bui-image>
-                                <text style="font-size: 25px;color: #898989"
+                                <text style="font-size: 24px;color: #898989"
                                       :value="blogItem.blogInfo.location.addr"></text>
                             </div>
 
@@ -383,7 +383,7 @@
 
     .blog-name {
         color: #627CA7;
-        font-size: 32px
+        font-size: 26px
     }
     .blog-orgName{
         color: #627CA7;
@@ -392,7 +392,7 @@
 
     .popup-item-text {
         color: #fff;
-        font-size: 25px;
+        font-size: 24px;
         margin-left: 5px
     }
 
@@ -970,62 +970,6 @@
                     }
                 }
             },
-            onBlogDeleteConfirm(blogItem){
-                this.isShowPopupMenu = false;
-                if (this.isArchive) {
-                    this.$toast("该行动已归档,不可操作!");
-                    return;
-                }
-                this.blogItem = blogItem;
-                this.dialogContent = "你是否确定要删除该动态？";
-                this.buttonArray = [{type: 1, title: '取消'}, {type: 2, title: '确定'}];
-                this.dialogType = 1;
-                this.showDialog = true;
-            },
-            deleteBlogForAdmin(item){
-                this.isShowLoading = true;
-                let datas = {
-                    blogId: item.blogInfo.blogId,
-                    sourceId: this.activityInfo.sourceId,
-                    entityName: this.activityInfo.suiteId
-                };
-                let params = {
-                    url: Config.serverConfig.uamUrl + '/extendBlog/deleteBlogOrComment',
-                    data: Util.toHttpRequestParams(datas)
-                }
-                linkapi.post(params).then((result) => {
-                    this.isShowLoading = false;
-                    if (result.s == 1) {
-                        this.$toast("删除成功");
-                        this.pageNo = 1;
-                        this.initData(1)
-                    } else {
-                        this.$toast(result.m);
-                    }
-                }).catch((error)=> {
-                    this.isShowLoading = false;
-                    this.$toast(Util.handleException(error));
-                });
-            },
-            deleteBlog(item){
-                this.isShowLoading = true;
-                let params = {
-                    url: Config.serverConfig.blogApi + '/v1/info?blogId=' + item.blogInfo.blogId,
-                }
-                linkapi.delete(params).then((result) => {
-                    this.isShowLoading = false;
-                    if (result.code == 200) {
-                        this.$toast("删除成功");
-                        this.pageNo = 1;
-                        this.initData(1)
-                    } else {
-                        this.$toast(result.message);
-                    }
-                }).catch((error)=> {
-                    this.isShowLoading = false;
-                    this.$toast(Util.handleException(error));
-                });
-            },
             getImageUrl(url){
                 if (Util.isEmpty(url)) {
                     return "";
@@ -1161,6 +1105,9 @@
                                     type: 'text',
                                     value: content,
                                     theme: 'blue',
+                                    style:{
+                                        "font-size":"24px"
+                                    }
                                 });
                             } else if (item.startsWith('#')) {
                                 let prefix = str.substring(0, i);
@@ -1170,6 +1117,9 @@
                                     type: 'text',
                                     value: item,
                                     theme: 'blue',
+                                    style:{
+                                        "font-size":"24px"
+                                    }
                                 });
                             } else if (item.startsWith('[')) {
                                 let prefix = str.substring(0, i);
@@ -1214,6 +1164,7 @@
                 for (var i = 0; i < text.length; i++) {
                     var obj = {
                         type: 'text',
+                        style: {'font-size': '24px'},
 //                       style: {'font-size': '28px', 'color': '#585858', 'margin-left': '0', 'margin-right': '0'},
 //                        style: { 'color': '#585858'},
                         theme: 'black',
@@ -1265,7 +1216,7 @@
                         offset: this.pageNo,
                         limit: this.pageSize,
                         isRefresh: 1,
-                        startTime: startTime,
+                        startTime: 0,//startTime,
                         sourceId: this.activityInfo.sourceId,
                     }
                 };
@@ -1276,7 +1227,7 @@
                     result = result.data;
                     if (result.code == 200 && result.data.length > 0) {
                         let datas = result.data;
-                        let _array = [];
+                        /*let _array = [];
                         for (let item of datas) {
                             if (!this.isExitsBlog(item.blogInfo.blogId) && this.blogList.length > 0) {
                                 _array.push(item)
@@ -1286,7 +1237,8 @@
                             this.blogList = _array.concat(this.blogList);
                         }else{
                             this.blogList = datas;
-                        }
+                        }*/
+                        this.blogList = datas;
                     }
                 }, error=> {
                 })
@@ -1298,84 +1250,6 @@
                     }
                 }
                 return false;
-            },
-            initData(type){//获取动态数据 type1 刷新数据 type2加载更多
-                this.isShowEmpty = false;
-                if (Util.isEmpty(this.activityInfo) || Util.isEmpty(this.activityInfo.suiteId)) {
-                    this.isShowLoading = false;
-                    return;
-                }
-                let params = {
-                    url: Config.serverConfig.uamUrl + '/extendBlog/getHomePageBlogList',
-                    data: {
-                        sourceModule: this.activityInfo.suiteId,
-                        offset: this.pageNo,
-                        limit: this.pageSize,
-                        sourceId: this.activityInfo.sourceId,
-                    }
-                }
-
-                params.data.labelId = this.currLabeId;
-                if (this.isSearching) {
-                    params = {
-                        url: Config.serverConfig.uamUrl + '/extendBlog/getHomePageBlogList',
-                        data: {
-                            sourceModule: this.activityInfo.suiteId,
-                            ignoreEcode: 1,
-                            offset: this.pageNo,
-                            limit: this.pageSize,
-                            sourceId: this.activityInfo.sourceId,
-                            keyword: this.filterParams.keyword ? this.filterParams.keyword : '',
-                            userId: this.filterParams.responsiblePersonId ? this.filterParams.responsiblePersonId : '',
-                            startTime: this.filterParams.startTime ? this.filterParams.startTime : '',
-                            endTime: this.filterParams.endTime ? this.filterParams.endTime : '',
-                            labelId: this.filterParams.labelId ? this.filterParams.labelId : '',
-                            orgId: this.filterParams.orgId ? this.filterParams.orgId : '',
-                            sourceType: 2,//（1、分享动态，2、工作动态）
-                        }
-                    }
-                    if(this.filterParams.labelId){
-                        this.currLabeId = this.filterParams.labelId;
-                    }
-                }
-                ajax.get(params.url,params.data).then((result) => {
-                    result = result.data;
-                    this.isShowLoading = false;
-                    if (result.code == 200) {
-                        if (result.labelStyle != null && JSON.stringify(result.labelStyle) != "{}") {
-                            this.labelStyle = result.labelStyle;
-                        }
-                        if (type == 1) {
-                            let datas = result.data;
-                            if (params.data.labelId == this.currLabeId) {
-                                this.blogList = datas;
-                                if (datas.length == 0) {
-                                    this.isShowEmpty = true;
-                                } else {
-                                    this.isShowEmpty = false;
-                                }
-                            }
-                        } else if (type == 2) {
-                            this.showLoading = false;
-                            const length = result.data.length;
-                            if (length > 0) {
-                                let datas = result.data
-                                this.blogList = this.blogList.concat(datas)
-                            } else {
-                                this.$toast('没有更多数据了');
-                            }
-                        }
-                    } else {
-                        this.refreshing = false;
-                        this.showLoading = false;
-                        this.$toast(result.message);
-                    }
-                }).catch((error)=> {
-                    this.isShowLoading = false;
-                    this.refreshing = false;
-                    this.showLoading = false;
-                    this.$toast("获取动态数据失败:" + Util.handleException(error));
-                });
             },
             convertBlogData(blogData){//评论倒叙
                 for (let i = 0; i < blogData.length; i++) {
@@ -1402,7 +1276,7 @@
                 //this.activityInfo = val;
                 //this.activityInfo.
                 this.getLoginInfo();
-                this.initData(1);
+                this.refreshData();
             },
             searchBlogData(val){
                 this.filterParams = val;
@@ -1410,7 +1284,7 @@
                 this.blogList = [];
                 this.isSearching = true;
                 this.isShowLoading = true;
-                this.initData(1);
+                this.refreshData();
             },
             handleTime(time){
                 return moment(time).utc().zone(-8).format('YYYY-MM-DD HH:mm');
@@ -1501,16 +1375,17 @@
             },
             getTopicInfo(){//用于发送动态的数据
                 let params = {
-                    url: Config.serverConfig.uamUrl + '/extendApproval/getTopic',
+                    url:`${Config.serverConfig.engineService}/metaservice/link_blog/${this.activityInfo.suiteId}/${this.activityInfo.sourceId}/topic`,
+                    //url: Config.serverConfig.uamUrl + '/extendApproval/getTopic',
                     data: {
-                        entityName: this.activityInfo.suiteId,
-                        sourceId: this.activityInfo.sourceId,
+                        //entityName: this.activityInfo.suiteId,
+                        //sourceId: this.activityInfo.sourceId
                     }
                 };
                 ajax.get(params.url,params.data).then((result) => {
-                    result = result.data;
-                    if (result.success) {
-                        this.topicData = result.data;
+                    if (result.status==200) {
+                        result = result.data;
+                        this.topicData = result;
                     } else {
                         this.$toast("获取topic数据失败：" + JSON.stringify(result));
                     }
@@ -1532,14 +1407,16 @@
                     content: '',
                     labelIds: labelIds,
                     privateInstanceID: this.topicData.sourceId,
-                    privateName: this.topicData.title,
-                    enableAtProjectMembers: true
+                    privateName: this.topicData.sourceName,
+                    enableAtProjectMembers: true,
+                    topicId:this.topicData.sourceId,
+                    title:this.topicData.sourceName
                 };
                 let datas = Object.assign({}, this.topicData, params);
                 linkapi.publishMicroblog(datas, result => {
                     this.sendCommentHint(result.blogId);
-                this.initData(1);//更新列表数据
-            }, (result) => {
+                    //this.initData(1);//更新列表数据
+                }, (result) => {
                 })
             },
             sendCommentHint(id){//发送评论提醒
@@ -1573,7 +1450,7 @@
                         this.requestData(this.activityInfo, this.currLabeId);
                     }
                 });*/
-                this.requestData(this.activityInfo, this.currLabeId);//resume激活时候触发刷新
+                this.refreshData();//resume激活时候触发刷新
 
                 storage.getItem("exit", event => {//
                     if (event.result == "success") {
@@ -1752,7 +1629,11 @@
                 _t.getMetaEntity(function(){
                     _t.refreshData();
                 })
-                service.getHomePage(params.homePageId||this.$getPageParams().homePageId).then((res)=>{
+                _t.tools = [];
+                _t.handleTabMenu();
+                _t.handleCreateMenu();
+                _t.handleWriteMenu();
+/*                service.getHomePage(params.homePageId||this.$getPageParams().homePageId).then((res)=>{
                     //获取主页配置
                     //快捷操作
                     if(!res){res={"mpHomePageOprationList":[]}}
@@ -1770,12 +1651,12 @@
                     _t.handleTabMenu();
                     _t.handleCreateMenu();
                     _t.handleWriteMenu();
-                });
+                });*/
             } else {
                 this.$toast("参数未传递");
                 //this.$pop();
             }
-
+            
             globalEvent.addEventListener("resume", e => {
                 this.onViewAppear();
             });

@@ -131,8 +131,8 @@
                     icon: 'ion-ios-arrow-left',
                 },
                 rightItem: {
-                    text: '更多',
-//                    icon: 'ion-ios-more',
+                    /*text: '更多',*/
+                    icon: 'ion-ios-more',
                 },
                 activityInfo: {},
                 memberDatas: [],
@@ -186,7 +186,8 @@
                     this.$refs.optionActionSheet.show();
                 } else {
                     this.isShowSelected = false;
-                    this.rightItem.text = '更多';
+                    this.rightItem.text = "";
+                    this.rightItem.icon = 'ion-ios-more';
                     if (this.operationType == 1) {//设置管理员
                         this.setAdmin(this.getSelectedUserId(), 1)
                     } else if (this.operationType == 2) {//取消管理员
@@ -288,12 +289,14 @@
                     case '设置管理员':
                         this.isShowSelected = true;
                         this.operationType = 1;
-                        this.rightItem.text = '确定';
+                        this.rightItem.icon = 'ion-android-done';
+                        //this.rightItem.text = '确定';
                         break;
                     case '取消管理员':
                         this.isShowSelected = true;
                         this.operationType = 2;
-                        this.rightItem.text = '确定';
+                        this.rightItem.icon = 'ion-android-done';
+                        //this.rightItem.text = '确定';
                         break;
                     case '邀请新成员':
                         this.selectMembers();
@@ -301,7 +304,8 @@
                     case '移除成员':
                         this.isShowSelected = true;
                         this.operationType = 3;
-                        this.rightItem.text = '确定';
+                        this.rightItem.icon = 'ion-android-done';
+                        //this.rightItem.text = '确定';
                         break;
                     case '退出成员':
                         this.exitMember();

@@ -8,20 +8,20 @@
         </div>
         <div  class="flex-row user_w">
             <div class="cell-box user add center" @click="selectMembers">
-                <div style="width: 100px;height:100px" @click="selectMembers">
-                    <bui-image @click="selectMembers" width="100px" height="100px" :src="'/image/cy_new.png'" radius="50"></bui-image>
+                <div style="width: 80px;height:80px" @click="selectMembers">
+                    <bui-image @click="selectMembers" width="80" height="80px" :src="'/image/cy_new.png'" radius="50"></bui-image>
                 </div>
                 <div class="flex1">
-                    <text style="color: #434343;font-size: 26px; margin-top: 10px;">添加</text>
+                    <text style="color: #434343;font-size: 24px; margin-top: 10px;">添加</text>
                 </div>
             </div>
             <div class="user" v-for="(item,index) in memberDatas" v-if="(lineNumber==-1)||(index<lineNumber)">
                 <div class="cell-box center">
-                        <div style="width: 100px;height:100px">
-                            <bui-image width="100px" height="100px" :src="getImageUrl(item.picture)" radius="50" @click="onAvatarClick(index,item)" placeholder="/image/usertp.png"></bui-image>
+                        <div style="width: 80px;height:80px">
+                            <bui-image width="80px" height="80px" :src="getImageUrl(item.picture)" radius="50" @click="onAvatarClick(index,item)" placeholder="/image/usertp.png"></bui-image>
                         </div>
-                        <div style="width:100px;">
-                            <text style="color:#434343;font-size: 26px; margin-top: 10px;lines :1; text-overflow:ellipsis; word-break: normal; white-space:nowrap; text-align: center; ">{{item.name}}</text>
+                        <div style="width:80px;">
+                            <text style="color:#434343;font-size: 24px; margin-top: 10px;lines :1; text-overflow:ellipsis; word-break: normal; white-space:nowrap; text-align: center; ">{{item.name}}</text>
                         </div>
                 </div>
             </div>
@@ -356,7 +356,7 @@
         },
         computed:{
             lineNumber(){
-                return (this.widgetParams.lines||this.widgetParams.lines===0)?((this.widgetParams.lines*6)-1):-1
+                return (this.widgetParams.lines||this.widgetParams.lines===0)?((this.widgetParams.lines*7)-1):-1
             }
             /*lineStyle(){
                 //显示行数样式
