@@ -1395,6 +1395,8 @@
                         sourceModule: this.activityInfo.suiteId,
                         offset: this.pageNo,
                         limit: this.pageSize,
+                        startTime:0,
+                        isRefresh:1,
                         sourceId: this.activityInfo.sourceId,
                     }
                 }
@@ -1416,6 +1418,7 @@
                             labelId: this.filterParams.labelId ? this.filterParams.labelId : '',
                             orgId: this.filterParams.orgId ? this.filterParams.orgId : '',
                             sourceType: 2,//（1、分享动态，2、工作动态）
+                            isRefresh:1
                         }
                     }
                     if(this.filterParams.labelId){
@@ -1753,18 +1756,16 @@
             },
             getTopicInfo(){//用于发送动态的数据
                 let params = {
-                    url: Config.serverConfig.uamUrl + '/extendApproval/getTopic',
+                    url:`${Config.serverConfig.engineService}/metaservice/link_blog/${this.activityInfo.suiteId}/${this.activityInfo.sourceId}/topic`,
                     data: {
-                        entityName: this.activityInfo.suiteId,
-                        sourceId: this.activityInfo.sourceId,
                     }
                 };
                 linkapi.get(params).then((result) => {
-                    if (result.success) {
-                    this.topicData = result.data;
-                } else {
-                    this.$toast("获取topic数据失败：" + JSON.stringify(result));
-                }
+                    if (result) {
+                        this.topicData = result.data;
+                    } else {
+                        this.$toast("获取topic数据失败：" + JSON.stringify(result));
+                    }
             }).catch((error)=> {
                 });
             },
@@ -1783,8 +1784,10 @@
                     content: '',
                     labelIds: labelIds,
                     privateInstanceID: this.topicData.sourceId,
-                    privateName: this.topicData.title,
-                    enableAtProjectMembers: true
+                    privateName: this.topicData.sourceName,
+                    enableAtProjectMembers: true,
+                    topicId:this.topicData.sourceId,
+                    title:this.topicData.sourceName
                 };
                 let datas = Object.assign({}, this.topicData, params);
                 linkapi.publishMicroblog(datas, result => {
