@@ -48,7 +48,7 @@ export default {
         return {
             filterPointStart: '',
             filterPointEnd: '',
-            datetimeFormat:'yyyy-MM-dd HH:mm'
+            datetimeFormat:'yyyy-MM-dd hh:mm'
         }
     },
     computed: {

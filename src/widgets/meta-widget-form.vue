@@ -456,7 +456,7 @@
                 return this.doSaveModel();
             },
             getData(){//页面部件获取表单数据方法
-                return this.getToUpdateModel();
+                return this.ignoreReadonlyFields()
             },
             formCheck(){//页面部件执行校验
                 var validated = true;
@@ -681,7 +681,6 @@
                 delete pageParam.readOnly;
                 this.readOnly = true;
             }
-
             // After deleting those checked properties, use the rest of pageParam as queryParam
             this.queryParam = pageParam;
 
@@ -734,7 +733,7 @@
                     let _formDefaultValues = this.widgetParams.formDefaultValues
                     if(_formDefaultValues){
                         if(_.isString(_formDefaultValues)){
-                            this.widgetParams.formDefaultValues = JSON.parse(_formDefaultValues);
+                            _formDefaultValues = JSON.parse(_formDefaultValues);
                         }
                         this.defaultValues = _formDefaultValues;
                     }//传入了表单默认值了
