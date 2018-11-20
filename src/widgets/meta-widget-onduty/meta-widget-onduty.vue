@@ -24,7 +24,7 @@
     import service from '../../js/service.js';
     import ajax from '../../js/ajax.js';
     import config from '../../js/config.js';
-    import utils from '../../js/tool/utils.js';
+    import Utils from '../../js/tool/utils.js';
 
     const linkapi = require('linkapi');
     const globalEvent = weex.requireModule('globalEvent');
@@ -71,7 +71,7 @@
                     return false;
                 }
                 let _this = this;
-                var curtime = new Date().getTime(); //当前的时间
+                var curtime = Utils.realTime(new Date().getTime()); //当前的时间
                 var startTime = this.timeformat(curtime);
 
                 //orgId=c72ab416-16d2-4f0c-aaf9-1ebadb416ca8
@@ -89,10 +89,10 @@
                 _this.ondutytime = "";
                 ajax.post(`${this.engineUrl}/${this.viewConfigInfo.metaEntityName.toLowerCase()}`, params).then(res => {
                     this.dutyId = res.data["$id"]
-                    this.begintime = new Date(res.data.startTime).getTime();//转换成时间戳
+                    this.begintime = Utils.realTime(new Date(res.data.startTime).getTime());//转换成时间戳
                     this.stopClick = false;
                     //请求成功后开始获取当前时间，和开始计算时长；
-                    this.currentTime = new Date().getTime();
+                    this.currentTime = Utils.realTime(new Date().getTime());
                     _this.timer = setInterval(_this.computtime, 1000); //计算正在值班的时间时长
                 });
 
@@ -101,7 +101,7 @@
                 if(this.stopClick){
                     return false;
                 }
-                var curtime = new Date().getTime(); //当前的时间
+                var curtime = Utils.realTime(new Date().getTime()); //当前的时间
                 var now = this.timeformat(curtime);
                 let params = {
                     "endTime": now,
@@ -163,10 +163,10 @@
                                     }
                                     _this.dutyId = _data.id
                                     let begindutyTime = _data.startTime //开始值班的时间
-                                    _this.begintime = new Date(begindutyTime).getTime();//转换成时间戳
+                                    _this.begintime = Utils.realTime(new Date(begindutyTime).getTime());//转换成时间戳
 
                                     function starting() {
-                                        var curtime = new Date().getTime(); //当前的时间
+                                        var curtime = Utils.realTime(new Date().getTime()); //当前的时间
                                         var timerdif = curtime - _this.begintime; //时间差（时间戳）
 
                                         //转换成时分秒
@@ -190,7 +190,7 @@
 
             },
             computtime: function () {    //计算时长(当前的时间 - 开始值班的时间)
-                var newcurtime = new Date().getTime();
+                var newcurtime = Utils.realTime(new Date().getTime());
                 var timelength = newcurtime - this.currentTime;
                 var seconds = parseInt((timelength % (1000 * 60)) / 1000);  //时间戳转换为秒
 

@@ -67,7 +67,7 @@ const Utils={
                 return '';
             }
         }
-        fmt=fmt||'yyyy-MM-dd HH:mm:ss';
+/*     fmt=fmt||'yyyy-MM-dd HH:mm:ss';
         var dateStr=fmt;
         var o = {
             "M+": dateObj.getMonth() + 1, //月份 
@@ -85,7 +85,39 @@ const Utils={
                 dateStr = dateStr.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
             }
         }
-        return dateStr;
+        return dateStr;*/
+        var time = "";
+        if(dateObj){
+            time = dateObj.getTime();
+        }
+        var format = fmt || "yyyy-MM-dd hh:mm:ss";
+/*        let d = new Date();//创建时间对象
+        let localTime = time;//当地时间戳
+        let localOffset=d.getTimezoneOffset()*60000;//获得当地时间偏移的毫秒数
+        let utc = localTime + localOffset; //utc即GMT时间
+        let offset = 8;//中国在东8区
+        time = utc + (3600000*offset); //真正的时间戳*/
+        let date = new Date(Utils.realTime(time));
+        var o = { "M+": date.getMonth() + 1, //month
+            "d+": date.getDate(), //day
+            "h+": date.getHours(), //hour
+            "m+": date.getMinutes(), //minute
+            "s+": date.getSeconds(), //second
+            "q+": Math.floor((date.getMonth() + 3) / 3), //quarter
+            "S": date.getMilliseconds() //millisecond
+        }
+        if (/(y+)/.test(format)) format = format.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length)); for (var k in o) if (new RegExp("(" + k + ")").test(format)) format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] :  ("00" + o[k]).substr(("" + o[k]).length));return format;
+
+
+    },
+    realTime(time){
+        let d = new Date();//创建时间对象
+        let localTime = time;//当地时间戳
+        let localOffset=d.getTimezoneOffset()*60000;//获得当地时间偏移的毫秒数
+        let utc = localTime + localOffset; //utc即GMT时间
+        let offset = 8;//中国在东8区
+        time = utc + (3600000*offset); //真正的时间戳
+        return time;
     }
 };
 export default Utils;
