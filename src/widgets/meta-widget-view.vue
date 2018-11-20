@@ -767,8 +767,6 @@ module.exports = {
         }
     },
     created(){
-        factoryApi.refresh(this);
-
         if(this.widgetParams.views){
             let contextPath = this.$getContextPath(),
                 _views = this.widgetParams.views, _getMetaViewDefNumber = 0,_t = this,
