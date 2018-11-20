@@ -353,6 +353,10 @@
                     dataId:this.widgetParams.dataId,
                     entityId:this.widgetParams.entityId
                 });
+            },
+            exportParams(){
+                //本部件暴露的参数
+                return Object.assign({},this.widgetParams)
             }
         },
         computed:{

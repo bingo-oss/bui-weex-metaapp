@@ -5,6 +5,7 @@ import factoryApi from '../../../widgets/libs/factory-api.js';
 import Utils from '../../../js/tool/utils';
 const linkapi = require('linkapi');
 import commonOperation from './common_operation.js';
+import buiweex from "bui-weex";
 var utils={
     expandOperation:function(operation,ctx){
         var params={};
@@ -45,7 +46,7 @@ var utils={
         //读取对应部件暴露参数
         let _childWidgets = _t.$root.$children[0].$refs.childWidgets;//遍历下所有引入的部件
         let returnVal = "";
-        if(!widgetCode){
+        if(widgetCode){
             _.each(_childWidgets,(cw)=>{
                 if(_.isFunction(cw.exportParams)){
                     let _data = cw.exportParams();//部件自身暴露的参数
