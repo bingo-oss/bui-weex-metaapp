@@ -219,6 +219,7 @@
                                 this.memberDatas = this.memberDatas.concat(result.data.resultSet)
                             }
                         }
+                        factoryApi.pageScrollUpdate(this);//需要更新滚动条的设置
                     } else {
                         this.$toast('获取数据失败!');
                     }

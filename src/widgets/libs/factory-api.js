@@ -99,6 +99,15 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
         //检测全局部件获取数据表单数据方法
         return factoryApi.submitPromise(t,[],"getData");
     },
+    pageScrollUpdate(t){
+        //容器的滚动视图更新
+        //全局部件刷新方法
+        if(_.isFunction(t.pageScrollUpdate)&&t.isWidgetPage){
+            t.pageScrollUpdate()
+        }else if(t.$parent){
+            factoryApi.pageScrollUpdate(t.$parent)//寻找父级
+        }
+    },
     //封装下linkapi--需要对参数特殊处理的接口
     post(params){
         if(params.data){

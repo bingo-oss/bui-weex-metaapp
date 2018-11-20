@@ -68,24 +68,7 @@
                 if(this.widgetParams&&this.widgetParams.pageId){
                     pageService.get(this.widgetParams.pageId,this.widgetParams.byOperation).then(function(pageConfig){
                         _this.pageConfig=_this.convert(pageConfig);
-
-                        //特殊处理-暂时先这样定义高度的变化--不然没法兼容
-                        var _setTimeout = setTimeout(function(){
-                            let _widgetHeights = 0;
-                            if(_this.pageConfig&&_this.$refs.childWidgets.length==_this.pageConfig.columnWidgets.length){
-                                _.each(_this.$refs.childWidgets,(cw)=>{
-                                    dom.getComponentRect(cw,function(res){
-                                        //计算下当前部件的总高--若超出则不需要定制高度
-                                        _widgetHeights+=res.size.height
-                                        if(_widgetHeights>(_this.scrollerStyle.height)){
-                                            _this.scrollerStyle = {};
-                                        }
-                                    });
-                                });
-                            }else{
-                                _setTimeout();
-                            }
-                        },1000);
+                        _this.pageScrollUpdate();
                     });
                 }
             },
@@ -184,6 +167,28 @@
                         cw.pageScrollHandler(e);
                     }
                 });
+            },
+            pageScrollUpdate(){
+                //需要部件去调用下更新
+                var _this=this;
+                //特殊处理-暂时先这样定义高度的变化--不然没法兼容
+                var _setTimeout = setTimeout(function(){
+                    let _widgetHeights = 0;
+                    if(_this.pageConfig&&_this.$refs.childWidgets.length==_this.pageConfig.columnWidgets.length){
+                        _.each(_this.$refs.childWidgets,(cw)=>{
+                            dom.getComponentRect(cw,function(res){
+                                //计算下当前部件的总高--若超出则不需要定制高度
+                                _widgetHeights+=res.size.height
+                                if(_widgetHeights>(_this.scrollerStyle.height)){
+                                    _this.scrollerStyle = {};
+                                    _this.$forceUpdate();//更新下视图
+                                }
+                            });
+                        });
+                    }else{
+                        _setTimeout();
+                    }
+                },1000);
             }
             /*,
             submit(){
