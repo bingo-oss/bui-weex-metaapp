@@ -25,7 +25,7 @@
             <refresh-wrapper @refresh="onrefresh" :isRefreshing="isRefreshing"></refresh-wrapper>
 
             <cell v-for="(o, index) in listData" :key="index">
-                <bui-swipe-cell height="200px"
+                <bui-swipe-cell :height="buiSwipeCellHeight"
                     @click="rowSingleClick(o)"
                     @swipeleft="cellSwiped(o.id)"
                     :ref="o.id"
@@ -132,10 +132,11 @@ module.exports = {
             swaggerEntiyDef: {},
             layoutType: "0",
             p1: 'title',
-            p2: '2',
-            p3: '3',
-            p4: '4',
-            p5: '5',
+            p2: '',
+            p3: '',
+            p4: '',
+            p5: '',
+            buiSwipeCellHeight:"200",
             presetFilters: [],
             filters: {}, // 高级搜索 filter
             quickSearchFilters: '', // 快捷搜索 filter
@@ -648,17 +649,19 @@ module.exports = {
                         }
                     }*/
                     let layout = viewDef.viewFields;
-                    if(layout[0])this.p1 = layout[0].fieldName;
-                    if(layout[1])this.p2 = layout[1].fieldName;
-                    if(layout[2])this.p3 = layout[2].fieldName;
-                    if(layout[3])this.p4 = layout[3].fieldName;
-                    if(layout[4])this.p5 = layout[4].fieldName;
+                    if(layout[0])this.p1 = layout[0]?layout[0].fieldName:"";
+                    if(layout[1])this.p2 = layout[1]?layout[1].fieldName:"";
+                    if(layout[2])this.p3 = layout[2]?layout[2].fieldName:"";
+                    if(layout[3])this.p4 = layout[3]?layout[3].fieldName:"";
+                    if(layout[4])this.p5 = layout[4]?layout[4].fieldName:"";
                     fields.add(this.p1);
                     fields.add(this.p2);
                     fields.add(this.p3);
                     fields.add(this.p4);
                     fields.add(this.p5);
-
+                    if(!this.p4&&!this.p5){
+                        this.buiSwipeCellHeight = "150"
+                    }
                     //params.select = Array.from(fields).join(',');
                     // 排序
                     if (viewDef.config.orderby) {
