@@ -164,8 +164,9 @@
                                     _this.dutyId = _data.id
                                     let begindutyTime = _data.startTime //开始值班的时间
                                     _this.begintime = Utils.realTime(new Date(begindutyTime).getTime());//转换成时间戳
+                                     _this.currentTime = _this.begintime;
 
-                                    function starting() {
+                                    /*function starting() {
                                         var curtime = Utils.realTime(new Date().getTime()); //当前的时间
                                         var timerdif = curtime - _this.begintime; //时间差（时间戳）
 
@@ -174,10 +175,10 @@
                                         _this.min = parseInt((timerdif % (1000 * 60 * 60)) / (1000 * 60));
                                         var seconds = parseInt((timerdif % (1000 * 60)) / 1000);
                                         _this.ondutytime = (this.hour?(this.hour + '小时:'):'') + (this.min?(this.min + '分钟:'):'') + seconds + '秒'
-                                    }
+                                    }*/
 
                                     //循环计时
-                                    _this.timer = setInterval(starting, 1000);
+                                    _this.timer = setInterval(this.computtime, 1000);
 
                                     //更改样式
                                     _this.startVal = false;
@@ -192,15 +193,17 @@
             computtime: function () {    //计算时长(当前的时间 - 开始值班的时间)
                 var newcurtime = Utils.realTime(new Date().getTime());
                 var timelength = newcurtime - this.currentTime;
-                var seconds = parseInt((timelength % (1000 * 60)) / 1000);  //时间戳转换为秒
-
-                if (seconds === 0) {
+                //var seconds = parseInt((timelength % (1000 * 60)) / 1000);  //时间戳转换为秒
+                this.hour = parseInt((timelength % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                this.min = parseInt((timelength % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = parseInt((timelength % (1000 * 60)) / 1000);
+                /*if (seconds === 0) {
                     this.min += 1;
                 }
                 if (this.min > 59) {
                     this.hour += 1;
                     this.min = 0;
-                }
+                }*/
                 this.ondutytime = (this.hour?(this.hour + '小时:'):'') + (this.min?(this.min + '分钟:'):'') + seconds + '秒'
             },
             timeformat: function (curtime) { //参数为时间戳 转换时间格式为：“2018-11-17 13:58:02”
@@ -248,6 +251,9 @@
     .wrapper {
         padding-top: 20px;
         padding-bottom: 40px;
+        border-bottom-style: solid;
+        border-bottom-width: 1px;
+        border-bottom-color: #f1f1f1;
     }
 
     .mybtn_d{
