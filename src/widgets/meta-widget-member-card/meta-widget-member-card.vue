@@ -373,13 +373,12 @@
             if (params != null && !Util.isEmpty(params.dataId) && !Util.isEmpty(params.entityId)) {
                 this.activityInfo.dataId = params.dataId;
                 this.activityInfo.entityId = params.entityId;
-                Config.readRuntimeConfig(this.$getContextPath()).then(runtimeConfig => {
-                    service.init(runtimeConfig.configServerUrl);//初始化请求到的地址
-                    service.getEngineUrlMeta(params.entityId).then(res=>{
-                        _t.externalUrl = res;
-                        _t.initData(1);
-                    });//获取引擎地址
-                });
+                //this.$alert(Config.serverConfig)
+                service.init(Config.serverConfig.configServerUrl);//初始化请求到的地址
+                service.getEngineUrlMeta(params.entityId).then(res=>{
+                    _t.externalUrl = res;
+                    _t.initData(1);
+                });//获取引擎地址
             } else {
                 //this.$toast("参数未传递");
             }
