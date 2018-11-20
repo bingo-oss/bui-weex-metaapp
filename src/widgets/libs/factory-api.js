@@ -110,25 +110,25 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
     },
     //封装下linkapi--需要对参数特殊处理的接口
     post(params){
-        if(params.data){
+        if(params.data&&(!params.headers)){
             params.data = Util.toHttpRequestParams(params.data)
         }
         return linkapi.post(params);
     },
     get(params){
-        if(params.data){
+        if(params.data&&(!params.headers)){
             params.data = Util.toHttpRequestParams(params.data)
         }
         return linkapi.get(params);
     },
     delete(params){
-        if(params.data){
+        if(params.data&&(!params.headers)){
             params.data = Util.toHttpRequestParams(params.data)
         }
         return linkapi.delete(params);
     },
     put(params){
-        if(params.data){
+        if(params.data&&(!params.headers)){
             params.data = Util.toHttpRequestParams(params.data)
         }
         return linkapi.put(params);
