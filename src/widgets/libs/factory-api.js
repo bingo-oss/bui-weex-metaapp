@@ -5,6 +5,8 @@ import i18n from '../../js/i18n/index';
 import buiweex from "bui-weex";
 import linkapi from "linkapi";
 import Util from '../../js/utils'
+import _ from '../../js/tool/lodash';
+
 var factoryApi = Object.assign({},buiweex,linkapi,{
     goback(context, $optInst) {
         //返回
@@ -49,8 +51,7 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
         //全局部件刷新方法
         if(_.isFunction(t.refresh)&&t.isWidgetPage){
             t.refresh()
-        }
-        if(t.$parent){
+        }else if(t.$parent){
             factoryApi.refresh(t.$parent)//寻找父级
         }
     },
@@ -122,7 +123,7 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
             params.data = Util.toHttpRequestParams(params.data)
         }
         return linkapi.put(params);
-    },
+    }
 });
 
 export default factoryApi

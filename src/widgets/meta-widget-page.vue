@@ -62,7 +62,7 @@
                 }
             });//存储起来需要传递的参数
         },
-        methods:{
+        methods:Object.assign({},pageMethods,{
             loadPageConfig(){
                 var _this=this;
                 if(this.widgetParams&&this.widgetParams.pageId){
@@ -210,7 +210,7 @@
                 }
                 return co(nextSubmit);
             }*/
-        }
+        })
     }
 </script>
 <style src="../styles/common.css"></style>

@@ -757,12 +757,18 @@ module.exports = {
         reload(){
             this.refreshData();
         },
+        refresh(){
+          //注册刷新事件是facoty-api的refresh方法的范围内
+          this.refreshData();
+        },
         exportParams(){
             //本部件暴露的参数
             return Object.assign({},this.widgetParams,this.selectedItem)
         }
     },
     created(){
+        factoryApi.refresh(this);
+
         if(this.widgetParams.views){
             let contextPath = this.$getContextPath(),
                 _views = this.widgetParams.views, _getMetaViewDefNumber = 0,_t = this,
