@@ -48,7 +48,7 @@ export default {
         return {
             filterPointStart: '',
             filterPointEnd: '',
-            datetimeFormat:'yyyy-MM-dd hh:mm'
+            datetimeFormat:'yyyy-MM-dd HH:mm'
         }
     },
     computed: {
@@ -60,21 +60,21 @@ export default {
         filterPointStartText() {
             if (this.filterPointStart) {
                 let d = this.parseDate(this.filterPointStart);
-                return utils.formatDate(d,this.datetimeFormat);
+                return utils.formatDate(d,this.datetimeFormat.replace("HH","hh"));
             }
             return '';
         },
         filterPointEndText() {
             if (this.filterPointEnd) {
                 let d = this.parseDate(this.filterPointEnd);
-                return utils.formatDate(d,this.datetimeFormat);
+                return utils.formatDate(d,this.datetimeFormat.replace("HH","hh"));
             }
             return '';
         },
         valueText() {
             if (this.value) {
                 let d = new Date(this.value);
-                return utils.formatDate(d,this.datetimeFormat);
+                return utils.formatDate(d,this.datetimeFormat.replace("HH","hh"));
             }
             return '';
         }
