@@ -401,7 +401,7 @@ module.exports = {
             this.queryParam.filters = filtersParts.join(' and ');
             this.queryParam.total=true;
             return ajax.get(this.dataUrlPath, this.queryParam).then(resp => {
-                this.isShowLoading = false;
+                this.isShowLoading = false
                 this.dataCount = resp.headers["X-Total-Count"]
                 if(this.presetFilters[this.currentTab]){
                     if(this.presetFilters[this.currentTab].showCount) {//是否显示数字
@@ -422,7 +422,7 @@ module.exports = {
                 this.isRefreshing = false;
                 this.currentPage = 1;
                 this.loadingStatus = 'init';
-                if(this.dataCount>=this.listData.length){
+                if(this.dataCount<=this.listData.length){
                     this.isloadingHide = true;
                 }else{
                     this.isloadingHide = false;
