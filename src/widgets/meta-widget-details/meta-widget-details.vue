@@ -34,7 +34,7 @@
                 </div>
             </div>
         </div>
-        <div v-if="titleInfo.title" class="person-info" style="padding-left: 25px; padding-right: 25px;">
+        <div v-if="titleInfo.title" class="person-info">
             <div class="person-title">
                 <text style="font-size: 28px; text-align: left; width: 600px;">人员信息</text>
                 <text style="font-size: 28px; padding:5px; color: #3eb4ff; width: 80px;" @click="infoShow">{{personInfo?"收起":"展开"}}</text>
@@ -76,33 +76,34 @@
             </div>
         </div>
         <!--处理结果-->
-        <div class="line" style="height: 1px;background-color:#f1f1f1;"></div>
-        <div class="results" v-if="this.titleInfo.forewarningStatus" style="padding-left: 25px; padding-right: 25px; flex: 1;">
+        <div class="results" v-if="this.titleInfo.forewarningStatus">
             <div class="person-title">
                 <text style="font-size: 28px;">处理结果</text>
             </div>
-            <div class="flex-row" style="padding-bottom: 18px;">
-                <text class="nonal" style="padding-right: 20px;">处理人</text>
-                <text style="font-size: 28px"></text>
-            </div>
-            <div class="flex-row" style="padding-bottom: 18px;">
-                <text class="nonal" style="padding-right: 20px;">所属部门</text>
-                <text style="font-size: 28px"></text>
-            </div>
-            <div class="flex-row" v-if="result.processingTime" style="padding-bottom: 18px;">
-                <text class="nonal" style="padding-right: 20px;">处理时间</text>
-                <text style="font-size: 28px">{{result.processingTime | timeformat}}</text>
-            </div>
-            <div class="flex-row" v-if="result.handlingOpinions" style="padding-bottom: 18px;">
-                <text class="nonal" style="padding-right: 20px;">处理意见</text>
-                <text style="font-size: 28px; width:560px;">{{result.handlingOpinions}}</text>
-            </div>
-            <div class="flex-row" v-if="result.result&&result.result.liveSrc.length" style="padding-bottom: 18px;">
-                <text class="nonal" style="padding-right: 20px;">现场图片</text>
-                <div style="flex-direction:row;flex-wrap:wrap; flex: 1;" >
-                    <div v-for="src in result.liveSrc">
-                        <image style="width: 180px;height: 220px; padding:5px 0 0 5px;"
-                               :src="src"></image>
+            <div class="info-detail">
+                <div class="flex-row" style="padding-bottom: 18px;">
+                    <text class="nonal" style="padding-right: 20px;">处理人</text>
+                    <text style="font-size: 28px"></text>
+                </div>
+                <div class="flex-row" style="padding-bottom: 18px;">
+                    <text class="nonal" style="padding-right: 20px;">所属部门</text>
+                    <text style="font-size: 28px"></text>
+                </div>
+                <div class="flex-row" v-if="result.processingTime" style="padding-bottom: 18px;">
+                    <text class="nonal" style="padding-right: 20px;">处理时间</text>
+                    <text style="font-size: 28px">{{result.processingTime | timeformat}}</text>
+                </div>
+                <div class="flex-row" v-if="result.handlingOpinions" style="padding-bottom: 18px;">
+                    <text class="nonal" style="padding-right: 20px;">处理意见</text>
+                    <text style="font-size: 28px; width:560px;">{{result.handlingOpinions}}</text>
+                </div>
+                <div class="flex-row" v-if="result.result&&result.result.liveSrc.length" style="padding-bottom: 18px;">
+                    <text class="nonal" style="padding-right: 20px;">现场图片</text>
+                    <div style="flex-direction:row;flex-wrap:wrap; flex: 1;" >
+                        <div v-for="src in result.liveSrc">
+                            <image style="width: 180px;height: 220px; padding:5px 0 0 5px;"
+                                   :src="src"></image>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -254,7 +255,7 @@
 
     .warn {
         font-size: 28px;
-        color: #FFFFFF;
+        color: #C4E1FE;
         padding-right: 40px;
     }
 
@@ -274,9 +275,20 @@
     }
 
     .person-title {
+        border-bottom-color: #f1f1f1;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+
+        border-top-color: #f1f1f1;
+        border-top-width: 1px;
+        border-top-style: solid;
+
         flex-direction: row;
-        padding-top: 30px;
-        padding-bottom: 30px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-left: 25px; padding-right: 25px;
     }
+
+    .info-detail{ padding-left: 25px; padding-right: 25px; padding-top: 20px; padding-bottom: 20px;}
 
 </style>
