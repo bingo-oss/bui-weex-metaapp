@@ -130,9 +130,9 @@
             </div>
         </bui-header>-->
 
-        <bui-header v-if="!widgetParams.hideHeader" :leftItem="{icon: 'ion-ios-arrow-left'}" @leftClick="() =>{this.$pop()}" :backgroundColor="themeBg">
+        <bui-header v-if="widgetParams.showHeader" :leftItem="{icon: 'ion-ios-arrow-left'}" @leftClick="() =>{this.$pop()}" :backgroundColor="themeBg">
             <div slot="center" class="page-title-wrapper">
-                <text v-for="title in titles" class="page-title" :style="{color:(title.highlight?highlight.color:'#ccc')}" @click="goto(title.type)">{{title.name}}</text>
+                <text v-for="title in titles" class="page-title" :style="{color:(title.highlight?highlight.color:'#ccc')}" @click="goto(title.type)">{{widgetParams.headerTitle?widgetParams.headerTitle:title.name}}</text>
             </div>
         </bui-header>
 
@@ -220,7 +220,7 @@
             </div>
         </actionsheet-wrapper>
 
-        <bui-loading v-if="!widgetParams.hideHeader" :show="isShowLoading" :loading-text="loadingText==''?'加载中...':loadingText"></bui-loading>
+        <bui-loading :show="isShowLoading" :loading-text="loadingText==''?'加载中...':loadingText"></bui-loading>
 
     </div>
 </template>
