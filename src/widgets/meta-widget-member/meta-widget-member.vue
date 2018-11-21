@@ -134,7 +134,7 @@
                     /*text: '更多',*/
                     icon: 'ion-ios-more',
                 },
-                activityInfo: {},
+                info: {},
                 memberDatas: [],
                 isSearching: false,
                 showDropdown: false,
@@ -344,7 +344,7 @@
                         page: this.pageNo,
                         page_size: this.pageSize,
                         keyWord: keyword,
-                        dataId:this.activityInfo.dataId,
+                        dataId:this.info.dataId,
                         tota:true
                     }
                 };
@@ -435,8 +435,8 @@
                 let params = {
                     url: this.externalUrl + '/meta_data_members/is_admin',
                     data: {
-                        metaEntityId: this.activityInfo.entityId,
-                        dataId: this.activityInfo.dataId,
+                        metaEntityId: this.info.entityId,
+                        dataId: this.info.dataId,
                     }
                 };
                 ajax.get(params.url,params.data).then((result)=> {
@@ -456,7 +456,7 @@
             getLoginInfo(){
                 linkapi.getLoginInfo((result)=> {
                     this.currUserId = result.userId;
-                    if (result.userId == this.activityInfo.createdBy) {
+                    if (result.userId == this.info.createdBy) {
                         this.isSuperAdmin = true;
                         this.optionItems = ['设置管理员', '取消管理员', '邀请新成员', '移除成员']
                     } else {
@@ -473,8 +473,8 @@
                 let params = {
                     url: this.externalUrl+(type?"/meta_data_members/setup_admin":"meta_data_members/deregister_admin"),
                     data:Util.toHttpRequestParams({
-                        metaEntityId: this.activityInfo.entityId,
-                        dataId: this.activityInfo.dataId,
+                        metaEntityId: this.info.entityId,
+                        dataId: this.info.dataId,
                         userId: userIds,
                     })
                 };
@@ -499,15 +499,15 @@
                 }
                 this.isShowLoading = true;
 /*                let datas = {
-                    entityName: this.activityInfo.suiteId,
-                    sourceId: this.activityInfo.sourceId,
+                    entityName: this.info.suiteId,
+                    sourceId: this.info.sourceId,
                     members: ids,
                 };
                 if (isSelf) {
                     datas.ignoreEcode = 1;
                 }*/
                 let params = {
-                    url: this.externalUrl + `/meta_data_members?metaEntityId=${this.activityInfo.entityId}&dataId=${this.activityInfo.dataId}&members=${ids}`,
+                    url: this.externalUrl + `/meta_data_members?metaEntityId=${this.info.entityId}&dataId=${this.info.dataId}&members=${ids}`,
                     /*data: datas*/
                 };
                 ajax.delete(params.url).then((result)=> {
@@ -537,8 +537,8 @@
                 let params = {
                     url:this.externalUrl + '/meta_data_members',
                     data: Util.toHttpRequestParams({
-                        metaEntityId: this.activityInfo.entityId,
-                        dataId: this.activityInfo.dataId,
+                        metaEntityId: this.info.entityId,
+                        dataId: this.info.dataId,
                         userIds: userId,
                         orgIds: orgId,
                         groupIds: groupId,
@@ -582,7 +582,7 @@
             },
             isMayShowRadio(item){
                 if (this.isShowSelected) {
-                    if (item.userId == this.currUserId || item.userId == this.activityInfo.createdBy) {
+                    if (item.userId == this.currUserId || item.userId == this.info.createdBy) {
                         return false;
                     } else if (this.operationType == 1) {
                         return !item.isAdmin
@@ -596,39 +596,22 @@
             },
         },
         mounted(){
-/*
-            Config.readRuntimeConfig(this.$getContextPath()).then(runtimeConfig => {
-                let params = this.$getPageParams();
-            if (params != null) {
-                this.activityInfo = JSON.parse(params.data);
-                this.isArchive = eval(params.isArchive)
-                this.getLoginInfo();
-                this.initData(1);
-            }
-        }).catch(error => {
-                this.$alert(error)
-        });
-*/
             let params =this.widgetParams,_t = this;//页面参
             if (params != null && !Util.isEmpty(params.dataId) && !Util.isEmpty(params.entityId)) {
-                this.activityInfo.dataId = params.dataId;
-                this.activityInfo.entityId = params.entityId;
+                this.info.dataId = params.dataId;
+                this.info.entityId = params.entityId;
                 //this.initData(1);
-                Config.readRuntimeConfig(this.$getContextPath()).then(runtimeConfig => {
-                    service.init(runtimeConfig.configServerUrl);//初始化请求到的地址
-                    service.getEngineUrlMeta(params.entityId).then(res=>{
-                        _t.externalUrl = res;
-                        _t.initData(1);
-                        _t.getAdminInfo();
-                    });//获取引擎地址
-                });
+                service.init(Config.serverConfig.configServerUrl);//初始化请求到的地址
+                service.getEngineUrlMeta(params.entityId).then(res=>{
+                    _t.externalUrl = res;
+                    _t.initData(1);
+                    _t.getAdminInfo();
+                });//获取引擎地址
 
             } else {
                 this.$toast("参数未传递");
                 this.$pop();
             }
-
-
             globalEvent.addEventListener("androidback", e => {
                 this.$pop();
             });

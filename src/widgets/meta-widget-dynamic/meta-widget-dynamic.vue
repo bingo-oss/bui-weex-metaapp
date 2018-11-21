@@ -2,6 +2,11 @@
     <div class="flex-column" style="flex: 1;">
         <bui-header v-if="!widgetParams.hideHeader" title="动态" :leftItem="leftItem"
                     @leftClick="back" :backgroundColor="themeBg">
+                <div slot="right" class="header-right-wrapper">
+                    <div class="header-button" @click="filterClicked">
+                        <bui-icon name="ion-funnel" color="white" @click="filterClicked"></bui-icon>
+                    </div>
+                </div>
         </bui-header>
         <div class="flex1">
             <!--筛选-->
@@ -16,7 +21,7 @@
             </div>
 
             <!--动态tab栏-->
-            <div v-if="!isShowFilter&&tabItems.length>0" class="flex-row tab_list">
+            <!--<div v-if="!isShowFilter&&tabItems.length>0" class="flex-row tab_list">
                 <div class="flex-row flex1 center" v-for="(item,index) in tabItems" style=""
                      @click="onTabClick(index,item,$event)">
                     <div class="flex1 center flex-row">
@@ -25,11 +30,11 @@
                             <text :class="[tabTextStyle(index)]">{{item.title}}</text>
                         </div>
                         <bui-icon v-if="index==5" name="ion-ios-arrow-down" size="30"></bui-icon>
-                        <!--index==5为更多菜单更多菜单时显示-->
+                        &lt;!&ndash;index==5为更多菜单更多菜单时显示&ndash;&gt;
                     </div>
-                    <!--<div class="separator_line2"></div>-->
+                    &lt;!&ndash;<div class="separator_line2"></div>&ndash;&gt;
                 </div>
-            </div>
+            </div>-->
 
             <!--更多-下拉菜单-->
             <bui-dropdown v-model="showDropdown" ref="dropdown">
@@ -701,8 +706,8 @@
                 leftItem: {
                     icon: 'ion-ios-arrow-left',
                 },
-                activityInfo: {
-                    sourceId: '',//活动id
+                info: {
+                    dataId: '',//数据id
                     name: '',
                     channelName: '',
                     startTime: '',
@@ -710,7 +715,7 @@
                     icon: '',
                     projectId: '',
                     formShortId: '',
-                    suiteId: ''//套件id
+                    entityId: ''//实体id
                 },
                 commentContent: '',
                 lastInputContent: '',
@@ -810,9 +815,9 @@
                     data: {}
                 };
                 if (!Util.isEmpty(actionParams)) {
-                    actionParams = actionParams.replace("{parentId}", this.activityInfo.sourceId);
-                    actionParams = actionParams.replace("{parentEntityName}", this.activityInfo.suiteId);
-                    actionParams = actionParams.replace("{parentText}", this.activityInfo.name);
+                    actionParams = actionParams.replace("{parentId}", this.info.dataId);
+                    actionParams = actionParams.replace("{parentEntityName}", this.info.entityId);
+                    actionParams = actionParams.replace("{parentText}", this.info.name);
                     actionParams = actionParams.replace("{closePage}", true);
                     link.launchLinkService([actionParams], null, null);
                 } else {
@@ -821,9 +826,9 @@
 /*                linkapi.get(params).then((result) => {
                     if (result.success && result.result) {
                         if (!Util.isEmpty(actionParams)) {
-                            actionParams = actionParams.replace("{parentId}", this.activityInfo.sourceId);
-                            actionParams = actionParams.replace("{parentEntityName}", this.activityInfo.suiteId);
-                            actionParams = actionParams.replace("{parentText}", this.activityInfo.name);
+                            actionParams = actionParams.replace("{parentId}", this.info.dataId);
+                            actionParams = actionParams.replace("{parentEntityName}", this.info.entityId);
+                            actionParams = actionParams.replace("{parentText}", this.info.name);
                             actionParams = actionParams.replace("{closePage}", true);
                             link.launchLinkService([actionParams], null, null);
                         } else {
@@ -916,7 +921,7 @@
                 let len = newContent.length - this.lastInputContent.length;
                 let _this = this;
                 let params = {
-                    idForAtProjectMembers: this.activityInfo.sourceId,
+                    idForAtProjectMembers: this.info.dataId,
                     onlyAtProjectMembers: true
                 };
                 this.$refs.input.getSelectionRange((e) => {
@@ -1057,8 +1062,8 @@
                 this.isShowLoading = true;
                 let datas = {
                     blogId: item.blogInfo.blogId,
-                    sourceId: this.activityInfo.sourceId,
-                    entityName: this.activityInfo.suiteId
+                    sourceId: this.info.dataId,
+                    entityName: this.info.entityId
                 };
                 let params = {
                     url: Config.serverConfig.uamUrl + '/extendBlog/deleteBlogOrComment',
@@ -1312,7 +1317,7 @@
                     if (data != null) {
                         _this.currLoginInfo = data
                         _this.getArchive(true);//获取是否归档
-                        if (data.userId == this.activityInfo.createdBy) {//创建人即管理员
+                        if (data.userId == this.info.createdBy) {//创建人即管理员
                             this.isAdmin = true;
                         }else{
                             this.getAdminInfo();
@@ -1322,7 +1327,7 @@
                 });
             },
             refreshData(){
-                if (this.activityInfo == null || Util.isEmpty(this.activityInfo.suiteId)) {
+                if (this.info == null || Util.isEmpty(this.info.entityId)) {
                     return;
                 }
                 let startTime = 0;
@@ -1332,12 +1337,12 @@
                 let params = {
                     url: Config.serverConfig.uamUrl + '/extendBlog/getHomePageBlogList',
                     data: {
-                        sourceModule: this.activityInfo.suiteId,
+                        sourceModule: this.info.entityId,
                         offset: this.pageNo,
                         limit: this.pageSize,
                         isRefresh: 1,
                         startTime: startTime,
-                        sourceId: this.activityInfo.sourceId,
+                        sourceId: this.info.dataId,
                     }
                 };
                 if (this.currLabeId != '') {
@@ -1371,19 +1376,19 @@
             },
             initData(type){//获取动态数据 type1 刷新数据 type2加载更多
                 this.isShowEmpty = false;
-                if (Util.isEmpty(this.activityInfo) || Util.isEmpty(this.activityInfo.suiteId)) {
+                if (Util.isEmpty(this.info) || Util.isEmpty(this.info.entityId)) {
                     this.isShowLoading = false;
                     return;
                 }
                 let params = {
                     url: Config.serverConfig.uamUrl + '/extendBlog/getHomePageBlogList',
                     data: {
-                        sourceModule: this.activityInfo.suiteId,
+                        sourceModule: this.info.entityId,
                         offset: this.pageNo,
                         limit: this.pageSize,
                         startTime:0,
                         isRefresh:1,
-                        sourceId: this.activityInfo.sourceId,
+                        sourceId: this.info.dataId,
                     }
                 }
 
@@ -1392,11 +1397,11 @@
                     params = {
                         url: Config.serverConfig.uamUrl + '/extendBlog/getHomePageBlogList',
                         data: {
-                            sourceModule: this.activityInfo.suiteId,
+                            sourceModule: this.info.entityId,
                             ignoreEcode: 1,
                             offset: this.pageNo,
                             limit: this.pageSize,
-                            sourceId: this.activityInfo.sourceId,
+                            sourceId: this.info.dataId,
                             keyword: this.filterParams.keyword ? this.filterParams.keyword : '',
                             userId: this.filterParams.responsiblePersonId ? this.filterParams.responsiblePersonId : '',
                             startTime: this.filterParams.startTime ? this.filterParams.startTime : '',
@@ -1505,8 +1510,8 @@
                 }
                 this.isShowLoading = true;
                 this.currLabeId = labelId;
-                //this.activityInfo = val;
-                //this.activityInfo.
+                //this.info = val;
+                //this.info.
                 this.getLoginInfo();
                 this.initData(1);
             },
@@ -1570,7 +1575,7 @@
                 switch (target) {
                     case 'Milestone':
                         var params = {
-                            activityId: this.activityInfo.sourceId
+                            activityId: this.info.dataId
                         };
                         var url = this.$getContextPath() + "/milestoneForm.weex.js";
                         this.$push(url, params);
@@ -1593,7 +1598,7 @@
                     switch (target) {
                         case 'Milestone':
                             var params = {
-                                activityId: this.activityInfo.sourceId
+                                activityId: this.info.dataId
                             };
                             var url = this.$getContextPath() + "/milestoneForm.weex.js";
                             this.$push(url, params);
@@ -1643,9 +1648,9 @@
                         appCode: 'crm',
                         appUrl: 'LinkOl/Modular/quick/quickForm.html',
                         data: {
-                            parentId: this.activityInfo.sourceId,
-                            parentEntityName: this.activityInfo.suiteId,
-                            parentText: this.activityInfo.name,
+                            parentId: this.info.dataId,
+                            parentEntityName: this.info.entityId,
+                            parentText: this.info.name,
                             quick: true,
                             closePage: true,
                             E: 'ExtendQianDao'
@@ -1659,7 +1664,7 @@
                     if (this.topicData != null) {
                         params.sourceId = this.topicData.sourceId;
                     }
-                    params.activityInfo = JSON.stringify(this.activityInfo)
+                    params.info = JSON.stringify(this.info)
                     this.$push(url, params);
                 }
             },
@@ -1695,7 +1700,7 @@
             },
             getArchive(isQuit){//是否归档
                 let params = {
-                    url: Config.serverConfig.engineService + '/metaservice/meta_suite_data_setting/' + this.activityInfo.sourceId,
+                    url: Config.serverConfig.engineService + '/metaservice/meta_suite_data_setting/' + this.info.dataId,
                 };
                 linkapi.get(params).then((result) => {
                     if (result) {
@@ -1723,7 +1728,7 @@
                 this.tabActive = index;
                 if (index == 0) {
                     this.currLabeId = ''
-                    this.requestData(this.activityInfo, this.currLabeId)
+                    this.requestData(this.info, this.currLabeId)
                 } else if (index == 5) {
                     this.openDropdown(event);
                 } else if(item.target=="filter"){
@@ -1737,12 +1742,20 @@
                     this.$push(url, params);
                 } else {
                     this.currLabeId = item.target;
-                    this.requestData(this.activityInfo, this.currLabeId);
+                    this.requestData(this.info, this.currLabeId);
                 }
+            },
+            filterClicked(){
+                //直接执行筛选操作
+                this.onTabClick(null,{
+                    title: '高级筛选',
+                    createBlog: true,
+                    target: 'filter'
+                });
             },
             getTopicInfo(){//用于发送动态的数据
                 let params = {
-                    url:`${Config.serverConfig.engineService}/metaservice/link_blog/${this.activityInfo.suiteId}/${this.activityInfo.sourceId}/topic`,
+                    url:`${Config.serverConfig.engineService}/metaservice/link_blog/${this.info.entityId}/${this.info.dataId}/topic`,
                     data: {
                     }
                 };
@@ -1794,7 +1807,7 @@
                     this.$push(url, params);
                 } else {
                     this.currLabeId = this.tabMoreMenuList[index].target;
-                    this.requestData(this.activityInfo, this.currLabeId)
+                    this.requestData(this.info, this.currLabeId)
                 }
             },
             clearFilter(){
@@ -1812,7 +1825,7 @@
                 });
                 storage.getItem("blogRefreshList", event => {//
                     if (event.result == "success" && event.data != null && event.data != '') {
-                        this.requestData(this.activityInfo, this.currLabeId);
+                        this.requestData(this.info, this.currLabeId);
                     }
                 });
                 storage.getItem("exit", event => {//
@@ -1876,7 +1889,7 @@
             },
             getMetaEntity(fun){//获取实体信息
                 let params = {
-                    url: Config.serverConfig.engineService + '/metaservice/meta_entity/' + this.activityInfo.suiteId,
+                    url: Config.serverConfig.engineService + '/metaservice/meta_entity/' + this.info.entityId,
                 };
                 linkapi.get(params).then((result) => {
                     this.isShowLoading = false;
@@ -1900,8 +1913,8 @@
                 let params = {
                     url: Config.serverConfig.uamUrl + '/extendApproval/isAdmin',
                     data: {
-                        entityName: this.activityInfo.suiteId,
-                        sourceId: this.activityInfo.sourceId,
+                        entityName: this.info.entityId,
+                        sourceId: this.info.dataId,
                     }
                 };
                 linkapi.get(params).then((result)=> {
@@ -1919,8 +1932,8 @@
                     url: Config.serverConfig.uamUrl + '/webTopMessage/list',
                     headers: {'Content-Type': 'application/json'},
                     data: {
-                        entityName: this.activityInfo.suiteId,
-                        sourceId: this.activityInfo.sourceId,
+                        entityName: this.info.entityId,
+                        sourceId: this.info.dataId,
                     }
                 };
                 linkapi.get(params).then((data) => {
@@ -1977,8 +1990,8 @@
         mounted(){
             let params =this.widgetParams,_t = this;//页面参
             if (params != null && !Util.isEmpty(params.dataId) && !Util.isEmpty(params.entityId)) {
-                this.activityInfo.sourceId = params.dataId;
-                this.activityInfo.suiteId = params.entityId;
+                this.info.dataId = params.dataId;
+                this.info.entityId = params.entityId;
                 _t.getMetaEntity(function(){
                     _t.refreshData();
                 })

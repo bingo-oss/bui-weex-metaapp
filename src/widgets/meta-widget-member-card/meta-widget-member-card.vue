@@ -98,7 +98,7 @@
         data () {
             return {
                 externalUrl:"",//引擎地址
-                activityInfo: {},
+                info: {},
                 memberDatas: [],
                 isSearching: false,
                 refreshing: false,
@@ -196,12 +196,12 @@
                     //url: Config.serverConfig.uamUrl + '/extendApproval/getApprovalUserList',
                     url:this.externalUrl + '/meta_data_members/query_members',
                     data: {
-                        /*sourceModule: this.activityInfo.entityId,
-                        sourceId: this.activityInfo.dataId,*/
+                        /*sourceModule: this.info.entityId,
+                        sourceId: this.info.dataId,*/
                         page: this.pageNo,
                         page_size: this.pageSize,
                         keyWord: keyword,
-                        dataId:this.activityInfo.dataId,
+                        dataId:this.info.dataId,
                         tota:true
                     }
                 };
@@ -256,8 +256,8 @@
                 }
                 this.isShowLoading = true;
                 let datas = {
-                    entityName: this.activityInfo.entityId,
-                    sourceId: this.activityInfo.sourceId,
+                    entityName: this.info.entityId,
+                    sourceId: this.info.sourceId,
                     id: ids,
                 };
                 if (isSelf) {
@@ -296,8 +296,8 @@
                     url:this.externalUrl + '/meta_data_members',
                     //url: Config.serverConfig.uamUrl + '/extendApproval/sendApproval',
                     data: Util.toHttpRequestParams({
-                        metaEntityId: this.activityInfo.entityId,
-                        dataId: this.activityInfo.dataId,
+                        metaEntityId: this.info.entityId,
+                        dataId: this.info.dataId,
                         userIds: userId,
                         orgIds: orgId,
                         groupIds: groupId,
@@ -371,8 +371,8 @@
         mounted(){
             let params =this.widgetParams,_t = this;//页面参
             if (params != null && !Util.isEmpty(params.dataId) && !Util.isEmpty(params.entityId)) {
-                this.activityInfo.dataId = params.dataId;
-                this.activityInfo.entityId = params.entityId;
+                this.info.dataId = params.dataId;
+                this.info.entityId = params.entityId;
                 //this.$alert(Config.serverConfig)
                 service.init(Config.serverConfig.configServerUrl);//初始化请求到的地址
                 service.getEngineUrlMeta(params.entityId).then(res=>{

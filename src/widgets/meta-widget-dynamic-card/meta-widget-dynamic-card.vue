@@ -633,8 +633,8 @@
                 leftItem: {
                     icon: 'ion-chevron-left',
                 },
-                activityInfo: {
-                    sourceId: '',//活动id
+                info: {
+                    dataId: '',//数据id
                     name: '',
                     channelName: '',
                     startTime: '',
@@ -642,7 +642,7 @@
                     icon: '',
                     projectId: '',
                     formShortId: '',
-                    suiteId: ''//套件id
+                    entityId: ''//实体id
                 },
                 commentContent: '',
                 lastInputContent: '',
@@ -734,9 +734,9 @@
                     data: {}
                 };
                 if (!Util.isEmpty(actionParams)) {
-                    actionParams = actionParams.replace("{parentId}", this.activityInfo.sourceId);
-                    actionParams = actionParams.replace("{parentEntityName}", this.activityInfo.suiteId);
-                    actionParams = actionParams.replace("{parentText}", this.activityInfo.name);
+                    actionParams = actionParams.replace("{parentId}", this.info.dataId);
+                    actionParams = actionParams.replace("{parentEntityName}", this.info.entityId);
+                    actionParams = actionParams.replace("{parentText}", this.info.name);
                     actionParams = actionParams.replace("{closePage}", true);
                     link.launchLinkService([actionParams], null, null);
                 } else {
@@ -745,9 +745,9 @@
 /*                linkapi.get(params).then((result) => {
                     if (result.success && result.result) {
                         if (!Util.isEmpty(actionParams)) {
-                            actionParams = actionParams.replace("{parentId}", this.activityInfo.sourceId);
-                            actionParams = actionParams.replace("{parentEntityName}", this.activityInfo.suiteId);
-                            actionParams = actionParams.replace("{parentText}", this.activityInfo.name);
+                            actionParams = actionParams.replace("{parentId}", this.info.dataId);
+                            actionParams = actionParams.replace("{parentEntityName}", this.info.entityId);
+                            actionParams = actionParams.replace("{parentText}", this.info.name);
                             actionParams = actionParams.replace("{closePage}", true);
                             link.launchLinkService([actionParams], null, null);
                         } else {
@@ -831,7 +831,7 @@
                 let len = newContent.length - this.lastInputContent.length;
                 let _this = this;
                 let params = {
-                    idForAtProjectMembers: this.activityInfo.sourceId,
+                    idForAtProjectMembers: this.info.dataId,
                     onlyAtProjectMembers: true
                 };
                 this.$refs.input.getSelectionRange((e) => {
@@ -1178,7 +1178,7 @@
                     if (data != null) {
                         _this.currLoginInfo = data
                         _this.getArchive(true);//获取是否归档
-                        if (data.userId == this.activityInfo.createdBy) {//创建人即管理员
+                        if (data.userId == this.info.createdBy) {//创建人即管理员
                             this.isAdmin = true;
                         }else{
                             this.getAdminInfo();
@@ -1188,7 +1188,7 @@
                 });
             },
             refreshData(){
-                if (this.activityInfo == null || Util.isEmpty(this.activityInfo.suiteId)) {
+                if (this.info == null || Util.isEmpty(this.info.entityId)) {
                     return;
                 }
                 let startTime = 0;
@@ -1198,12 +1198,12 @@
                 let params = {
                     url: Config.serverConfig.uamUrl + '/extendBlog/getHomePageBlogList',
                     data: {
-                        sourceModule: this.activityInfo.suiteId,
+                        sourceModule: this.info.entityId,
                         offset: this.pageNo,
                         limit: this.pageSize,
                         isRefresh: 1,
                         startTime: 0,//startTime,
-                        sourceId: this.activityInfo.sourceId,
+                        sourceId: this.info.dataId,
                     }
                 };
                 if (this.currLabeId != '') {
@@ -1260,8 +1260,8 @@
                 }
                 this.isShowLoading = true;
                 this.currLabeId = labelId;
-                //this.activityInfo = val;
-                //this.activityInfo.
+                //this.info = val;
+                //this.info.
                 this.getLoginInfo();
                 this.refreshData();
             },
@@ -1321,7 +1321,7 @@
                     switch (target) {
                         case 'Milestone':
                             var params = {
-                                activityId: this.activityInfo.sourceId
+                                activityId: this.info.dataId
                             };
                             var url = this.$getContextPath() + "/milestoneForm.weex.js";
                             this.$push(url, params);
@@ -1339,7 +1339,7 @@
             },
             getArchive(isQuit){//是否归档
                 let params = {
-                    url: Config.serverConfig.engineService + '/metaservice/meta_suite_data_setting/' + this.activityInfo.sourceId,
+                    url: Config.serverConfig.engineService + '/metaservice/meta_suite_data_setting/' + this.info.dataId,
                 };
                 ajax.get(params.url).then((result) => {
                     if (result) {
@@ -1362,11 +1362,11 @@
             },
             getTopicInfo(){//用于发送动态的数据
                 let params = {
-                    url:`${Config.serverConfig.engineService}/metaservice/link_blog/${this.activityInfo.suiteId}/${this.activityInfo.sourceId}/topic`,
+                    url:`${Config.serverConfig.engineService}/metaservice/link_blog/${this.info.entityId}/${this.info.dataId}/topic`,
                     //url: Config.serverConfig.uamUrl + '/extendApproval/getTopic',
                     data: {
-                        //entityName: this.activityInfo.suiteId,
-                        //sourceId: this.activityInfo.sourceId
+                        //entityName: this.info.entityId,
+                        //sourceId: this.info.dataId
                     }
                 };
                 ajax.get(params.url,params.data).then((result) => {
@@ -1419,7 +1419,7 @@
                 });*/
                 /*storage.getItem("blogRefreshList", event => {//
                     if (event.result == "success" && event.data != null && event.data != '') {
-                        this.requestData(this.activityInfo, this.currLabeId);
+                        this.requestData(this.info, this.currLabeId);
                     }
                 });*/
                 this.refreshData();//resume激活时候触发刷新
@@ -1485,7 +1485,7 @@
             },
             getMetaEntity(fun){//获取实体信息
                 let params = {
-                    url: Config.serverConfig.engineService + '/metaservice/meta_entity/' + this.activityInfo.suiteId,
+                    url: Config.serverConfig.engineService + '/metaservice/meta_entity/' + this.info.entityId,
                 };
                 ajax.get(params.url).then((result) => {
                     result = result.data;
@@ -1510,8 +1510,8 @@
                 let params = {
                     url: Config.serverConfig.uamUrl + '/extendApproval/isAdmin',
                     data: {
-                        entityName: this.activityInfo.suiteId,
-                        sourceId: this.activityInfo.sourceId,
+                        entityName: this.info.entityId,
+                        sourceId: this.info.dataId,
                     }
                 };
                 linkapi.get(params).then((result)=> {
@@ -1529,8 +1529,8 @@
                     url: Config.serverConfig.uamUrl + '/webTopMessage/list',
                     headers: {'Content-Type': 'application/json'},
                     data: {
-                        entityName: this.activityInfo.suiteId,
-                        sourceId: this.activityInfo.sourceId,
+                        entityName: this.info.entityId,
+                        sourceId: this.info.dataId,
                     }
                 };
                 linkapi.get(params).then((data) => {
@@ -1600,8 +1600,8 @@
         mounted(){
             let params =this.widgetParams,_t = this;//页面参
             if (params != null && !Util.isEmpty(params.dataId) && !Util.isEmpty(params.entityId)) {
-                this.activityInfo.sourceId = params.dataId;
-                this.activityInfo.suiteId = params.entityId;
+                this.info.dataId = params.dataId;
+                this.info.entityId = params.entityId;
                 _t.getMetaEntity(function(){
                     _t.refreshData();
                 })
