@@ -65,6 +65,8 @@ Vue.component('meta-widget-text',require("../widgets/meta-widget-text/meta-widge
 
 //值班部件
 Vue.component('meta-widget-onduty',require("../widgets/meta-widget-onduty/meta-widget-onduty.vue"));
+//详情部件
+Vue.component('meta-widget-details',require("../widgets/meta-widget-details/meta-widget-details.vue"));
 
 
 App.el = '#root'
