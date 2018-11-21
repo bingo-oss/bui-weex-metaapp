@@ -995,7 +995,6 @@
                 linkapi.post(params).then((result) => {
                     // this.blogList.push()
                     if (result.code == 200) {
-                        this.sendCommentHint(result.data)
                         this.commentContent = "";
                         this.lastInputContent = "";
                         this.blogItem.commentList.push(datas)
@@ -1006,19 +1005,6 @@
                 }).catch((error)=> {
                     this.$toast(Util.handleException(error));
                 });
-            },
-            sendCommentHint(id){//发送评论提醒
-                let datas = {
-                    sourceId: this.activityInfo.sourceId,
-                    blogId: id,
-                    entityName: this.activityInfo.suiteId
-                };
-                let params = {
-                    url: Config.serverConfig.uamUrl + '/extendMessage/sendComment',
-                    data: Util.toHttpRequestParams(datas)
-                };
-                linkapi.post(params).then(res=> {
-                }).catch(null);
             },
             handleCommentContent(){
                 let content = this.commentContent;
@@ -1791,24 +1777,9 @@
                 };
                 let datas = Object.assign({}, this.topicData, params);
                 linkapi.publishMicroblog(datas, result => {
-                    this.sendCommentHint(result.blogId);
                 this.initData(1);//更新列表数据
             }, (result) => {
                 })
-            },
-            sendCommentHint(id){//发送评论提醒
-                let datas = {
-                    sourceId: this.activityInfo.sourceId,
-                    blogId: id,
-                    entityName: this.activityInfo.suiteId
-                };
-                let params = {
-                    url: Config.serverConfig.uamUrl + '/extendMessage/sendComment',
-                    data: Util.toHttpRequestParams(datas)
-                };
-                linkapi.post(params).then(res=> {
-//                    this.$alert(JSON.stringify(res))
-                }).catch(null);
             },
             onMoreMenuClick(index){//tab更多菜单
                 this.showDropdown = false;
@@ -2053,7 +2024,6 @@
             globalEvent.addEventListener("onBlogDetailCommentedCallback", e => {
                 if (e) {
                     let commentId = JSON.parse(e.result).commentId;
-                    this.sendCommentHint(commentId);
                 }
             });
 
