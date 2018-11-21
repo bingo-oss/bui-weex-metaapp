@@ -12,7 +12,6 @@ import Utils from '../../js/tool/utils';
 import OperationUtils from './js/operation_utils';
 import factoryApi from '../../widgets/libs/factory-api.js';
 const globalEvent = weex.requireModule('globalEvent');
-
 //操作类型定义
 var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script',openApp:'openApp',toOperation:"to_operation"};
 /*
@@ -61,15 +60,10 @@ export default {
         let _t = this;
         _t.operation.show = false;
         _t.operation.widgetContext = this.extendedWidgetContext;//暴露部件参数出去提供更多的校验手段
-        OperationUtils.showOperation(this.operation).then(res=>{
-            if(typeof(res) == "boolean"){
-              _t.operation.show = res;
-              _t.$forceUpdate();
-            }
-        })
+        _t.showOperation();
         //用于监听激活刷新校验
         globalEvent.addEventListener("resume", e => {
-            OperationUtils.showOperation(this.operation);
+            _t.showOperation();
         });
     },
     computed:{
@@ -146,6 +140,15 @@ export default {
         };
     },
     methods:{
+        showOperation(){
+            let _this  = this;
+            OperationUtils.showOperation(_this.operation).then(res=>{
+                if(typeof(res) == "boolean"){
+                    _this.operation.show = res;
+                    _this.$forceUpdate();
+                }
+            });
+        },
         triggered(optType){
             this.$emit("triggered",optType);
         },
