@@ -241,6 +241,9 @@
     }
     .wrapper{
         background-color: #FFF;
+        border-bottom-color: #ececec;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
     }
 
     .flex-row {
