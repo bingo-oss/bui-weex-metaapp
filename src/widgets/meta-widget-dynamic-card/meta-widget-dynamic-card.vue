@@ -1420,12 +1420,6 @@
                     }
                 });*/
                 this.refreshData();//resume激活时候触发刷新
-
-                storage.getItem("exit", event => {//
-                    if (event.result == "success") {
-                        this.$pop();
-                    }
-                });
             },
             handleWriteMenu(){
                 let _array = this.tools//this.metaSuite.settings.tools;

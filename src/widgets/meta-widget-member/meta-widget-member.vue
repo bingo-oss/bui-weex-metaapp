@@ -490,7 +490,6 @@
                 });
             },
             deleteMembers(ids, isSelf){
-                this.$alert(ids)
                 if (Util.isEmpty(ids)) {
                     return;
                 }
@@ -602,7 +601,7 @@
                 service.getEngineUrlMeta(params.entityId).then(res=>{
                     _t.externalUrl = res;
                     _t.initData(1);
-                    _t.getAdminInfo();
+                    _t.getLoginInfo();
                 });//获取引擎地址
 
             } else {

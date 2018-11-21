@@ -386,7 +386,13 @@
             } else {
                 //this.$toast("参数未传递");
             }
+            storage.removeItem("exit");
             globalEvent.addEventListener("resume", e => {
+                storage.getItem("exit", event => {//
+                    if (event.result == "success") {
+                        this.$pop();
+                    }
+                 });
                 _t.initData(1);
             });//监听应用激活 刷新
         }
