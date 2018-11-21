@@ -29,6 +29,7 @@
     const linkapi = require('linkapi');
     const globalEvent = weex.requireModule('globalEvent');
     import _ from '../../js/tool/lodash';
+    import factoryApi from '../libs/factory-api.js';
 
     import buiweex from "bui-weex";
     /*
@@ -71,30 +72,35 @@
                     return false;
                 }
                 let _this = this;
-                var curtime = Utils.realTime(new Date().getTime()); //当前的时间
-                var startTime = this.timeformat(curtime);
 
-                //orgId=c72ab416-16d2-4f0c-aaf9-1ebadb416ca8
-                //onDutyPersonId=e4cfb2ca-7b83-44d5-a32d-1f0c0fc6c94f
-                let params = {
-                    "isOnDuty": 1,
-                    "startTime": startTime,
-                    "orgId": this.orgId,
-                    "onDutyPersonId": this.onDutyPersonId
-                }
+                buiweex.confirm("是否确认开始值班？",(res)=>{
+                    buiweex.alert(res)
+                    if(res=="确定"){
+                        var curtime = Utils.realTime(new Date().getTime()); //当前的时间
+                        var startTime = this.timeformat(curtime);
+                        //orgId=c72ab416-16d2-4f0c-aaf9-1ebadb416ca8
+                        //onDutyPersonId=e4cfb2ca-7b83-44d5-a32d-1f0c0fc6c94f
+                        let params = {
+                            "isOnDuty": 1,
+                            "startTime": startTime,
+                            "orgId": this.orgId,
+                            "onDutyPersonId": this.onDutyPersonId
+                        }
+                        _this.startVal = false;
+                        _this.endVal = true;
+                        _this.stopClick = true;
+                        _this.ondutytime = "";
+                        ajax.post(`${this.engineUrl}/${this.viewConfigInfo.metaEntityName.toLowerCase()}`, params).then(res => {
+                            this.dutyId = res.data["$id"]
+                            this.begintime = Utils.realTime(new Date(res.data.startTime).getTime());//转换成时间戳
+                            this.stopClick = false;
+                            //请求成功后开始获取当前时间，和开始计算时长；
+                            this.currentTime = Utils.realTime(new Date().getTime());
+                            _this.timer = setInterval(_this.computtime, 1000); //计算正在值班的时间时长
+                        });
+                    }
 
-                _this.startVal = false;
-                _this.endVal = true;
-                _this.stopClick = true;
-                _this.ondutytime = "";
-                ajax.post(`${this.engineUrl}/${this.viewConfigInfo.metaEntityName.toLowerCase()}`, params).then(res => {
-                    this.dutyId = res.data["$id"]
-                    this.begintime = Utils.realTime(new Date(res.data.startTime).getTime());//转换成时间戳
-                    this.stopClick = false;
-                    //请求成功后开始获取当前时间，和开始计算时长；
-                    this.currentTime = Utils.realTime(new Date().getTime());
-                    _this.timer = setInterval(_this.computtime, 1000); //计算正在值班的时间时长
-                });
+                })
 
             },
             endDuty: function () { //结束值班
@@ -118,6 +124,7 @@
                     _this.startVal = !_this.startVal;
                     _this.endVal = !_this.endVal;
                     _this.currentTime = 0;
+                    factoryApi.refresh(_this);//进行刷新动作
                 });
             },
             getDutyInfo: function () { //获取值班信息
@@ -204,7 +211,7 @@
                     this.hour += 1;
                     this.min = 0;
                 }*/
-                this.ondutytime = (this.hour?(this.hour + '小时:'):'') + (this.min?(this.min + '分钟:'):'') + seconds + '秒'
+                this.ondutytime = (this.hour?(this.hour + '小时'):'') + (this.min?(this.min + '分'):'') + seconds + '秒';
             },
             timeformat: function (curtime) { //参数为时间戳 转换时间格式为：“2018-11-17 13:58:02”
                 var date = new Date(curtime);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
@@ -220,7 +227,7 @@
         computed: {
             bgstyle() { //更改按钮背景色
                 return {
-                    backgroundColor: this.startVal ? '#4EC3F2' : '#009900'
+                    backgroundColor: this.startVal ? '#4EC3F2' : '#F65B44'
                 }
             }
         },
@@ -270,7 +277,6 @@
         margin-top: 38px;
         margin-bottom: 25px;
     }
-
     .tips {
       justify-content: center;
           align-items: center;
