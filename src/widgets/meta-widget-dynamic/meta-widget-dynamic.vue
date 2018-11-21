@@ -1062,11 +1062,11 @@
                 this.isShowLoading = true;
                 let datas = {
                     blogId: item.blogInfo.blogId,
-                    sourceId: this.info.dataId,
-                    entityName: this.info.entityId
+                    dataId: this.info.dataId,
+                    entityId: this.info.entityId
                 };
                 let params = {
-                    url: Config.serverConfig.uamUrl + '/extendBlog/deleteBlogOrComment',
+                    url:  `${Config.serverConfig.engineService}/metaservice/meta_blog/deleteBlogOrComment`,
                     data: Util.toHttpRequestParams(datas)
                 }
                 linkapi.post(params).then((result) => {
@@ -1335,7 +1335,7 @@
                     startTime = this.blogList[0].blogInfo.publishTime + 1;
                 }
                 let params = {
-                    url: Config.serverConfig.uamUrl + '/extendBlog/getHomePageBlogList',
+                    url:  `${Config.serverConfig.engineService}/metaservice/meta_blog/getHomePageBlogList`,
                     data: {
                         sourceModule: this.info.entityId,
                         offset: this.pageNo,
@@ -1381,7 +1381,7 @@
                     return;
                 }
                 let params = {
-                    url: Config.serverConfig.uamUrl + '/extendBlog/getHomePageBlogList',
+                    url:  `${Config.serverConfig.engineService}/metaservice/meta_blog/getHomePageBlogList`,
                     data: {
                         sourceModule: this.info.entityId,
                         offset: this.pageNo,
@@ -1395,7 +1395,7 @@
                 params.data.labelId = this.currLabeId;
                 if (this.isSearching) {
                     params = {
-                        url: Config.serverConfig.uamUrl + '/extendBlog/getHomePageBlogList',
+                        url:  `${Config.serverConfig.engineService}/metaservice/meta_blog/getHomePageBlogList`,
                         data: {
                             sourceModule: this.info.entityId,
                             ignoreEcode: 1,
@@ -1911,19 +1911,17 @@
             },
             getAdminInfo(){
                 let params = {
-                    url: Config.serverConfig.uamUrl + '/extendApproval/isAdmin',
+                    url: `${Config.serverConfig.engineService}/metaservice/judge_has_permissions/is_admin`,
                     data: {
-                        entityName: this.info.entityId,
-                        sourceId: this.info.dataId,
+                        entityId: this.info.entityId,
+                        dataId: this.info.dataId,
                     }
                 };
                 linkapi.get(params).then((result)=> {
-                    if (result != undefined && result.success) {
-                    this.isAdmin = result.data;
-                }
-                this.getArchive(true);
-                //this.getMetaEntity();
-            }, error=> {
+                    this.isAdmin = result;
+                    this.getArchive(true);
+                    //this.getMetaEntity();
+                }, error=> {
                     //this.getMetaEntity();
                 });
             },
@@ -2010,6 +2008,7 @@
                         }//0:通用,1:快捷
                     });
                     _t.tools = res.mpHomePageOprationList;
+                    _t.getLoginInfo();
                     _t.handleTabMenu();
                     _t.handleCreateMenu();
                     _t.handleWriteMenu();

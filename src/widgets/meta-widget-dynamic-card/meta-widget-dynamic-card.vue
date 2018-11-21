@@ -618,14 +618,11 @@
                 type: Boolean,
                 default: false
             },*/
-            isAdmin: {
-                type: Boolean,
-                default: false
-            }
         },
         components: {'emoji-express': emojiExpression, 'bui-loading': loading, 'dialog': dialog},
         data () {
             return {
+                externalUrl:"",//引擎地址
                 praiseList: [],
                 isShowComment: false,
                 isShowExpression: false,
@@ -1196,7 +1193,7 @@
                     startTime = this.blogList[0].blogInfo.publishTime + 1;
                 }
                 let params = {
-                    url: Config.serverConfig.uamUrl + '/extendBlog/getHomePageBlogList',
+                    url:  `${Config.serverConfig.engineService}/metaservice/meta_blog/getHomePageBlogList`,
                     data: {
                         sourceModule: this.info.entityId,
                         offset: this.pageNo,
@@ -1497,6 +1494,7 @@
                         this.metaSuite.relations = [];//用于动态过滤
                         this.metaSuite.settings= {tools:[]};//存快捷
                         this.getTopicInfo();
+                        this.externalUrl = result.project.engine.externalUrl;
                         //this.handleTabMenu();
                         //this.handleWriteMenu();
                         //this.handleCreateMenu();
@@ -1508,19 +1506,17 @@
             },
             getAdminInfo(){
                 let params = {
-                    url: Config.serverConfig.uamUrl + '/extendApproval/isAdmin',
+                    url: `${Config.serverConfig.engineService}/metaservice/judge_has_permissions/is_admin`,
                     data: {
-                        entityName: this.info.entityId,
-                        sourceId: this.info.dataId,
+                        entityId: this.info.entityId,
+                        dataId: this.info.dataId,
                     }
                 };
                 linkapi.get(params).then((result)=> {
-                    if (result != undefined && result.success) {
-                    this.isAdmin = result.data;
-                }
-                this.getArchive(true);
-                //this.getMetaEntity();
-            }, error=> {
+                    this.isAdmin = result;
+                    this.getArchive(true);
+                    //this.getMetaEntity();
+                }, error=> {
                     //this.getMetaEntity();
                 });
             },
@@ -1599,7 +1595,6 @@
                 //本部件暴露的参数
                 return Object.assign({},this.widgetParams)
             }
-
         },
         mounted(){
             let params =this.widgetParams,_t = this;//页面参
@@ -1610,6 +1605,7 @@
                     _t.refreshData();
                 })
                 _t.tools = [];
+                _t.getAdminInfo();
                 _t.handleTabMenu();
                 _t.handleCreateMenu();
                 _t.handleWriteMenu();

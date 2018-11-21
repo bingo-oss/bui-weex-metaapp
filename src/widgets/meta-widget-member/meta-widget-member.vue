@@ -441,14 +441,11 @@
                 };
                 ajax.get(params.url,params.data).then((result)=> {
                     result = result.data;
-                    if (result) {
-                        this.isAdmin = result;
-                        if (this.isAdmin) {
-                            this.optionItems = ['设置管理员', '取消管理员', '邀请新成员', '移除成员', '退出成员'];
-                        } else {//普通成员
-                            this.optionItems = ['邀请新成员', '退出成员'];
-                        }
-                    } else {
+                    this.isAdmin = result;
+                    if (this.isAdmin) {
+                        this.optionItems = ['设置管理员', '取消管理员', '邀请新成员', '移除成员', '退出成员'];
+                    } else {//普通成员
+                        this.optionItems = ['邀请新成员', '退出成员'];
                     }
                 }, error=> {
                 });
