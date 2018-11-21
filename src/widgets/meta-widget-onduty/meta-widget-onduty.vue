@@ -31,7 +31,6 @@
     import _ from '../../js/tool/lodash';
     import factoryApi from '../libs/factory-api.js';
 
-    import buiweex from "bui-weex";
     /*
     * 初始化发请求，判断什么状态 值班中or未值班
     * 未值班状态：startVal=true;正在值班：endVal=true;
@@ -63,7 +62,7 @@
                 orgId: null,
                 onDutyPersonId: null,
                 dutyId: null,
-                stopClick:false
+                stopClick:false //避免多次点击
             }
         },
         methods: {

@@ -22,7 +22,7 @@ const pageService={
                 ax.get(runtimeConfig["service.metabase.endpoint"]+`/mp_page/${pageId}?terminalType=${mobileType}&byOperation=${byOperation}`).then(({data})=>{
                     resolve(data);
                 },()=>{
-                    ax.get(`http://10.200.84.125:3333/project/bui-weex-metaapp/dist/test_page/${pageId}.json`).then(({data})=>{
+                    ax.get(`http://10.200.85.142:8686/dist/test_page/${pageId}.json`).then(({data})=>{
                         resolve(data);
                      },()=>{
                         reject();

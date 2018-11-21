@@ -12,7 +12,7 @@ const configServerUrl = "https://developer.bingosoft.net:12100/services/tool/sys
 var configData=null;
 export default {
     debug: true,
-    token: 'c2Fhc3Nzbzo0NTg1MDk5Yy00ZmIxLTRlZjUtOTdkNy01ZmU5YzQ1NzAxODM',
+    token: 'c2Fhc3NzbzowMzFjMDRhZi0xYTEyLTRjNzEtODMxYS1lMDk3NTQyMTMxOWE',
     configFilename: 'config.json',
     serverConfig:{},
     // 读取与 list.weex.js、form.weex.js 同级的配置文件
