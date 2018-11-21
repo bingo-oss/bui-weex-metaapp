@@ -211,7 +211,7 @@
                     this.hour += 1;
                     this.min = 0;
                 }*/
-                this.ondutytime = (this.hour?(this.hour + '小时'):'') + (this.min?(this.min + '分'):'') + seconds + '秒';
+                this.ondutytime = (this.hour?(this.hour + '小时'):'') + (this.min?(this.min + '分'):'') + (seconds?(seconds + '秒'):"");
             },
             timeformat: function (curtime) { //参数为时间戳 转换时间格式为：“2018-11-17 13:58:02”
                 var date = new Date(curtime);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
