@@ -117,7 +117,8 @@
             getWidgetContext(){
                 //传入操作的上下文内容
                return {
-                   widgetParams:this.widgetParams
+                   widgetParams:this.widgetParams,
+                   module:this
                };
             },
             openGroupChat(){

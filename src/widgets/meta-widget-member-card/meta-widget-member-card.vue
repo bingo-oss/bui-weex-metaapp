@@ -199,7 +199,7 @@
                         /*sourceModule: this.info.entityId,
                         sourceId: this.info.dataId,*/
                         page: this.pageNo,
-                        page_size: this.pageSize,
+                        page_size: this.widgetParams.lines?this.widgetParams.lines*7:this.pageSize,
                         keyWord: keyword,
                         dataId:this.info.dataId,
                         tota:true
@@ -357,6 +357,10 @@
             exportParams(){
                 //本部件暴露的参数
                 return Object.assign({},this.widgetParams)
+            },
+            refresh(){
+                //注册刷新事件是facoty-api的refresh方法的范围内
+                this.initData(1);
             }
         },
         computed:{
