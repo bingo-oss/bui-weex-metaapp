@@ -96,7 +96,7 @@
                     <text class="nonal" style="padding-right: 20px;">处理意见</text>
                     <text style="font-size: 28px; width:560px;">{{result.handlingOpinions}}</text>
                 </div>
-                <div class="flex-row" v-if="result.liveSrc.length" style="padding-bottom: 18px;">
+                <div class="flex-row" v-if="result.liveSrc&&result.liveSrc.length" style="padding-bottom: 18px;">
                     <text class="nonal" style="padding-right: 20px;">现场图片</text>
                     <div style="flex-direction:row;flex-wrap:wrap; flex: 1;">
                         <div v-for="src in result.liveSrc">

@@ -335,7 +335,8 @@
                             }
                         }
                         this.pageNo = 1;
-                        this.initData(1);
+                        //this.initData(1);
+                        factoryApi.refresh(this);
                         this.$toast("操作成功");
                     } else {
                         this.$toast("操作失败！");
