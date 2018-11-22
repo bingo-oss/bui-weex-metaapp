@@ -133,7 +133,7 @@ export default {
                 //成功回调
             },(erro)=>{
                 //失败回调
-                _this.$alert(erro);
+                //_this.$alert(erro);
                 filesIndex++;
                 _this.fileUpload(files,filesIndex)
             });
@@ -188,11 +188,9 @@ export default {
                 if (_array.length > 0) {
                     return _url + _array[0];
                 } else {
-                    this.$alert(_url)
                     return _url + url;
                 }
             } else {
-                this.$alert(_url)
                 return _url + url;
             }
         },
