@@ -1,15 +1,15 @@
 <template>
     <div class="wrapper">
-        <div class="details-header">
-            <div class="escape" v-if="titleInfo.personName">
-                <text class="escape-in">{{titleInfo.title}}：{{titleInfo.personName}}</text>
+        <div class="details-header" v-if="titleInfo.title">
+            <div class="escape" v-if="titleInfo.title">
+                <text class="escape-in">{{titleInfo.title}}{{titleInfo.personName?(":"+titleInfo.personName):""}}</text>
             </div>
             <div class="flex-row" style="padding-bottom: 25px;">
                 <text class="warn" v-if="titleInfo.forewarningTime">预警时间：{{titleInfo.forewarningTime | timeformat}}</text>
-                <text class="warn">预警状态：{{titleInfo.forewarningStatus ? '已处理':'未处理'}}</text>
+                <text class="warn" v-if="titleInfo.title">预警状态：{{titleInfo.forewarningStatus ? '已处理':'未处理'}}</text>
             </div>
             <div class="flex-row" style="padding-bottom: 25px;">
-                <text class="warn">摄像机：{{titleInfo.Camera}}</text>
+                <text class="warn" v-if="titleInfo.Camera">摄像机：{{titleInfo.Camera}}</text>
             </div>
         </div>
         <div class="pic-compare" v-if="comparePic&&comparePic.similarityDegree" style="padding-left: 25px;">
@@ -243,7 +243,7 @@
     }
 
     .details-header {
-        height: 190px;
+       /*height: 200px;*/
         padding-left: 25px;
         background-color: #4DA4FE
     }
@@ -262,7 +262,7 @@
     .escape-in {
         color: #FFFFFF;
         font-size: 38px;
-        padding-top: 20px;
+        padding-top: 10px;
         padding-bottom: 25px;
     }
 
