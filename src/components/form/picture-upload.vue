@@ -186,12 +186,12 @@ export default {
             let _array = url.split("||");
             if (Array.isArray(_array)) {
                 if (_array.length > 0) {
-                    return _url + _array[0];
+                    return _url + _array[0] +"&width=120&height=120";
                 } else {
-                    return _url + url;
+                    return _url + url+"&width=120&height=120";
                 }
             } else {
-                return _url + url;
+                return _url + url+"&width=120&height=120";
             }
         },
         downloadUrl(url,success) {

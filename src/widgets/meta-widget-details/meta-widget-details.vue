@@ -96,11 +96,11 @@
                     <text class="nonal" style="padding-right: 20px;">处理意见</text>
                     <text style="font-size: 28px; width:560px;">{{result.handlingOpinions}}</text>
                 </div>
-                <div class="flex-row" v-if="result.liveSrc&&result.liveSrc.length" style="padding-bottom: 18px;">
+                <div class="flex-row" v-if="result.livePicture&&result.livePicture.length" style="padding-bottom: 18px;">
                     <text class="nonal" style="padding-right: 20px;">现场图片</text>
                     <div style="flex-direction:row;flex-wrap:wrap; flex: 1;">
-                        <div v-for="src in result.liveSrc">
-                            <image style="width: 180px;height: 220px; padding:5px 0px 0px 5px;" :src="src"></image>
+                        <div v-for="picture in result.livePicture">
+                            <image style="width: 180px;height: 220px; padding:5px 0px 0px 5px;" :src="Config.serverConfig.engineService+'/stream?filePath='+picture.relativePath+'&width=180&height=220'"></image>
                         </div>
                     </div>
                 </div>
@@ -136,7 +136,8 @@
                 result: {},  //处理结果
                 comparePic: {},  //照片对比
                 titleInfo: {},  //详情顶部信息
-                resultshow: null
+                resultshow: null,
+                Config:config
             }
         },
         methods: {
@@ -195,10 +196,10 @@
                                     _this.result.handlingOpinions = res.data[0].handlingOpinions;  //处理意见
                                     _this.result.livePicture = res.data[0].livePicture;    //现场图片
                                     /*这里需要判断图片>2两张才遍历*/
-                                    _this.result.liveSrc = [];
+                                    /*_this.result.liveSrc = [];
                                     _.each(res.data[0].livePicture, (val, i) => {
                                         _this.result.liveSrc.push(config.serverConfig.engineService + "/stream?filePath=" + val.relativePath);
-                                    });
+                                    });*/
                                 }
 
                             })
