@@ -73,7 +73,6 @@
                 let _this = this;
 
                 buiweex.confirm("是否确认开始值班？",(res)=>{
-                    buiweex.alert(res)
                     if(res=="确定"){
                         var curtime = Utils.realTime(new Date().getTime()); //当前的时间
                         var startTime = this.timeformat(curtime);

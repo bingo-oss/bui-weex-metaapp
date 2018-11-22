@@ -213,8 +213,12 @@
                     })
                 })
             },
+            refresh(){
+                //部件刷新的实现
+                this.getDetailsInfo();
+            },
             exportParams() { //本部件暴露的参数
-                return Object.assign({}, this.widgetParams, this.selectedItem);
+                return Object.assign({}, this.widgetParams, this.titleInfo);
             }
         },
         component: {},
@@ -225,7 +229,10 @@
             }
         },
         created() {
-            this.getDetailsInfo()
+            this.getDetailsInfo();
+            globalEvent.addEventListener("resume", e => {
+                this.getDetailsInfo();
+            });
         }
 
     }

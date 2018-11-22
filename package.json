@@ -31,7 +31,7 @@
   "dependencies": {
     "bui-weex": "^0.3.7",
     "co": "^4.6.0",
-    "linkapi": "^0.3.11",
+    "linkapi": "^0.3.20",
     "lodash": "^4.17.4",
     "path-to-regexp": "1.7.0",
     "url-template": "^2.0.8",
