@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <div class="details-header" v-if="titleInfo.title">
+        <div class="details-header">
             <div class="escape" v-if="titleInfo.personName">
                 <text class="escape-in">{{titleInfo.title}}：{{titleInfo.personName}}</text>
             </div>
