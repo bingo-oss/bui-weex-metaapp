@@ -1761,11 +1761,11 @@
                 };
                 linkapi.get(params).then((result) => {
                     if (result) {
-                        this.topicData = result.data;
+                        this.topicData = result;
                     } else {
                         this.$toast("获取topic数据失败：" + JSON.stringify(result));
                     }
-            }).catch((error)=> {
+                }).catch((error)=> {
                 });
             },
             publishBlog(){//发送评论
@@ -1790,8 +1790,8 @@
                 };
                 let datas = Object.assign({}, this.topicData, params);
                 linkapi.publishMicroblog(datas, result => {
-                this.initData(1);//更新列表数据
-            }, (result) => {
+                    this.initData(1);//更新列表数据
+                }, (result) => {
                 })
             },
             onMoreMenuClick(index){//tab更多菜单
