@@ -221,6 +221,7 @@
         filters: {
             timeformat(val) {  //时间格式转换
                 return Utils.formatDate(val);
+
             }
         },
         created() {
