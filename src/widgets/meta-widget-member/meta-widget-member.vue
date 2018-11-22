@@ -468,7 +468,7 @@
                 }
                 this.isShowLoading = true;
                 let params = {
-                    url: this.externalUrl+(type?"/meta_data_members/setup_admin":"meta_data_members/deregister_admin"),
+                    url: this.externalUrl+(type?"/meta_data_members/setup_admin":"/meta_data_members/deregister_admin"),
                     data:Util.toHttpRequestParams({
                         metaEntityId: this.info.entityId,
                         dataId: this.info.dataId,

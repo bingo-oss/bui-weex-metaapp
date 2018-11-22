@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <div class="details-header">
+        <div class="details-header" v-if="titleInfo.title">
             <div class="escape">
                 <text class="escape-in">{{titleInfo.title}}：{{titleInfo.personName}}</text>
             </div>
@@ -10,10 +10,10 @@
             </div>
             <div class="flex-row" style="padding-bottom: 25px;">
                 <text class="warn">摄像机：</text>
-                <text class="warn">成员：</text>
+                <!--<text class="warn">成员：</text>-->
             </div>
         </div>
-        <div class="pic-compare" style="padding-left: 25px;">
+        <div class="pic-compare" v-if="comparePic&&comparePic.similarityDegree" style="padding-left: 25px;">
             <div class="compare-title">
                 <text style="font-size: 28px;">照片比对</text>
             </div>
@@ -21,23 +21,23 @@
                 <text class="nonal" style="padding: 10px;">相似度：</text>
                 <text class="similar">{{comparePic.similarityDegree}}</text>
             </div>
-            <div class="pic-con flex-row" style="justify-content: center;">
-                <div style="justify-content: center;width: 300px;height: 440px;">
+            <div class="pic-con flex-row" style="">
+                <div v-if="comparePic.snapsrc" style="justify-content: center;width: 300px;height: 440px;">
                     <image style="width: 300px;height: 400px; padding: 10px;"
                            :src="comparePic.snapsrc"></image>
                     <text class="nonal" style="text-align: center;">抓拍图片</text>
                 </div>
-                <div style="justify-content: center;width: 300px;height: 440px;">
+                <div v-if="comparePic.originalsrc" style="justify-content: center;width: 300px;height: 440px;">
                     <image style="width: 300px;height: 400px; padding: 10px;"
                            :src="comparePic.originalsrc"></image>
                     <text class="nonal" style="text-align: center;">库中原图</text>
                 </div>
             </div>
         </div>
-        <div class="person-info" style="padding-left: 25px; padding-right: 25px;">
+        <div v-if="titleInfo.title" class="person-info">
             <div class="person-title">
                 <text style="font-size: 28px; text-align: left; width: 600px;">人员信息</text>
-                <text style="font-size: 28px; padding:5px; color: #3eb4ff; width: 80px;" @click="infoShow">展开</text>
+                <text style="font-size: 28px; padding:5px; color: #3eb4ff; width: 80px;" @click="infoShow">{{personInfo?"收起":"展开"}}</text>
             </div>
             <!--人员信息-->
             <div class="info-detail" v-if="personInfo">
@@ -76,36 +76,36 @@
             </div>
         </div>
         <!--处理结果-->
-        <div class="line" style="height: 1px;background-color: #ccc;"></div>
-        <div class="results" v-if="this.titleInfo.forewarningStatus" style="padding-left: 25px; padding-right: 25px;">
+        <div class="results" v-if="this.titleInfo.forewarningStatus">
             <div class="person-title">
                 <text style="font-size: 28px;">处理结果</text>
             </div>
-            <div class="flex-row" style="padding-bottom: 18px;">
-                <text class="nonal" style="padding-right: 20px;">处理人</text>
-                <text style="font-size: 28px"></text>
-            </div>
-            <div class="flex-row" style="padding-bottom: 18px;">
-                <text class="nonal" style="padding-right: 20px;">所属部门</text>
-                <text style="font-size: 28px"></text>
-            </div>
-            <div class="flex-row" style="padding-bottom: 18px;">
-                <text class="nonal" style="padding-right: 20px;">处理时间</text>
-                <text style="font-size: 28px">{{result.processingTime | timeformat}}</text>
-            </div>
-            <div class="flex-row" style="padding-bottom: 18px;">
-                <text class="nonal" style="padding-right: 20px;">处理意见</text>
-                <text style="font-size: 28px; width:560px;">{{result.handlingOpinions}}</text>
-            </div>
-            <div class="flex-row" style="padding-bottom: 18px; flex-wrap:wrap;">
-                <text class="nonal" style="padding-right: 20px;">现场图片</text>
-                <!--<div v-for="src in result.liveSrc">
-                    <image style="width: 190px;height: 220px; padding: 10px;"
-                           :src="src"></image>
-                </div>-->
-
-
-
+            <div class="info-detail">
+                <div class="flex-row" style="padding-bottom: 18px;">
+                    <text class="nonal" style="padding-right: 20px;">处理人</text>
+                    <text style="font-size: 28px"></text>
+                </div>
+                <div class="flex-row" style="padding-bottom: 18px;">
+                    <text class="nonal" style="padding-right: 20px;">所属部门</text>
+                    <text style="font-size: 28px"></text>
+                </div>
+                <div class="flex-row" v-if="result.processingTime" style="padding-bottom: 18px;">
+                    <text class="nonal" style="padding-right: 20px;">处理时间</text>
+                    <text style="font-size: 28px">{{result.processingTime | timeformat}}</text>
+                </div>
+                <div class="flex-row" v-if="result.handlingOpinions" style="padding-bottom: 18px;">
+                    <text class="nonal" style="padding-right: 20px;">处理意见</text>
+                    <text style="font-size: 28px; width:560px;">{{result.handlingOpinions}}</text>
+                </div>
+                <div class="flex-row" v-if="result.result&&result.result.liveSrc.length" style="padding-bottom: 18px;">
+                    <text class="nonal" style="padding-right: 20px;">现场图片</text>
+                    <div style="flex-direction:row;flex-wrap:wrap; flex: 1;" >
+                        <div v-for="src in result.liveSrc">
+                            <image style="width: 180px;height: 220px; padding:5px 0 0 5px;"
+                                   :src="src"></image>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -116,6 +116,7 @@
     import config from '../../js/config.js';
     import Utils from '../../js/tool/utils.js';
     import _ from '../../js/tool/lodash';
+    import buiweex from "bui-weex";
 
     /*
     * 数据获取：通过实体id获取容器地址，拼接参数"数据id"去get
@@ -143,7 +144,6 @@
         methods: {
             infoShow() {
                 this.personInfo = !this.personInfo;
-                _this.comparePic.src
             },
             getDetailsInfo() {
                 service.init(config.serverConfig.configServerUrl); //初始化请求地址
@@ -183,16 +183,19 @@
                             params.filters = "forewarningEntityId eq " + _this.widgetParams.entityId + " and forewarningId eq " + _this.widgetParams.dataId
                             ajax.get(`${externalUrl}/forewarningprocessingrecord`, params).then(res => {//处理结果
                                 //1是已处理 0是未处理
-                                _this.$set(_this.result, 'processingTime', res.data[0].processingTime);   //处理时间
                                 //_this.$set(_this.result, '', res.data);   //处理人
                                 //_this.result = res.data;    //所属部门
-                                _this.result.handlingOpinions = res.data[0].handlingOpinions;  //处理意见
-                                _this.result.livePicture = res.data[0].livePicture;    //现场图片
-                                /*这里需要判断图片>2两张才遍历*/
-                                _this.result.liveSrc = [];
-                                _.each(res.data[0].livePicture, (val, i) => {
-                                    _this.result.liveSrc.push(config.serverConfig.engineService + "/stream?filePath=" + val.relativePath);
-                                })
+                                if(res.data&&res.data.length){
+                                    _this.result.processingTime = res.data[0].processingTime
+                                    _this.result.handlingOpinions = res.data[0].handlingOpinions;  //处理意见
+                                    _this.result.livePicture = res.data[0].livePicture;    //现场图片
+                                    /*这里需要判断图片>2两张才遍历*/
+                                    _this.result.liveSrc = [];
+                                    _.each(res.data[0].livePicture, (val, i) => {
+                                        _this.result.liveSrc.push(config.serverConfig.engineService + "/stream?filePath=" + val.relativePath);
+                                });
+                                }
+
 
                             })
                         }
@@ -217,15 +220,8 @@
         component: {},
         filters: {
             timeformat(val) {  //时间格式转换
-                var time = Utils.realTime(new Date(val).getTime());//转换成时间戳
-                var date = new Date(time);//时间戳为10位需*1000，时间戳为13位的话不需乘1000
-                var Y = date.getFullYear() + '-';
-                var M = (date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1) + '-';
-                var D = date.getDate() + ' ';
-                var h = date.getHours() + ':';
-                var m = date.getMinutes() + ':';
-                var s = date.getSeconds();
-                return Y + M + D + h + m + s;
+                return Utils.formatDate(val);
+
             }
         },
         created() {
@@ -242,7 +238,13 @@
     .details-header {
         height: 180px;
         padding-left: 25px;
-        background-color: #3eb4ff
+        background-color: #4DA4FE
+    }
+    .wrapper{
+        background-color: #FFF;
+        border-bottom-color: #ececec;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
     }
 
     .flex-row {
@@ -257,7 +259,7 @@
 
     .warn {
         font-size: 28px;
-        color: #FFFFFF;
+        color: #C4E1FE;
         padding-right: 40px;
     }
 
@@ -277,9 +279,20 @@
     }
 
     .person-title {
+        border-bottom-color: #f1f1f1;
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+
+        border-top-color: #f1f1f1;
+        border-top-width: 1px;
+        border-top-style: solid;
+
         flex-direction: row;
-        padding-top: 30px;
-        padding-bottom: 30px;
+        padding-top: 20px;
+        padding-bottom: 20px;
+        padding-left: 25px; padding-right: 25px;
     }
+
+    .info-detail{ padding-left: 25px; padding-right: 25px; padding-top: 20px; padding-bottom: 20px;}
 
 </style>
