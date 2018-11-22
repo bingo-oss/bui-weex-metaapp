@@ -2,7 +2,7 @@
     <div class="full-column" v-if="pageConfig" >
         <scroller class="full-column" style="background-color:#F8F8F8" @scroll="scrollHandler">
             <div :style="scrollerStyle">
-                <component v-for="(widget,index) in pageConfig.columnWidgets" @appear="appear(widget,index)" @disappear="disappear(widget,index)" ref="childWidgets" :is="widget.tagName" :key="index" :widget-params="widget.params" :vue-modal="vueModal" :tag-name="widget.tagName" :widget-name="widget.widgetName"></component>
+                <component v-for="(widget,index) in pageConfig.columnWidgets" :is="widget.tagName" ref="childWidgets" :key="index" :widget-params="widget.params" :vue-modal="vueModal" :tag-name="widget.tagName" :widget-name="widget.widgetName"></component>
             </div>
             <!--<div class="full-column" v-for="(col,colIndex) in pageConfig.style.columns" :key="colIndex">
                 <component class="full-column" v-for="(widget,index) in pageConfig.widgets[colIndex]" @appear="appear(widget,index)" @disappear="disappear(widget,index)" ref="childWidgets" :is="widget.tagName" :key="index" :widget-params="widget.params" :vue-modal="vueModal" :tag-name="widget.tagName" :widget-name="widget.widgetName"></component>
@@ -46,7 +46,8 @@
                 isWidgetPage:true,
                 dom:dom,//方便其他部件调用滚动
                 urlParam:{},//存储的页面参数
-                scrollerStyle:{"flex":1,height:scrollerHeight}//ios的scroller标签内的flex不生效-需要做个兼容
+                scrollerStyle:{"flex":1,height:scrollerHeight},//ios的scroller标签内的flex不生效-需要做个兼容
+                widgetsInfo:[]//用于存入出现过的部件信息（高度）
             };
         },
         watch:{
@@ -142,27 +143,24 @@
                 storage.removeItem("urlParam");//取出后立即清除-防止参数错乱
                 return _layout;
             },
-            appear(widget,index){
-                //进入--导航部件自身不进行变化
-                if(widget.tagName=="meta-widget-navbar")return false;
-                _.each(this.$refs.childWidgets,(cw)=>{
-                    if(_.isFunction(cw.appear)){
-                        cw.appear(this.$refs.childWidgets[index],index);
-                    }
-                });
-            },
-            disappear(widget,index){
-                //离开--导航部件自身不进行变化
-                if(widget.tagName=="meta-widget-navbar")return false;
-                _.each(this.$refs.childWidgets,(cw)=>{
-                    if(_.isFunction(cw.disappear)){
-                        cw.disappear(this.$refs.childWidgets[index],index);
+            viewEvent(widget,Event){
+                //if(widget.tagName=="meta-widget-navbar")return false;
+                _.each(this.$refs.childWidgets,(cw,index)=>{
+                    if(_.isFunction(cw[Event])){
+                        cw[Event](widget,index);
                     }
                 });
             },
             scrollHandler(e){
                 //滚动触发
-                _.each(this.$refs.childWidgets,(cw)=>{
+                _.each(this.$refs.childWidgets,(cw,index)=>{
+                    if(this.widgetsInfo[index].widget == cw){
+                        if(this.widgetsInfo[index+1]&&
+                            ((-e.contentOffset.y)<=this.widgetsInfo[index+1].info.size.top)&&
+                            ((-e.contentOffset.y)>this.widgetsInfo[index].info.size.top)){
+                            this.viewEvent(cw,"appear");
+                        }
+                    }
                     if(_.isFunction(cw.pageScrollHandler)){
                         cw.pageScrollHandler(e);
                     }
@@ -177,8 +175,10 @@
                     if(_this.pageConfig&&_this.$refs.childWidgets.length==_this.pageConfig.columnWidgets.length){
                         _.each(_this.$refs.childWidgets,(cw)=>{
                             dom.getComponentRect(cw,function(res){
+                                //存入部件信息
+                                _this.widgetsInfo.push({widget:cw,info:res});
                                 //计算下当前部件的总高--若超出则不需要定制高度
-                                _widgetHeights+=res.size.height
+                                _widgetHeights+=res.size.height;
                                 if(_widgetHeights>(_this.scrollerStyle.height)){
                                     _this.scrollerStyle = {};
                                     _this.$forceUpdate();//更新下视图

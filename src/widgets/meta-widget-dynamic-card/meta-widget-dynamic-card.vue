@@ -64,14 +64,14 @@
                 </scroller>
             </div>
 
-            <div class="bui-list">
-                <div class="center" v-if="isShowEmpty">
+            <list class="bui-list">
+                <cell class="center" v-if="isShowEmpty">
                     <div class="center">
                         <text style="color: #656565;font-size: 32px;margin-top: 50px" value="暂无数据!"></text>
                     </div>
-                </div>
+                </cell>
 
-                <div class="cell-box" v-for="(blogItem,index) in blogList" :ref="blogItem.blogInfo.blogId"
+                <cell class="cell-box" v-for="(blogItem,index) in blogList" :ref="blogItem.blogInfo.blogId"
                       @click="onBlogItemClick(blogItem.blogInfo.blogId)" v-if="blogList.length>0">
                     <div :class="['flex-row','blog-div',getItemLabelStyle(blogItem)!=''?'instructions-label':'']"
                     ><!--  :style="{'border-left-color':'#'+getItemLabelStyle(blogItem).color}"-->
@@ -213,8 +213,8 @@
                         <bui-image width="150px" height="110px"
                                    :src="getImageUrl(getItemLabelStyle(blogItem).pic)"></bui-image>
                     </div>
-                </div>
-            </div>
+                </cell>
+            </list>
 
             <div class="flex-row" style="padding: 10px;background-color: #f1f1f1;align-items: center"
                  v-if="isShowComment">

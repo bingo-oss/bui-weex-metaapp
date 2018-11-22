@@ -204,17 +204,21 @@
                 this.$parent.dom.scrollToElement(el, {});
                 this.gotoOpt = false;
             },
-            appear(widget,index){
+            appear(widget){
                 //进入视图
-                _.each(this.tapLabels,(tapLabel)=>{
-                    tapLabel.highlight = false;
-                });
-                _.each(this.tapLabels,(tapLabel,index)=>{
-                    if(tapLabel.childWidget==widget){
-                        //this.goto(tapLabel,index);
-                        tapLabel.highlight = true;
-                    }
-                });
+                if(widget){
+                    _.each(this.tapLabels,(tapLabel)=>{
+                        tapLabel.highlight = false;
+                    });
+                    _.each(this.tapLabels,(tapLabel,index)=>{
+                        if(tapLabel.childWidget==widget){
+                            //this.goto(tapLabel,index);
+                            tapLabel.highlight = true;
+                            return false;
+                        }
+                    });
+                }
+
             },
             disappear(widget,index){
                 //离开视图
