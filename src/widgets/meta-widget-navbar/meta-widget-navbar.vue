@@ -207,12 +207,12 @@
             appear(widget){
                 //进入视图
                 if(widget){
-                    _.each(this.tapLabels,(tapLabel)=>{
-                        tapLabel.highlight = false;
-                    });
                     _.each(this.tapLabels,(tapLabel,index)=>{
-                        if(tapLabel.childWidget==widget){
+                        if(tapLabel.childWidget==widget&&!tapLabel.highlight){
                             //this.goto(tapLabel,index);
+                            _.each(this.tapLabels,(tapLabel)=>{
+                                tapLabel.highlight = false;
+                            });
                             tapLabel.highlight = true;
                             return false;
                         }
