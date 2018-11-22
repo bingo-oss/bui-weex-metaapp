@@ -405,7 +405,7 @@ module.exports = {
                 this.dataCount = resp.headers["X-Total-Count"]
                 if(this.presetFilters[this.currentTab]){
                     if(this.presetFilters[this.currentTab].showCount) {//是否显示数字
-                        this.presetFilters[this.currentTab].count = `(${resp.headers["X-Total-Count"]})`;
+                        this.presetFilters[this.currentTab].count = (resp.headers["X-Total-Count"]>0)?`(${resp.headers["X-Total-Count"]})`:"";
                         this.presetFilters[this.currentTab].title = `${this.presetFilters[this.currentTab].text}${this.presetFilters[this.currentTab].count}`;
                     }
                 }
@@ -544,7 +544,8 @@ module.exports = {
                         params.total=true;
                         service.getEngineUrl(viewDef.projectId).then(engineUrl => {
                                 ajax.get(`${engineUrl}/${viewDef.metaEntityName.toLowerCase()}`, params).then(resp => {
-                                    this.presetFilters[_index].count = `(${resp.headers["X-Total-Count"]})`;//对应标签的总数
+                                    this.presetFilters[_index].count = (resp.headers["X-Total-Count"]>0)?`(${resp.headers["X-Total-Count"]})`:"";//对应标签的总数
+
                                     this.presetFilters[_index].title =  `${this.presetFilters[_index].text}${this.presetFilters[_index].count}`;
                                 });
                         });

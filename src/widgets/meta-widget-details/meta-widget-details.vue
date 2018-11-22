@@ -156,8 +156,9 @@
                         _this.titleInfo.forewarningStatus = res.data.forewarningStatus; //预警状态
                         _this.titleInfo.forewarningTime = res.data.forewarningTime; //预警时间
                         _this.titleInfo.title = res.data.title; //预警标题
-                        _this.titleInfo.Camera = res.data._data.cameraId[cameraId].title; //摄像头
-
+                        if(res.data._data&&res.data._data.cameraId){
+                            _this.titleInfo.Camera = res.data._data.cameraId[cameraId].title; //摄像头
+                        }
                         _this.$set(_this.infomation, 'identityNo', res.data.identityNo)  //证件号
                         _this.infomation.belongLib = res.data.belongLib;  //所在库
                         _this.infomation.nation = res.data.nation;  //名族
@@ -167,10 +168,12 @@
                         _this.infomation.caseCause = res.data.caseCause;  //案由
 
                         _this.$set(_this.comparePic, 'similarityDegree', res.data.similarityDegree)  //相似度
-                        _this.comparePic.snapPicture = eval('(' + res.data.snapPicture + ')')  //抓拍图片
-                        if (_this.comparePic.snapPicture && _this.comparePic.snapPicture.length > 0) {
-                            let snapsrc = _this.comparePic.snapPicture[0].relativePath;
-                            _this.comparePic.snapsrc = config.serverConfig.engineService + "/stream?filePath=" + snapsrc
+                        if(res.data.snapPicture){
+                            _this.comparePic.snapPicture = eval('(' + res.data.snapPicture + ')')  //抓拍图片
+                            if (_this.comparePic.snapPicture && _this.comparePic.snapPicture.length > 0) {
+                                let snapsrc = _this.comparePic.snapPicture[0].relativePath;
+                                _this.comparePic.snapsrc = config.serverConfig.engineService + "/stream?filePath=" + snapsrc
+                            }
                         }
                         if (_this.comparePic.originalPicture && _this.comparePic.originalPicture.length > 0) {
                             _this.comparePic.originalPicture = eval('(' + res.data.originalPicture + ')')  //库中图片
