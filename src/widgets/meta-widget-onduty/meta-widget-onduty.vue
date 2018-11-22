@@ -30,6 +30,7 @@
     const globalEvent = weex.requireModule('globalEvent');
     import _ from '../../js/tool/lodash';
     import factoryApi from '../libs/factory-api.js';
+    import buiweex from "bui-weex";
 
     /*
     * 初始化发请求，判断什么状态 值班中or未值班
