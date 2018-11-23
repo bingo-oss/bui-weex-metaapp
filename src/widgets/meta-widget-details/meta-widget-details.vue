@@ -75,7 +75,7 @@
             </div>
         </div>
         <!--处理结果-->
-        <div class="results" v-if="this.titleInfo.forewarningStatus">
+        <div class="results" v-if="titleInfo.forewarningStatus">
             <div class="person-title">
                 <text style="font-size: 28px;">处理结果</text>
             </div>
@@ -116,7 +116,7 @@
     import _ from '../../js/tool/lodash';
     import buiweex from "bui-weex";
     const globalEvent = weex.requireModule('globalEvent');
-    import factoryApi from "../libs/factory-api"
+    import factoryApi from "../libs/factory-api";
     /*
     * 数据获取：通过实体id获取容器地址，拼接参数"数据id"去get
     *
@@ -138,7 +138,8 @@
                 comparePic: {},  //照片对比
                 titleInfo: {},  //详情顶部信息
                 resultshow: null,
-                Config:config
+                Config:config,
+                metaEntit:{},
             }
         },
         methods: {
@@ -147,32 +148,24 @@
             },
             getDetailsInfo() {
                 factoryApi.startLoading(this);//显示加载圈
-                service.init(config.serverConfig.configServerUrl); //初始化请求地址
                 let _this = this;
-                service.getMetaEntity(this.widgetParams.entityId).then(res => {
-                    /**/
-                    //console.log(res.name);
-                    //console.log(res.project.engine.externalUrl);
-                    let externalUrl = res.project.engine.externalUrl;
-                    ajax.get(`${externalUrl}/${res.name}/${_this.widgetParams.dataId}`).then(res => {
-                        console.log(res);
-                        let cameraId = res.data.cameraId
-                        _this.$set(_this.titleInfo, 'personName', res.data.personName)
+                    ajax.get(`${_this.metaEntit.project.engine.externalUrl}/${_this.metaEntit.name}/${_this.widgetParams.dataId}`).then(res => {
+                        let cameraId = res.data.cameraId;
+                        _this.titleInfo.personName = res.data.personName;
                         _this.titleInfo.forewarningStatus = res.data.forewarningStatus; //预警状态
                         _this.titleInfo.forewarningTime = res.data.forewarningTime; //预警时间
                         _this.titleInfo.title = res.data.title; //预警标题
                         if(res.data._data&&res.data._data.cameraId){
                             _this.titleInfo.Camera = res.data._data.cameraId[cameraId].title; //摄像头
                         }
-                        _this.$set(_this.infomation, 'identityNo', res.data.identityNo)  //证件号
+                        _this.infomation.identityNo = res.data.identityNo;  //证件号
                         _this.infomation.belongLib = res.data.belongLib;  //所在库
                         _this.infomation.nation = res.data.nation;  //名族
                         _this.infomation.sex = res.data.sex;  //性别
                         _this.infomation.birthday = res.data.birthday;  //出生日期
                         _this.infomation.registryAddress = res.data.registryAddress;  //户籍所在地
                         _this.infomation.caseCause = res.data.caseCause;  //案由
-
-                        _this.$set(_this.comparePic, 'similarityDegree', res.data.similarityDegree)  //相似度
+                        _this.comparePic.similarityDegree = res.data.similarityDegree; //相似度
                         if(res.data.snapPicture){
                             if(_.isString(res.data.snapPicture)){
                                 _this.comparePic.snapPicture = eval('(' + res.data.snapPicture + ')')  //抓拍图片
@@ -190,47 +183,32 @@
                             _this.comparePic.originalsrc = config.serverConfig.engineService + "/stream?filePath=" + originalsrc*/
                         }
                         factoryApi.stopLoading(this);//关闭加载圈
+                        _this.$forceUpdate();//更新下视图
                         if (_this.titleInfo.forewarningStatus == 1) {
                             let params = {};
                             params.filters = "forewarningEntityId eq " + _this.widgetParams.entityId + " and forewarningId eq " + _this.widgetParams.dataId
-                            ajax.get(`${externalUrl}/forewarningprocessingrecord`, params).then(res => {//处理结果
+                            ajax.get(`${_this.metaEntit.project.engine.externalUrl}/forewarningprocessingrecord`, params).then(res => {//处理结果
                                 //1是已处理 0是未处理
                                 if (res.data && res.data.length) {
                                     let operatorId = res.data[0].operatorId;
                                     let operatorOrgId1 = res.data[0].operatorOrgId;
-                                    _this.$set(_this.result, 'processingTime', res.data[0].processingTime);   //处理时间
+                                    _this.result.processingTime = res.data[0].processingTime //处理时间
                                     _this.result.department = res.data[0]._data.operatorOrgId[operatorOrgId1].title;    //所属部门
                                     _this.result.deal = res.data[0]._data.operatorId[operatorId].title;    //处理人
                                     _this.result.handlingOpinions = res.data[0].handlingOpinions;  //处理意见
                                     _this.result.livePicture = res.data[0].livePicture;    //现场图片
-                                    /*这里需要判断图片>2两张才遍历*/
-                                    /*_this.result.liveSrc = [];
-                                    _.each(res.data[0].livePicture, (val, i) => {
-                                        _this.result.liveSrc.push(config.serverConfig.engineService + "/stream?filePath=" + val.relativePath);
-                                    });*/
+                                    _this.$forceUpdate();//更新下视图
                                 }
                                 setTimeout(function(){
                                     factoryApi.pageScrollUpdate(_this);//需要更新滚动条的设置
                                 },300)
-                            })
+                            });
                         }else{
                             setTimeout(function(){
                                 factoryApi.pageScrollUpdate(_this);//需要更新滚动条的设置
                             },300)
                         }
                     })
-                })
-            },
-            getResultInfo() {  //获取处理结果信息
-                service.init(config.serverConfig.configServerUrl); //初始化请求地址
-                let _this = this;
-                let params = {};
-                params.filters = "forewarningEntityId eq " + _this.onDutyPersonId + " and forewarningId eq 1"
-                service.getMetaEntity(this.widgetParams.entityId).then(res => {
-                    ajax.get(`${res.project.engine.externalUrl }/${res.name}/${_this.widgetParams.dataId}`, params).then(res => {
-
-                    })
-                })
             },
             refresh() {
                 //部件刷新的实现
@@ -246,8 +224,13 @@
                 return Utils.formatDate(val,"yyyy-MM-dd hh:mm");
             }
         },
-        created() {
-            this.getDetailsInfo();
+        mounted(){
+            let _this = this;
+            service.init(config.serverConfig.configServerUrl); //初始化请求地址
+            service.getMetaEntity(_this.widgetParams.entityId).then(res => {
+                _this.metaEntit = res;
+                _this.getDetailsInfo();
+            });
             globalEvent.addEventListener("resume", e => {
                 this.getDetailsInfo();
             });
