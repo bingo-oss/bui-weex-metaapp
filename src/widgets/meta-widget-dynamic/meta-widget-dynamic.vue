@@ -127,7 +127,7 @@
                     ><!--  :style="{'border-left-color':'#'+getItemLabelStyle(blogItem).color}"-->
                         <div style="width: 80px;height: 80px;border-radius: 50px">
                             <bui-image width="80px" height="80px" radius="50px"
-                                       :src="getImageUrl(blogItem.blogInfo.accountImage)"
+                                       :src="getImageUrl(blogItem.blogInfo.accountImage)+'&width=80&height=80'"
                                        placeholder="/image/usertp.png"></bui-image>
                         </div>
                         <div class="bui-list-main">

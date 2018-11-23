@@ -18,7 +18,7 @@
             <div class="user" v-for="(item,index) in memberDatas" v-if="(lineNumber==-1)||(index<lineNumber)">
                 <div class="cell-box center">
                         <div style="width: 80px;height:80px">
-                            <bui-image width="80px" height="80px" :src="getImageUrl(item.picture)" radius="50" @click="onAvatarClick(index,item)" placeholder="/image/usertp.png"></bui-image>
+                            <bui-image width="80px" height="80px" :src="getImageUrl(item.picture)+'&width=80&height=80'" radius="50" @click="onAvatarClick(index,item)" placeholder="/image/usertp.png"></bui-image>
                         </div>
                         <div style="width:80px;">
                             <text style="color:#434343;font-size: 24px; margin-top: 10px;lines :1; text-overflow:ellipsis; word-break: normal; white-space:nowrap; text-align: center; ">{{item.name}}</text>

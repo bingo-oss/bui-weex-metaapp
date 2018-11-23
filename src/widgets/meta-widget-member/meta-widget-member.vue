@@ -40,7 +40,7 @@
                     <div class="bui-list-main">
                         <div class="flex-row" style="align-items: center">
                             <div style="width: 75px;height: 75px">
-                                <bui-image width="75px" height="75px" :src="getImageUrl(item.picture)" radius="10"
+                                <bui-image width="75px" height="75px" :src="getImageUrl(item.picture)+'&width=75&height=75'" radius="10"
                                            @click="onAvatarClick(index,item)"
                                            placeholder="/image/usertp.png"></bui-image>
                             </div>
