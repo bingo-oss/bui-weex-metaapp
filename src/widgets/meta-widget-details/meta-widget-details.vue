@@ -23,12 +23,12 @@
             <div class="pic-con flex-row" style="">
                 <div v-if="comparePic.snapsrc" style="justify-content: center;width: 300px;height: 440px;">
                     <image style="width: 300px;height: 400px; padding: 10px;"
-                           :src="comparePic.snapsrc"></image>
+                           :src="comparePic.snapsrc+'&width=300&height=400'"></image>
                     <text class="nonal" style="text-align: center;">抓拍图片</text>
                 </div>
                 <div v-if="comparePic.originalsrc" style="justify-content: center;width: 300px;height: 440px;">
                     <image style="width: 300px;height: 400px; padding: 10px;"
-                           :src="comparePic.originalsrc"></image>
+                           :src="comparePic.originalsrc+'&width=300&height=400'"></image>
                     <text class="nonal" style="text-align: center;">库中原图</text>
                 </div>
             </div>
