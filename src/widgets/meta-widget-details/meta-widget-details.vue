@@ -4,7 +4,7 @@
             <div class="escape" v-if="titleInfo.title">
                 <text class="escape-in">{{titleInfo.title}}</text>
             </div>
-            <div class="flex-row" style="padding-bottom: 25px;">
+            <div class="flex-row" style="margin-bottom: 25px;">
                 <text class="warn" v-if="titleInfo.forewarningTime">预警时间：{{titleInfo.forewarningTime | timeformat}}</text>
                 <text class="warn" v-if="titleInfo.title">预警状态：{{titleInfo.forewarningStatus ? '已处理':'未处理'}}</text>
             </div>
@@ -16,20 +16,20 @@
             <div class="compare-title">
                 <text style="font-size: 28px;">照片比对</text>
             </div>
-            <div class="flex-row">
-                <text class="nonal" style="padding: 10px;">相似度：</text>
-                <text class="similar">{{comparePic.similarityDegree}}</text>
+            <div class="flex-row" style="padding-bottom: 10px">
+                <text class="nonal" style="padding: 10px">相似度：</text>
+                <text class="similar">{{comparePic.similarityDegree}}%</text>
             </div>
-            <div class="pic-con flex-row">
-                <div v-if="comparePic.snapsrc" style="justify-content: center;width: 300px;height: 440px;">
-                    <image style="width: 300px;height: 400px; padding: 10px;"
-                           :src="comparePic.snapsrc+'&width=300&height=400'"></image>
-                    <text class="nonal" style="text-align: center;">抓拍图片</text>
+            <div class="pic-con flex-row" style="flex-wrap:wrap;">
+                <div v-if="comparePic.snapPicture" v-for="picture in comparePic.snapPicture" style="justify-content:center; margin: 10px; width: 300px;height: 440px;">
+                    <image style="width: 300px;height: 400px;"
+                           :src="Config.serverConfig.engineService+'/stream?filePath='+picture.relativePath+'&width=300&height=400'"></image>
+                    <text class="nonal" style="text-align: center; margin: 20px 0px 20px;">抓拍图片</text>
                 </div>
-                <div v-if="comparePic.originalsrc" style="justify-content: center;width: 300px;height: 440px;">
-                    <image style="width: 300px;height: 400px; padding: 10px;"
-                           :src="comparePic.originalsrc+'&width=300&height=400'"></image>
-                    <text class="nonal" style="text-align: center;">库中原图</text>
+                <div v-if="comparePic.originalPicture" v-for="picture in comparePic.originalPicture" style="justify-content: center;  margin: 10px; width: 300px;height: 440px;">
+                    <image style="width: 300px;height: 400px;"
+                           :src="Config.serverConfig.engineService+'/stream?filePath='+picture.relativePath+'&width=300&height=400'"></image>
+                    <text class="nonal" style="text-align: center; margin: 20px 0px 20px;">库中原图</text>
                 </div>
             </div>
         </div>
@@ -41,35 +41,35 @@
             <!--人员信息-->
             <div class="info-detail" v-if="personInfo">
                 <div class="flex-row" v-if="titleInfo.personName" style="padding-bottom: 18px;">
-                    <text class="nonal" style="padding-right: 20px;">人员名称</text>
+                    <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">人员名称</text>
                     <text style="font-size: 28px">{{titleInfo.personName}}</text>
                 </div>
                 <div class="flex-row" v-if="infomation.identityNo" style="padding-bottom: 18px;">
-                    <text class="nonal" style="padding-right: 20px;">证件号</text>
+                    <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">证件号</text>
                     <text style="font-size: 28px;">{{infomation.identityNo}}</text>
                 </div>
                 <div class="flex-row" v-if="infomation.belongLib" style="padding-bottom: 18px;">
-                    <text class="nonal" style="padding-right: 20px;">所在库</text>
+                    <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">所在库</text>
                     <text style="font-size: 28px">{{infomation.belongLib}}</text>
                 </div>
                 <div class="flex-row" v-if="infomation.nation" style="padding-bottom: 18px;">
-                    <text class="nonal" style="padding-right: 20px;">民族</text>
+                    <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">民族</text>
                     <text style="font-size: 28px">{{infomation.nation}}</text>
                 </div>
                 <div class="flex-row" v-if="infomation.sex" style="padding-bottom: 18px;">
-                    <text class="nonal" style="padding-right: 20px;">性别</text>
+                    <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">性别</text>
                     <text style="font-size: 28px">{{infomation.sex}}</text>
                 </div>
                 <div class="flex-row" style="padding-bottom: 18px;">
-                    <text class="nonal" style="padding-right: 20px;">出生日期</text>
+                    <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">出生日期</text>
                     <text style="font-size: 28px">{{infomation.birthday}}</text>
                 </div>
                 <div class="flex-row" v-if="infomation.registryAddress" style="padding-bottom: 18px;">
-                    <text class="nonal" style="padding-right: 20px;">户籍地址</text>
+                    <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">户籍地址</text>
                     <text style="font-size: 28px">{{infomation.registryAddress}}</text>
                 </div>
                 <div class="flex-row" v-if="infomation.caseCause" style="padding-bottom: 18px;">
-                    <text class="nonal" style="padding-right: 20px;">案由</text>
+                    <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">案由</text>
                     <text style="font-size: 28px; width:560px;">{{infomation.caseCause}}</text>
                 </div>
             </div>
@@ -99,8 +99,8 @@
                 <div class="flex-row" v-if="result.livePicture&&result.livePicture.length" style="padding-bottom: 18px;">
                     <text class="nonal" style="padding-right: 20px;">现场图片</text>
                     <div style="flex-direction:row;flex-wrap:wrap; flex: 1;">
-                        <div v-for="picture in result.livePicture">
-                            <image style="width: 180px;height: 220px; padding:5px 0px 0px 5px;" :src="Config.serverConfig.engineService+'/stream?filePath='+picture.relativePath+'&width=180&height=220'"></image>
+                        <div v-for="picture in result.livePicture" style="margin:3px 0px 0px 3px;">
+                            <image style="width: 170px;height: 220px;" :src="Config.serverConfig.engineService+'/stream?filePath='+picture.relativePath+'&width=180&height=220'"></image>
                         </div>
                     </div>
                 </div>
@@ -150,10 +150,12 @@
                 service.init(config.serverConfig.configServerUrl); //初始化请求地址
                 let _this = this;
                 service.getMetaEntity(this.widgetParams.entityId).then(res => {
+                    /**/
                     //console.log(res.name);
                     //console.log(res.project.engine.externalUrl);
                     let externalUrl = res.project.engine.externalUrl;
                     ajax.get(`${externalUrl}/${res.name}/${_this.widgetParams.dataId}`).then(res => {
+                        console.log(res);
                         let cameraId = res.data.cameraId
                         _this.$set(_this.titleInfo, 'personName', res.data.personName)
                         _this.titleInfo.forewarningStatus = res.data.forewarningStatus; //预警状态
@@ -177,10 +179,6 @@
                             }else{
                                 _this.comparePic.snapPicture = res.data.snapPicture;  //抓拍图片
                             }
-                            if (_this.comparePic.snapPicture && _this.comparePic.snapPicture.length > 0) {
-                                let snapsrc = _this.comparePic.snapPicture[0].relativePath;
-                                _this.comparePic.snapsrc = config.serverConfig.engineService + "/stream?filePath=" + snapsrc
-                            }
                         }
                         if(res.data.originalPicture){
                             if(_.isString(res.data.originalPicture)){
@@ -188,8 +186,8 @@
                             }else{
                                 _this.comparePic.originalPicture = res.data.originalPicture;  //库中图片
                             }
-                            let originalsrc = _this.comparePic.originalPicture[0].relativePath;
-                            _this.comparePic.originalsrc = config.serverConfig.engineService + "/stream?filePath=" + originalsrc
+                            /*let originalsrc = _this.comparePic.originalPicture[0].relativePath;
+                            _this.comparePic.originalsrc = config.serverConfig.engineService + "/stream?filePath=" + originalsrc*/
                         }
                         factoryApi.stopLoading(this);//关闭加载圈
                         if (_this.titleInfo.forewarningStatus == 1) {
