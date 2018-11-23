@@ -18,6 +18,7 @@
     import buiweex from 'bui-weex';
     const dom = weex.requireModule('dom');
     const storage = weex.requireModule('storage');
+    import linkapi from "linkapi";
 
     var co = require('co');
     export default {
@@ -66,6 +67,7 @@
         methods:Object.assign({},pageMethods,{
             loadPageConfig(){
                 var _this=this;
+                //linkapi.showLoading({"title":"加载中"})
                 if(this.widgetParams&&this.widgetParams.pageId){
                     pageService.get(this.widgetParams.pageId,this.widgetParams.byOperation).then(function(pageConfig){
                         _this.pageConfig=_this.convert(pageConfig);
@@ -153,12 +155,11 @@
             },
             scrollHandler(e){
                 //滚动触发
-
                 _.each(this.$refs.childWidgets,(cw,index)=>{
                     if(this.widgetsInfo[index].widget == cw){
-                        if(this.widgetsInfo[index+1]&&
-                            ((-e.contentOffset.y)<=(this.widgetsInfo[index+1].info.size.top))&&
-                            ((-e.contentOffset.y)>(this.widgetsInfo[index].info.size.top))){
+                        if(this.widgetsInfo[index+2]&&
+                            ((-e.contentOffset.y)<=(this.widgetsInfo[index+2].info.size.top))&&
+                            ((-e.contentOffset.y)>(this.widgetsInfo[index+1].info.size.top))){
                             this.viewEvent(cw,"appear");
                         }
                     }

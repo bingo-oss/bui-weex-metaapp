@@ -1,7 +1,7 @@
 <template>
     <div class="dynamic_card">
         <div  class="flex-row _title">
-            <div class="flex1 title_l"><text class="_title_text">最新动态</text></div>
+            <div class="flex1 title_l"><text class="_title_text">最新评论</text></div>
             <div class="flex-row flex1 title_r">
                 <text class="_title_text" style="color: #999999" @click="allMember">全部</text>
                 <bui-icon name="ion-ios-arrow-right" size="35" style="margin-right: 20px" color="#999" @click="allMember"></bui-icon></div>
@@ -1139,6 +1139,14 @@
                 } else {
                     _array = _array.concat(this.convertText(str));
 
+                }
+                //不需要显示怎么多数据
+                if(_array.length>=60){
+                    _array.splice(60);
+                    _array.push({
+                        type: 'text',
+                        value: "..."
+                    });
                 }
                 return _array;
             },

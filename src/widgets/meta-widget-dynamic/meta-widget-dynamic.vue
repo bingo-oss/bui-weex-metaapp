@@ -296,7 +296,9 @@
 
             <emoji-express v-if="isShowExpression" @faceSelected="onFaceSelected"></emoji-express>
 
+<!--
             <bui-loading :show="isShowLoading" loading-text="加载中..."></bui-loading>
+-->
 
             <dialog v-model="showDialog" @btnClick="onDialogCallback" title="提示" :buttonArray="buttonArray"
                     :dialogContent="dialogContent">
@@ -752,7 +754,7 @@
                 currLabeId: '',
                 labelStyle: {},
                 isShowEmpty: false,
-                isShowLoading: false,
+                //isShowLoading: false,
                 showDialog: false,
                 buttonArray: [],
                 dialogContent: '',
@@ -1059,7 +1061,8 @@
                 this.showDialog = true;
             },
             deleteBlogForAdmin(item){
-                this.isShowLoading = true;
+                factoryApi.startLoading(this);//显示加载圈
+                //this.isShowLoading = true;
                 let datas = {
                     blogId: item.blogInfo.blogId,
                     dataId: this.info.dataId,
@@ -1070,7 +1073,8 @@
                     data: Util.toHttpRequestParams(datas)
                 }
                 linkapi.post(params).then((result) => {
-                    this.isShowLoading = false;
+                    factoryApi.stopLoading(this);//关闭加载圈
+                //this.isShowLoading = false;
                     if (result.s == 1) {
                         this.$toast("删除成功");
                         this.pageNo = 1;
@@ -1079,17 +1083,20 @@
                         this.$toast(result.m);
                     }
                 }).catch((error)=> {
-                    this.isShowLoading = false;
+                    factoryApi.stopLoading(this);//关闭加载圈
+                //this.isShowLoading = false;
                     this.$toast(Util.handleException(error));
                 });
             },
             deleteBlog(item){
-                this.isShowLoading = true;
+                factoryApi.startLoading(this);//显示加载圈
+                //this.isShowLoading = true;
                 let params = {
                     url: Config.serverConfig.blogApi + '/v1/info?blogId=' + item.blogInfo.blogId,
                 }
                 linkapi.delete(params).then((result) => {
-                    this.isShowLoading = false;
+                    factoryApi.stopLoading(this);//关闭加载圈
+                //this.isShowLoading = false;
                     if (result.code == 200) {
                         this.$toast("删除成功");
                         this.pageNo = 1;
@@ -1098,7 +1105,8 @@
                         this.$toast(result.message);
                     }
                 }).catch((error)=> {
-                    this.isShowLoading = false;
+                    factoryApi.stopLoading(this);//关闭加载圈
+                //this.isShowLoading = false;
                     this.$toast(Util.handleException(error));
                 });
             },
@@ -1363,6 +1371,7 @@
                             this.blogList = datas;
                         }
                     }
+                    factoryApi.stopLoading(this);//关闭加载圈
                 }, error=> {
                 })
             },
@@ -1377,7 +1386,8 @@
             initData(type){//获取动态数据 type1 刷新数据 type2加载更多
                 this.isShowEmpty = false;
                 if (Util.isEmpty(this.info) || Util.isEmpty(this.info.entityId)) {
-                    this.isShowLoading = false;
+                    factoryApi.stopLoading(this);//关闭加载圈
+                    //this.isShowLoading = false;
                     return;
                 }
                 let params = {
@@ -1417,7 +1427,8 @@
                     }
                 }
                 linkapi.get(params).then((result) => {
-                    this.isShowLoading = false;
+                    factoryApi.stopLoading(this);//关闭加载圈
+                //this.isShowLoading = false;
                     if (result.code == 200) {
                         if (result.labelStyle != null && JSON.stringify(result.labelStyle) != "{}") {
                             this.labelStyle = result.labelStyle;
@@ -1454,7 +1465,8 @@
                         this.$toast(result.message);
                     }
                 }).catch((error)=> {
-                    this.isShowLoading = false;
+                    factoryApi.stopLoading(this);//关闭加载圈
+                //this.isShowLoading = false;
                     this.refreshing = false;
                     this.showLoading = false;
                     this.$toast("获取动态数据失败:" + Util.handleException(error));
@@ -1508,7 +1520,8 @@
                 if (this.currLabeId != labelId) {
                     this.blogList = []
                 }
-                this.isShowLoading = true;
+                factoryApi.startLoading(this);//显示加载圈
+                //this.isShowLoading = true;
                 this.currLabeId = labelId;
                 //this.info = val;
                 //this.info.
@@ -1520,7 +1533,8 @@
                 this.pageNo = 1;
                 this.blogList = [];
                 this.isSearching = true;
-                this.isShowLoading = true;
+                //this.isShowLoading = true;
+                factoryApi.startLoading(this);//显示加载圈
                 this.initData(1);
             },
             clearFilterData(){
@@ -1892,7 +1906,8 @@
                     url: Config.serverConfig.engineService + '/metaservice/meta_entity/' + this.info.entityId,
                 };
                 linkapi.get(params).then((result) => {
-                    this.isShowLoading = false;
+                    factoryApi.stopLoading(this);//关闭加载圈
+                //this.isShowLoading = false;
                     if (result.id) {
                         if(fun){fun(result)}
                         this.metaSuite = result;
@@ -1905,7 +1920,7 @@
                         //this.handleCreateMenu();
                     }
                 }).catch((error)=> {
-                        this.isShowLoading = false;
+                    factoryApi.stopLoading(this);//关闭加载圈
                     //this.$toast("获取信息失败：" + Util.handleException(error))
                 });
             },
@@ -1990,6 +2005,7 @@
             if (params != null && !Util.isEmpty(params.dataId) && !Util.isEmpty(params.entityId)) {
                 this.info.dataId = params.dataId;
                 this.info.entityId = params.entityId;
+                factoryApi.startLoading(this);//显示加载圈
                 _t.getMetaEntity(function(){
                     _t.refreshData();
                 })

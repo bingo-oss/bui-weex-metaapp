@@ -220,8 +220,6 @@
             </div>
         </actionsheet-wrapper>
 
-        <bui-loading :show="isShowLoading" :loading-text="loadingText==''?'加载中...':loadingText"></bui-loading>
-
     </div>
 </template>
 
@@ -365,7 +363,7 @@
                     reject();
                     return;
                 }
-                this.isShowLoading = false;
+                factoryApi.startLoading(this);//显示加载圈
                 // 编辑或保存成功后，直接 this.$pop() 返回上一页
                 // https://jira.bingosoft.net/browse/LINKSUITE-413
                 if (this.entityId) {
@@ -375,13 +373,13 @@
                     //嵌入使用时，不弹出提示
                     if(!this.widgetParams.embedded){
                         this.$toast('编辑成功');
+                        factoryApi.stopLoading(this);//关闭加载圈
                     }
-                    this.isShowLoading = false;
                 }).catch(err => {
-                        reject();
+                    reject();
                     //this.$alert(err);
                     this.$toast("已归档,不可操作!")
-                    this.isShowLoading = false;
+                    factoryApi.stopLoading(this);//关闭加载圈
                 });
                 } else {
                     // 对于 this.queryParam 里的 query，遇到属于实体字段的 query 要在创建实体时带上
@@ -393,15 +391,15 @@
                     }
                     service.createEntify(this.engineUrl, this.entityName, this.queryParam, postData).then(data => {
                         resolve(data);
-                    if(!this.widgetParams.embedded){
-                        this.$toast('创建成功');
-                    }
-                    this.isShowLoading = false;
-                }).catch(err => {
-                    reject();
-                    this.$alert(err);
-                    this.isShowLoading = false;
-                });
+                        if(!this.widgetParams.embedded){
+                            this.$toast('创建成功');
+                        }
+                        factoryApi.stopLoading(this);//关闭加载圈
+                    }).catch(err => {
+                        reject();
+                        this.$alert(err);
+                        factoryApi.stopLoading(this);//关闭加载圈
+                    });
                 }
             });
 
@@ -532,7 +530,6 @@
                 metaForm:"",
                 metaEntity:{},
                 showActionsheet: false,
-                isShowLoading:false,
                 loadingText:""
             }
         },
@@ -704,7 +701,7 @@
                 return;
             }*/
             let contextPath = this.$getContextPath();
-            this.isShowLoading = true;
+            factoryApi.startLoading(this);//显示加载圈
             readRuntimeConfigPromise = config.readRuntimeConfig(contextPath).then(runtimeConfig => {
                         service.init(runtimeConfig.configServerUrl)
             console.log('fetch data')
@@ -754,7 +751,7 @@
                         this.permObj = perm.parseBits(data.permVal);
                     })
                 }
-                this.isShowLoading = false;
+                factoryApi.stopLoading(this);//关闭加载圈
             })
         });
         });

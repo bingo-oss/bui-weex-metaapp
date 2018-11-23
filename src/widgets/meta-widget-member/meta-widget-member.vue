@@ -74,7 +74,9 @@
                 :dialogContent="dialogContent">
         </dialog>
 
+<!--
         <bui-loading ref="loading" :show="isShowLoading" title="处理中"></bui-loading>
+-->
 
     </div>
 </template>
@@ -159,7 +161,7 @@
                 dialogContent: '',
                 existsUserIds: '',
                 notExistsUserIds: '',
-                isShowLoading: false,
+                //isShowLoading: false,
                 adminNumber: 0,
                 otherNumber: 0,
                 totalCount: 0
@@ -374,6 +376,7 @@
                         this.showLoading = false;
                         this.$toast('获取数据失败!');
                     }
+                    factoryApi.stopLoading(this);//关闭加载圈
                 }).catch((error, text)=> {
                     this.refreshing = false;
                     this.showLoading = false;
@@ -466,7 +469,8 @@
                 if (Util.isEmpty(userIds)) {
                     return;
                 }
-                this.isShowLoading = true;
+                factoryApi.startLoading(this);//显示加载圈
+                //this.isShowLoading = true;
                 let params = {
                     url: this.externalUrl+(type?"/meta_data_members/setup_admin":"/meta_data_members/deregister_admin"),
                     data:Util.toHttpRequestParams({
@@ -476,7 +480,8 @@
                     })
                 };
                 ajax.patch(params.url,params.data).then((result)=> {
-                    this.isShowLoading = false;
+                    factoryApi.stopLoading(this);//关闭加载圈
+                    //this.isShowLoading = false;
                     if (result) {
                         this.$toast("操作成功");
                         this.pageNo = 1;
@@ -485,7 +490,8 @@
                         this.$toast("操作失败！");
                     }
                 }, error=> {
-                    this.isShowLoading = false;
+                    factoryApi.stopLoading(this);//关闭加载圈
+                    //this.isShowLoading = false;
                     this.$toast(Util.handleException(error))
                 });
             },
@@ -493,7 +499,8 @@
                 if (Util.isEmpty(ids)) {
                     return;
                 }
-                this.isShowLoading = true;
+                factoryApi.startLoading(this);//显示加载圈
+                //this.isShowLoading = true;
 /*                let datas = {
                     entityName: this.info.suiteId,
                     sourceId: this.info.sourceId,
@@ -507,7 +514,8 @@
                     /*data: datas*/
                 };
                 ajax.delete(params.url).then((result)=> {
-                    this.isShowLoading = false;
+                    factoryApi.stopLoading(this);//关闭加载圈
+                    //this.isShowLoading = false;
                     if (result) {
                         this.$toast("操作成功");
                         if (isSelf) {
@@ -521,7 +529,8 @@
                         this.$toast("操作失败！");
                     }
                 }, error=> {
-                    this.isShowLoading = false;
+                    factoryApi.stopLoading(this);//关闭加载圈
+                    //this.isShowLoading = false;
                     this.$toast(Util.handleException(error))
                 });
             },
@@ -529,7 +538,8 @@
                 if (Util.isEmpty(userId) && Util.isEmpty(orgId) && Util.isEmpty(groupId)) {
                     return
                 }
-                this.isShowLoading = true;
+                factoryApi.startLoading(this);//显示加载圈
+                //this.isShowLoading = true;
                 let params = {
                     url:this.externalUrl + '/meta_data_members',
                     data: Util.toHttpRequestParams({
@@ -545,7 +555,8 @@
                 };
                 ajax.post(params.url,params.data).then((result)=> {
                     result = result.data;
-                    this.isShowLoading = false;
+                    factoryApi.stopLoading(this);//关闭加载圈
+                    //this.isShowLoading = false;
                     if (result.success) {
                         if (result.data && JSON.stringify(result.data) != "{}" && result.data.existsUserIds) {
                             let existsUserNames = result.data.existsUserNames;
@@ -572,7 +583,8 @@
                         this.$toast("操作失败！");
                     }
                 }, error=> {
-                    this.isShowLoading = false;
+                    factoryApi.stopLoading(this);//关闭加载圈
+                    //this.isShowLoading = false;
                     this.$toast(Util.handleException(error))
                 });
             },
@@ -597,6 +609,7 @@
                 this.info.dataId = params.dataId;
                 this.info.entityId = params.entityId;
                 //this.initData(1);
+                factoryApi.startLoading(this);//显示加载圈
                 service.init(Config.serverConfig.configServerUrl);//初始化请求到的地址
                 service.getEngineUrlMeta(params.entityId).then(res=>{
                     _t.externalUrl = res;

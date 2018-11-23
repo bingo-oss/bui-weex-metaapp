@@ -25,7 +25,7 @@
             <refresh-wrapper @refresh="onrefresh" :isRefreshing="isRefreshing"></refresh-wrapper>
 
             <cell v-for="(o, index) in listData" :key="index">
-                <bui-swipe-cell :height="buiSwipeCellHeight"
+                <bui-swipe-cell :height="''"
                     @click="rowSingleClick(o)"
                     @swipeleft="cellSwiped(o.id)"
                     :ref="o.id"
@@ -87,7 +87,9 @@
             </filter-view>
         </bui-popup>
 
+<!--
         <bui-loading :show="isShowLoading" :loading-text="loadingText==''?'加载中...':loadingText"></bui-loading>
+-->
 
     </div>
 </template>
@@ -136,7 +138,6 @@ module.exports = {
             p3: '',
             p4: '',
             p5: '',
-            buiSwipeCellHeight:"200",
             presetFilters: [],
             filters: {}, // 高级搜索 filter
             quickSearchFilters: '', // 快捷搜索 filter
@@ -149,8 +150,8 @@ module.exports = {
             currentPage: 1,
             pageSize: 10,
             remainingPageParam: {},
-            isShowLoading:false,
             loadingText:"",
+            //isShowLoading:false,
             //showFilterView:false,
             currentTab:0,//默认选择第一个
             selectedItem:{},//记录选择对象--合并暴露对象
@@ -401,7 +402,8 @@ module.exports = {
             this.queryParam.filters = filtersParts.join(' and ');
             this.queryParam.total=true;
             return ajax.get(this.dataUrlPath, this.queryParam).then(resp => {
-                this.isShowLoading = false
+                factoryApi.stopLoading(this);//关闭加载圈
+                //this.isShowLoading = false
                 this.dataCount = resp.headers["X-Total-Count"]
                 if(this.presetFilters[this.currentTab]){
                     if(this.presetFilters[this.currentTab].showCount) {//是否显示数字
@@ -556,7 +558,8 @@ module.exports = {
 
         },
         getView() {
-                this.isShowLoading = true;
+                factoryApi.startLoading(this);//显示加载圈
+                //this.isShowLoading = true;
                 this.contextPath = this.$getContextPath();
                 globalEvent.addEventListener("androidback", e => {
                     this.$pop();
@@ -660,9 +663,9 @@ module.exports = {
                     fields.add(this.p3);
                     fields.add(this.p4);
                     fields.add(this.p5);
-                    if(!this.p4&&!this.p5){
+                    /*if(!this.p4&&!this.p5){
                         this.buiSwipeCellHeight = "150"
-                    }
+                    }*/
                     //params.select = Array.from(fields).join(',');
                     // 排序
                     if (viewDef.config.orderby) {
@@ -862,6 +865,7 @@ module.exports = {
 
 .list-item {
     flex-direction: column;
+    padding-top: 10px;
     padding-bottom: 20px;
     padding-right: 40px;
 }
@@ -877,7 +881,9 @@ module.exports = {
     font-size: 33px;
     margin-bottom: 5px;
     flex: 1;
+/*
     lines:1;
+*/
 }
 
 .sub-text {

@@ -146,6 +146,7 @@
                 this.personInfo = !this.personInfo;
             },
             getDetailsInfo() {
+                factoryApi.startLoading(this);//显示加载圈
                 service.init(config.serverConfig.configServerUrl); //初始化请求地址
                 let _this = this;
                 service.getMetaEntity(this.widgetParams.entityId).then(res => {
@@ -190,7 +191,7 @@
                             let originalsrc = _this.comparePic.originalPicture[0].relativePath;
                             _this.comparePic.originalsrc = config.serverConfig.engineService + "/stream?filePath=" + originalsrc
                         }
-
+                        factoryApi.stopLoading(this);//关闭加载圈
                         if (_this.titleInfo.forewarningStatus == 1) {
                             let params = {};
                             params.filters = "forewarningEntityId eq " + _this.widgetParams.entityId + " and forewarningId eq " + _this.widgetParams.dataId

@@ -108,6 +108,24 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
             factoryApi.pageScrollUpdate(t.$parent)//寻找父级
         }
     },
+    startLoading(t){
+        //显示加载圈
+        //全局部件刷新方法
+        if(_.isFunction(t.startLoading)&&t.isWidgetPage){
+            t.startLoading()
+        }else if(t.$parent){
+            factoryApi.startLoading(t.$parent)//寻找父级
+        }
+    },
+    stopLoading(t){
+      //关闭加载圈
+      //全局部件刷新方法
+      if(_.isFunction(t.stopLoading)&&t.isWidgetPage){
+        t.stopLoading()
+      }else if(t.$parent) {
+        factoryApi.stopLoading(t.$parent)//寻找父级
+      }
+    },
     //封装下linkapi--需要对参数特殊处理的接口
     post(params){
         if(params.data&&(!params.headers)){
