@@ -20,7 +20,7 @@
                 <text class="nonal" style="padding: 10px;">相似度：</text>
                 <text class="similar">{{comparePic.similarityDegree}}</text>
             </div>
-            <div class="pic-con flex-row" style="">
+            <div class="pic-con flex-row">
                 <div v-if="comparePic.snapsrc" style="justify-content: center;width: 300px;height: 440px;">
                     <image style="width: 300px;height: 400px; padding: 10px;"
                            :src="comparePic.snapsrc+'&width=300&height=400'"></image>
@@ -170,14 +170,22 @@
 
                         _this.$set(_this.comparePic, 'similarityDegree', res.data.similarityDegree)  //相似度
                         if(res.data.snapPicture){
-                            _this.comparePic.snapPicture = eval('(' + res.data.snapPicture + ')')  //抓拍图片
+                            if(_.isString(res.data.snapPicture)){
+                                _this.comparePic.snapPicture = eval('(' + res.data.snapPicture + ')')  //抓拍图片
+                            }else{
+                                _this.comparePic.snapPicture = res.data.snapPicture;  //抓拍图片
+                            }
                             if (_this.comparePic.snapPicture && _this.comparePic.snapPicture.length > 0) {
                                 let snapsrc = _this.comparePic.snapPicture[0].relativePath;
                                 _this.comparePic.snapsrc = config.serverConfig.engineService + "/stream?filePath=" + snapsrc
                             }
                         }
-                        if (_this.comparePic.originalPicture && _this.comparePic.originalPicture.length > 0) {
-                            _this.comparePic.originalPicture = eval('(' + res.data.originalPicture + ')')  //库中图片
+                        if(res.data.originalPicture){
+                            if(_.isString(res.data.originalPicture)){
+                                _this.comparePic.originalPicture = eval('(' + res.data.originalPicture + ')')  //库中图片
+                            }else{
+                                _this.comparePic.originalPicture = res.data.originalPicture;  //库中图片
+                            }
                             let originalsrc = _this.comparePic.originalPicture[0].relativePath;
                             _this.comparePic.originalsrc = config.serverConfig.engineService + "/stream?filePath=" + originalsrc
                         }
