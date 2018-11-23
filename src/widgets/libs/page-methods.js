@@ -62,16 +62,16 @@ var pageMethods = {
         }
         this.startLoadingNumber++;//需要累加的加载圈
         if(this.startLoadingNumber==1){
-            //this.isShowLoading = true;
-            linkapi.showLoading({title:"加载中"});
+            this.isShowLoading = true;
+            //linkapi.showLoading({title:"加载中"});
         }//只调用一次
     },
     stopLoading(){
         //关闭加载圈
         this.startLoadingNumber--;//需要累加的加载圈
         if(this.startLoadingNumber==0){
-            //this.isShowLoading = false;
-            linkapi.hideLoading();
+            this.isShowLoading = false;
+            //linkapi.hideLoading();
         }
     }
 }

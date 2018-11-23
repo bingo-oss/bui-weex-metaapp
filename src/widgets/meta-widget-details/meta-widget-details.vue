@@ -20,16 +20,16 @@
                 <text class="nonal" style="padding: 10px">相似度：</text>
                 <text class="similar">{{comparePic.similarityDegree}}%</text>
             </div>
-            <div class="pic-con flex-row" style="flex-wrap:wrap;">
-                <div v-if="comparePic.snapPicture" v-for="picture in comparePic.snapPicture" style="justify-content:center; margin: 10px; width: 300px;height: 440px;">
-                    <image style="width: 300px;height: 400px;"
+            <div class="pic-con flex-row" style="flex-wrap:wrap; padding-bottom: 15px;">
+                <div class="_picture" v-if="comparePic.snapPicture" v-for="picture in comparePic.snapPicture">
+                    <image class="_picture_img"
                            :src="Config.serverConfig.engineService+'/stream?filePath='+picture.relativePath+'&width=300&height=400'"></image>
-                    <text class="nonal" style="text-align: center; margin: 20px 0px 20px;">抓拍图片</text>
+                    <text class="nonal" style="text-align: center; margin-top: 15px;">抓拍图片</text>
                 </div>
-                <div v-if="comparePic.originalPicture" v-for="picture in comparePic.originalPicture" style="justify-content: center;  margin: 10px; width: 300px;height: 440px;">
-                    <image style="width: 300px;height: 400px;"
+                <div class="_picture" v-if="comparePic.originalPicture" v-for="picture in comparePic.originalPicture">
+                    <image class="_picture_img"
                            :src="Config.serverConfig.engineService+'/stream?filePath='+picture.relativePath+'&width=300&height=400'"></image>
-                    <text class="nonal" style="text-align: center; margin: 20px 0px 20px;">库中原图</text>
+                    <text class="nonal" style="text-align: center; margin-top: 15px;">库中原图</text>
                 </div>
             </div>
         </div>
@@ -258,6 +258,12 @@
 <style lang="css">
     template {
         font-size: 28px;
+    }
+    ._picture{
+        justify-content:center; margin-top: 15px; margin-right: 20px; width: 300px;
+    }
+    ._picture_img{
+        width: 300px;height: 400px;
     }
 
     .details-header {
