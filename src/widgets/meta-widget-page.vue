@@ -8,6 +8,9 @@
                 <component class="full-column" v-for="(widget,index) in pageConfig.widgets[colIndex]" @appear="appear(widget,index)" @disappear="disappear(widget,index)" ref="childWidgets" :is="widget.tagName" :key="index" :widget-params="widget.params" :vue-modal="vueModal" :tag-name="widget.tagName" :widget-name="widget.widgetName"></component>
             </div>-->
         </scroller>
+<!--
+        <bui-loading :show="isShowLoading" :loading-text="'加载中...'"></bui-loading>
+-->
     </div>
 </template>
 <script>
@@ -45,6 +48,7 @@
             return {
                 pageConfig:null,
                 isWidgetPage:true,
+                isShowLoading:false,
                 dom:dom,//方便其他部件调用滚动
                 urlParam:{},//存储的页面参数
                 scrollerStyle:{"flex":1,height:scrollerHeight},//ios的scroller标签内的flex不生效-需要做个兼容
