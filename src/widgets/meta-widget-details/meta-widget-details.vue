@@ -2,7 +2,7 @@
     <div class="wrapper">
         <div class="details-header" v-if="titleInfo.title">
             <div class="escape" v-if="titleInfo.title">
-                <text class="escape-in">{{titleInfo.title}}{{titleInfo.personName?(":"+titleInfo.personName):""}}</text>
+                <text class="escape-in">{{titleInfo.title}}</text>
             </div>
             <div class="flex-row" style="padding-bottom: 25px;">
                 <text class="warn" v-if="titleInfo.forewarningTime">预警时间：{{titleInfo.forewarningTime | timeformat}}</text>
@@ -116,6 +116,7 @@
     import _ from '../../js/tool/lodash';
     import buiweex from "bui-weex";
     const globalEvent = weex.requireModule('globalEvent');
+    import factoryApi from "../libs/factory-api"
     /*
     * 数据获取：通过实体id获取容器地址，拼接参数"数据id"去get
     *
@@ -209,8 +210,14 @@
                                         _this.result.liveSrc.push(config.serverConfig.engineService + "/stream?filePath=" + val.relativePath);
                                     });*/
                                 }
-
+                                setTimeout(function(){
+                                    factoryApi.pageScrollUpdate(_this);//需要更新滚动条的设置
+                                },300)
                             })
+                        }else{
+                            setTimeout(function(){
+                                factoryApi.pageScrollUpdate(_this);//需要更新滚动条的设置
+                            },300)
                         }
                     })
                 })

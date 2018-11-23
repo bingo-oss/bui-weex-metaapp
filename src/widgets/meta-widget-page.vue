@@ -157,8 +157,8 @@
                 _.each(this.$refs.childWidgets,(cw,index)=>{
                     if(this.widgetsInfo[index].widget == cw){
                         if(this.widgetsInfo[index+1]&&
-                            ((-e.contentOffset.y)<=(this.widgetsInfo[index+1].info.size.top-160))&&
-                            ((-e.contentOffset.y)>(this.widgetsInfo[index].info.size.top-160))){
+                            ((-e.contentOffset.y)<=(this.widgetsInfo[index+1].info.size.top))&&
+                            ((-e.contentOffset.y)>(this.widgetsInfo[index].info.size.top))){
                             this.viewEvent(cw,"appear");
                         }
                     }

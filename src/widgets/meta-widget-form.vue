@@ -681,6 +681,7 @@
                 delete pageParam.readOnly;
                 this.readOnly = true;
             }
+            pageParam.title = "";//不需要传入标题
             // After deleting those checked properties, use the rest of pageParam as queryParam
             this.queryParam = pageParam;
 

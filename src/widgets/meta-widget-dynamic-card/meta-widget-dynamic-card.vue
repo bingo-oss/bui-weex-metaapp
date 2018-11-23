@@ -1210,7 +1210,8 @@
                     result = result.data;
                     if (result.code == 200 && result.data.length > 0) {
                         let datas = result.data;
-                        factoryApi.pageScrollUpdate(this);//需要更新滚动条的设置
+                        let _this = this;
+                        setTimeout(function(){factoryApi.pageScrollUpdate(_this)},300);//需要更新滚动条的设置
                         /*let _array = [];
                         for (let item of datas) {
                             if (!this.isExitsBlog(item.blogInfo.blogId) && this.blogList.length > 0) {
