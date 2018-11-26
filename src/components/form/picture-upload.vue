@@ -21,7 +21,7 @@
         </template>
         <div class="form-hrb" style="flex-direction:row;flex-wrap:wrap;">
             <div class="file_image" v-for="(file,index) in files" @click="handlePreview(file)">
-                <bui-image  @click="handlePreview(file)" width="120px" height="120px" :src="getImageUrl(file.relativePath)"></bui-image>
+                <bui-image  @click="handlePreview(file)" width="120px" height="120px" :src="getImageUrl(file.url)"></bui-image>
                 <bui-icon @click="del(file,index)" class="image_del" name="ion-android-delete" size="40" color="red"></bui-icon>
             </div>
             <div v-if="!viewMode&&!forceView" class="file_image" @click="showOptionBar = !showOptionBar">
@@ -123,8 +123,12 @@ export default {
                 //进度
             },(res)=>{
                 if(res.code==200){
-                    var fileData = JSON.parse(res.response)
-                    _this.files.push(fileData.file);
+                    var fileData = JSON.parse(res.response);
+                    _this.files.push({
+                        name:fileData.file.fileName,
+                        url:fileData.file.relativePath,
+                        size:fileData.file.size
+                    }/*fileData.file*/);
                     filesIndex++;
                     _this.fileUpload(files,filesIndex)
                     //_this.$emit('input', JSON.stringify(_this.files))
@@ -203,7 +207,7 @@ export default {
         },
         handlePreview(file) {
             //下载或者预览
-            this.downloadUrl(file.relativePath,(downloadUrl)=>{
+            this.downloadUrl((file.relativePath||file.url),(downloadUrl)=>{
                 let suffix = file.fileName.split("."),previewUrl;
                 if(file.download){
                     previewUrl = downloadUrl;

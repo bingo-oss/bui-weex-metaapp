@@ -23,12 +23,12 @@
             <div class="pic-con flex-row" style="flex-wrap:wrap; padding-bottom: 15px;">
                 <div class="_picture" v-if="comparePic.snapPicture" v-for="picture in comparePic.snapPicture">
                     <image class="_picture_img"
-                           :src="Config.serverConfig.engineService+'/stream?filePath='+picture.relativePath+'&width=300&height=400'"></image>
+                           :src="Config.serverConfig.engineService+'/stream?filePath='+(picture.relativePath||picture.url)+'&width=300&height=400'"></image>
                     <text class="nonal" style="text-align: center; margin-top: 15px;">抓拍图片</text>
                 </div>
                 <div class="_picture" v-if="comparePic.originalPicture" v-for="picture in comparePic.originalPicture">
                     <image class="_picture_img"
-                           :src="Config.serverConfig.engineService+'/stream?filePath='+picture.relativePath+'&width=300&height=400'"></image>
+                           :src="Config.serverConfig.engineService+'/stream?filePath='+(picture.relativePath||picture.url)+'&width=300&height=400'"></image>
                     <text class="nonal" style="text-align: center; margin-top: 15px;">库中原图</text>
                 </div>
             </div>
@@ -100,7 +100,7 @@
                     <text class="nonal" style="padding-right: 20px;">现场图片</text>
                     <div style="flex-direction:row;flex-wrap:wrap; flex: 1;">
                         <div v-for="picture in result.livePicture" style="margin:3px 0px 0px 3px;">
-                            <image style="width: 170px;height: 220px;" :src="Config.serverConfig.engineService+'/stream?filePath='+picture.relativePath+'&width=180&height=220'"></image>
+                            <image style="width: 170px;height: 220px;" :src="Config.serverConfig.engineService+'/stream?filePath='+(picture.relativePath||picture.url)+'&width=180&height=220'"></image>
                         </div>
                     </div>
                 </div>
