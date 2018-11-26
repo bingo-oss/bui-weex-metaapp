@@ -47,17 +47,17 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
             }
         });
     },
-    refresh:function(t){
+    refresh(t){
         //全局部件刷新方法
-        if(_.isFunction(t.refresh)&&t.isWidgetPage){
+        if(_.isFunction(t.refresh)&&t.widgetContainer){
             t.refresh()
         }else if(t.$parent){
             factoryApi.refresh(t.$parent)//寻找父级
         }
     },
-    submitPromise:function(t,arry,funName){
+    submitPromise(t,arry,funName){
         if(!arry){arry=[]}
-        if(_.isFunction(t[funName])&&t.isWidgetPage){
+        if(_.isFunction(t[funName])&&t.widgetContainer){
             arry.push(t[funName]())
         }
         if(t.$parent){
@@ -70,7 +70,7 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
             return arry;
         }
     },
-    submit:function(t,arry){
+    submit(t,arry){
         //检测全局部件提交表单方法
         let _submNumber = factoryApi.submitPromise(t,arry)
         return new Promise(function(resolve, reject){
@@ -102,7 +102,7 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
     pageScrollUpdate(t){
         //容器的滚动视图更新
         //全局部件刷新方法
-        if(_.isFunction(t.pageScrollUpdate)&&t.isWidgetPage){
+        if(_.isFunction(t.pageScrollUpdate)&&t.widgetContainer){
             t.pageScrollUpdate()
         }else if(t.$parent){
             factoryApi.pageScrollUpdate(t.$parent)//寻找父级
@@ -111,8 +111,16 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
     startLoading(t){
         //显示加载圈
         //全局部件刷新方法
-        if(_.isFunction(t.startLoading)&&t.isWidgetPage){
-            t.startLoading()
+        if(t.widgetContainer){
+            //显示加载圈
+            if(_.isEmpty(t.startLoadingNumber)){
+                t.startLoadingNumber  = 0;
+            }
+            t.startLoadingNumber++;//需要累加的加载圈
+            if(t.startLoadingNumber==1){
+                //this.isShowLoading = true;
+                linkapi.showLoading({title:"加载中"});
+            }//只调用一次
         }else if(t.$parent){
             factoryApi.startLoading(t.$parent)//寻找父级
         }
@@ -120,8 +128,13 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
     stopLoading(t){
       //关闭加载圈
       //全局部件刷新方法
-      if(_.isFunction(t.stopLoading)&&t.isWidgetPage){
-        t.stopLoading()
+      if(t.widgetContainer){
+          //关闭加载圈
+          t.startLoadingNumber--;//需要累加的加载圈
+          if(t.startLoadingNumber==0){
+              //this.isShowLoading = false;
+              linkapi.hideLoading();
+          }
       }else if(t.$parent) {
         factoryApi.stopLoading(t.$parent)//寻找父级
       }

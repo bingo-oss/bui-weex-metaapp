@@ -44,10 +44,10 @@
             }
         },
         data(){
-            var scrollerHeight = (750/weex.config.env.deviceWidth*weex.config.env.deviceHeight);
+            var scrollerHeight = ((750/weex.config.env.deviceWidth)*weex.config.env.deviceHeight);
             return {
                 pageConfig:null,
-                isWidgetPage:true,
+                widgetContainer:true,//用于判断是否是部件容器
                 isShowLoading:false,
                 dom:dom,//方便其他部件调用滚动
                 urlParam:{},//存储的页面参数
