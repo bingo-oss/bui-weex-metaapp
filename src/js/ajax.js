@@ -100,11 +100,12 @@ export default {
         }
         return this.request(param);
     },
-    post(url, data) {
+    post(url, data,headers) {
         let param = {
             url,
             method: 'POST',
             body: data,
+            headers:headers
         }
         return this.request(param);
     },
