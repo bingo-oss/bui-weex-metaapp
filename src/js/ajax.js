@@ -87,9 +87,11 @@ export default {
     },
     patch(url, data) {
         let param = {
-            method: 'PATCH',
+            //method: 'PATCH',
+            method: 'POST',
             url,
             body: data,
+            headers:{"x-http-method-override":"PATCH"}
         }
         return this.request(param);
     },
