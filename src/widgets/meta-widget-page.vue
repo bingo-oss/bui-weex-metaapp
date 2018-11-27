@@ -161,9 +161,9 @@
                 //滚动触发
                 _.each(this.$refs.childWidgets,(cw,index)=>{
                     if(this.widgetsInfo[index].widget == cw){
-                        if(this.widgetsInfo[index+2]&&
-                            ((-e.contentOffset.y)<=(this.widgetsInfo[index+2].info.size.top))&&
-                            ((-e.contentOffset.y)>(this.widgetsInfo[index+1].info.size.top))){
+                        if(/*this.widgetsInfo[index+1]&&*/
+                            ((-e.contentOffset.y)<=(this.widgetsInfo[index].info.size.top+this.widgetsInfo[index].info.size.height))&&
+                            ((-e.contentOffset.y)>(this.widgetsInfo[index].info.size.top))){
                             this.viewEvent(cw,"appear");
                         }
                     }
