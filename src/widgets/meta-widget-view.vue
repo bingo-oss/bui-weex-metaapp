@@ -431,7 +431,8 @@ module.exports = {
                 }
             }).catch(err => {
                 this.isRefreshing = false;
-                this.$alert(err);
+                this.$alert("请求失败,请重试");
+                //this.$alert(err);
             });
         },
         loadMore() {
@@ -600,8 +601,8 @@ module.exports = {
                 let contextPath = this.$getContextPath();
                 readRuntimeConfigPromise = config.readRuntimeConfig(contextPath)
                 .catch(err => {
-                        this.$alert(err);
-                        this.$toast('读取运行时配置失败');
+                        //this.$alert(err);
+                        //this.$toast('读取运行时配置失败');
                 })
                 .then(runtimeConfig => {
                     service.init(runtimeConfig.configServerUrl)
@@ -610,8 +611,8 @@ module.exports = {
                 readRuntimeConfigPromise.then(() => {
                     // 获取视图定义
                     return service.getMetaViewDef(viewId,setData).catch((err) => {
-                        this.$toast('getMetaViewDef error')
-                        this.$alert(err)
+                        //this.$toast('getMetaViewDef error')
+                        //this.$alert(err)
                 }).then(viewDef => {
                     if(setData.getDefaultForm&&viewDef.viewFields){
                         //取的是默认视图
@@ -693,8 +694,8 @@ module.exports = {
 
                     return service.getEngineUrl(viewDef.projectId)
                     .catch(err => {
-                        this.$toast('getEngineUrl error')
-                        this.$alert(err)
+                        //this.$toast('getEngineUrl error')
+                        //this.$alert(err)
                     })
                     .then(engineUrl => {
                         this.engineUrl = engineUrl;
@@ -730,8 +731,8 @@ module.exports = {
                         }*/
                     })
                     .catch(err => {
-                        this.$toast('getSwagger error');
-                        this.$alert(err);
+                        //this.$toast('getSwagger error');
+                        //this.$alert(err);
                     })
                     .then(() => {
                             // 转成小写，否则不认
@@ -740,14 +741,14 @@ module.exports = {
                         return this.refreshData();
                     })
                     .catch(err => {
-                            this.$alert('refreshData error')
-                        this.$alert(err)
+                        //this.$alert('refreshData error')
+                        //this.$alert(err)
                     })
                 });
             })
             }).catch(err => {
                 console.log(err)
-                this.$alert(err);
+                //this.$alert(err);
             });
         },
         getWidgetContext(obj){
@@ -778,8 +779,8 @@ module.exports = {
             let contextPath = this.$getContextPath(),
                 _views = this.widgetParams.views, _getMetaViewDefNumber = 0,_t = this,
                 readRuntimeConfigPromise = config.readRuntimeConfig(contextPath).catch(err => {
-                        this.$alert(err);
-                        this.$toast('读取运行时配置失败');
+                        //this.$alert(err);
+                        //this.$toast('读取运行时配置失败');
                 }).then(runtimeConfig => {
                         service.init(runtimeConfig.configServerUrl);
                         _t.presetFilters = _views;
