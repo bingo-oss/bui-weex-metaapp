@@ -6,6 +6,7 @@ import buiweex from "bui-weex";
 import linkapi from "linkapi";
 import Util from '../../js/utils'
 import _ from '../../js/tool/lodash';
+import ajax from '../../js/ajax.js';
 
 var factoryApi = Object.assign({},buiweex,linkapi,{
     goback(context, $optInst) {
@@ -139,30 +140,57 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
         factoryApi.stopLoading(t.$parent)//寻找父级
       }
     },
-    //封装下linkapi--需要对参数特殊处理的接口
     post(params){
-        if(params.data&&(!params.headers)){
-            params.data = Util.toHttpRequestParams(params.data)
-        }
-        return linkapi.post(params);
+        return new Promise((resolve, reject) => {
+            ajax.post(params.url, params.data, params.headers).then((res)=>{
+                if(res.ok) {
+                    resolve(res.data);
+                }else{
+                    reject(res)
+                }
+            },err0=>{
+                reject(erro)
+            })
+        })
     },
     get(params){
-        if(params.data&&(!params.headers)){
-            params.data = Util.toHttpRequestParams(params.data)
-        }
-        return linkapi.get(params);
+        return new Promise((resolve, reject) => {
+            ajax.get(params.url, params.data, params.headers).then((res)=>{
+                if(res.ok){
+                    resolve(res.data);
+                }else{
+                    reject(res)
+                }
+            },erro=>{
+                reject(erro)
+            })
+        })
     },
     delete(params){
-        if(params.data&&(!params.headers)){
-            params.data = Util.toHttpRequestParams(params.data)
-        }
-        return linkapi.delete(params);
+        return new Promise((resolve, reject) => {
+            ajax.delete(params.url, params.data).then((res)=>{
+                if(res.ok){
+                    resolve(res.data);
+                }else{
+                    reject(res)
+                }
+            },erro=>{
+                reject(erro)
+            })
+        })
     },
-    put(params){
-        if(params.data&&(!params.headers)){
-            params.data = Util.toHttpRequestParams(params.data)
-        }
-        return linkapi.put(params);
+    patch(params){
+        return new Promise((resolve, reject) => {
+            ajax.patch(params.url, params.data).then((res)=>{
+                if(res.ok){
+                    resolve(res.data);
+                }else{
+                    reject(res)
+                }
+            },erro=>{
+                reject(erro)
+            })
+        })
     }
 });
 
