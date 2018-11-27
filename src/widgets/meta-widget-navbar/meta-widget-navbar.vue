@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="fixedStyleDiv" v-if="widgetParams.isFixed"></div>
+        <div class="fixedStyleDiv" :style="fixedDivStyle" v-if="widgetParams.isFixed"></div>
         <div class="fixedStyle" :style="fixedStyle">
             <bui-header :leftItem="{icon: 'ion-ios-arrow-left'}" @leftClick="() =>{this.$pop()}" :backgroundColor="themeBg">
                 <div slot="center" class="page-title-wrapper">
@@ -90,9 +90,11 @@
                     if(terminalType!==1){
                         _opts.push(opt);
                     }
-                    JSON.stringify
                 });
                 return _opts;
+            },
+            fixedDivStyle(){
+                return {height:((weex.config.env.deviceModel.indexOf("iPhone")==-1)?90:130)}
             }
         },
         watch:{
