@@ -148,7 +148,7 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
                 }else{
                     reject(res)
                 }
-            },err0=>{
+            },erro=>{
                 reject(erro)
             })
         })
