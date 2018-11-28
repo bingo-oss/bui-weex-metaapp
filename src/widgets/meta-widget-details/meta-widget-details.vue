@@ -21,14 +21,14 @@
                 <text class="similar">{{comparePic.similarityDegree}}%</text>
             </div>
             <div class="pic-con flex-row" style="flex-wrap:wrap; padding-bottom: 15px;">
-                <div class="_picture" v-if="comparePic.snapPicture" v-for="picture in comparePic.snapPicture">
+                <div class="_picture" v-if="comparePic.snapPicture" v-for="picture in comparePic.snapPicture" @click="handlePreview(picture)">
                     <image class="_picture_img"
-                           :src="Config.serverConfig.engineService+'/stream?filePath='+(picture.relativePath||picture.url)+'&width=300&height=400'"></image>
+                           :src="Config.serverConfig.engineService+'/stream?filePath='+(picture.relativePath||picture.url)+'&width=300&height=400'" @click="handlePreview(picture)"></image>
                     <text class="nonal" style="text-align: center; margin-top: 15px;">抓拍图片</text>
                 </div>
-                <div class="_picture" v-if="comparePic.originalPicture" v-for="picture in comparePic.originalPicture">
+                <div class="_picture" v-if="comparePic.originalPicture" v-for="picture in comparePic.originalPicture" @click="handlePreview(picture)">
                     <image class="_picture_img"
-                           :src="Config.serverConfig.engineService+'/stream?filePath='+(picture.relativePath||picture.url)+'&width=300&height=400'"></image>
+                           :src="Config.serverConfig.engineService+'/stream?filePath='+(picture.relativePath||picture.url)+'&width=300&height=400'" @click="handlePreview(picture)"></image>
                     <text class="nonal" style="text-align: center; margin-top: 15px;">库中原图</text>
                 </div>
             </div>
@@ -99,8 +99,8 @@
                 <div class="flex-row" v-if="result.livePicture&&result.livePicture.length" style="padding-bottom: 18px;">
                     <text class="nonal" style="padding-right: 20px;">现场图片</text>
                     <div style="flex-direction:row;flex-wrap:wrap; flex: 1;">
-                        <div v-for="picture in result.livePicture" style="margin:3px 0px 0px 3px;">
-                            <image style="width: 170px;height: 220px;" :src="Config.serverConfig.engineService+'/stream?filePath='+(picture.relativePath||picture.url)+'&width=180&height=220'"></image>
+                        <div v-for="picture in result.livePicture" style="margin:3px 0px 0px 3px;" @click="handlePreview(picture)">
+                            <image style="width: 170px;height: 220px;" :src="Config.serverConfig.engineService+'/stream?filePath='+(picture.relativePath||picture.url)+'&width=180&height=220'" @click="handlePreview(picture)"></image>
                         </div>
                     </div>
                 </div>
@@ -117,6 +117,7 @@
     import buiweex from "bui-weex";
     const globalEvent = weex.requireModule('globalEvent');
     import factoryApi from "../libs/factory-api";
+    import linkapi from "linkapi"
     /*
     * 数据获取：通过实体id获取容器地址，拼接参数"数据id"去get
     *
@@ -216,6 +217,10 @@
             },
             exportParams() { //本部件暴露的参数
                 return Object.assign({}, this.widgetParams, this.titleInfo);
+            },
+            handlePreview(file) {
+                //预览
+                linkapi.openLinkBroswer(file.name?file.name:"预览",`${config.serverConfig.engineService}/stream?filePath=${file.relativePath||file.url}`);
             }
         },
         component: {},
