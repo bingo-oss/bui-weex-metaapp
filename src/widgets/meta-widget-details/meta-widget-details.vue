@@ -58,7 +58,7 @@
                 </div>
                 <div class="flex-row" v-if="infomation.sex" style="padding-bottom: 18px;">
                     <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">性别</text>
-                    <text style="font-size: 28px">{{infomation.sex}}</text>
+                    <text style="font-size: 28px">{{(infomation.sex==1)?"男":"女"}}</text>
                 </div>
                 <div class="flex-row" style="padding-bottom: 18px;">
                     <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">出生日期</text>
