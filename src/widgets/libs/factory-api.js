@@ -119,8 +119,8 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
             }
             t.startLoadingNumber++;//需要累加的加载圈
             if(t.startLoadingNumber==1){
-                //this.isShowLoading = true;
-                linkapi.showLoading({title:"加载中"});
+                t.isShowLoading = true;
+                //linkapi.showLoading({title:"加载中"});
             }//只调用一次
         }else if(t.$parent){
             factoryApi.startLoading(t.$parent)//寻找父级
@@ -133,8 +133,8 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
           //关闭加载圈
           t.startLoadingNumber--;//需要累加的加载圈
           if(t.startLoadingNumber==0){
-              //this.isShowLoading = false;
-              linkapi.hideLoading();
+              t.isShowLoading = false;
+              //linkapi.hideLoading();
           }
       }else if(t.$parent) {
         factoryApi.stopLoading(t.$parent)//寻找父级

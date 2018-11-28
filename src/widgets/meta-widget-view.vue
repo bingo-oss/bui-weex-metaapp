@@ -599,21 +599,14 @@ module.exports = {
                     viewId = pageParam.entity;
                 }
                 let contextPath = this.$getContextPath();
-                readRuntimeConfigPromise = config.readRuntimeConfig(contextPath)
+                config.readRuntimeConfig(contextPath)
                 .catch(err => {
                         //this.$alert(err);
                         //this.$toast('读取运行时配置失败');
-                })
-                .then(runtimeConfig => {
-                    service.init(runtimeConfig.configServerUrl)
-                })
-
-                readRuntimeConfigPromise.then(() => {
+                }).then(runtimeConfig => {
+                    service.init(runtimeConfig.configServerUrl);
                     // 获取视图定义
-                    return service.getMetaViewDef(viewId,setData).catch((err) => {
-                        //this.$toast('getMetaViewDef error')
-                        //this.$alert(err)
-                }).then(viewDef => {
+                    service.getMetaViewDef(viewId,setData).then(viewDef => {
                     if(setData.getDefaultForm&&viewDef.viewFields){
                         //取的是默认视图
                         viewDef = viewDef.viewFields
@@ -692,15 +685,14 @@ module.exports = {
                         this.metaEntity.metaEntityId = viewDef.metaEntityId
                     });
 
-                    return service.getEngineUrl(viewDef.projectId)
-                    .catch(err => {
-                        //this.$toast('getEngineUrl error')
-                        //this.$alert(err)
-                    })
-                    .then(engineUrl => {
+                    service.getEngineUrl(viewDef.projectId).then((engineUrl)=>{
                         this.engineUrl = engineUrl;
                         this.entityName = viewDef.metaEntityName;
                         this.entityId = viewDef.metaEntityId;
+                        // 转成小写，否则不认
+                        this.dataUrlPath = `${engineUrl}/${viewDef.metaEntityName.toLowerCase()}`;
+                        this.queryParam = params;
+                        this.refreshData();
                         service.getSwaggerEntityDef(engineUrl, this.entityName).then(entityDef => {
                             // 对于实体类型的字段，这里构造其 entityResourceUrl，参考以下 swagger.json 片段
                             // "channelId": {
@@ -712,40 +704,26 @@ module.exports = {
                             //         "channelId"
                             //     ],
                             // },
-                        for (let k in entityDef.properties) {
-                            let p = entityDef.properties[k];
-                            if (p['x-join-fields']) {
-                                let entityRefProp = p['x-join-fields'][0];
-                                let entityName = p['x-target-entity'].toLowerCase();
-                                if (entityDef.properties[entityRefProp]) {
-                                    entityDef.properties[entityRefProp].entityResourceUrl = `${engineUrl}/${entityName}`
+                            for (let k in entityDef.properties) {
+                                let p = entityDef.properties[k];
+                                if (p['x-join-fields']) {
+                                    let entityRefProp = p['x-join-fields'][0];
+                                    let entityName = p['x-target-entity'].toLowerCase();
+                                    if (entityDef.properties[entityRefProp]) {
+                                        entityDef.properties[entityRefProp].entityResourceUrl = `${engineUrl}/${entityName}`
+                                    }
                                 }
                             }
-                        }
-                        this.swaggerEntiyDef = entityDef;
-                        // 对于 pageParam 里的 query，遇到属于字段的 query 要在获取实体数据时带上
-                        /*for (let k in this.swaggerEntiyDef.properties) {
-                            if (pageParam[k]) {
-                                params[k] = pageParam[k];
-                            }
-                        }*/
-                    })
-                    .catch(err => {
-                        //this.$toast('getSwagger error');
-                        //this.$alert(err);
-                    })
-                    .then(() => {
-                            // 转成小写，否则不认
-                        this.dataUrlPath = `${engineUrl}/${viewDef.metaEntityName.toLowerCase()}`;
-                        this.queryParam = params;
-                        return this.refreshData();
-                    })
-                    .catch(err => {
-                        //this.$alert('refreshData error')
-                        //this.$alert(err)
-                    })
-                });
-            })
+                            this.swaggerEntiyDef = entityDef;
+                            // 对于 pageParam 里的 query，遇到属于字段的 query 要在获取实体数据时带上
+                            /*for (let k in this.swaggerEntiyDef.properties) {
+                                if (pageParam[k]) {
+                                    params[k] = pageParam[k];
+                                }
+                            }*/
+                        })
+                    });
+                })
             }).catch(err => {
                 console.log(err)
                 //this.$alert(err);
