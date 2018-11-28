@@ -404,7 +404,9 @@ module.exports = {
             return ajax.get(this.dataUrlPath, this.queryParam).then(resp => {
                 factoryApi.stopLoading(this);//关闭加载圈
                 //this.isShowLoading = false
-                this.dataCount = resp.headers["X-Total-Count"]
+                if(resp.headers){
+                    this.dataCount = resp.headers["X-Total-Count"]
+                }
                 if(this.presetFilters[this.currentTab]){
                     if(this.presetFilters[this.currentTab].showCount) {//是否显示数字
                         this.presetFilters[this.currentTab].count = (resp.headers["X-Total-Count"]>0)?`(${resp.headers["X-Total-Count"]})`:"";
@@ -421,6 +423,7 @@ module.exports = {
                 this.dataInited = true; // 控制 viewAppear 时是否刷新页面，只有获取数据成功过才刷新
                 this.listData = data;
                 //console.log(data);
+                this.$forceUpdate();//更新下视图
                 this.isRefreshing = false;
                 this.currentPage = 1;
                 this.loadingStatus = 'init';
@@ -692,7 +695,6 @@ module.exports = {
                         // 转成小写，否则不认
                         this.dataUrlPath = `${engineUrl}/${viewDef.metaEntityName.toLowerCase()}`;
                         this.queryParam = params;
-                        this.refreshData();
                         service.getSwaggerEntityDef(engineUrl, this.entityName).then(entityDef => {
                             // 对于实体类型的字段，这里构造其 entityResourceUrl，参考以下 swagger.json 片段
                             // "channelId": {
@@ -721,7 +723,8 @@ module.exports = {
                                     params[k] = pageParam[k];
                                 }
                             }*/
-                        })
+                            this.refreshData();
+                        });
                     });
                 })
             }).catch(err => {
