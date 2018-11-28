@@ -28,6 +28,8 @@ const pageService={
                         reject();
                      });
                 });
+            },(erro)=>{
+                reject(erro);
             });
         })
     }

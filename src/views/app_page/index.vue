@@ -6,6 +6,8 @@
 </template>
 <script>
 import EventBus from '../../js/bus';
+const globalEvent = weex.requireModule('globalEvent');
+
 export default {
     data(){
         return {
@@ -28,6 +30,11 @@ export default {
         var pageId=this.$getPageParams()['pageId'];
         var byOperation=this.$getPageParams()['byOperation'];
         this.params=Object.assign({pageId:pageId,byOperation:byOperation},this.params);
+
+        globalEvent.addEventListener("androidback", e => {
+            this.$pop();
+        });
+
     }
 }
 </script>
