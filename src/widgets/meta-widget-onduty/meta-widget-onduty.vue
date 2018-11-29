@@ -99,6 +99,7 @@
                             this.currentTime = Utils.realTime(new Date(res.data.startTime).getTime());
                             _this.getServiceTime().then(res=>{
                                 //循环计时
+                                _this.accumulationTime = 0;//重新开始值班需要清0
                                 _this.serviceTime = res.data;
                                 _this.timer = setInterval(this.computtime, 1000);
                             })
