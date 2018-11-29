@@ -114,10 +114,10 @@
                 if(this.stopClick){
                     return false;
                 }
-                var curtime = Utils.realTime(new Date().getTime()); //当前的时间
-                var now = this.timeformat(curtime);
+                //var curtime = Utils.realTime(new Date().getTime()); //当前的时间
+                //var now = this.timeformat(curtime);
                 let params = {
-                    "endTime": now,
+                    "endTime": this.timeformat(this.serviceTime+this.accumulationTime),
                     "duration": "值班历时时长:"+this.ondutytime,
                     "isOnDuty": 0
                 }
