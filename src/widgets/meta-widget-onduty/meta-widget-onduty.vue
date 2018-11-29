@@ -52,6 +52,8 @@
                 classObject: {
                     activecolor: true
                 },
+                serviceTime:'',//获取从服务器返回的时间
+                accumulationTime:0,//记录累加的秒数
                 currentTime: '', //点击开始值班记录的开始时间
                 timer: null, //开始值班的定时器,值班中的定时器
                 ondutytime: "", //页面显示值班时长
@@ -81,7 +83,7 @@
                         //onDutyPersonId=e4cfb2ca-7b83-44d5-a32d-1f0c0fc6c94f
                         let params = {
                             "isOnDuty": 1,
-                            "startTime": startTime,
+                            //"startTime": "",
                             "orgId": this.orgId,
                             "onDutyPersonId": this.onDutyPersonId
                         }
@@ -91,11 +93,17 @@
                         _this.ondutytime = "";
                         ajax.post(`${this.engineUrl}/${this.viewConfigInfo.metaEntityName.toLowerCase()}`, params).then(res => {
                             this.dutyId = res.data["$id"]
-                            this.begintime = Utils.realTime(new Date(res.data.startTime).getTime());//转换成时间戳
+                            //this.begintime = Utils.realTime(new Date(res.data.startTime).getTime());//转换成时间戳
                             this.stopClick = false;
                             //请求成功后开始获取当前时间，和开始计算时长；
-                            this.currentTime = Utils.realTime(new Date().getTime());
-                            _this.timer = setInterval(_this.computtime, 1000); //计算正在值班的时间时长
+                            this.currentTime = Utils.realTime(new Date(res.data.startTime).getTime());
+                            _this.getServiceTime().then(res=>{
+                                //循环计时
+                                _this.serviceTime = res.data;
+                                _this.timer = setInterval(this.computtime, 1000);
+                            })
+                            //this.currentTime = Utils.realTime(new Date().getTime());
+                            //_this.timer = setInterval(_this.computtime, 1000); //计算正在值班的时间时长
                         });
                     }
 
@@ -169,8 +177,8 @@
                                     }
                                     _this.dutyId = _data.id
                                     let begindutyTime = _data.startTime //开始值班的时间
-                                    _this.begintime = Utils.realTime(new Date(begindutyTime).getTime());//转换成时间戳
-                                     _this.currentTime = _this.begintime;
+                                    //_this.begintime = Utils.realTime(new Date(begindutyTime).getTime());//转换成时间戳
+                                     _this.currentTime = Utils.realTime(new Date(begindutyTime).getTime());
 
                                     /*function starting() {
                                         var curtime = Utils.realTime(new Date().getTime()); //当前的时间
@@ -183,8 +191,12 @@
                                         _this.ondutytime = (this.hour?(this.hour + '小时:'):'') + (this.min?(this.min + '分钟:'):'') + seconds + '秒'
                                     }*/
 
-                                    //循环计时
-                                    _this.timer = setInterval(this.computtime, 1000);
+                                    _this.getServiceTime().then(res=>{
+                                        //循环计时
+                                        _this.serviceTime = res.data;
+                                        _this.timer = setInterval(this.computtime, 1000);
+                                    })
+
 
                                     //更改样式
                                     _this.startVal = false;
@@ -197,8 +209,9 @@
 
             },
             computtime: function () {    //计算时长(当前的时间 - 开始值班的时间)
-                var newcurtime = Utils.realTime(new Date().getTime());
-                var timelength = newcurtime - this.currentTime;
+                //var newcurtime = Utils.realTime(new Date().getTime());
+                this.accumulationTime+=1000;
+                var timelength = this.serviceTime - this.currentTime + this.accumulationTime;
                 //var seconds = parseInt((timelength % (1000 * 60)) / 1000);  //时间戳转换为秒
                 this.hour = parseInt((timelength % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 this.min = parseInt((timelength % (1000 * 60 * 60)) / (1000 * 60));
@@ -221,7 +234,11 @@
                 var m = (date.getMinutes()<10?("0"+date.getMinutes()):date.getMinutes()) + ':';
                 var s = (date.getSeconds()<10?("0"+date.getSeconds()):date.getSeconds());
                 return Y + M + D + h + m + s;
+            },
+            getServiceTime(){
+                return ajax.get(`${this.engineUrl}/service/time`)
             }
+
         },
         computed: {
             bgstyle() { //更改按钮背景色
