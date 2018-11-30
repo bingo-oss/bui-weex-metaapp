@@ -1334,7 +1334,7 @@
                 }, function (error) {
                 });
             },
-            refreshData(){
+            /*refreshData(){
                 if (this.info == null || Util.isEmpty(this.info.entityId)) {
                     return;
                 }
@@ -1374,7 +1374,7 @@
                     factoryApi.stopLoading(this);//关闭加载圈
                 }, error=> {
                 })
-            },
+            },*/
             isExitsBlog(id){
                 for (let item of this.blogList) {
                     if (id == item.blogInfo.blogId) {
@@ -1484,7 +1484,7 @@
                 this.refreshing = true;
                 this.pageNo = 1;
                 this.initData(1);
-                this.$emit("refresh")
+                //this.$emit("refresh")
             },
             //refresh下拉放手前的文字与图标
             "onPullingdown": function (e) {
@@ -2007,7 +2007,8 @@
                 this.info.entityId = params.entityId;
                 factoryApi.startLoading(this);//显示加载圈
                 _t.getMetaEntity(function(){
-                    _t.refreshData();
+                    _t.initData(1);
+                    //_t.refreshData();
                 })
                 service.getHomePage(params.homePageId||this.$getPageParams().homePageId).then((res)=>{
                     //获取主页配置
@@ -2024,7 +2025,7 @@
                         }//0:通用,1:快捷
                     });
                     _t.tools = res.mpHomePageOprationList;
-                    _t.getLoginInfo();
+                    _t.getAdminInfo();
                     _t.handleTabMenu();
                     _t.handleCreateMenu();
                     _t.handleWriteMenu();
