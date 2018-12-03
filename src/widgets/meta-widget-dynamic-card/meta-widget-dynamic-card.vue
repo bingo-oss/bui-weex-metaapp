@@ -820,7 +820,7 @@
                         this.$toast("点赞失败");
                     }
                 }).catch((error)=> {
-                    this.$toast(Util.handleException(error));
+                    //this.$toast(Util.handleException(error));
                 });
             },
             onInput(event){//监听输入
@@ -915,7 +915,7 @@
                         this.$toast("评论发送失败");
                     }
                 }).catch((error)=> {
-                    this.$toast(Util.handleException(error));
+                    //this.$toast(Util.handleException(error));
                 });
             },
             handleCommentContent(){

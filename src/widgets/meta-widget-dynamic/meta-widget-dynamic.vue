@@ -1010,7 +1010,7 @@
                         this.$toast("评论发送失败");
                     }
                 }).catch((error)=> {
-                    this.$toast(Util.handleException(error));
+                    //this.$toast(Util.handleException(error));
                 });
             },
             handleCommentContent(){
@@ -1085,7 +1085,7 @@
                 }).catch((error)=> {
                     factoryApi.stopLoading(this);//关闭加载圈
                 //this.isShowLoading = false;
-                    this.$toast(Util.handleException(error));
+                    //this.$toast(Util.handleException(error));
                 });
             },
             deleteBlog(item){
@@ -1107,7 +1107,7 @@
                 }).catch((error)=> {
                     factoryApi.stopLoading(this);//关闭加载圈
                 //this.isShowLoading = false;
-                    this.$toast(Util.handleException(error));
+                    //this.$toast(Util.handleException(error));
                 });
             },
             getImageUrl(url){
@@ -1469,7 +1469,7 @@
                 //this.isShowLoading = false;
                     this.refreshing = false;
                     this.showLoading = false;
-                    this.$toast("获取动态数据失败:" + Util.handleException(error));
+                    //this.$toast("获取动态数据失败:" + Util.handleException(error));
                 });
             },
             convertBlogData(blogData){//评论倒叙

@@ -157,7 +157,7 @@
                         }
                     }
                 }).catch(error => {
-                    this.$toast(Utils.handleException(error))
+                    //this.$toast(Utils.handleException(error))
                 })
             },
             createGroupAndOpen(){
@@ -179,16 +179,16 @@
                         linkapi.execSyncService(1, res=> {
                             linkapi.startGroupChat(this.groupId, null, null);
                         }, error=> {
-                            this.$toast(error)
+                            //this.$toast(error)
                         });
                         this.$toast("创建群组成功")
                     } else {
-                        this.$toast(res.msg)
+                        //this.$toast(res.msg)
                     }
                 }).catch(error => {
                     this.isShowLoading = false;
                     this.loadingText = "";
-                    this.$toast(Utils.handleException(error))
+                    //this.$toast(Utils.handleException(error))
                 })
             },
             goto(tapLabel,index){

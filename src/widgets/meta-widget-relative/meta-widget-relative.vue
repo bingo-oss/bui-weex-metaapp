@@ -286,7 +286,7 @@
                         this.esServiceList = JSON.parse(result.d.getEsServiceList).r;
                     }
                 }).catch((error)=> {
-                    this.$toast(Util.handleException(error));
+                    //this.$toast(Util.handleException(error));
                 });
             },
             getMetaSuite(){//获取套件信息
