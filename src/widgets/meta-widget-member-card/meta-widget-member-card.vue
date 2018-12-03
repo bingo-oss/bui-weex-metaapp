@@ -225,7 +225,8 @@
                         this.$toast('获取数据失败!');
                     }
                 }).catch((error, text)=> {
-                    this.$toast(Util.handleException(error));
+                    factoryApi.stopLoading(this);//关闭加载圈
+                    //this.$toast(Util.handleException(error));
                 });
             },
             onDialogCallback(val){
@@ -343,8 +344,9 @@
                         this.$toast("操作失败！");
                     }
                 }, error=> {
-                    this.isShowLoading = false;
-                    this.$toast(Util.handleException(error))
+                    factoryApi.stopLoading(this);//关闭加载圈
+                    //this.isShowLoading = false;
+                    //this.$toast(Util.handleException(error))
                 });
             },
             allMember(){

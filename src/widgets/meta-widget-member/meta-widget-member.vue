@@ -380,7 +380,7 @@
                 }).catch((error, text)=> {
                     this.refreshing = false;
                     this.showLoading = false;
-                    this.$toast(Util.handleException(error));
+                    //this.$toast(Util.handleException(error));
                 });
             },
 
@@ -492,7 +492,7 @@
                 }, error=> {
                     factoryApi.stopLoading(this);//关闭加载圈
                     //this.isShowLoading = false;
-                    this.$toast(Util.handleException(error))
+                    //this.$toast(Util.handleException(error))
                 });
             },
             deleteMembers(ids, isSelf){
@@ -531,7 +531,7 @@
                 }, error=> {
                     factoryApi.stopLoading(this);//关闭加载圈
                     //this.isShowLoading = false;
-                    this.$toast(Util.handleException(error))
+                    //this.$toast(Util.handleException(error))
                 });
             },
             inviteMembers(userId, orgId, groupId, isRemoveExistsMembers){
@@ -585,7 +585,7 @@
                 }, error=> {
                     factoryApi.stopLoading(this);//关闭加载圈
                     //this.isShowLoading = false;
-                    this.$toast(Util.handleException(error))
+                    //this.$toast(Util.handleException(error))
                 });
             },
             isMayShowRadio(item){
