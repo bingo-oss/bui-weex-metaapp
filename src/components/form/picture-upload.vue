@@ -46,7 +46,7 @@ const FileModule = weex.requireModule('FileModule');
 const FileTransfer = weex.requireModule('FileTransferModule');
 import config from '../../js/config';
 import _ from '../../js/tool/lodash.js';
-
+import buiweex from "bui-weex";
 export default {
     componentType: 'PictureUpload',
     extends: mixin,
@@ -119,7 +119,30 @@ export default {
                 _this.$emit('input', _this.files)
                 return false;
             }
-            FileTransfer.upload(files[filesIndex].resourceLocal,config.serverConfig.engineService + "/stream",{},(progress)=>{
+/*            FileTransfer.upload(files[filesIndex].resourceLocal,config.serverConfig.engineService + "/stream",{},(progress)=>{
+                //进度
+            },(res)=>{
+                if(res.code==200){
+                    var fileData = JSON.parse(res.response);
+                    _this.files.push({
+                        name:fileData.file.fileName,
+                        url:fileData.file.relativePath,
+                        size:fileData.file.size
+                    }/!*fileData.file*!/);
+                    filesIndex++;
+                    _this.fileUpload(files,filesIndex);
+                    //_this.$emit('input', JSON.stringify(_this.files))
+                }
+                //this.$alert(res);
+                //成功回调
+            },(erro)=>{
+                //失败回调
+                //_this.$alert(erro);
+                filesIndex++;
+                _this.fileUpload(files,filesIndex)
+            });*/
+            //图片压缩
+            FileTransfer.upload(files[filesIndex],config.serverConfig.engineService + "/stream",{},(progress)=>{
                 //进度
             },(res)=>{
                 if(res.code==200){
@@ -130,7 +153,7 @@ export default {
                         size:fileData.file.size
                     }/*fileData.file*/);
                     filesIndex++;
-                    _this.fileUpload(files,filesIndex)
+                    _this.fileUpload(files,filesIndex);
                     //_this.$emit('input', JSON.stringify(_this.files))
                 }
                 //this.$alert(res);
@@ -141,13 +164,25 @@ export default {
                 filesIndex++;
                 _this.fileUpload(files,filesIndex)
             });
+
         },
         inputClicked(type) {
             if(this.readonly){
                 return;
             }
             let _this = this;
-            linkapi.selectFiles(type, (result) => {
+
+            if(type==1){
+                //选择图片
+                linkapi.selectImage({quality:90},function(res){
+                    _this.fileUpload(res.filePaths,0);//执行上传
+                })
+            }else{
+                linkapi.captureImage({quality:90},function(res){
+                    _this.fileUpload(res.filePaths,0);//执行上传
+                });
+            }
+/*            linkapi.selectFiles(type, (result) => {
                 if (result.resource) {
                     if(_.isString(result.resource)){
                         result.resource = JSON.parse(result.resource)
@@ -155,7 +190,7 @@ export default {
                     _this.fileUpload(result.resource,0);//执行上传
                 }
             }, (err) => {
-            })
+            })*/
 
 
             /*FileTransfer.upload("","",{},(e)=>{
