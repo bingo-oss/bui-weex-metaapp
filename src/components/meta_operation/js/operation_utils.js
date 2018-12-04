@@ -57,7 +57,17 @@ var utils={
             })
         }else{
             //需要传入自身部件模型上暴露函数
-            let _exportParams = _t.exportParams||_t.$parent.exportParams
+            function upward(_this){
+                if(_this.exportParams){
+                    return _this.exportParams;
+                }else if(_this.widgetContainer){
+                    //已经置顶不需要再循环了
+                    return ""
+                }else if(_this.$parent){
+                    return upward(_this.$parent);
+                }
+            }
+            let _exportParams = upward(_t);
             if(_.isFunction(_exportParams)){
                 let _data = _exportParams()
                 if (_data[key]) {
