@@ -1,5 +1,5 @@
 <template>
-    <div class="flex-column">
+    <div class="flex-column" style="flex: 1;">
         <web style="position: absolute; width: 100%; height: 100%;" :src="widgetParams.url"></web>
     </div>
 </template>
