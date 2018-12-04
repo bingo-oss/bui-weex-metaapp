@@ -70,7 +70,7 @@ var utils={
             let _exportParams = upward(_t);
             if(_.isFunction(_exportParams)){
                 let _data = _exportParams()
-                if (_data[key]) {
+                if (_data[key]||_data[key]===0) {
                     returnVal = _data[key]
                 }
             }
