@@ -174,11 +174,11 @@ export default {
 
             if(type==1){
                 //选择图片
-                linkapi.selectImage({quality:90},function(res){
+                linkapi.selectImage({quality:85,maxSelect:15},function(res){
                     _this.fileUpload(res.filePaths,0);//执行上传
                 })
             }else{
-                linkapi.captureImage({quality:90},function(res){
+                linkapi.captureImage({quality:85},function(res){
                     _this.fileUpload(res.filePaths,0);//执行上传
                 });
             }
