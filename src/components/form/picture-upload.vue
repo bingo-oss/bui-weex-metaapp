@@ -119,36 +119,17 @@ export default {
                 _this.$emit('input', _this.files)
                 return false;
             }
-/*            FileTransfer.upload(files[filesIndex].resourceLocal,config.serverConfig.engineService + "/stream",{},(progress)=>{
-                //进度
-            },(res)=>{
-                if(res.code==200){
-                    var fileData = JSON.parse(res.response);
-                    _this.files.push({
-                        name:fileData.file.fileName,
-                        url:fileData.file.relativePath,
-                        size:fileData.file.size
-                    }/!*fileData.file*!/);
-                    filesIndex++;
-                    _this.fileUpload(files,filesIndex);
-                    //_this.$emit('input', JSON.stringify(_this.files))
-                }
-                //this.$alert(res);
-                //成功回调
-            },(erro)=>{
-                //失败回调
-                //_this.$alert(erro);
-                filesIndex++;
-                _this.fileUpload(files,filesIndex)
-            });*/
-            //图片压缩
-            linkapi.compressImage({
+
+            let _sourcePath = {
                 sourcePath:files[filesIndex].resourceLocal,
                 savePath:true,
-                //targetHeight:((750/weex.config.env.deviceWidth)*weex.config.env.deviceHeight),
-                targetWidth:750,
-                //quality:80
-            },function(file){
+                quality:100
+            }
+            if(files[filesIndex].resourceSize&&(files[filesIndex].resourceSize.indexOf("KB")==-1)){
+
+                _sourcePath.targetWidth = 640;
+            }//需要压缩
+            linkapi.compressImage(_sourcePath,function(file){
                     FileTransfer.upload(file.filePaths[0],config.serverConfig.engineService + "/stream",{},(progress)=>{
                         //进度
                     },(res)=>{
@@ -172,7 +153,6 @@ export default {
                         _this.fileUpload(files,filesIndex)
                     });
             });
-
         },
         inputClicked(type) {
             if(this.readonly){
