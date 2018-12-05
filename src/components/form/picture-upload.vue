@@ -142,27 +142,35 @@ export default {
                 _this.fileUpload(files,filesIndex)
             });*/
             //图片压缩
-            FileTransfer.upload(files[filesIndex],config.serverConfig.engineService + "/stream",{},(progress)=>{
-                //进度
-            },(res)=>{
-                if(res.code==200){
-                    var fileData = JSON.parse(res.response);
-                    _this.files.push({
-                        name:fileData.file.fileName,
-                        url:fileData.file.relativePath,
-                        size:fileData.file.size
-                    }/*fileData.file*/);
-                    filesIndex++;
-                    _this.fileUpload(files,filesIndex);
-                    //_this.$emit('input', JSON.stringify(_this.files))
-                }
-                //this.$alert(res);
-                //成功回调
-            },(erro)=>{
-                //失败回调
-                //_this.$alert(erro);
-                filesIndex++;
-                _this.fileUpload(files,filesIndex)
+            linkapi.compressImage({
+                sourcePath:files[filesIndex].resourceLocal,
+                savePath:true,
+                //targetHeight:((750/weex.config.env.deviceWidth)*weex.config.env.deviceHeight),
+                targetWidth:750,
+                //quality:80
+            },function(file){
+                    FileTransfer.upload(file.filePaths[0],config.serverConfig.engineService + "/stream",{},(progress)=>{
+                        //进度
+                    },(res)=>{
+                        if(res.code==200){
+                            var fileData = JSON.parse(res.response);
+                            _this.files.push({
+                                name:fileData.file.fileName,
+                                url:fileData.file.relativePath,
+                                size:fileData.file.size
+                            }/*fileData.file*/);
+                            filesIndex++;
+                            _this.fileUpload(files,filesIndex);
+                            //_this.$emit('input', JSON.stringify(_this.files))
+                        }
+                        //this.$alert(res);
+                        //成功回调
+                    },(erro)=>{
+                        //失败回调
+                        //_this.$alert(erro);
+                        filesIndex++;
+                        _this.fileUpload(files,filesIndex)
+                    });
             });
 
         },
@@ -172,7 +180,7 @@ export default {
             }
             let _this = this;
 
-            if(type==1){
+/*            if(type==1){
                 //选择图片
                 linkapi.selectImage({quality:85,maxSelect:15},function(res){
                     _this.fileUpload(res.filePaths,0);//执行上传
@@ -181,8 +189,8 @@ export default {
                 linkapi.captureImage({quality:85},function(res){
                     _this.fileUpload(res.filePaths,0);//执行上传
                 });
-            }
-/*            linkapi.selectFiles(type, (result) => {
+            }*/
+            linkapi.selectFiles(type, (result) => {
                 if (result.resource) {
                     if(_.isString(result.resource)){
                         result.resource = JSON.parse(result.resource)
@@ -190,7 +198,7 @@ export default {
                     _this.fileUpload(result.resource,0);//执行上传
                 }
             }, (err) => {
-            })*/
+            })
 
 
             /*FileTransfer.upload("","",{},(e)=>{
@@ -243,11 +251,11 @@ export default {
         handlePreview(file) {
             //下载或者预览
             this.downloadUrl((file.relativePath||file.url),(downloadUrl)=>{
-                let suffix = file.fileName.split("."),previewUrl;
+                let suffix = file.name.split("."),previewUrl;
                 if(file.download){
                     previewUrl = downloadUrl;
                     //执行的是下载操作--不是预览
-                    FileTransfer.download(previewUrl,{filename:file.fileName},function(res){
+                    FileTransfer.download(previewUrl,{filename:file.name},function(res){
                         /*buiweex.alert(res);*/
                     },function(res){
                         FileModule.openFile(res.savePath);
