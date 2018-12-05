@@ -47,7 +47,7 @@ const FileTransfer = weex.requireModule('FileTransferModule');
 import config from '../../js/config';
 import _ from '../../js/tool/lodash.js';
 import buiweex from "bui-weex";
-import factoryApi from '../../widgets/libs/factory-api.js';
+var modal = weex.requireModule('modal');
 export default {
     componentType: 'PictureUpload',
     extends: mixin,
@@ -118,11 +118,8 @@ export default {
             let _this = this;
             if(!files[filesIndex]) {
                 _this.$emit('input', _this.files)
-                factoryApi.stopLoading(this);
                 return false;
             }
-
-            factoryApi.startLoading(this);
             let _sourcePath = {
                 sourcePath:files[filesIndex].resourceLocal,
                 savePath:true,
@@ -133,6 +130,10 @@ export default {
             }//需要压缩
             linkapi.compressImage(_sourcePath,function(file){
                     FileTransfer.upload(file.filePaths[0],config.serverConfig.engineService + "/stream",{},(progress)=>{
+                        modal.toast({
+                            message: `上传中...`,
+                            duration: 1
+                        });
                         //进度
                     },(res)=>{
                         if(res.code==200){
