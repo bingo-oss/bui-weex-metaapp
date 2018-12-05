@@ -28,7 +28,13 @@
                 <bui-image width="120px" height="120px" src="/image/u85.png" @click="showOptionBar = !showOptionBar">></bui-image>
             </div>
         </div>
-
+        <div class="wxc-loading" v-if="loadingText">
+            <div class="loading-box">
+                <text
+                        class="loading-text">上传中...
+                </text>
+            </div>
+        </div>
         <bui-actionsheet
                 :items="optionItems"
                 v-model="showOptionBar"
@@ -64,6 +70,7 @@ export default {
             files:[],
             optionItems:["拍照上传","选择图片"],
             showOptionBar: false,
+            loadingText:false,
             officeSupport: [
                 "ods",
                 "xls",
@@ -118,6 +125,7 @@ export default {
             let _this = this;
             if(!files[filesIndex]) {
                 _this.$emit('input', _this.files)
+                _this.loadingText = false;
                 return false;
             }
             let _sourcePath = {
@@ -128,12 +136,9 @@ export default {
             if(files[filesIndex].resourceSize&&(files[filesIndex].resourceSize.indexOf("KB")==-1)){
                 _sourcePath.targetWidth = 640;
             }//需要压缩
+            _this.loadingText = true;
             linkapi.compressImage(_sourcePath,function(file){
                     FileTransfer.upload(file.filePaths[0],config.serverConfig.engineService + "/stream",{},(progress)=>{
-                        modal.toast({
-                            message: `上传中...`,
-                            duration: 1
-                        });
                         //进度
                     },(res)=>{
                         if(res.code==200){
@@ -269,4 +274,26 @@ export default {
 <style>
     .file_image{ margin-bottom: 15px; margin-left: 15px;}
     .image_del{ position: absolute; right: 5px; bottom:5px;}
+    .wxc-loading {
+        position: fixed;
+        left: 287px;
+        top: 520px;
+        z-index: 9999;
+        align-items: center;
+        justify-content: center;
+    }
+    .loading-box {
+        align-items: center;
+        justify-content: center;
+        border-radius: 10px;
+        width: 175px;
+        height: 80px;
+        background-color: #000;
+        opacity: .4;
+    }
+    .loading-text {
+        padding-top: 30px;
+        color: #fff;
+        font-size: 30px;
+    }
 </style>
