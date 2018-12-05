@@ -118,7 +118,7 @@ export default {
         return this._getConfig().then((data) => {
             let metaApiEndpoint = data[keyMetaBaseEndpoint];
             let url = `${metaApiEndpoint}/meta_view/default/short/${viewId}`
-            return ajax.get(url,param?{}:param).then((resp) => {
+            return ajax.get(url,(param?{}:param)).then((resp) => {
                 return Promise.resolve(resp.data);
             })
         })
