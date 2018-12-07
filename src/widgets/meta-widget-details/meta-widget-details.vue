@@ -216,7 +216,12 @@
                 this.getDetailsInfo();
             },
             getWidgetContext() { //本部件暴露的参数
-                return Object.assign({}, this.widgetParams, this.titleInfo);
+                let _this = this;
+                //return Object.assign({}, this.widgetParams, this.titleInfo);
+                return Object.assign({},{
+                    widgetParams: _this.widgetParams,
+                    selectedItem: _this.titleInfo
+                })
             },
             handlePreview(file) {
                 //预览
