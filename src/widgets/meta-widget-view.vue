@@ -624,9 +624,9 @@ module.exports = {
                     fields.add('_data'); // _data 字段里会有冗余信息
                     fields.add('id'); // id 是一定要获取的，否则删改操作都无法进行
                     viewDef.viewFields.forEach(col => {
-                        fields.add(col.name)
+                        fields.add(col.fieldName)
                         if (col.quicksearchable) {
-                            this.quickSearchableField.push(col.name);
+                            this.quickSearchableField.push(col.fieldName);
                         }
                         if(col.searchable){
                             //this.showFilterView = true;//存在高级筛选 显示按钮
