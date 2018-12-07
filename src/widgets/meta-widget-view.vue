@@ -737,7 +737,7 @@ module.exports = {
             let _t = this,_obj = {};
             if(obj){
                 _obj.selectedId = obj.id;
-                _obj.selectedItem = obj;//选择的数据对象
+                _obj.selectedItem = obj||_t.selectedItem;//选择的数据对象
               }
               _obj.model = this//模型自身
               _obj.widgetParams = _t.widgetParams;//部件参数
@@ -749,10 +749,6 @@ module.exports = {
         refresh(){
           //注册刷新事件是facoty-api的refresh方法的范围内
           this.refreshData();
-        },
-        exportParams(){
-            //本部件暴露的参数
-            return Object.assign({},this.widgetParams,this.selectedItem)
         }
     },
     created(){

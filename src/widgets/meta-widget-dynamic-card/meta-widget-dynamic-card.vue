@@ -1594,7 +1594,7 @@
                 //注册刷新事件是facoty-api的refresh方法的范围内
                 this.refreshData();
             },
-            exportParams(){
+            getWidgetContext(){
                 //本部件暴露的参数
                 return Object.assign({},this.widgetParams)
             }

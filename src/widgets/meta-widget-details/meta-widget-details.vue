@@ -215,7 +215,7 @@
                 //部件刷新的实现
                 this.getDetailsInfo();
             },
-            exportParams() { //本部件暴露的参数
+            getWidgetContext() { //本部件暴露的参数
                 return Object.assign({}, this.widgetParams, this.titleInfo);
             },
             handlePreview(file) {

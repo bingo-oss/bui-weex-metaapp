@@ -235,7 +235,7 @@
                     }
                 }
             },
-            exportParams(){
+            getWidgetContext(){
                 //本部件暴露的参数
                 return Object.assign({},this.widgetParams)
             }

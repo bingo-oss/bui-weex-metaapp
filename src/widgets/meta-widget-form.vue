@@ -483,10 +483,6 @@
                             }
                         });
                     })
-            },
-            exportParams(){
-                //本部件暴露的参数
-                return Object.assign({},this.widgetParams,this.result)
             }
         },
         data () {
