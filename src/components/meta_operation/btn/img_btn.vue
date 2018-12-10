@@ -3,7 +3,7 @@
     <text>123123123</text>
 -->
     <div style="padding-left: 10px; padding-right: 10px;">
-        <image style="width:38px;height:38px;" :src="getImageUrl(operation.icon)"></image>
+        <image style="width:50px;height:50px;" :src="getImageUrl(operation.icon)"></image>
     </div>
 </template>
 <script>
