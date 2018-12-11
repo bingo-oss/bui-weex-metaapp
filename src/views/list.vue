@@ -420,7 +420,6 @@ module.exports = {
                     }
                 }
                 var metabasePromise=metabase.initMetabase(viewDef.projectId).then(()=>{
-                    debugger
                     var metaEntity=metabase.findMetaEntity(viewDef.metaEntityName);
                     this.metaEntity=metaEntity;
                     return service.getEngineUrl(viewDef.projectId)

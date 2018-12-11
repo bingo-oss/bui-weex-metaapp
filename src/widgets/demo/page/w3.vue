@@ -1,11 +1,40 @@
 <template>
   <div class="widget-con">
+    <!-- <div>{{getDefinition()}}</div> -->
     <div
       v-if="widgetParams&&widgetParams.commonOperations"
       v-for="(commonOpt,index) in widgetParams.commonOperations"
       :key="index"
       class="common-operation"
     >
+
+      <single-line-text
+        :showComponent="true"
+        :viewMode="true"
+        :definition="commonOpt.props.definition"
+      >
+
+      </single-line-text>
+
+      <!-- <div v-if="commonOpt.showComponent">
+        <div v-if="commonOpt.props">
+          <div v-if="commonOpt.props.definition">
+            {{commonOpt.props.definition}}
+          </div>
+          <div v-else>
+            commonOpt.props.definition is empty
+          </div>
+        </div>
+        <div v-else>
+          commonOpt.props is empty
+        </div>
+      </div> -->
+
+      <meta-operation
+        :operation="commonOpt"
+        :widget-context="getWidgetContext()"
+      ></meta-operation>
+
       <meta-operation
         :operation="commonOpt"
         :widget-context="getWidgetContext()"
@@ -24,7 +53,11 @@
   </div>
 </template>
 <script>
+import SingleLineText from "../../../components/form/single-line-text.vue";
 export default {
+  components: {
+    "single-line-text": SingleLineText
+  },
   props: {
     widgetParams: {
       type: Object,
@@ -44,8 +77,20 @@ export default {
         metaEntity: metaEntity,
         grid: ""
       };
+    },
+    getDefinition() {
+      for (var i = 0; i < this.widgetParams.commonOperations.length; i++) {
+        var commonOpt = this.widgetParams.commonOperations[i];
+        if (commonOpt.showComponent) {
+          break;
+        }
+      }
+      return "111";
     }
   }
+  // components: {
+  //   commonOperation: require("./common_operation.vue"),
+  // }
 };
 </script>
 <style lang="css" scoped>

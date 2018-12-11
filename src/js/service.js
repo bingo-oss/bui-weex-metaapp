@@ -1,6 +1,7 @@
 import ajax from '../js/ajax.js'
 
 const keyMetaBaseEndpoint = 'service.metabase.endpoint';
+const keyGatewayEndpoint = 'service.gateway.endpoint';
 
 let CachedConfig = null;
 let ConfigUrl = '';
@@ -100,11 +101,11 @@ export default {
      * @param  {string} formId  表单 ID
      * @return {Promise} Promise 对象，成功返回定义对象，失败返回 error
      */
-    getMetaFormDef(formId,param) {
+    getMetaFormDef(formId, param) {
         return this._getConfig().then((data) => {
             let metaApiEndpoint = data[keyMetaBaseEndpoint]
             let url = `${metaApiEndpoint}/meta_form/default/short/${formId}`
-            return ajax.get(url,param?{}:param).then((resp) => {
+            return ajax.get(url, param ? {} : param).then((resp) => {
                 return Promise.resolve(resp.data);
             })
         })
@@ -166,7 +167,7 @@ export default {
      * @param  {string} projectId
      * @return {Promise} 成功返回引擎地址，失败返回 error。
      */
-    getMetaEntity(entityId){
+    getMetaEntity(entityId) {
         return this._getConfig().then((data) => {
             let metabaseUrl = data[keyMetaBaseEndpoint]
             let url = `${metabaseUrl}/meta_entity/${entityId}`
@@ -180,7 +181,7 @@ export default {
      * @param  {string} projectId
      * @return {Promise} 成功返回引擎地址，失败返回 error。
      */
-    getEngineUrlMeta(entityId){
+    getEngineUrlMeta(entityId) {
         return this._getConfig().then((data) => {
             let metabaseUrl = data[keyMetaBaseEndpoint]
             let url = `${metabaseUrl}/meta_entity/${entityId}`
@@ -189,7 +190,19 @@ export default {
                 return Promise.resolve(engineUrl);
             })
         })
+    },
+
+    /**
+     * 获取菜单项
+     * @return {Promise} Promise 对象，成功返回定义对象，失败返回 error
+     */
+    getMenuItems(param) {
+        return this._getConfig().then((data) => {
+            let metaApiEndpoint = data[keyGatewayEndpoint];
+            let url = `${metaApiEndpoint}/metad/api/mp_operation`
+            return ajax.get(url, Object.assign({}, param)).then((resp) => {
+                return Promise.resolve(resp.data);
+            })
+        })
     }
-
-
 }
