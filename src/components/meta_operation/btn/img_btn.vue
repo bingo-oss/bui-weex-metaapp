@@ -1,14 +1,10 @@
 <template>
-  <div>
-
-    <div style="padding-left: 10px; padding-right: 10px;">
-      <image
-        style="width:100px;height:100px;"
-        :src="getImageUrl(operation.icon)"
-      />
-    </div>
+  <div style="padding-left: 10px; padding-right: 10px;">
+    <image
+      style="width:50px;height:50px;"
+      :src="getImageUrl(operation.icon)"
+    />
   </div>
-
 </template>
 <script>
 import Util from "../../../js/utils";
