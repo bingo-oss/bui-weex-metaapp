@@ -56,11 +56,12 @@
             console.log('rendering filters view');
             let forms = [];
             // 遍历 layout 里的所有表单项
-            this.viewDef && this.swaggerEntiyDef && this.viewDef.config.columns.forEach((col) => {
-                if (!col.searchable) {
+            this.swaggerEntiyDef
+            this.viewDef && this.swaggerEntiyDef && this.viewDef.viewFields.forEach((col) => {
+                /*if (!col.searchable) {
                     return;
-                }
-                let properties = this.swaggerEntiyDef.properties[col.name];
+                }*/
+                let properties = this.swaggerEntiyDef.properties[col.fieldName];
                 if(!properties)return false;
                 let inputType = properties['x-input']
                 // 伪造 definition
@@ -83,9 +84,9 @@
                         entityResourceUrl = properties.entityResourceUrl;
                         if (!entityResourceUrl) {
                             if (config.debug) {
-                                this.$alert(`No entityResourceUrl for ${col.name}`)
+                                this.$alert(`No entityResourceUrl for ${col.fieldName}`)
                             } else {
-                                console.log(`No entityResourceUrl for ${col.name}`)
+                                console.log(`No entityResourceUrl for ${col.fieldName}`)
                             }
                         }
                         break
@@ -107,14 +108,14 @@
                 let input = h(`Meta${inputType}`, {
                     props: {
                         definition: fakeDefinition,
-                        filterValue: this.copiedFilters[col.name],
+                        filterValue: this.copiedFilters[col.fieldName],
                         filterMode: true,
                         entityResourceUrl: entityResourceUrl,
                     },
                     on: {
                         filterInput: (v) => {
-                            console.log(`setting ${v} for ${col.name}`)
-                            this.$set(this.copiedFilters, col.name, v);
+                            console.log(`setting ${v} for ${col.fieldName}`)
+                            this.$set(this.copiedFilters, col.fieldName, v);
                         }
                     },
                 })
