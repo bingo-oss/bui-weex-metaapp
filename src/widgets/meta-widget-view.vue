@@ -737,9 +737,12 @@ module.exports = {
             let _t = this,_obj = {};
             if(obj){
                 _obj.selectedId = obj.id;
-                _obj.selectedItem = obj||_t.selectedItem;//选择的数据对象
-              }
-              _obj.model = this//模型自身
+                _obj.selectedItem = obj;//选择的数据对象
+            }else{
+                _obj.selectedId = _t.selectedItem.id;
+                _obj.selectedItem = _t.selectedItem;//选择的数据对象
+            }
+          _obj.model = this//模型自身
               _obj.widgetParams = _t.widgetParams;//部件参数
             return _obj;
         },
