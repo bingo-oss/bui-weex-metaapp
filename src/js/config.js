@@ -11,20 +11,20 @@ const configServerUrl = "https://developer.bingosoft.net:12100/services/tool/sys
  * 发布时记得将 debug 设为 false
  *
  */
-var configData=null;
+var configData = null;
 export default {
-    debug: false,
-    token: 'c2Fhc3NzbzoyMGZiNDE5MS1kM2Y4LTRkMDYtYjE1Yy04MTdmNmI0YjU4Njg',
+    debug: true,
+    token: 'c2Fhc3Nzbzo2NmZkYjQ4NS1jNmU1LTQwZWYtYTkzMS1kNjJjZWUyYWNiYTQ',
     configFilename: 'config.json',
-    serverConfig:{},
+    serverConfig: {},
     // 读取与 list.weex.js、form.weex.js 同级的配置文件
     readRuntimeConfig(contextPath) {
-        contextPath=contextPath||buiweex.getContextPath();
+        contextPath = contextPath || buiweex.getContextPath();
         return new Promise((resolve, reject) => {
-            if(configData){
+            if (configData) {
                 this.serverConfig = configData;
                 resolve(configData);
-            }else{
+            } else {
                 /*configData=Object.assign({},{
                     "configServerUrl":configServerUrl,
                     "blogApi": "",
@@ -33,41 +33,41 @@ export default {
                 });
                 this.serverConfig = {};
                 resolve(configData);*/
-/*                ajax.get(configServerUrl).then((resp) => {
-                    configData=Object.assign(resp.data,{
-                        "configServerUrl":configServerUrl,
-                        "blogApi": resp.data["service.blog.endpoint"],
-                        "uamUrl": resp.data["service.link.endpoint"],
-                        "engineService": resp.data["service.gateway.endpoint"]+"/services"
-                    });
-                    this.serverConfig = configData;
-                    resolve(configData);
-                },()=>{
-                    this.serverConfig = {};
-                    resolve({})
-                });*/
+                /*                ajax.get(configServerUrl).then((resp) => {
+                                    configData=Object.assign(resp.data,{
+                                        "configServerUrl":configServerUrl,
+                                        "blogApi": resp.data["service.blog.endpoint"],
+                                        "uamUrl": resp.data["service.link.endpoint"],
+                                        "engineService": resp.data["service.gateway.endpoint"]+"/services"
+                                    });
+                                    this.serverConfig = configData;
+                                    resolve(configData);
+                                },()=>{
+                                    this.serverConfig = {};
+                                    resolve({})
+                                });*/
                 contextPath = contextPath.replace('file://', ''); // 消除 file:
                 let absPath = `${contextPath}/${this.configFilename}`;
-                 linkapi.readTextFromFile(absPath, 'utf-8', data => {
+                linkapi.readTextFromFile(absPath, 'utf-8', data => {
                     try {
-                        if(data.configServerUrl){
+                        if (data.configServerUrl) {
                             //获取服务端的配置
                             ajax.get(data.configServerUrl).then((resp) => {
-                                configData=Object.assign(data,resp.data,{
+                                configData = Object.assign(data, resp.data, {
                                     "blogApi": resp.data["service.blog.endpoint"],
                                     "uamUrl": resp.data["service.link.endpoint"],
-                                    "engineService": resp.data["service.gateway.endpoint"]+"/services"
+                                    "engineService": resp.data["service.gateway.endpoint"] + "/services"
                                 });
                                 this.serverConfig = configData;
                                 resolve(configData);
-                            },(err)=>{
+                            }, (err) => {
                                 reject(err);
                             })
-                        }else{
-                            configData=data;
+                        } else {
+                            configData = data;
                             resolve(configData);
                         }
-                    } catch(err) {
+                    } catch (err) {
                         reject(err);
                     }
                 }, err => {
@@ -77,39 +77,39 @@ export default {
         })
 
     },
-    getMetaServiceUrl(){
+    getMetaServiceUrl() {
         return new Promise((resolve, reject) => {
-            this.readRuntimeConfig().then((c)=>{
-                var url=c['service.metabase.endpoint'];
-                if(url){
+            this.readRuntimeConfig().then((c) => {
+                var url = c['service.metabase.endpoint'];
+                if (url) {
                     resolve(url);
-                }else{
+                } else {
                     buiweex.toast(i18n.noMetadataConfigUrl);
                     reject();
                 }
             });
         });
     },
-    getApiBaseUrl(){
+    getApiBaseUrl() {
         return new Promise((resolve, reject) => {
-            this.readRuntimeConfig().then((c)=>{
-                var url=c['apiBaseUrl'];
-                if(url){
+            this.readRuntimeConfig().then((c) => {
+                var url = c['apiBaseUrl'];
+                if (url) {
                     resolve(url);
-                }else{
+                } else {
                     buiweex.toast(i18n.noMetadataConfigUrl);
                     reject();
                 }
             });
         });
     },
-    getStreamUrl(){
+    getStreamUrl() {
         return new Promise((resolve, reject) => {
-            this.readRuntimeConfig().then((c)=>{
-                var url=c['service.stream.endpoint'];
-                if(url){
+            this.readRuntimeConfig().then((c) => {
+                var url = c['service.stream.endpoint'];
+                if (url) {
                     resolve(url);
-                }else{
+                } else {
                     buiweex.toast(i18n.noMetadataConfigUrl);
                     reject();
                 }

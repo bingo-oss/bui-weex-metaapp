@@ -11,6 +11,7 @@ Vue.component('meta-opt-btn',require("../components/meta_operation/btn/opt_btn.v
 //demo
 Vue.component('meta-widget-w1',require("../widgets/demo/page/w1.vue"));
 Vue.component('meta-widget-w2',require("../widgets/demo/page/w2.vue"));
+Vue.component('meta-widget-w3',require("../widgets/demo/page/w3.vue"));
 Vue.component('meta-widget-opt1',require("../widgets/demo/operation/opt1.vue"));
 Vue.component('meta-widget-opt2',require("../widgets/demo/operation/opt2.vue"));
 //列表,表单部件
