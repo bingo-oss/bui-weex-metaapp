@@ -168,7 +168,7 @@ export default {
   methods: {
     showOperation() {
       let _this = this;
-      OperationUtils.showOperation(_this.operation).then(res => {
+      OperationUtils.showOperation(_this.operation,_this).then(res => {
         if (typeof res == "boolean") {
           _this.operation.show = res;
           _this.$forceUpdate();

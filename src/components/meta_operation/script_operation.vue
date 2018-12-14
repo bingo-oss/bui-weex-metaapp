@@ -44,6 +44,9 @@ export default {
       implCode: "" //存入执行代码
     };
   },
+  created(){
+    factoryApi.init(this);//初始化变量
+  },
   methods: {
     execScript() {
       this.$emit("on_btn_click");
@@ -58,7 +61,7 @@ export default {
         OperationUtils.execution(
           this.operation,
           _widgetCtx,
-          "beforeExecCode"
+          "beforeExecCode",this
         ).then(res => {
           if (_.isFunction(this.operation.onClick)) {
             this.mustStopRepeatedClick = true;
@@ -78,7 +81,7 @@ export default {
           }
           this.mustStopRepeatedClick = false;
           this.$emit("triggered", "script");
-          OperationUtils.execution(this.operation, _widgetCtx, "afterExecCode"); //执行后
+          OperationUtils.execution(this.operation, _widgetCtx, "afterExecCode",this); //执行后
         });
       } else {
         if (_t.implCode) {
@@ -104,7 +107,7 @@ export default {
       OperationUtils.execution(
         this.operation,
         _widgetCtx,
-        "beforeExecCode"
+        "beforeExecCode",this
       ).then(res => {
         if (_.isFunction(this.implCode)) {
           this.mustStopRepeatedClick = true;
@@ -116,7 +119,7 @@ export default {
         }
         this.mustStopRepeatedClick = false;
         this.$emit("triggered", "script");
-        OperationUtils.execution(this.operation, _widgetCtx, "afterExecCode"); //执行后
+        OperationUtils.execution(this.operation, _widgetCtx, "afterExecCode",this); //执行后
       });
     }
   }

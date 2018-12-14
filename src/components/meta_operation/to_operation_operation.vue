@@ -52,7 +52,7 @@ export default {
       OperationUtils.execution(
         this.operation,
         _widgetCtx,
-        "beforeExecCode"
+        "beforeExecCode",this
       ).then(res => {
         if (!this.operation.pageId) {
           return;
@@ -65,7 +65,7 @@ export default {
           } /*,this.getIdFromContext(),this.operation.queryParams*/
         );
         OperationUtils.setUrlParam(this.operation, this); //按钮输入参数处理
-        OperationUtils.execution(this.operation, _widgetCtx, "afterExecCode"); //执行后
+        OperationUtils.execution(this.operation, _widgetCtx, "afterExecCode",this); //执行后
         this.$push(Utils.pageEntry(), queryParam);
         this.$emit("triggered", "toPage");
       });

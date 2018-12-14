@@ -7,8 +7,11 @@ import linkapi from "linkapi";
 import Util from '../../js/utils'
 import _ from '../../js/tool/lodash';
 import ajax from '../../js/ajax.js';
-
+var _this=this;//用于初始化指向
 var factoryApi = Object.assign({},buiweex,linkapi,{
+    init(t){
+      _this = t;
+    },
     goback(context, $optInst) {
         //返回
         buiweex.pop();
@@ -48,16 +51,18 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
             }
         });
     },
-    refresh(t){
+    refresh(){
         //全局部件刷新方法
-        if(_.isFunction(t.refresh)&&t.widgetContainer){
-            t.refresh()
-        }else if(t.$parent){
-            factoryApi.refresh(t.$parent)//寻找父级
+        if(_.isFunction(_this.refresh)&&_this.widgetContainer){
+            _this.refresh()
+        }else if(_this.$parent){
+            _this = _this.$parent;//转移指向
+            factoryApi.refresh()//寻找父级
         }
     },
     submitPromise(t,arry,funName){
         if(!arry){arry=[]}
+        if(!t){return}
         if(_.isFunction(t[funName])&&t.widgetContainer){
             arry.push(t[funName]())
         }
@@ -71,9 +76,9 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
             return arry;
         }
     },
-    submit(t,arry){
+    submit(arry){
         //检测全局部件提交表单方法
-        let _submNumber = factoryApi.submitPromise(t,arry)
+        let _submNumber = factoryApi.submitPromise(_this,arry)
         return new Promise(function(resolve, reject){
             let formData = [];
             if(_submNumber.length){
@@ -92,52 +97,55 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
             }
         });
     },
-    formCheck(t){
+    formCheck(){
         //检测全局部件表单校验方法
-        return factoryApi.submitPromise(t,[],"formCheck");
+        return factoryApi.submitPromise(_this,[],"formCheck");
     },
-    getData(t){
+    getData(){
         //检测全局部件获取数据表单数据方法
-        return factoryApi.submitPromise(t,[],"getData");
+        return factoryApi.submitPromise(_this,[],"getData");
     },
-    pageScrollUpdate(t){
+    pageScrollUpdate(){
         //容器的滚动视图更新
         //全局部件刷新方法
-        if(_.isFunction(t.pageScrollUpdate)&&t.widgetContainer){
-            t.pageScrollUpdate()
-        }else if(t.$parent){
-            factoryApi.pageScrollUpdate(t.$parent)//寻找父级
+        if(_.isFunction(_this.pageScrollUpdate)&&_this.widgetContainer){
+            _this.pageScrollUpdate()
+        }else if(_this.$parent){
+            _this = _this.$parent;//转移指向
+            factoryApi.pageScrollUpdate()//寻找父级
         }
     },
-    startLoading(t){
+    startLoading(){
         //显示加载圈
         //全局部件刷新方法
-        if(t.widgetContainer){
+        if(_this.widgetContainer){
             //显示加载圈
-            if(_.isEmpty(t.startLoadingNumber)){
-                t.startLoadingNumber  = 0;
+            if(_.isEmpty(_this.startLoadingNumber)){
+                _this.startLoadingNumber  = 0;
             }
-            t.startLoadingNumber++;//需要累加的加载圈
-            if(t.startLoadingNumber==1){
-                t.isShowLoading = true;
+            _this.startLoadingNumber++;//需要累加的加载圈
+            if(_this.startLoadingNumber==1){
+                _this.isShowLoading = true;
                 //linkapi.showLoading({title:"加载中"});
             }//只调用一次
-        }else if(t.$parent){
-            factoryApi.startLoading(t.$parent)//寻找父级
+        }else if(_this.$parent){
+            _this = _this.$parent;//转移指向
+            factoryApi.startLoading()//寻找父级
         }
     },
-    stopLoading(t){
+    stopLoading(){
       //关闭加载圈
       //全局部件刷新方法
-      if(t.widgetContainer){
+      if(_this.widgetContainer){
           //关闭加载圈
-          t.startLoadingNumber--;//需要累加的加载圈
-          if(t.startLoadingNumber==0){
-              t.isShowLoading = false;
+          _this.startLoadingNumber--;//需要累加的加载圈
+          if(_this.startLoadingNumber==0){
+              _this.isShowLoading = false;
               //linkapi.hideLoading();
           }
-      }else if(t.$parent) {
-        factoryApi.stopLoading(t.$parent)//寻找父级
+      }else if(_this.$parent) {
+          _this = _this.$parent;//转移指向
+          factoryApi.stopLoading()//寻找父级
       }
     },
     post(params){

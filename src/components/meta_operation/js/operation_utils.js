@@ -24,9 +24,10 @@ var utils={
         });
         return _.extend(operation,params);
     },
-    execution(operation,_widgetCtx,before_after){
+    execution(operation,_widgetCtx,before_after,_this){
         //操作执行前后逻辑
         //operation.widgetContext = _widgetCtx;
+        factoryApi.init(_this);
         return new Promise(function(resolve, reject) {
             let value=true;
             if(operation[before_after]) {
@@ -130,7 +131,8 @@ var utils={
             storage.setItem("urlParam", JSON.stringify(urlParam));//存储起来需要传递的参数
         }
     },
-    showOperation(operation){
+    showOperation(operation,_this){
+        factoryApi.init(_this);
         //具备校验函数--需要对按钮进行显隐控制
 /*        if(operation.checkFunc){
             if (_.isFunction(operation.checkFunc)) {
@@ -158,6 +160,7 @@ var utils={
     operationClick(_rowSingleData,_widgetCtx,_t){
         //部件按钮的对象,部件需要暴露给按钮操作的对象,_t自身模型
         //模拟按钮组件的方法执行--适用于列表部件单击
+        factoryApi.init(_t);
         _widgetCtx.buttonInfo = _rowSingleData//按钮信息
         var operation=utils.expandOperation(_rowSingleData,{
             operation:_rowSingleData,
@@ -172,25 +175,25 @@ var utils={
                 operation.onclick(_widgetCtx,factoryApi);
             }
         }else if(operation.onClick){//脚本操作
-            utils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
+            utils.execution(operation,_widgetCtx,"beforeExecCode",_t).then((res)=>{
                 if(_.isFunction(operation.onclick)){
                     operation.onClick(_widgetCtx,factoryApi);
                 }else{
                     var onclick=Function('"use strict";return ' + operation.onClick  )();
                     onclick(_widgetCtx,factoryApi);
                 }
-                utils.execution(operation,_widgetCtx,"afterExecCode")//执行后
+                utils.execution(operation,_widgetCtx,"afterExecCode",_t)//执行后
             });
         }else if(operation.operationType=="execOperation"){//脚本操作
             function cellExecScript() {
-                utils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
+                utils.execution(operation,_widgetCtx,"beforeExecCode",_t).then((res)=>{
                     if (_.isFunction(_t.implCode)) {
                         _t.implCode(_widgetCtx,factoryApi);
                     } else {
                         var onclick = Function('"use strict";return ' + _t.implCode)();
                         onclick(_widgetCtx,factoryApi);
                     }
-                    utils.execution(operation,_widgetCtx,"afterExecCode")//执行后
+                    utils.execution(operation,_widgetCtx,"afterExecCode",_t)//执行后
                 });
             }
             if(_t.implCode){
@@ -218,8 +221,8 @@ var utils={
             if(operation.operationType=="toOperation"){
                 byOperation = true;
             }
-            utils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
-                utils.execution(operation,_widgetCtx,"afterExecCode")//执行后
+            utils.execution(operation,_widgetCtx,"beforeExecCode",_t).then((res)=>{
+                utils.execution(operation,_widgetCtx,"afterExecCode",_t)//执行后
                 if(operation.operationType=="toDynamicPage"){
                     /*_widgetCtx.selectedItem.actionParams={"ios":"[aaa] \n pageId=navbar \n entityId=abcdefgh","android":"[aaa] \n pageId=navber \n entityId=abcdefgh"}
                     operation.dynamicPageFunc = function(obj,factoryApi){

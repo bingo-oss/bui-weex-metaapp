@@ -399,6 +399,9 @@
                  });
                 _t.initData(1);
             });//监听应用激活 刷新
+        },
+        created(){
+            factoryApi.init(this);//初始化全局api的指向
         }
     }
 </script>

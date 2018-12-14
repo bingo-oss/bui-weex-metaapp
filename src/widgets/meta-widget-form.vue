@@ -756,6 +756,9 @@
              console.log(err)
              this.$alert('Fetch data failed: ' + JSON.stringify(err));
              })*/
+        },
+        created(){
+            factoryApi.init(this);//初始化全局api的指向
         }
     }
 </script>

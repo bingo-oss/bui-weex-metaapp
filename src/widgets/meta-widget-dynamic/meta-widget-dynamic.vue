@@ -2056,6 +2056,9 @@
                 }
             });
 
+        },
+        created(){
+            factoryApi.init(this);//初始化全局api的指向
         }
     }
 </script>

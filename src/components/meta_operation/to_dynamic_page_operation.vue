@@ -45,6 +45,9 @@ export default {
     }
     return {};
   },
+  created(){
+    factoryApi.init(this);//初始化变量
+  },
   methods: {
     gotoPage() {
       this.$emit("on_btn_click");
@@ -54,7 +57,7 @@ export default {
       OperationUtils.execution(
         this.operation,
         _widgetCtx,
-        "beforeExecCode"
+        "beforeExecCode",this
       ).then(res => {
         var pageParams = {};
         if (this.operation.dynamicPageFunc) {
@@ -74,7 +77,7 @@ export default {
           }
           OperationUtils.setUrlParam(this.operation, this); //按钮输入参数处理
         }
-        OperationUtils.execution(this.operation, _widgetCtx, "afterExecCode"); //执行后
+        OperationUtils.execution(this.operation, _widgetCtx, "afterExecCode",this); //执行后
 
         if (pageParams.type == "factoryApp") {
           //跳入的是应用工厂应用

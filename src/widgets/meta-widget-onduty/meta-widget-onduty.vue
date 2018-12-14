@@ -33,11 +33,11 @@
     import buiweex from "bui-weex";
 
     /*
-    * 初始化发请求，判断什么状态 值班中or未值班
-    * 未值班状态：startVal=true;正在值班：endVal=true;
-    * 未值班状态：点击发送请求（时间给后台）;
-    * 值班状态： 获取开始值班时间， 获取当前时间，求出值班时长;
-    * */
+     * 初始化发请求，判断什么状态 值班中or未值班
+     * 未值班状态：startVal=true;正在值班：endVal=true;
+     * 未值班状态：点击发送请求（时间给后台）;
+     * 值班状态： 获取开始值班时间， 获取当前时间，求出值班时长;
+     * */
     module.exports = {
         props: {
             widgetParams: {
@@ -60,7 +60,7 @@
                 begintime: null,
                 min: 0, //分
                 hour: 0, //小时
-                viewConfigInfo: null, //视图配置信息
+                metaEntityConfigInfo: null, //实体信息
                 engineUrl: null,
                 orgId: null,
                 onDutyPersonId: null,
@@ -77,38 +77,38 @@
 
                 buiweex.confirm("是否确认开始值班？",(res)=>{
                     if(res=="确定"){
-                        var curtime = Utils.realTime(new Date().getTime()); //当前的时间
-                        var startTime = this.timeformat(curtime);
-                        //orgId=c72ab416-16d2-4f0c-aaf9-1ebadb416ca8
-                        //onDutyPersonId=e4cfb2ca-7b83-44d5-a32d-1f0c0fc6c94f
-                        let params = {
-                            "isOnDuty": 1,
-                            //"startTime": "",
-                            "orgId": this.orgId,
-                            "onDutyPersonId": this.onDutyPersonId
-                        }
-                        _this.startVal = false;
-                        _this.endVal = true;
-                        _this.stopClick = true;
-                        _this.ondutytime = "";
-                        ajax.post(`${this.engineUrl}/${this.viewConfigInfo.metaEntityName.toLowerCase()}`, params).then(res => {
-                            this.dutyId = res.data["$id"]
-                            //this.begintime = Utils.realTime(new Date(res.data.startTime).getTime());//转换成时间戳
-                            this.stopClick = false;
-                            //请求成功后开始获取当前时间，和开始计算时长；
-                            this.currentTime = Utils.realTime(new Date(res.data.startTime).getTime());
-                            _this.getServiceTime().then(res=>{
-                                //循环计时
-                                _this.accumulationTime = 0;//重新开始值班需要清0
-                                _this.serviceTime = res.data;
-                                _this.timer = setInterval(this.computtime, 1000);
-                            })
-                            //this.currentTime = Utils.realTime(new Date().getTime());
-                            //_this.timer = setInterval(_this.computtime, 1000); //计算正在值班的时间时长
-                        });
+                    var curtime = Utils.realTime(new Date().getTime()); //当前的时间
+                    var startTime = this.timeformat(curtime);
+                    //orgId=c72ab416-16d2-4f0c-aaf9-1ebadb416ca8
+                    //onDutyPersonId=e4cfb2ca-7b83-44d5-a32d-1f0c0fc6c94f
+                    let params = {
+                        "isOnDuty": 1,
+                        //"startTime": "",
+                        "orgId": this.orgId,
+                        "onDutyPersonId": this.onDutyPersonId
                     }
-
+                    _this.startVal = false;
+                    _this.endVal = true;
+                    _this.stopClick = true;
+                    _this.ondutytime = "";
+                    ajax.post(`${this.engineUrl}/${this.metaEntityConfigInfo.name.toLowerCase()}`, params).then(res => {
+                        this.dutyId = res.data["$id"]
+                    //this.begintime = Utils.realTime(new Date(res.data.startTime).getTime());//转换成时间戳
+                    this.stopClick = false;
+                    //请求成功后开始获取当前时间，和开始计算时长；
+                    this.currentTime = Utils.realTime(new Date(res.data.startTime).getTime());
+                    _this.getServiceTime().then(res=>{
+                        //循环计时
+                        _this.accumulationTime = 0;//重新开始值班需要清0
+                    _this.serviceTime = res.data;
+                    _this.timer = setInterval(this.computtime, 1000);
                 })
+                    //this.currentTime = Utils.realTime(new Date().getTime());
+                    //_this.timer = setInterval(_this.computtime, 1000); //计算正在值班的时间时长
+                });
+                }
+
+            })
 
             },
             endDuty: function () { //结束值班
@@ -126,14 +126,14 @@
                 _this.stopClick = true;
                 clearInterval(_this.timer);
 
-                ajax.patch(`${this.engineUrl}/${this.viewConfigInfo.metaEntityName.toLowerCase()}/${this.dutyId}`, params).then(res => {
+                ajax.patch(`${this.engineUrl}/${this.metaEntityConfigInfo.name.toLowerCase()}/${this.dutyId}`, params).then(res => {
                     _this.stopClick = false;
-                    //this.$alert(res); duration  endTime
-                    _this.startVal = !_this.startVal;
-                    _this.endVal = !_this.endVal;
-                    _this.currentTime = 0;
-                    factoryApi.refresh(_this);//进行刷新动作
-                });
+                //this.$alert(res); duration  endTime
+                _this.startVal = !_this.startVal;
+                _this.endVal = !_this.endVal;
+                _this.currentTime = 0;
+                factoryApi.refresh(_this);//进行刷新动作
+            });
             },
             getDutyInfo: function () { //获取值班信息
                 /**
@@ -144,69 +144,71 @@
                  *  viewShortId:sU7SEtExK8gNRvFc8xGmbM
                  * */
                 let _this = this;
-                let viewId = this.widgetParams.viewShortId; //视图id
-                let mobileType = "";
-                if ((weex.config.env.deviceModel.indexOf("iPhone") != -1)) {
-                    mobileType = 2
-                } else if ((weex.config.env.deviceModel.indexOf("iPhone") == -1)) {
-                    mobileType = 1
-                }
-                let setData = {terminalType: mobileType};
+                //let viewId = this.widgetParams.viewShortId; //视图id
+                let entityId = this.widgetParams.entityId;//实体id
+                /*                let mobileType = "";
+                 if ((weex.config.env.deviceModel.indexOf("iPhone") != -1)) {
+                 mobileType = 2
+                 } else if ((weex.config.env.deviceModel.indexOf("iPhone") == -1)) {
+                 mobileType = 1
+                 }
+                 let setData = {terminalType: mobileType};*/
                 let contextPath = this.$getContextPath();
                 config.readRuntimeConfig(contextPath).catch(err => {
+
                 }).then(runtimeConfig => {
                     service.init(runtimeConfig.configServerUrl);    //初始化请求到的地址
+                //service.getMetaViewDef(viewId, setData).catch(err => {
+                service.getMetaEntity(entityId).catch(err => {
+                }).then(metaEntityConfigInfo => {    //获取视图配置的一些信息
+                    //存储起来，以便后续发请求使用
+                    _this.metaEntityConfigInfo = metaEntityConfigInfo;
+                let params = {};
+                params.filters = "onDutyPersonId eq " + _this.onDutyPersonId + " and isOnDuty eq 1"
+                service.getEngineUrl(_this.metaEntityConfigInfo.project.id).then(engineUrl => {
+                    //存储起来，以便后续发请求使用
+                    _this.engineUrl = engineUrl;
+                ajax.get(`${engineUrl }/${_this.metaEntityConfigInfo.name.toLowerCase()}`, params).then(res => { //需要拼接上实体名
+                    if ((_.isArray(res.data)&&(res.data.length==0))||res.data.id) { //无数据说明没有值班，有数据说明值班中
+                    _this.startVal = true;
+                } else { //有数据 获取数据的开始值班时间startTime 然后获取当前的时间 计算出时间
+                    var _data;
+                    if(_.isArray(res.data)){
+                        _data = res.data[0];
+                    }else{
+                        _data = res.data;
+                    }
+                    _this.dutyId = _data.id
+                    let begindutyTime = _data.startTime //开始值班的时间
+                    //_this.begintime = Utils.realTime(new Date(begindutyTime).getTime());//转换成时间戳
+                    _this.currentTime = Utils.realTime(new Date(begindutyTime).getTime());
 
-                    service.getMetaViewDef(viewId, setData).catch(err => {
-                    }).then(viewConfigInfo => {    //获取视图配置的一些信息
-                        //存储起来，以便后续发请求使用
-                        _this.viewConfigInfo = viewConfigInfo;
-                        let params = {};
-                        params.filters = "onDutyPersonId eq " + _this.onDutyPersonId + " and isOnDuty eq 1"
-                        service.getEngineUrl(_this.viewConfigInfo.projectId).then(engineUrl => {
-                            //存储起来，以便后续发请求使用
-                            _this.engineUrl = engineUrl;
-                            ajax.get(`${engineUrl }/${_this.viewConfigInfo.metaEntityName.toLowerCase()}`, params).then(res => { //需要拼接上实体名
-                                if ((_.isArray(res.data)&&(res.data.length==0))||res.data.id) { //无数据说明没有值班，有数据说明值班中
-                                    _this.startVal = true;
-                                } else { //有数据 获取数据的开始值班时间startTime 然后获取当前的时间 计算出时间
-                                    var _data;
-                                    if(_.isArray(res.data)){
-                                        _data = res.data[0];
-                                    }else{
-                                        _data = res.data;
-                                    }
-                                    _this.dutyId = _data.id
-                                    let begindutyTime = _data.startTime //开始值班的时间
-                                    //_this.begintime = Utils.realTime(new Date(begindutyTime).getTime());//转换成时间戳
-                                     _this.currentTime = Utils.realTime(new Date(begindutyTime).getTime());
+                    /*function starting() {
+                     var curtime = Utils.realTime(new Date().getTime()); //当前的时间
+                     var timerdif = curtime - _this.begintime; //时间差（时间戳）
 
-                                    /*function starting() {
-                                        var curtime = Utils.realTime(new Date().getTime()); //当前的时间
-                                        var timerdif = curtime - _this.begintime; //时间差（时间戳）
+                     //转换成时分秒
+                     _this.hour = parseInt((timerdif % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                     _this.min = parseInt((timerdif % (1000 * 60 * 60)) / (1000 * 60));
+                     var seconds = parseInt((timerdif % (1000 * 60)) / 1000);
+                     _this.ondutytime = (this.hour?(this.hour + '小时:'):'') + (this.min?(this.min + '分钟:'):'') + seconds + '秒'
+                     }*/
 
-                                        //转换成时分秒
-                                        _this.hour = parseInt((timerdif % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                                        _this.min = parseInt((timerdif % (1000 * 60 * 60)) / (1000 * 60));
-                                        var seconds = parseInt((timerdif % (1000 * 60)) / 1000);
-                                        _this.ondutytime = (this.hour?(this.hour + '小时:'):'') + (this.min?(this.min + '分钟:'):'') + seconds + '秒'
-                                    }*/
-
-                                    _this.getServiceTime().then(res=>{
-                                        //循环计时
-                                        _this.serviceTime = res.data;
-                                        _this.timer = setInterval(this.computtime, 1000);
-                                    })
-
-
-                                    //更改样式
-                                    _this.startVal = false;
-                                    _this.endVal = true;
-                                }
-                            });
-                        });
-                    })
+                    _this.getServiceTime().then(res=>{
+                        //循环计时
+                        _this.serviceTime = res.data;
+                    _this.timer = setInterval(this.computtime, 1000);
                 })
+
+
+                    //更改样式
+                    _this.startVal = false;
+                    _this.endVal = true;
+                }
+            });
+            });
+            })
+            })
 
             },
             computtime: function () {    //计算时长(当前的时间 - 开始值班的时间)
@@ -218,12 +220,12 @@
                 this.min = parseInt((timelength % (1000 * 60 * 60)) / (1000 * 60));
                 var seconds = parseInt((timelength % (1000 * 60)) / 1000);
                 /*if (seconds === 0) {
-                    this.min += 1;
-                }
-                if (this.min > 59) {
-                    this.hour += 1;
-                    this.min = 0;
-                }*/
+                 this.min += 1;
+                 }
+                 if (this.min > 59) {
+                 this.hour += 1;
+                 this.min = 0;
+                 }*/
                 this.ondutytime = (this.hour?(this.hour + '小时'):'') + (this.min?(this.min + '分'):'') + (seconds?(seconds + '秒'):"");
             },
             timeformat: function (curtime) { //参数为时间戳 转换时间格式为：“2018-11-17 13:58:02”
@@ -251,7 +253,7 @@
         mounted() {
             globalEvent.addEventListener("androidback", e => {
                 this.$pop();
-            });
+        });
         },
         beforeMount() {
             let _this = this;
@@ -261,8 +263,8 @@
                 _this.getDutyInfo();
             });
         },
-        created() {
-
+        created(){
+            factoryApi.init(this);//初始化全局api的指向
         },
         destroyed() {
             //当跳转到其他页面的时候，要在生命周期的destroyed里清空this.timerID
@@ -295,8 +297,8 @@
         margin-bottom: 25px;
     }
     .tips {
-      justify-content: center;
-          align-items: center;
+        justify-content: center;
+        align-items: center;
     }
 
     .timetips {

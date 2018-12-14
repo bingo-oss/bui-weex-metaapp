@@ -74,7 +74,7 @@
 
 
     const linkapi = require('linkapi');
-    const buiweex = require('bui-weex');
+    import buiweex from "bui-weex";
 
     const globalEvent = weex.requireModule('globalEvent');
 

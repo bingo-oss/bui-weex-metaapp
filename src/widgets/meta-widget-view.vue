@@ -755,6 +755,7 @@ module.exports = {
         }
     },
     created(){
+        factoryApi.init(this);//初始化全局api的指向
         if(this.widgetParams.views){
             let contextPath = this.$getContextPath(),
                 _views = this.widgetParams.views, _getMetaViewDefNumber = 0,_t = this,
