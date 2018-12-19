@@ -29,17 +29,22 @@ var utils={
         //operation.widgetContext = _widgetCtx;
         factoryApi.init(_this);
         return new Promise(function(resolve, reject) {
-            let value=true;
-            if(operation[before_after]) {
-                if (_.isFunction(operation[before_after])) {
-                    operation[before_after](_widgetCtx,factoryApi,resolve)
-                } else {
-                    var onclick=Function('"use strict";return ' + operation[before_after]  )();
-                    onclick(_widgetCtx,factoryApi,resolve);
-                }
-                //resolve(value);
+            if(!operation.hasPermission&&operation.securityControllTypes&&operation.securityControllTypes==2){
+                //无权时-不能点击
+                resolve(false)
             }else{
-                resolve(value);
+                let value=true;
+                if(operation[before_after]) {
+                    if (_.isFunction(operation[before_after])) {
+                        operation[before_after](_widgetCtx,factoryApi,resolve)
+                    } else {
+                        var onclick=Function('"use strict";return ' + operation[before_after]  )();
+                        onclick(_widgetCtx,factoryApi,resolve);
+                    }
+                    //resolve(value);
+                }else{
+                    resolve(value);
+                }
             }
         });
     },
@@ -143,17 +148,22 @@ var utils={
             }
         }*/
         return new Promise(function(resolve, reject) {
-            let value=true;
-            if(operation.checkFunc) {
-                if (_.isFunction(operation.checkFunc)) {
-                    operation.checkFunc(operation,factoryApi,resolve);
+            if(!operation.hasPermission&&operation.securityControllTypes&&operation.securityControllTypes==1){
+                //无权时-隐藏
+                resolve(false)
+            }else {
+                let value = true;
+                if (operation.checkFunc) {
+                    if (_.isFunction(operation.checkFunc)) {
+                        operation.checkFunc(operation, factoryApi, resolve);
+                    } else {
+                        var onclick = Function('"use strict";return ' + operation.checkFunc)();
+                        onclick(operation, factoryApi, resolve);
+                    }
+                    //resolve(value);
                 } else {
-                    var onclick = Function('"use strict";return ' + operation.checkFunc)();
-                    onclick(operation,factoryApi,resolve);
+                    resolve(value);
                 }
-                //resolve(value);
-            }else{
-                resolve(value);
             }
         });
     },
