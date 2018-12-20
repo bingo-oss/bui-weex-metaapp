@@ -536,6 +536,7 @@
                     "form": this,
                     "model":this,
                     "metaEntity": this.metaEntity,
+                    "metaEntityId" : this.metaEntity.metaEntityId,
                     "selectedId": this.result.id,
                     "selectedItem": this.result,
                     "widgetParams" : this.widgetParams//部件参数

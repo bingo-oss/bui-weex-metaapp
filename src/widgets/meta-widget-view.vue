@@ -742,8 +742,12 @@ module.exports = {
                 _obj.selectedId = _t.selectedItem.id;
                 _obj.selectedItem = _t.selectedItem;//选择的数据对象
             }
-          _obj.model = this//模型自身
-              _obj.widgetParams = _t.widgetParams;//部件参数
+            if(_t.metaEntity){
+                _obj.metaEntity = _t.metaEntity;
+                _obj.metaEntityId = _t.metaEntity.metaEntityId;
+            }
+            _obj.model = this//模型自身
+             _obj.widgetParams = _t.widgetParams;//部件参数
             return _obj;
         },
         reload(){
