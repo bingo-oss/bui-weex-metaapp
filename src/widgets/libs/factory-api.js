@@ -78,7 +78,7 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
     },
     submit(arry){
         //检测全局部件提交表单方法
-        let _submNumber = factoryApi.submitPromise(_this,arry)
+        let _submNumber = factoryApi.submitPromise(_this,arry,"submit")
         return new Promise(function(resolve, reject){
             let formData = [];
             if(_submNumber.length){
