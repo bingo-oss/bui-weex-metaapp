@@ -693,7 +693,8 @@ module.exports = {
                         this.entityName = viewDef.metaEntityName;
                         this.entityId = viewDef.metaEntityId;
                         // 转成小写，否则不认
-                        this.dataUrlPath = `${engineUrl}/${viewDef.metaEntityName.toLowerCase()}`;
+                        this.dataUrlPath = `${engineUrl}/${metabase.lowerUnderscore(viewDef.metaEntityName)}`;
+                        this.metaEntity.resourceUrl = this.dataUrlPath;//引擎地址
                         this.queryParam = params;
                         service.getSwaggerEntityDef(engineUrl, this.entityName).then(entityDef => {
                             // 对于实体类型的字段，这里构造其 entityResourceUrl，参考以下 swagger.json 片段

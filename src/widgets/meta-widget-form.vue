@@ -706,7 +706,7 @@
             return service.getMetaFormDef(formId,setData).then(formDef => {
                 this.data = formDef;
             this.metaForm = formDef;//用于暴露表单定义
-            this.entityName = formDef.metaEntityName.toLowerCase();
+            this.entityName = metabase.lowerUnderscore(formDef.metaEntityName)//formDef.metaEntityName.toLowerCase();
             metabase.initMetabase(formDef.projectId,true).then(ddd=>{
                 this.metaEntity = metabase.findMetaEntity(formDef.metaEntityName);
                 this.metaEntity.metaEntityId = formDef.metaEntityId;//存入实体id
@@ -714,6 +714,7 @@
 
             return service.getEngineUrl(formDef.projectId).then(engineUrl => {
                 this.engineUrl = engineUrl;
+                this.metaEntity.resourceUrl = `${engineUrl}/${this.entityName}`//存储引擎地址
                 if (!this.entityId) {
                     // 在非编辑实体的情况下，才fetch defaultValues
                     this.data.layout.forEach(o => {
