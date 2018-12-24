@@ -189,7 +189,7 @@ var utils={
                 operation= _.extend(operation,commonOpt);
                 operation.onclick(_widgetCtx,factoryApi);
             }
-        }else if(operation.onClick){//脚本操作
+        }else if(operation.onClick&&operation.operationType=="script"){//脚本操作
             utils.execution(operation,_widgetCtx,"beforeExecCode",_t).then((res)=>{
                 if(_.isFunction(operation.onclick)){
                     operation.onClick(_widgetCtx,factoryApi);
