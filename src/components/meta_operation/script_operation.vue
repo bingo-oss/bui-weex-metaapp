@@ -58,33 +58,10 @@ export default {
         var _widgetCtx = Object.assign(this.widgetContext, {
           buttonInfo: this.operation
         });
-        OperationUtils.execution(
-          this.operation,
-          _widgetCtx,
-          "beforeExecCode",this
-        ).then(res => {
-          if (_.isFunction(this.operation.onClick)) {
-            this.mustStopRepeatedClick = true;
-            this.operation.onClick(
-              Object.assign(this.widgetContext, { buttonInfo: this.operation }),
-              factoryApi
-            );
-          } else {
-            this.mustStopRepeatedClick = true;
-            var onclick = Function(
-              '"use strict";return ' + this.operation.onClick
-            )();
-            onclick(
-              Object.assign(this.widgetContext, { buttonInfo: this.operation }),
-              factoryApi
-            );
-          }
-          this.mustStopRepeatedClick = false;
-          this.$emit("triggered", "script");
-          OperationUtils.execution(this.operation, _widgetCtx, "afterExecCode",this); //执行后
-        });
+        this.mustStopRepeatedClick = true;
+        _t.cellExecScript();
       } else {
-        if (_t.implCode) {
+        if (this.operation.onClick) {
           _t.cellExecScript();
         } else {
           //获取执行代码
@@ -93,7 +70,7 @@ export default {
               runtimeConfig["service.metabase.endpoint"] +
                 `/meta_operation/${_t.operation.operationId}`
             ).then(({ data }) => {
-              _t.implCode = data.implCode;
+              this.operation.onClick = data.implCode;
               _t.cellExecScript();
             });
           });
@@ -109,13 +86,18 @@ export default {
         _widgetCtx,
         "beforeExecCode",this
       ).then(res => {
-        if (_.isFunction(this.implCode)) {
-          this.mustStopRepeatedClick = true;
-          this.implCode(_widgetCtx, factoryApi);
-        } else {
-          this.mustStopRepeatedClick = true;
-          var onclick = Function('"use strict";return ' + this.implCode)();
-          onclick(_widgetCtx, factoryApi);
+        var fun = this.operation.onClick;
+        try{
+          if (_.isFunction(fun)) {
+            this.mustStopRepeatedClick = true;
+            fun(_widgetCtx, factoryApi);
+          } else {
+            this.mustStopRepeatedClick = true;
+            var onclick = Function('"use strict";return ' + fun)();
+            onclick(_widgetCtx, factoryApi);
+          }
+        }catch (e){
+          this.$toast("脚本语法有误");
         }
         this.mustStopRepeatedClick = false;
         this.$emit("triggered", "script");
