@@ -395,5 +395,6 @@ export default{
           return;
       }
       router.params["entityName"]=entityName;
-    }
+    },
+  lowerUnderscore:lowerUnderscore
 }

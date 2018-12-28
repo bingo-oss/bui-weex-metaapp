@@ -549,6 +549,8 @@ module.exports = {
                         params.filters = filtersParts.join('and');
                         params.total=true;
                         service.getEngineUrl(viewDef.projectId).then(engineUrl => {
+                            var a = `${engineUrl}/${viewDef.metaEntityName.toLowerCase()}`;
+            debugger
                                 ajax.get(`${engineUrl}/${viewDef.metaEntityName.toLowerCase()}`, params).then(resp => {
                                     this.presetFilters[_index].count = (resp.headers["X-Total-Count"]>0)?`(${resp.headers["X-Total-Count"]})`:"";//对应标签的总数
 
@@ -684,8 +686,9 @@ module.exports = {
 
                     metabase.initMetabase(viewDef.projectId,true).then(ddd=>{
                         var mentity=metabase.findMetaEntity(viewDef.metaEntityName/*'Activity'*/);
-                        this.metaEntity = mentity
-                        this.metaEntity.metaEntityId = viewDef.metaEntityId
+                        this.metaEntity = mentity;
+                        this.metaEntity.metaEntityId = viewDef.metaEntityId;
+                        this.metaEntity.resourceUrl = this.dataUrlPath;//引擎地址
                     });
 
                     service.getEngineUrl(viewDef.projectId).then((engineUrl)=>{
@@ -694,7 +697,6 @@ module.exports = {
                         this.entityId = viewDef.metaEntityId;
                         // 转成小写，否则不认
                         this.dataUrlPath = `${engineUrl}/${metabase.lowerUnderscore(viewDef.metaEntityName)}`;
-                        this.metaEntity.resourceUrl = this.dataUrlPath;//引擎地址
                         this.queryParam = params;
                         service.getSwaggerEntityDef(engineUrl, this.entityName).then(entityDef => {
                             // 对于实体类型的字段，这里构造其 entityResourceUrl，参考以下 swagger.json 片段
@@ -760,7 +762,6 @@ module.exports = {
         }
     },
     created(){
-        factoryApi.init(this);//初始化全局api的指向
         if(this.widgetParams.views){
             let contextPath = this.$getContextPath(),
                 _views = this.widgetParams.views, _getMetaViewDefNumber = 0,_t = this,
@@ -768,6 +769,7 @@ module.exports = {
                         //this.$alert(err);
                         //this.$toast('读取运行时配置失败');
                 }).then(runtimeConfig => {
+                        factoryApi.init(_t);//初始化全局api的指向
                         service.init(runtimeConfig.configServerUrl);
                         _t.presetFilters = _views;
                         _t.selectedFilter = _views[0];
