@@ -150,6 +150,9 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
     },
     post(params){
         return new Promise((resolve, reject) => {
+            if(_.isString(params.data)){
+                params.data = JSON.parse(params.data)
+            }
             ajax.post(params.url, params.data, params.headers).then((res)=>{
                 if(res.ok) {
                     resolve(res.data);
@@ -163,6 +166,9 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
     },
     get(params){
         return new Promise((resolve, reject) => {
+            if(_.isString(params.data)){
+                params.data = JSON.parse(params.data)
+            }
             ajax.get(params.url, params.data, params.headers).then((res)=>{
                 if(res.ok){
                     resolve(res.data);
@@ -176,6 +182,9 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
     },
     delete(params){
         return new Promise((resolve, reject) => {
+            if(_.isString(params.data)){
+                params.data = JSON.parse(params.data)
+            }
             ajax.delete(params.url, params.data).then((res)=>{
                 if(res.ok){
                     resolve(res.data);
@@ -189,6 +198,9 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
     },
     patch(params){
         return new Promise((resolve, reject) => {
+            if(_.isString(params.data)){
+                params.data = JSON.parse(params.data)
+            }
             ajax.patch(params.url, params.data).then((res)=>{
                 if(res.ok){
                     resolve(res.data);

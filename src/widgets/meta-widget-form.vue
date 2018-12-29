@@ -710,11 +710,12 @@
             metabase.initMetabase(formDef.projectId,true).then(ddd=>{
                 this.metaEntity = metabase.findMetaEntity(formDef.metaEntityName);
                 this.metaEntity.metaEntityId = formDef.metaEntityId;//存入实体id
+                this.metaEntity.resourceUrl = `${this.engineUrl}/${metabase.lowerUnderscore(this.entityName)}`//存储引擎地址
             })
 
             return service.getEngineUrl(formDef.projectId).then(engineUrl => {
                 this.engineUrl = engineUrl;
-                this.metaEntity.resourceUrl = `${engineUrl}/${this.entityName}`//存储引擎地址
+                //this.metaEntity.resourceUrl = `${engineUrl}/${this.entityName}`//存储引擎地址
                 if (!this.entityId) {
                     // 在非编辑实体的情况下，才fetch defaultValues
                     this.data.layout.forEach(o => {
