@@ -22,10 +22,10 @@
         <bui-tabbar :titleSize="30" v-if="widgetParams.isViewMode&&(presetFilters.length>1)" :tabItems="presetFilters" showSelectedLine=true @change="onItemChange" v-model="currentTab" :background="'#fff'" :selectedBackground="'#fff'" :containerStyle="{'border-bottom-color': '#F2F2F2','border-bottom-width': '1px','border-bottom-style':'solid'}" ></bui-tabbar>
 
         <list class="scroller">
-            <refresh-wrapper @refresh="onrefresh" :isRefreshing="isRefreshing"></refresh-wrapper>
+            <refresh-wrapper @refresh="obuiSwipeCellHeightnrefresh" :isRefreshing="isRefreshing"></refresh-wrapper>
 
             <cell v-for="(o, index) in listData" :key="index">
-                <bui-swipe-cell
+                <bui-swipe-cell :height="buiSwipeCellHeight"
                     @click="rowSingleClick(o)"
                     @swipeleft="cellSwiped(o.id)"
                     :ref="o.id"
@@ -664,9 +664,9 @@ module.exports = {
                     fields.add(this.p3);
                     fields.add(this.p4);
                     fields.add(this.p5);
-                    /*if(!this.p4&&!this.p5){
+                    if(!this.p4&&!this.p5){
                         this.buiSwipeCellHeight = "150"
-                    }*/
+                    }
                     //params.select = Array.from(fields).join(',');
                     // 排序
                     if (viewDef.config.orderby) {
