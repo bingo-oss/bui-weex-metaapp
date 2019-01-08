@@ -534,7 +534,7 @@ module.exports = {
                             filters: viewDef.config.filters, // 过滤
                         };
                         // 排序
-                        if (viewDef.config.orderby) {
+                        if (viewDef.config.orderby&&viewDef.config.orderby.length) {
                             params.orderby = viewDef.config.orderby.map(o => `${o.name} ${o.type}`).join(',')
                         }
                         if(_selectedFilter.filterId){
@@ -550,7 +550,6 @@ module.exports = {
                         params.total=true;
                         service.getEngineUrl(viewDef.projectId).then(engineUrl => {
                             var a = `${engineUrl}/${viewDef.metaEntityName.toLowerCase()}`;
-            debugger
                                 ajax.get(`${engineUrl}/${viewDef.metaEntityName.toLowerCase()}`, params).then(resp => {
                                     this.presetFilters[_index].count = (resp.headers["X-Total-Count"]>0)?`(${resp.headers["X-Total-Count"]})`:"";//对应标签的总数
 
@@ -627,7 +626,10 @@ module.exports = {
                     fields.add('id'); // id 是一定要获取的，否则删改操作都无法进行
                     viewDef.viewFields.forEach(col => {
                         fields.add(col.fieldName)
-                        if (col.quicksearchable) {
+                        /*if (col.quicksearchable) {
+                            this.quickSearchableField.push(col.fieldName);
+                        }*/
+                        if (col.key) {
                             this.quickSearchableField.push(col.fieldName);
                         }
                         if(col.searchable){
@@ -762,6 +764,13 @@ module.exports = {
         }
     },
     created(){
+        //读取部件参数的设置
+        this.pageSize  = this.widgetParams.pageSize||10;//设置的页数
+
+        if(!this.widgetParams.pager){
+            this.isloadingHide = true;
+        }//是否显示分页
+
         if(this.widgetParams.views){
             let contextPath = this.$getContextPath(),
                 _views = this.widgetParams.views, _getMetaViewDefNumber = 0,_t = this,
