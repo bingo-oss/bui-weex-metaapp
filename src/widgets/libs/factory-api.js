@@ -150,9 +150,11 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
     },
     post(params){
         return new Promise((resolve, reject) => {
-            if(_.isString(params.data)){
-                params.data = JSON.parse(params.data)
-            }
+            try{
+                if(_.isString(params.data)){
+                    params.data = JSON.parse(params.data)
+                }
+            }catch(e){}
             ajax.post(params.url, params.data, params.headers).then((res)=>{
                 if(res.ok) {
                     resolve(res.data);
@@ -166,9 +168,11 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
     },
     get(params){
         return new Promise((resolve, reject) => {
-            if(_.isString(params.data)){
-                params.data = JSON.parse(params.data)
-            }
+            try{
+                if(_.isString(params.data)){
+                    params.data = JSON.parse(params.data)
+                }
+            }catch(e){}
             ajax.get(params.url, params.data, params.headers).then((res)=>{
                 if(res.ok){
                     resolve(res.data);
@@ -182,9 +186,11 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
     },
     delete(params){
         return new Promise((resolve, reject) => {
-            if(_.isString(params.data)){
-                params.data = JSON.parse(params.data)
-            }
+            try{
+                if(_.isString(params.data)){
+                    params.data = JSON.parse(params.data)
+                }
+            }catch(e){}
             ajax.delete(params.url, params.data).then((res)=>{
                 if(res.ok){
                     resolve(res.data);
@@ -198,9 +204,11 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
     },
     patch(params){
         return new Promise((resolve, reject) => {
-            if(_.isString(params.data)){
-                params.data = JSON.parse(params.data)
-            }
+            try{
+                if(_.isString(params.data)){
+                    params.data = JSON.parse(params.data)
+                }
+            }catch(e){}
             ajax.patch(params.url, params.data).then((res)=>{
                 if(res.ok){
                     resolve(res.data);
