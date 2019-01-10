@@ -14,7 +14,7 @@
       </slot>
     </div>
 
-    <!--    <div bubble="true" class="full-column" v-if="!operation.isPopup">
+    <!--    <div bubble="true" class="full-column" v-if="!operation.openType">
         &lt;!&ndash;<bui-popup pos="top" v-model="popupWidgetModal" :height="modalHeight" :width="modalWidth">
             <meta-widget-page class="full-column" ref="page" :query="pageParams" :widget-params="pageParams"></meta-widget-page>
         </bui-popup>&ndash;&gt;
@@ -31,7 +31,7 @@
             <meta-widget-page v-if="pageShow" ref="page" :query="pageParams" :widget-params="pageParams" :vue-modal="this"></meta-widget-page>
         </div>
 
-        <div @click="toggleModal" class="full-column" v-if="operation.isPopup">
+        <div @click="toggleModal" class="full-column" v-if="operation.openType">
             <slot>
                 <meta-opt-btn :btn-type="btnType" :operation="operation"></meta-opt-btn>
             </slot>
@@ -68,10 +68,19 @@ export default {
     if (!this.operation.pageId) {
       //this.$toast("page参数缺失");
     }
+
+    if(this.operation.displayRegion){
+      if(typeof this.operation.displayRegion=="string"){
+        this.operation.displayRegion = JSON.parse(this.operation.displayRegion)
+      }
+      this.operation.modalWidth = this.operation.displayRegion.width;
+      this.operation.modalHeight = this.operation.displayRegion.height;
+    }
+
     return {
       modalWidth: this.operation.modalWidth || 750,
       modalHeight: this.operation.modalHeight || 840,
-      modalTitle: this.operation.modalTitle,
+      modalTitle: this.operation.title,
       popupWidgetModal: false,
       pageShow: true,
       pageParams: {}
@@ -144,6 +153,7 @@ export default {
         /*this.webUrl = Utils.pageEntry()+"?pageId="+this.pageParams.pageId+"&dataId="+this.pageParams.dataId+"&entity="+this.pageParams.entity;*/
         /*this.$refs
          */
+
         this.popupWidgetModal = !this.popupWidgetModal;
         this.$emit("triggered", "popup");
         this.pageShow = true;

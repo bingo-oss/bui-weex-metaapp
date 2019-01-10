@@ -2,7 +2,13 @@
     <div class="full-column" v-if="pageConfig" >
         <scroller class="full-column" style="background-color:#F8F8F8" @scroll="scrollHandler">
             <div :style="scrollerStyle">
-                <component v-for="(widget,index) in pageConfig.columnWidgets" :is="widget.tagName" ref="childWidgets" :key="index" :widget-params="widget.params" :vue-modal="vueModal" :tag-name="widget.tagName" :widget-name="widget.widgetName"></component>
+                <template v-for="(widget,index) in pageConfig.columnWidgets" :style="{
+                    width:widget.frame.width+'px',
+                    'margin':widget.frame.margin+'px'
+                    }">
+                    <text v-if="widget.frame&&widget.frame.isFrame&&widget.frame.title" class="frame_name">{{widget.frame.title}}</text>
+                    <component :style="{height:(widget.frame.height?widget.frame.height+'px':'')}" :is="widget.tagName" ref="childWidgets" :key="index" :widget-params="widget.params" :vue-modal="vueModal" :tag-name="widget.tagName" :widget-name="widget.widgetName"></component>
+                </template>
             </div>
             <!--<div class="full-column" v-for="(col,colIndex) in pageConfig.style.columns" :key="colIndex">
                 <component class="full-column" v-for="(widget,index) in pageConfig.widgets[colIndex]" @appear="appear(widget,index)" @disappear="disappear(widget,index)" ref="childWidgets" :is="widget.tagName" :key="index" :widget-params="widget.params" :vue-modal="vueModal" :tag-name="widget.tagName" :widget-name="widget.widgetName"></component>
@@ -50,6 +56,7 @@
                 dom:dom,//方便其他部件调用滚动
                 urlParam:{},//存储的页面参数
                 scrollerStyle:{"flex":1,height:scrollerHeight},//ios的scroller标签内的flex不生效-需要做个兼容
+                frameStyle:{},//窗口样式
                 widgetsInfo:[]//用于存入出现过的部件信息（高度）
             };
         },
@@ -93,19 +100,31 @@
                     //遍历每一列的所有部件
                     _.each(columnWidgets,function(w){
                         var props={},operations={};
+                        //设置默认值
+                        w.frame  = {
+                            isFrame:false,
+                            title:"",//名称
+                            height:"",//高度
+                            width:"",//宽度
+                            margin:0//外边距
+                        };
                         if(pageConfig.widgetParams&&pageConfig.widgetParams.length&&w.widgetParamId){
                             //存在对应部件参数的数据
                             pageConfig.widgetParams.filter((obj)=>{
                                 if(w.widgetParamId==obj.id){
-                                //读取对应的部件参数进行设置
-                                props = obj.params;
-                                //操作
-                                _.each(obj.buttons,(e)=>{
-                                    if(!operations[e.location]){
-                                        operations[e.location] = [];//不存在操作区域则声明
-                                    }
-                                    operations[e.location].push(e)
-                                })
+                                    //读取对应的部件参数进行设置
+                                    props = obj.params;
+                                    //操作
+                                    _.each(obj.buttons,(e)=>{
+                                        if(!operations[e.location]){
+                                            operations[e.location] = [];//不存在操作区域则声明
+                                        }
+                                        operations[e.location].push(e)
+                                    });
+                                    //部件窗体信息
+                                    if(obj.frame){
+                                        Object.assign(w.frame,obj.frame);
+                                    };
                                 }
                             });
                         }else{
@@ -225,3 +244,6 @@
     }
 </script>
 <style src="../styles/common.css"></style>
+<style lang="sass" scoped>
+    .frame_name{ padding:15px; background-color: #f1f1f1; font-size: 26px;}
+</style>
