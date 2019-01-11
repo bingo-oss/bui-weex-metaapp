@@ -678,7 +678,7 @@
     import loading from '../../components/common/bui-loading.vue'
     import dialog from '../../components/common/dialog.vue'
     import buiweex from "bui-weex"
-    import factoryApi from '../libs/factory-api.js';
+    import factoryApp from '../libs/factory-app.js';
     import popupmenu from './components/bui-popupmenu.vue'
     import service from './js/service'
     import _ from '../../js/tool/lodash';
@@ -1061,7 +1061,7 @@
                 this.showDialog = true;
             },
             deleteBlogForAdmin(item){
-                factoryApi.startLoading(this);//显示加载圈
+                factoryApp.startLoading(this);//显示加载圈
                 //this.isShowLoading = true;
                 let datas = {
                     blogId: item.blogInfo.blogId,
@@ -1073,7 +1073,7 @@
                     data: Util.toHttpRequestParams(datas)
                 }
                 linkapi.post(params).then((result) => {
-                    factoryApi.stopLoading(this);//关闭加载圈
+                    factoryApp.stopLoading(this);//关闭加载圈
                 //this.isShowLoading = false;
                     if (result.s == 1) {
                         this.$toast("删除成功");
@@ -1083,19 +1083,19 @@
                         this.$toast(result.m);
                     }
                 }).catch((error)=> {
-                    factoryApi.stopLoading(this);//关闭加载圈
+                    factoryApp.stopLoading(this);//关闭加载圈
                 //this.isShowLoading = false;
                     //this.$toast(Util.handleException(error));
                 });
             },
             deleteBlog(item){
-                factoryApi.startLoading(this);//显示加载圈
+                factoryApp.startLoading(this);//显示加载圈
                 //this.isShowLoading = true;
                 let params = {
                     url: Config.serverConfig.blogApi + '/v1/info?blogId=' + item.blogInfo.blogId,
                 }
                 linkapi.delete(params).then((result) => {
-                    factoryApi.stopLoading(this);//关闭加载圈
+                    factoryApp.stopLoading(this);//关闭加载圈
                 //this.isShowLoading = false;
                     if (result.code == 200) {
                         this.$toast("删除成功");
@@ -1105,7 +1105,7 @@
                         this.$toast(result.message);
                     }
                 }).catch((error)=> {
-                    factoryApi.stopLoading(this);//关闭加载圈
+                    factoryApp.stopLoading(this);//关闭加载圈
                 //this.isShowLoading = false;
                     //this.$toast(Util.handleException(error));
                 });
@@ -1371,7 +1371,7 @@
                             this.blogList = datas;
                         }
                     }
-                    factoryApi.stopLoading(this);//关闭加载圈
+                    factoryApp.stopLoading(this);//关闭加载圈
                 }, error=> {
                 })
             },*/
@@ -1386,7 +1386,7 @@
             initData(type){//获取动态数据 type1 刷新数据 type2加载更多
                 this.isShowEmpty = false;
                 if (Util.isEmpty(this.info) || Util.isEmpty(this.info.entityId)) {
-                    factoryApi.stopLoading(this);//关闭加载圈
+                    factoryApp.stopLoading(this);//关闭加载圈
                     //this.isShowLoading = false;
                     return;
                 }
@@ -1427,7 +1427,7 @@
                     }
                 }
                 linkapi.get(params).then((result) => {
-                    factoryApi.stopLoading(this);//关闭加载圈
+                    factoryApp.stopLoading(this);//关闭加载圈
                 //this.isShowLoading = false;
                     if (result.code == 200) {
                         if (result.labelStyle != null && JSON.stringify(result.labelStyle) != "{}") {
@@ -1465,7 +1465,7 @@
                         this.$toast(result.message);
                     }
                 }).catch((error)=> {
-                    factoryApi.stopLoading(this);//关闭加载圈
+                    factoryApp.stopLoading(this);//关闭加载圈
                 //this.isShowLoading = false;
                     this.refreshing = false;
                     this.showLoading = false;
@@ -1520,7 +1520,7 @@
                 if (this.currLabeId != labelId) {
                     this.blogList = []
                 }
-                factoryApi.startLoading(this);//显示加载圈
+                factoryApp.startLoading(this);//显示加载圈
                 //this.isShowLoading = true;
                 this.currLabeId = labelId;
                 //this.info = val;
@@ -1534,7 +1534,7 @@
                 this.blogList = [];
                 this.isSearching = true;
                 //this.isShowLoading = true;
-                factoryApi.startLoading(this);//显示加载圈
+                factoryApp.startLoading(this);//显示加载圈
                 this.initData(1);
             },
             clearFilterData(){
@@ -1906,7 +1906,7 @@
                     url: Config.serverConfig.engineService + '/metaservice/meta_entity/' + this.info.entityId,
                 };
                 linkapi.get(params).then((result) => {
-                    factoryApi.stopLoading(this);//关闭加载圈
+                    factoryApp.stopLoading(this);//关闭加载圈
                 //this.isShowLoading = false;
                     if (result.id) {
                         if(fun){fun(result)}
@@ -1920,7 +1920,7 @@
                         //this.handleCreateMenu();
                     }
                 }).catch((error)=> {
-                    factoryApi.stopLoading(this);//关闭加载圈
+                    factoryApp.stopLoading(this);//关闭加载圈
                     //this.$toast("获取信息失败：" + Util.handleException(error))
                 });
             },
@@ -2005,7 +2005,7 @@
             if (params != null && !Util.isEmpty(params.dataId) && !Util.isEmpty(params.entityId)) {
                 this.info.dataId = params.dataId;
                 this.info.entityId = params.entityId;
-                factoryApi.startLoading(this);//显示加载圈
+                factoryApp.startLoading(this);//显示加载圈
                 _t.getMetaEntity(function(){
                     _t.initData(1);
                     //_t.refreshData();
@@ -2058,7 +2058,7 @@
 
         },
         created(){
-            factoryApi.init(this);//初始化全局api的指向
+            factoryApp.init(this);//初始化全局api的指向
         }
     }
 </script>

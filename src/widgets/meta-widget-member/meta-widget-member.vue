@@ -114,7 +114,7 @@
     import loading from '../../components/common/bui-loading.vue'
     import dialog from '../../components/common/dialog.vue'
     const storage = weex.requireModule('storage');
-    import factoryApi from '../libs/factory-api.js';
+    import factoryApp from '../libs/factory-app.js';
     import service from '../../js/service.js';
     import ajax from '../../js/ajax.js';
 
@@ -376,7 +376,7 @@
                         this.showLoading = false;
                         this.$toast('获取数据失败!');
                     }
-                    factoryApi.stopLoading(this);//关闭加载圈
+                    factoryApp.stopLoading(this);//关闭加载圈
                 }).catch((error, text)=> {
                     this.refreshing = false;
                     this.showLoading = false;
@@ -469,7 +469,7 @@
                 if (Util.isEmpty(userIds)) {
                     return;
                 }
-                factoryApi.startLoading(this);//显示加载圈
+                factoryApp.startLoading(this);//显示加载圈
                 //this.isShowLoading = true;
                 let params = {
                     url: this.externalUrl+(type?"/meta_data_members/setup_admin":"/meta_data_members/deregister_admin"),
@@ -480,7 +480,7 @@
                     })
                 };
                 ajax.patch(params.url,params.data).then((result)=> {
-                    factoryApi.stopLoading(this);//关闭加载圈
+                    factoryApp.stopLoading(this);//关闭加载圈
                     //this.isShowLoading = false;
                     if (result) {
                         this.$toast("操作成功");
@@ -490,7 +490,7 @@
                         this.$toast("操作失败！");
                     }
                 }, error=> {
-                    factoryApi.stopLoading(this);//关闭加载圈
+                    factoryApp.stopLoading(this);//关闭加载圈
                     //this.isShowLoading = false;
                     //this.$toast(Util.handleException(error))
                 });
@@ -499,7 +499,7 @@
                 if (Util.isEmpty(ids)) {
                     return;
                 }
-                factoryApi.startLoading(this);//显示加载圈
+                factoryApp.startLoading(this);//显示加载圈
                 //this.isShowLoading = true;
 /*                let datas = {
                     entityName: this.info.suiteId,
@@ -514,7 +514,7 @@
                     /*data: datas*/
                 };
                 ajax.delete(params.url).then((result)=> {
-                    factoryApi.stopLoading(this);//关闭加载圈
+                    factoryApp.stopLoading(this);//关闭加载圈
                     //this.isShowLoading = false;
                     if (result) {
                         this.$toast("操作成功");
@@ -529,7 +529,7 @@
                         this.$toast("操作失败！");
                     }
                 }, error=> {
-                    factoryApi.stopLoading(this);//关闭加载圈
+                    factoryApp.stopLoading(this);//关闭加载圈
                     //this.isShowLoading = false;
                     //this.$toast(Util.handleException(error))
                 });
@@ -538,7 +538,7 @@
                 if (Util.isEmpty(userId) && Util.isEmpty(orgId) && Util.isEmpty(groupId)) {
                     return
                 }
-                factoryApi.startLoading(this);//显示加载圈
+                factoryApp.startLoading(this);//显示加载圈
                 //this.isShowLoading = true;
                 let params = {
                     url:this.externalUrl + '/meta_data_members',
@@ -555,7 +555,7 @@
                 };
                 ajax.post(params.url,params.data).then((result)=> {
                     result = result.data;
-                    factoryApi.stopLoading(this);//关闭加载圈
+                    factoryApp.stopLoading(this);//关闭加载圈
                     //this.isShowLoading = false;
                     if (result.success) {
                         if (result.data && JSON.stringify(result.data) != "{}" && result.data.existsUserIds) {
@@ -583,7 +583,7 @@
                         this.$toast("操作失败！");
                     }
                 }, error=> {
-                    factoryApi.stopLoading(this);//关闭加载圈
+                    factoryApp.stopLoading(this);//关闭加载圈
                     //this.isShowLoading = false;
                     //this.$toast(Util.handleException(error))
                 });
@@ -609,7 +609,7 @@
                 this.info.dataId = params.dataId;
                 this.info.entityId = params.entityId;
                 //this.initData(1);
-                factoryApi.startLoading(this);//显示加载圈
+                factoryApp.startLoading(this);//显示加载圈
                 service.init(Config.serverConfig.configServerUrl);//初始化请求到的地址
                 service.getEngineUrlMeta(params.entityId).then(res=>{
                     _t.externalUrl = res;
@@ -626,7 +626,7 @@
             });
         },
         created(){
-            factoryApi.init(this);//初始化全局api的指向
+            factoryApp.init(this);//初始化全局api的指向
         }
     }
 </script>

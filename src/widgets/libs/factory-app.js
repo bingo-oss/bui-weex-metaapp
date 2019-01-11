@@ -8,7 +8,7 @@ import Util from '../../js/utils'
 import _ from '../../js/tool/lodash';
 import ajax from '../../js/ajax.js';
 var _this=this;//用于初始化指向
-var factoryApi = Object.assign({},buiweex,linkapi,{
+var factoryApp = Object.assign({},buiweex,linkapi,{
     init(t){
       _this = t;
     },
@@ -57,7 +57,7 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
             _this.refresh()
         }else if(_this.$parent){
             _this = _this.$parent;//转移指向
-            factoryApi.refresh()//寻找父级
+            factoryApp.refresh()//寻找父级
         }
     },
     submitPromise(t,arry,funName){
@@ -67,18 +67,18 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
             arry.push(t[funName]())
         }
         if(t.$parent){
-            //let _arry = factoryApi.submitPromise(t.$parent,arry,funName);
+            //let _arry = factoryApp.submitPromise(t.$parent,arry,funName);
             /*if(_arry.length){
              arry.concat(_arry)//寻找父级
              }*/
-            return factoryApi.submitPromise(t.$parent,arry,funName);
+            return factoryApp.submitPromise(t.$parent,arry,funName);
         }else{
             return arry;
         }
     },
     submit(arry){
         //检测全局部件提交表单方法
-        let _submNumber = factoryApi.submitPromise(_this,arry,"submit")
+        let _submNumber = factoryApp.submitPromise(_this,arry,"submit")
         return new Promise(function(resolve, reject){
             let formData = [];
             if(_submNumber.length){
@@ -99,11 +99,11 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
     },
     formCheck(){
         //检测全局部件表单校验方法
-        return factoryApi.submitPromise(_this,[],"formCheck");
+        return factoryApp.submitPromise(_this,[],"formCheck");
     },
     getData(){
         //检测全局部件获取数据表单数据方法
-        return factoryApi.submitPromise(_this,[],"getData");
+        return factoryApp.submitPromise(_this,[],"getData");
     },
     pageScrollUpdate(){
         //容器的滚动视图更新
@@ -112,7 +112,7 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
             _this.pageScrollUpdate()
         }else if(_this.$parent){
             _this = _this.$parent;//转移指向
-            factoryApi.pageScrollUpdate()//寻找父级
+            factoryApp.pageScrollUpdate()//寻找父级
         }
     },
     startLoading(){
@@ -130,7 +130,7 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
             }//只调用一次
         }else if(_this.$parent){
             _this = _this.$parent;//转移指向
-            factoryApi.startLoading()//寻找父级
+            factoryApp.startLoading()//寻找父级
         }
     },
     stopLoading(){
@@ -145,7 +145,7 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
           }
       }else if(_this.$parent) {
           _this = _this.$parent;//转移指向
-          factoryApi.stopLoading()//寻找父级
+          factoryApp.stopLoading()//寻找父级
       }
     },
     post(params){
@@ -222,4 +222,4 @@ var factoryApi = Object.assign({},buiweex,linkapi,{
     }
 });
 
-export default factoryApi
+export default factoryApp

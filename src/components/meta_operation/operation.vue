@@ -22,7 +22,7 @@ import propParser from "../../js/tool/prop_parser";
 import _ from "../../js/tool/lodash";
 import Utils from "../../js/tool/utils";
 import OperationUtils from "./js/operation_utils";
-import factoryApi from "../../widgets/libs/factory-api.js";
+import factoryApp from "../../widgets/libs/factory-app.js";
 const globalEvent = weex.requireModule("globalEvent");
 //操作类型定义
 var operationType = {

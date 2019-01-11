@@ -233,7 +233,7 @@
     import allComponents from '../components/all-components';
     import metabase from '../js/metadata/metabase.js';
     import Utils from '../js/tool/utils';
-    import factoryApi from './libs/factory-api.js';
+    import factoryApp from './libs/factory-app.js';
 
     Vue.use(allComponents);
     Vue.use(buiweex);
@@ -363,7 +363,7 @@
                     reject();
                     return;
                 }
-                factoryApi.startLoading(this);//显示加载圈
+                factoryApp.startLoading(this);//显示加载圈
                 // 编辑或保存成功后，直接 this.$pop() 返回上一页
                 // https://jira.bingosoft.net/browse/LINKSUITE-413
                 if (this.entityId) {
@@ -373,13 +373,13 @@
                     //嵌入使用时，不弹出提示
                     if(!this.widgetParams.embedded){
                         this.$toast('编辑成功');
-                        factoryApi.stopLoading(this);//关闭加载圈
+                        factoryApp.stopLoading(this);//关闭加载圈
                     }
                 }).catch(err => {
                     reject();
                     //this.$alert(err);
                     this.$toast("已归档,不可操作!")
-                    factoryApi.stopLoading(this);//关闭加载圈
+                    factoryApp.stopLoading(this);//关闭加载圈
                 });
                 } else {
                     // 对于 this.queryParam 里的 query，遇到属于实体字段的 query 要在创建实体时带上
@@ -394,11 +394,11 @@
                         if(!this.widgetParams.embedded){
                             this.$toast('创建成功');
                         }
-                        factoryApi.stopLoading(this);//关闭加载圈
+                        factoryApp.stopLoading(this);//关闭加载圈
                     }).catch(err => {
                         reject();
                         this.$alert(err);
-                        factoryApi.stopLoading(this);//关闭加载圈
+                        factoryApp.stopLoading(this);//关闭加载圈
                     });
                 }
             });
@@ -698,7 +698,7 @@
                 return;
             }*/
             let contextPath = this.$getContextPath();
-            factoryApi.startLoading(this);//显示加载圈
+            factoryApp.startLoading(this);//显示加载圈
             readRuntimeConfigPromise = config.readRuntimeConfig(contextPath).then(runtimeConfig => {
                         service.init(runtimeConfig.configServerUrl)
             console.log('fetch data')
@@ -750,7 +750,7 @@
                         this.permObj = perm.parseBits(data.permVal);
                     })
                 }
-                factoryApi.stopLoading(this);//关闭加载圈
+                factoryApp.stopLoading(this);//关闭加载圈
             })
         });
         });
@@ -761,7 +761,7 @@
              })*/
         },
         created(){
-            factoryApi.init(this);//初始化全局api的指向
+            factoryApp.init(this);//初始化全局api的指向
         }
     }
 </script>

@@ -603,7 +603,7 @@
     import loading from '../../components/common/bui-loading.vue'
     import dialog from '../../components/common/dialog.vue'
     import buiweex from "bui-weex"
-    import factoryApi from '../libs/factory-api.js';
+    import factoryApp from '../libs/factory-app.js';
     import service from './js/service'
     import _ from '../../js/tool/lodash';
     import ajax from '../../js/ajax.js';
@@ -1219,7 +1219,7 @@
                     if (result.code == 200 && result.data.length > 0) {
                         let datas = result.data;
                         let _this = this;
-                        setTimeout(function(){factoryApi.pageScrollUpdate(_this)},300);//需要更新滚动条的设置
+                        setTimeout(function(){factoryApp.pageScrollUpdate(_this)},300);//需要更新滚动条的设置
                         /*let _array = [];
                         for (let item of datas) {
                             if (!this.isExitsBlog(item.blogInfo.blogId) && this.blogList.length > 0) {
@@ -1664,7 +1664,7 @@
             }
         },
         created(){
-            factoryApi.init(this);//初始化全局api的指向
+            factoryApp.init(this);//初始化全局api的指向
         }
     }
 </script>

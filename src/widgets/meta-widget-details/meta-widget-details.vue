@@ -116,7 +116,7 @@
     import _ from '../../js/tool/lodash';
     import buiweex from "bui-weex";
     const globalEvent = weex.requireModule('globalEvent');
-    import factoryApi from "../libs/factory-api";
+    import factoryApp from "../libs/factory-app";
     import linkapi from "linkapi"
     /*
     * 数据获取：通过实体id获取容器地址，拼接参数"数据id"去get
@@ -148,7 +148,7 @@
                 this.personInfo = !this.personInfo;
             },
             getDetailsInfo() {
-                factoryApi.startLoading(this);//显示加载圈
+                factoryApp.startLoading(this);//显示加载圈
                 let _this = this;
                     ajax.get(`${_this.metaEntit.project.engine.externalUrl}/${_this.metaEntit.name}/${_this.widgetParams.dataId}`).then(res => {
                         let cameraId = res.data.cameraId;
@@ -183,7 +183,7 @@
                             /*let originalsrc = _this.comparePic.originalPicture[0].relativePath;
                             _this.comparePic.originalsrc = config.serverConfig.engineService + "/stream?filePath=" + originalsrc*/
                         }
-                        factoryApi.stopLoading(this);//关闭加载圈
+                        factoryApp.stopLoading(this);//关闭加载圈
                         _this.$forceUpdate();//更新下视图
                         if (_this.titleInfo.forewarningStatus == 1) {
                             let params = {};
@@ -201,12 +201,12 @@
                                     _this.$forceUpdate();//更新下视图
                                 }
                                 setTimeout(function(){
-                                    factoryApi.pageScrollUpdate(_this);//需要更新滚动条的设置
+                                    factoryApp.pageScrollUpdate(_this);//需要更新滚动条的设置
                                 },300)
                             });
                         }else{
                             setTimeout(function(){
-                                factoryApi.pageScrollUpdate(_this);//需要更新滚动条的设置
+                                factoryApp.pageScrollUpdate(_this);//需要更新滚动条的设置
                             },300)
                         }
                     })
@@ -246,7 +246,7 @@
             });
         },
         created(){
-            factoryApi.init(this);//初始化全局api的指向
+            factoryApp.init(this);//初始化全局api的指向
         }
 
     }

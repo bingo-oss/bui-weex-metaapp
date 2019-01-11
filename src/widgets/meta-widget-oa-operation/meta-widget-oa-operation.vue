@@ -53,7 +53,7 @@
     import Utils from '../../js/tool/utils';
     import ajax from '../../js/ajax.js';
     const linkapi = require('linkapi');
-    import factoryApi from '../libs/factory-api.js';
+    import factoryApp from '../libs/factory-app.js';
 
     //import xml2js from "xml2js"
     export default {

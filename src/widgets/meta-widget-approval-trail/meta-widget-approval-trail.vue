@@ -53,7 +53,7 @@ import _ from '../../js/tool/lodash.js'
 import service from './js/service';
 import utils from '../../js/tool/utils';
 import buiweex from 'bui-weex';
-import factoryApi from '../libs/factory-api.js';
+import factoryApp from '../libs/factory-app.js';
 
 export default {
     props: {

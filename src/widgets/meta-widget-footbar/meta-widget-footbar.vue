@@ -23,7 +23,7 @@
 </template>
 <script>
     import _ from '../../js/tool/lodash';
-    import factoryApi from '../libs/factory-api.js';
+    import factoryApp from '../libs/factory-app.js';
     import popupmenu from './components/bui-popupmenu.vue'
 
     export default {

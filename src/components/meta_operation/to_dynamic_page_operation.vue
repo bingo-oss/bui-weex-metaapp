@@ -20,7 +20,7 @@ import _ from "../../js/tool/lodash.js";
 import Utils from "../../js/tool/utils";
 import OperationUtils from "./js/operation_utils";
 import linkapi from "linkapi";
-import factoryApi from "../../widgets/libs/factory-api.js";
+import factoryApp from "../../widgets/libs/factory-app.js";
 export default {
   props: {
     widgetContext: {
@@ -46,7 +46,7 @@ export default {
     return {};
   },
   created(){
-    factoryApi.init(this);//初始化变量
+    factoryApp.init(this);//初始化变量
   },
   methods: {
     gotoPage() {
@@ -64,7 +64,7 @@ export default {
           //进行数据解析
           if (_.isFunction(this.operation.dynamicPageFunc)) {
             this.mustStopRepeatedClick = true;
-            pageParams = this.operation.dynamicPageFunc(_widgetCtx, factoryApi);
+            pageParams = this.operation.dynamicPageFunc(_widgetCtx, factoryApp);
           } else {
             var dynamicPageFunc = Function(
               '"use strict";return ' + this.operation.dynamicPageFunc
@@ -72,7 +72,7 @@ export default {
             pageParams = dynamicPageFunc(
               Object.assign(_widgetCtx.operation),
               this,
-              factoryApi
+              factoryApp
             );
           }
           OperationUtils.setUrlParam(this.operation, this); //按钮输入参数处理

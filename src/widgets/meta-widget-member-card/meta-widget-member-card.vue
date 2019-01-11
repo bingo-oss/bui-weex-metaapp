@@ -82,7 +82,7 @@
     import loading from '../../components/common/bui-loading.vue'
     import dialog from '../../components/common/dialog.vue'
     const storage = weex.requireModule('storage');
-    import factoryApi from '../libs/factory-api.js';
+    import factoryApp from '../libs/factory-app.js';
     import ajax from '../../js/ajax.js';
     import buiweex from 'bui-weex';
     import service from '../../js/service.js';
@@ -220,12 +220,12 @@
                             }
                         }
                         let _this = this;
-                        setTimeout(function(){factoryApi.pageScrollUpdate(_this)},300);//需要更新滚动条的设置
+                        setTimeout(function(){factoryApp.pageScrollUpdate(_this)},300);//需要更新滚动条的设置
                     } else {
                         this.$toast('获取数据失败!');
                     }
                 }).catch((error, text)=> {
-                    factoryApi.stopLoading(this);//关闭加载圈
+                    factoryApp.stopLoading(this);//关闭加载圈
                     //this.$toast(Util.handleException(error));
                 });
             },
@@ -338,13 +338,13 @@
                         }
                         this.pageNo = 1;
                         //this.initData(1);
-                        factoryApi.refresh(this);
+                        factoryApp.refresh(this);
                         this.$toast("操作成功");
                     } else {
                         this.$toast("操作失败！");
                     }
                 }, error=> {
-                    factoryApi.stopLoading(this);//关闭加载圈
+                    factoryApp.stopLoading(this);//关闭加载圈
                     //this.isShowLoading = false;
                     //this.$toast(Util.handleException(error))
                 });
@@ -401,7 +401,7 @@
             });//监听应用激活 刷新
         },
         created(){
-            factoryApi.init(this);//初始化全局api的指向
+            factoryApp.init(this);//初始化全局api的指向
         }
     }
 </script>

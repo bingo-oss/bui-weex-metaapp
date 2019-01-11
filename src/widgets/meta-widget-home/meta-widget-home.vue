@@ -475,7 +475,7 @@ import buiweex from "bui-weex";
 import _ from "../../js/tool/lodash";
 import Utils from "../../js/tool/utils";
 import service from "../../js/service.js";
-import factoryApi from "../libs/factory-api.js";
+import factoryApp from "../libs/factory-app.js";
 import widgetService from "./js/service.js";
 
 module.exports = {

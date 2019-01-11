@@ -6,7 +6,7 @@
 <style lang="css"></style>
 <script>
     import EventBus from '../../js/bus';
-    import factoryApi from '../libs/factory-api.js';
+    import factoryApp from '../libs/factory-app.js';
 
     export default {
         props:{
@@ -24,7 +24,7 @@
         computed: {
         },
         mounted(){
-            factoryApi.refresh(this);
+            factoryApp.refresh(this);
             EventBus.$emit("widget-push-title",this.widgetParams.title||"");
         }
     }

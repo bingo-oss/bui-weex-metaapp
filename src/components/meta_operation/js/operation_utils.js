@@ -1,7 +1,7 @@
 import _ from '../../../js/tool/lodash';
 import propParser from '../../../js/tool/prop_parser';
 const storage = weex.requireModule('storage');
-import factoryApi from '../../../widgets/libs/factory-api.js';
+import factoryApp from '../../../widgets/libs/factory-app.js';
 import Utils from '../../../js/tool/utils';
 const linkapi = require('linkapi');
 import commonOperation from './common_operation.js';
@@ -30,7 +30,7 @@ var utils={
     execution(operation,_widgetCtx,before_after,_this){
         //操作执行前后逻辑
         //operation.widgetContext = _widgetCtx;
-        factoryApi.init(_this);
+        factoryApp.init(_this);
         return new Promise(function(resolve, reject) {
             if (!operation.hasPermission && operation.securityControllTypes && operation.securityControllTypes == 2) {
                 //无权时-不能点击
@@ -40,10 +40,10 @@ var utils={
                     let value = true;
                     if (operation[before_after]) {
                         if (_.isFunction(operation[before_after])) {
-                            operation[before_after](_widgetCtx, factoryApi, resolve)
+                            operation[before_after](_widgetCtx, factoryApp, resolve)
                         } else {
                             var onclick = Function('"use strict";return ' + operation[before_after])();
-                            onclick(_widgetCtx, factoryApi, resolve);
+                            onclick(_widgetCtx, factoryApp, resolve);
                         }
                         //resolve(value);
                     } else {
@@ -150,14 +150,14 @@ var utils={
         }
     },
     showOperation(operation,_this){
-        factoryApi.init(_this);
+        factoryApp.init(_this);
         //具备校验函数--需要对按钮进行显隐控制
 /*        if(operation.checkFunc){
             if (_.isFunction(operation.checkFunc)) {
-                operation.checkFunc(operation,factoryApi);
+                operation.checkFunc(operation,factoryApp);
             } else {
                 var onclick = Function('"use strict";return ' + operation.checkFunc)();
-                onclick(operation,factoryApi);
+                onclick(operation,factoryApp);
             }
         }*/
         return new Promise(function(resolve, reject) {
@@ -168,10 +168,10 @@ var utils={
                 let value = true;
                 if (operation.checkFunc) {
                     if (_.isFunction(operation.checkFunc)) {
-                        operation.checkFunc(operation, factoryApi, resolve);
+                        operation.checkFunc(operation, factoryApp, resolve);
                     } else {
                         var onclick = Function('"use strict";return ' + operation.checkFunc)();
-                        onclick(operation, factoryApi, resolve);
+                        onclick(operation, factoryApp, resolve);
                     }
                     //resolve(value);
                 } else {
@@ -183,7 +183,7 @@ var utils={
     operationClick(_rowSingleData,_widgetCtx,_t){
         //部件按钮的对象,部件需要暴露给按钮操作的对象,_t自身模型
         //模拟按钮组件的方法执行--适用于列表部件单击
-        factoryApi.init(_t);
+        factoryApp.init(_t);
         _widgetCtx.buttonInfo = _rowSingleData//按钮信息
         var operation=utils.expandOperation(_rowSingleData,{
             operation:_rowSingleData,
@@ -195,15 +195,15 @@ var utils={
             let commonOpt=commonOperation.createOperation(commonOptName);
             if(commonOpt){
                 operation= _.extend(operation,commonOpt);
-                operation.onclick(_widgetCtx,factoryApi);
+                operation.onclick(_widgetCtx,factoryApp);
             }
         }else if(operation.onClick&&operation.operationType=="script"){//脚本操作
             utils.execution(operation,_widgetCtx,"beforeExecCode",_t).then((res)=>{
                 if(_.isFunction(operation.onclick)){
-                    operation.onClick(_widgetCtx,factoryApi);
+                    operation.onClick(_widgetCtx,factoryApp);
                 }else{
                     var onclick=Function('"use strict";return ' + operation.onClick  )();
-                    onclick(_widgetCtx,factoryApi);
+                    onclick(_widgetCtx,factoryApp);
                 }
                 utils.execution(operation,_widgetCtx,"afterExecCode",_t)//执行后
             });
@@ -211,10 +211,10 @@ var utils={
             function cellExecScript() {
                 utils.execution(operation,_widgetCtx,"beforeExecCode",_t).then((res)=>{
                     if (_.isFunction(_t.implCode)) {
-                        _t.implCode(_widgetCtx,factoryApi);
+                        _t.implCode(_widgetCtx,factoryApp);
                     } else {
                         var onclick = Function('"use strict";return ' + _t.implCode)();
-                        onclick(_widgetCtx,factoryApi);
+                        onclick(_widgetCtx,factoryApp);
                     }
                     utils.execution(operation,_widgetCtx,"afterExecCode",_t)//执行后
                 });
@@ -248,7 +248,7 @@ var utils={
                 utils.execution(operation,_widgetCtx,"afterExecCode",_t)//执行后
                 if(operation.operationType=="toDynamicPage"){
                     /*_widgetCtx.selectedItem.actionParams={"ios":"[aaa] \n pageId=navbar \n entityId=abcdefgh","android":"[aaa] \n pageId=navber \n entityId=abcdefgh"}
-                    operation.dynamicPageFunc = function(obj,factoryApi){
+                    operation.dynamicPageFunc = function(obj,factoryApp){
                         var _actionParams = {"type":"factoryApp", "pageId":"", "url":"", "params":{}}
                         if(obj.selectedItem&&obj.selectedItem.actionParams){
                             //存在跳入的配置页面
@@ -273,10 +273,10 @@ var utils={
                         //进行数据解析
                         if (_.isFunction(operation.dynamicPageFunc)) {
                             _t.mustStopRepeatedClick = true;
-                            pageParams = operation.dynamicPageFunc(_widgetCtx,factoryApi);
+                            pageParams = operation.dynamicPageFunc(_widgetCtx,factoryApp);
                         } else {
                             var dynamicPageFunc = Function('"use strict";return ' + operation.dynamicPageFunc)();
-                            pageParams = dynamicPageFunc(_widgetCtx,factoryApi);
+                            pageParams = dynamicPageFunc(_widgetCtx,factoryApp);
                         }
                     }
                     if(pageParams.type=="factoryApp"){

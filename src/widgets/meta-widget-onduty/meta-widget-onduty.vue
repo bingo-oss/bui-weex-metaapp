@@ -29,7 +29,7 @@
     const linkapi = require('linkapi');
     const globalEvent = weex.requireModule('globalEvent');
     import _ from '../../js/tool/lodash';
-    import factoryApi from '../libs/factory-api.js';
+    import factoryApp from '../libs/factory-app.js';
     import buiweex from "bui-weex";
 
     /*
@@ -132,7 +132,7 @@
                 _this.startVal = !_this.startVal;
                 _this.endVal = !_this.endVal;
                 _this.currentTime = 0;
-                factoryApi.refresh(_this);//进行刷新动作
+                factoryApp.refresh(_this);//进行刷新动作
             });
             },
             getDutyInfo: function () { //获取值班信息
@@ -264,7 +264,7 @@
             });
         },
         created(){
-            factoryApi.init(this);//初始化全局api的指向
+            factoryApp.init(this);//初始化全局api的指向
         },
         destroyed() {
             //当跳转到其他页面的时候，要在生命周期的destroyed里清空this.timerID

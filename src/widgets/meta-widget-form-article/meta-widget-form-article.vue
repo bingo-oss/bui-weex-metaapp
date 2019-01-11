@@ -18,7 +18,7 @@
     import service from "./js/service";
     const fileTransfer = weex.requireModule('FileTransferModule');
     const FileModule = weex.requireModule('FileModule');
-    import factoryApi from '../libs/factory-api.js';
+    import factoryApp from '../libs/factory-app.js';
 
     export default {
         props: {

@@ -70,7 +70,7 @@
     import Utils from '../../js/tool/utils';
     import OperationUtils from '../../components/meta_operation/js/operation_utils';
     import commonOperation from '../../components/meta_operation/js/common_operation.js';
-    import factoryApi from '../libs/factory-api.js';
+    import factoryApp from '../libs/factory-app.js';
 
 
     const linkapi = require('linkapi');

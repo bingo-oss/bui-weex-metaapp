@@ -84,7 +84,7 @@
     import buiweex from 'bui-weex';
     import Utils from '../../js/tool/utils';
     import ajax from '../../js/ajax.js';
-    import factoryApi from '../libs/factory-api.js';
+    import factoryApp from '../libs/factory-app.js';
     const dom = weex.requireModule('dom');
     const globalEvent = weex.requireModule('globalEvent');
     const linkapi = require('linkapi');

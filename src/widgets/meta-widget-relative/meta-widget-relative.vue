@@ -66,7 +66,7 @@
     import Util from '../../js/utils'
     import Config from '../../js/config'
     import buiweex from "bui-weex";
-    import factoryApi from '../libs/factory-api.js';
+    import factoryApp from '../libs/factory-app.js';
     import service from './js/service';
     import _ from '../../js/tool/lodash';
 

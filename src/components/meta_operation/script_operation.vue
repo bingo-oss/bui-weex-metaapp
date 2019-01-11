@@ -19,7 +19,7 @@ import ax from "../../js/ajax.js";
 import config from "../../js/config.js";
 import buiweex from "bui-weex";
 import OperationUtils from "./js/operation_utils";
-import factoryApi from "../../widgets/libs/factory-api.js";
+import factoryApp from "../../widgets/libs/factory-app.js";
 export default {
   props: {
     widgetContext: {
@@ -45,7 +45,7 @@ export default {
     };
   },
   created(){
-    factoryApi.init(this);//初始化变量
+    factoryApp.init(this);//初始化变量
   },
   methods: {
     execScript() {
@@ -90,11 +90,11 @@ export default {
         try{
           if (_.isFunction(fun)) {
             this.mustStopRepeatedClick = true;
-            fun(_widgetCtx, factoryApi);
+            fun(_widgetCtx, factoryApp);
           } else {
             this.mustStopRepeatedClick = true;
             var onclick = Function('"use strict";return ' + fun)();
-            onclick(_widgetCtx, factoryApi);
+            onclick(_widgetCtx, factoryApp);
           }
         }catch (e){
           this.$toast("脚本语法有误");

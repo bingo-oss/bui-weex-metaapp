@@ -106,7 +106,7 @@ import Utils from '../js/tool/utils';
 import OperationUtils from '../components/meta_operation/js/operation_utils';
 import commonOperation from '../components/meta_operation/js/common_operation.js';
 import EventBus from '../js/bus';
-import factoryApi from './libs/factory-api.js';
+import factoryApp from './libs/factory-app.js';
 import buiweex from "bui-weex";
 
 const linkapi = require('linkapi');
@@ -213,15 +213,15 @@ module.exports = {
                 let commonOpt=commonOperation.createOperation(commonOptName);
                 if(commonOpt){
                     operation= _.extend(operation,commonOpt);
-                    operation.onclick(_widgetCtx,factoryApi);
+                    operation.onclick(_widgetCtx,factoryApp);
                 }
             }else if(operation.onClick){//脚本操作
                 OperationUtils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
                     if(_.isFunction(operation.onclick)){
-                        operation.onClick(_widgetCtx,factoryApi);
+                        operation.onClick(_widgetCtx,factoryApp);
                     }else{
                         var onclick=Function('"use strict";return ' + operation.onClick  )();
-                        onclick(_widgetCtx,factoryApi);
+                        onclick(_widgetCtx,factoryApp);
                     }
                     OperationUtils.execution(operation,_widgetCtx,"afterExecCode")//执行后
                 });
@@ -230,10 +230,10 @@ module.exports = {
                 function cellExecScript() {
                     OperationUtils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
                         if (_.isFunction(_t.implCode)) {
-                            _t.implCode(Object.assign(_widgetCtx, operation),factoryApi);
+                            _t.implCode(Object.assign(_widgetCtx, operation),factoryApp);
                         } else {
                             var onclick = Function('"use strict";return ' + _t.implCode)();
-                            onclick(Object.assign(_widgetCtx, operation),factoryApi);
+                            onclick(Object.assign(_widgetCtx, operation),factoryApp);
                         }
                         OperationUtils.execution(operation,_widgetCtx,"afterExecCode")//执行后
                     });
@@ -267,7 +267,7 @@ module.exports = {
                     OperationUtils.execution(operation,_widgetCtx,"afterExecCode")//执行后
                     if(operation.operationType=="toDynamicPage"){
                         this.selectedItem.actionParams={"ios":"[aaa] \n pageId=navbar \n entityId=abcdefgh","android":"[aaa] \n pageId=navber \n entityId=abcdefgh"}
-                        operation.dynamicPageFunc = function(obj,factoryApi){
+                        operation.dynamicPageFunc = function(obj,factoryApp){
                             var _actionParams = {"type":"factoryApp", "pageId":"", "url":"", "params":{}}
                             if(obj.selectedItem&&obj.selectedItem.actionParams){
                                 //存在跳入的配置页面
@@ -293,10 +293,10 @@ module.exports = {
                             //进行数据解析
                             if (_.isFunction(operation.dynamicPageFunc)) {
                                 this.mustStopRepeatedClick = true;
-                                pageParams = operation.dynamicPageFunc(_widgetCtx,factoryApi);
+                                pageParams = operation.dynamicPageFunc(_widgetCtx,factoryApp);
                             } else {
                                 var dynamicPageFunc = Function('"use strict";return ' + operation.dynamicPageFunc)();
-                                pageParams = dynamicPageFunc(_widgetCtx,factoryApi);
+                                pageParams = dynamicPageFunc(_widgetCtx,factoryApp);
                             }
                         }
                         if(pageParams.type=="factoryApp"){
@@ -402,7 +402,7 @@ module.exports = {
             this.queryParam.filters = filtersParts.join(' and ');
             this.queryParam.total=true;
             return ajax.get(this.dataUrlPath, this.queryParam).then(resp => {
-                factoryApi.stopLoading(this);//关闭加载圈
+                 factoryApp.stopLoading(this);//关闭加载圈
                 //this.isShowLoading = false
                 if(resp.headers){
                     this.dataCount = resp.headers["X-Total-Count"]
@@ -563,7 +563,7 @@ module.exports = {
 
         },
         getView() {
-                factoryApi.startLoading(this);//显示加载圈
+                factoryApp.startLoading(this);//显示加载圈
                 //this.isShowLoading = true;
                 this.contextPath = this.$getContextPath();
                 globalEvent.addEventListener("androidback", e => {
@@ -778,7 +778,7 @@ module.exports = {
                         //this.$alert(err);
                         //this.$toast('读取运行时配置失败');
                 }).then(runtimeConfig => {
-                        factoryApi.init(_t);//初始化全局api的指向
+                        factoryApp.init(_t);//初始化全局api的指向
                         service.init(runtimeConfig.configServerUrl);
                         _t.presetFilters = _views;
                         _t.selectedFilter = _views[0];

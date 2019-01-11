@@ -56,7 +56,7 @@
 <script>
     import _ from '../../js/tool/lodash';
     import service from "./js/service"
-    import factoryApi from '../libs/factory-api.js';
+    import factoryApp from '../libs/factory-app.js';
 
     const picker = weex.requireModule('picker')
     export default {
