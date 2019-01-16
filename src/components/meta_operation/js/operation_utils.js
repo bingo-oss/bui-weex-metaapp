@@ -125,6 +125,7 @@ var utils={
                     let _vals = [];
                     _.each(_props,(_prop)=>{
                         //_prop = _prop.replace("{{","").replace("}}","");
+                        let __props = _prop.split(".");
                         let _widgetCode = "",_key = ""
                         if(__props.length){
                             _widgetCode = __props[1];
@@ -132,9 +133,9 @@ var utils={
                         }
                         let _prop_val = (utils.getWidgetExportParams(_t,_key,_widgetCode));
                         //获取到的参数处理
-                        if(_.isObject(_prop_val)){
+                        if(typeof _prop_val=="object"){
                             _prop_val = JSON.stringify(_prop_val)
-                        }else if(typeof _prop_val=="string"){
+                        }else if(typeof _prop_val!="string"){
                             _prop_val = `"${_prop_val}"`;
                         }
                         _vals.push(_prop_val);//添加匹配到的值
