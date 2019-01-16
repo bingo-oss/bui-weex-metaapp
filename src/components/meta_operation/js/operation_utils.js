@@ -282,6 +282,7 @@ var utils={
                     if(pageParams.type=="factoryApp"){
                         //跳入的是应用工厂应用
                         _t.$push(Utils.pageEntry(),Object.assign({pageId:pageParams.pageId},pageParams.params));
+                        storage.setItem("urlParam", JSON.stringify(pageParams.params));//存储起来需要传递的参数
                     }else if(pageParams.type=="url"){
                         //跳入的是第三方url
                         let _urlParams = []
