@@ -73,7 +73,7 @@
 <style lang="sass" src="bui-weex/src/css/buiweex.scss"></style>
 <style src="../../styles/common.css"></style>
 <style lang="css">
-    .fixedStyleDiv{ height: 140px;}
+    .fixedStyleDiv{ height: 160px;}
     .fixedStyle{ bottom: 0; /*position: fixed;*/ width: 750px;}
     .action-bar {
         background-color: #fff;
