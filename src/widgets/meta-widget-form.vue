@@ -537,7 +537,7 @@
                     "model":this,
                     "metaEntity": this.metaEntity,
                     "metaEntityId" : this.metaEntity.metaEntityId,
-                    "selectedId": this.result.id,
+                    "selectedId": this.entityId,
                     "selectedItem": this.result,
                     "widgetParams" : this.widgetParams//部件参数
                 }
@@ -744,11 +744,11 @@
 
                 // 在编辑实体的情况下，才获取实体数据
                 if (this.entityId) {
-                    this.result.id = this.entityId;
+                    //this.result.id = this.entityId;
                     service.getEntityDataForId(engineUrl, this.entityName, this.entityId).then(data => {
                         this.existedRecord = data;
                         this.permObj = perm.parseBits(data.permVal);
-                    })
+                    });
                 }
                 factoryApp.stopLoading(this);//关闭加载圈
             })
