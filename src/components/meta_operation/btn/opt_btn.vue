@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="flex: 1;">
     <component
       @on_btn_click="$emit('on_btn_click')"
       :is="btnComponentName"

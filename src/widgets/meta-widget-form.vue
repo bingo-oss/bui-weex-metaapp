@@ -577,7 +577,6 @@
             "existedRecord"(val){
                 let forms = [];
                 // 遍历 layout 里的所有表单项
-                Object.assign(this.result,val);
                 this.data.layout && this.data.layout.forEach((o) => {
                     if (this.entityId) {
                     // 当前表单正在编辑实体
