@@ -666,6 +666,8 @@ module.exports = {
                     fields.add(this.p5);
                     if(!this.p4&&!this.p5){
                         this.buiSwipeCellHeight = "150"
+                    }else{
+                        this.buiSwipeCellHeight = "200"
                     }
                     //params.select = Array.from(fields).join(',');
                     // 排序
