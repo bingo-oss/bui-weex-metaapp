@@ -2,8 +2,8 @@
     <div class="wrapper">
         <bui-header v-if="widgetParams.showHeader" :leftItem="{icon: 'ion-ios-arrow-left'}" @leftClick="pop" :backgroundColor="themeBg">
             <div slot="center" class="page-title-wrapper" @click="titleClicked">
-                <text class="page-title" @click="titleClicked">{{widgetParams.isViewMode?widgetParams.headerTitle:title}}</text>
-                <bui-icon v-if="!widgetParams.isViewMode&&presetFilters.length" name="ion-chevron-down" color="white" size=39 @click="titleClicked"></bui-icon>
+                <text class="page-title">{{widgetParams.isViewMode?widgetParams.headerTitle:title}}</text>
+                <bui-icon v-if="!widgetParams.isViewMode&&presetFilters.length" name="ion-chevron-down" color="white" size=39></bui-icon>
             </div>
             <div slot="right" class="header-right-wrapper">
                 <div class="header-button" @click="filterClicked" v-if="widgetParams.showFilterView">
@@ -23,7 +23,6 @@
 
         <list class="scroller">
             <refresh-wrapper @refresh="onrefresh" :isRefreshing="isRefreshing"></refresh-wrapper>
-
             <cell v-for="(o, index) in listData" :key="index">
                 <bui-swipe-cell :height="buiSwipeCellHeight"
                     @click="rowSingleClick(o)"
@@ -51,8 +50,8 @@
                             <text class="sub-text">{{getFieldValue(o, p3)}}</text>
                         </div>
                         <div class="list-item-row">
-                            <text class="sub-text">{{getFieldValue(o, p4)}}</text>
-                            <text class="sub-text">{{getFieldValue(o, p5)}}</text>
+                            <text class="sub-text" style="text-align: right;">{{getFieldValue(o, p4)}}</text>
+                            <text class="sub-text" style="text-align: right;">{{getFieldValue(o, p5)}}</text>
                         </div>
                     </div>
                 </bui-swipe-cell>
@@ -825,12 +824,23 @@ module.exports = {
                     button.show = res;
                 })
             });//不是调用 meta-operation 渲染的按钮-需要单独执行校验函数 和显隐处理--会返回
+
+        //滑块默认色调
+        _.each(this.widgetParams.listOperations,(button,index)=>{
+            if(!index%2){
+                button.btnType = "primary"
+            }else if(!index%3){
+                button.btnType = "success"
+            }else{
+                button.btnType = "error"
+            }
+        });//需要设置下默认值
+
     },
     components: {
         'filter-view': require('../views/filter.vue')
     },
-    mounted(){
-    }
+    mounted(){}
 }
 </script>
 <style lang="css">

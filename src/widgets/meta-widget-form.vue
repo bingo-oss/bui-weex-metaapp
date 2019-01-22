@@ -209,7 +209,7 @@
         </div>-->
         <!--表单底部为公共操作区域-->
         <div class="action-bar" v-if="widgetParams.bottomOperations&&widgetParams.bottomOperations.length">
-            <meta-operation v-for="(commonOpt,index) in widgetParams.bottomOperations" :operation="commonOpt" :widget-context="getWidgetContext" :key="index" class="full-column" style="flex: 1"></meta-operation>
+            <meta-operation v-for="(commonOpt,index) in widgetParams.bottomOperations" :operation="commonOpt" :widget-context="getWidgetContext" @triggered="actionsheetTriggered" @successed="actionsheetSuccessed" :key="index" class="full-column" style="flex: 1"></meta-operation>
         </div>
 
 
@@ -413,6 +413,10 @@
                     this.$refs.actionsheet.hide();
                 }else{
                     this.$refs.actionsheet._maskClick()
+                }
+
+                if(type=="script"){
+                    this.formCheck();//表单校验
                 }
             },
             actionsheetSuccessed(type){
@@ -733,7 +737,6 @@
                         }
                         this.defaultValues = _formDefaultValues;
                     }//传入了表单默认值了
-
                 }
 
                 // 获取 swagger 定义
