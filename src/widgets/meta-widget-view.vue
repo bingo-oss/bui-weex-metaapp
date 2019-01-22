@@ -354,7 +354,7 @@ module.exports = {
                 }
             } else {
                 // 对于非引用实体字段，针对日期作处理
-                let fieldDef = this.swaggerEntiyDef.properties[field];
+                /*let fieldDef = this.swaggerEntiyDef.properties[field];
                 if (fieldDef) {
                     switch (fieldDef.format) {
                         case 'date-time':
@@ -370,11 +370,11 @@ module.exports = {
                             if(minute<10){minute="0"+minute;}
                             let second=d.getSeconds();
                             if(second<10){second="0"+second;}
-                            return year+"-"+moth+"-"+date+" "+hour+":"+minute/*d.toLocaleString(undefined, {hour12: false})*/
+                            return year+"-"+moth+"-"+date+" "+hour+":"+minute/!*d.toLocaleString(undefined, {hour12: false})*!/
                         default:
 
                     }
-                }
+                }*/
                 return obj[field];
             }
         },
