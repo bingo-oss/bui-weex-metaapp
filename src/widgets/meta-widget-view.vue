@@ -31,7 +31,7 @@
                     :items="[]"
                     >
                     <template slot="action">
-                        <meta-operation class="bui-list-swipe-btn-custom" v-for="(commonOpt,index) in widgetParams.listOperations" :key="index" @triggered="closeSwipeCell(o.id)" @successed="onrefresh" btn-type="swipe-cell" :operation="commonOpt" :widget-context="getWidgetContext(o)">
+                        <meta-operation class="bui-list-swipe-btn-custom" v-for="(commonOpt,index) in widgetParams.listOperations" :key="index" @triggered="closeSwipeCell(o)" @on_btn_click="selectedItemChange(o)" @successed="onrefresh" btn-type="swipe-cell" :operation="commonOpt" :widget-context="getWidgetContext(o)">
                         </meta-operation>
                     </template>
                     <!-- 布局 0 默认 -->
@@ -494,9 +494,12 @@ module.exports = {
             }
             this.lastSwipeCellId = id;
         },
-        closeSwipeCell(id){//操作触发后，需要还原向左滑动出来的按钮区
-            let swipeCell = this.$refs[id][0];
+        closeSwipeCell(o){//操作触发后，需要还原向左滑动出来的按钮区
+            let swipeCell = this.$refs[o.id][0];
             swipeCell&&swipeCell.close();
+        },
+        selectedItemChange(o){
+            this.selectedItem = o;//设置下选中数据;
         },
         getViewTotal(){
             //只用于获取数据总数
