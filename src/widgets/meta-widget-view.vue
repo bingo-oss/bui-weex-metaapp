@@ -357,8 +357,16 @@ module.exports = {
             } else {
                 // 对于非引用实体字段，针对日期作处理
                 let fieldDef = this.swaggerEntiyDef.properties[field];
-                if (fieldDef&&obj[field]&&(obj[field].indexOf("T")!=-1)) {
+                if (fieldDef&&obj[field]) {
                     //只对格林时间格式处理
+                    //undefined
+                    try{
+                        if(obj[field].indexOf("T")==-1){
+                            return obj[field];
+                        }
+                    }catch (e){
+
+                    }
                     switch (fieldDef.format) {
                         case 'date-time':
                             let d = new Date(obj[field]);

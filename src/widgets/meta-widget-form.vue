@@ -209,7 +209,7 @@
         </div>-->
         <!--表单底部为公共操作区域-->
         <div class="action-bar" v-if="widgetParams.bottomOperations&&widgetParams.bottomOperations.length">
-            <meta-operation v-for="(commonOpt,index) in widgetParams.bottomOperations" :operation="commonOpt" :widget-context="getWidgetContext" @triggered="actionsheetTriggered" @successed="actionsheetSuccessed" :key="index" class="full-column" style="flex: 1"></meta-operation>
+            <meta-operation v-for="(commonOpt,index) in widgetParams.bottomOperations" :operation="commonOpt" :widget-context="getWidgetContext()" @triggered="actionsheetTriggered" @successed="actionsheetSuccessed" :key="index" class="full-column" style="flex: 1"></meta-operation>
         </div>
 
 
@@ -487,6 +487,18 @@
                             }
                         });
                     })
+            },
+            getWidgetContext(){
+                //传入操作的上下文内容
+                return {
+                    "form": this,
+                    "model":this,
+                    "metaEntity": this.metaEntity,
+                    "metaEntityId" : this.metaEntity.metaEntityId,
+                    "selectedId": this.entityId,
+                    "selectedItem": this.result,
+                    "widgetParams" : this.widgetParams//部件参数
+                }
             }
         },
         data () {
@@ -534,18 +546,6 @@
             }
         },
         computed: {
-            getWidgetContext(){
-                //传入操作的上下文内容
-                return {
-                    "form": this,
-                    "model":this,
-                    "metaEntity": this.metaEntity,
-                    "metaEntityId" : this.metaEntity.metaEntityId,
-                    "selectedId": this.entityId,
-                    "selectedItem": this.result,
-                    "widgetParams" : this.widgetParams//部件参数
-                }
-            },
             getDeviceHeight(){
                 return (750/(weex.config.env.deviceWidth))*weex.config.env.deviceHeight
             },
