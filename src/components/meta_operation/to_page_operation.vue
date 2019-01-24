@@ -88,7 +88,7 @@ export default {
   },
   methods: {
     getIdFromContext() {
-      var context = _.extend(this.widgetContext, this.operation);
+      var context = _.extend({},this.widgetContext, this.operation);
       var id = context.selectedId;
       var metaEntity = context.metaEntity;
       if (!context.selectedItem && context.selectedItems) {
@@ -113,7 +113,7 @@ export default {
     },
     gotoPage() {
       this.$emit("on_btn_click");
-      var _widgetCtx = Object.assign(this.widgetContext, {
+      var _widgetCtx = Object.assign({},this.widgetContext, {
         buttonInfo: this.operation
       });
       OperationUtils.execution(
@@ -138,7 +138,7 @@ export default {
       });
     },
     toggleModal() {
-      var _widgetCtx = Object.assign(this.widgetContext, {
+      var _widgetCtx = Object.assign({},this.widgetContext, {
         buttonInfo: this.operation
       });
       OperationUtils.execution(
