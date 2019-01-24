@@ -153,7 +153,7 @@
                         this.$emit('filter', this.copiedFilters);
                     }
                 }
-            }, ['筛选'])
+            }, ['确定'])
 
             let resetButton = h('text', {
                 'class': ['action-button'],
