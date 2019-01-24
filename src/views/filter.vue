@@ -48,6 +48,7 @@
             }
         },
         props: {
+            filterCheck:false,//是否检验视图的高级搜索设置
             filters: {},
             viewDef: null,
             swaggerEntiyDef: null,
@@ -58,15 +59,15 @@
             // 遍历 layout 里的所有表单项
             this.swaggerEntiyDef
             this.viewDef && this.swaggerEntiyDef && this.viewDef.viewFields.forEach((col) => {
-                /*if (!col.searchable) {
+                if (!col.searchable&&this.filterCheck) {
                     return;
-                }*/
+                }
                 let properties = this.swaggerEntiyDef.properties[col.fieldName];
                 if(!properties)return false;
                 let inputType = properties['x-input']
                 // 伪造 definition
                 let fakeDefinition = {
-                    dataField: col.name,
+                    dataField: col.fieldName,
                     componentParams: {
                         title: properties.title
                     }
@@ -114,7 +115,7 @@
                     },
                     on: {
                         filterInput: (v) => {
-                            console.log(`setting ${v} for ${col.fieldName}`)
+                            console.log(`setting ${v} for ${col.fieldName}`);
                             this.$set(this.copiedFilters, col.fieldName, v);
                         }
                     },

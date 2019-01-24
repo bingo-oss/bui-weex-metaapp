@@ -6,12 +6,13 @@
                 <bui-icon v-if="!widgetParams.isViewMode&&presetFilters.length" name="ion-chevron-down" color="white" size=39></bui-icon>
             </div>
             <div slot="right" class="header-right-wrapper">
-                <div class="header-button" @click="filterClicked" v-if="widgetParams.showFilterView">
+                <div class="header-button" @click="filterClicked" v-if="widgetParams.showFilterView&&showFilterView">
                     <bui-icon name="ion-funnel" color="white" @click="filterClicked"></bui-icon>
                 </div>
                 <div class="header-button">
                     <template v-if="mobileHeaderOperations.length===1">
-                        <meta-operation btn-type="img" :operation="mobileHeaderOperations[0]" :widget-context="getWidgetContext()"></meta-operation>
+                        <meta-operation v-if="mobileHeaderOperations[0].icon" btn-type="img" :operation="mobileHeaderOperations[0]" :widget-context="getWidgetContext()"></meta-operation>
+                        <meta-operation v-if="!mobileHeaderOperations[0].icon" :operation="mobileHeaderOperations[0]" :widget-context="getWidgetContext()" style="height: 50px; margin-left: -20px;"></meta-operation>
                     </template>
                     <bui-icon v-if="mobileHeaderOperations.length>1" name="ion-ios-more" color="white" @click="titleOperationClicked"></bui-icon>
                 </div>
@@ -77,6 +78,7 @@
 
         <bui-popup v-model="showPopup" pos="right" width=600>
             <filter-view
+                :filter-check="true"
                 :filters="filters"
                 :viewDef="viewDef"
                 :swaggerEntiyDef="swaggerEntiyDef"
@@ -151,7 +153,7 @@ module.exports = {
             remainingPageParam: {},
             loadingText:"",
             //isShowLoading:false,
-            //showFilterView:false,
+            showFilterView:false,//判断是否设置了支持高级搜索的字段
             currentTab:0,//默认选择第一个
             selectedItem:{},//记录选择对象--合并暴露对象
             isloadingHide:false//是否隐藏加载更新
@@ -636,7 +638,7 @@ module.exports = {
                             this.quickSearchableField.push(col.fieldName);
                         }
                         if(col.searchable){
-                            //this.showFilterView = true;//存在高级筛选 显示按钮
+                            this.showFilterView = true;//存在高级筛选 显示按钮
                         }
                     });
                     /*if (viewDef.config.mLayout) {
