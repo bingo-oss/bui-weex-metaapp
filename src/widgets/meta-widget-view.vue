@@ -1,9 +1,11 @@
 <template>
     <div class="wrapper">
         <bui-header v-if="widgetParams.showHeader" :leftItem="{icon: 'ion-ios-arrow-left'}" @leftClick="pop" :backgroundColor="themeBg">
-            <div slot="center" class="page-title-wrapper" @click="titleClicked">
-                <text class="page-title">{{widgetParams.isViewMode?widgetParams.headerTitle:title}}</text>
-                <bui-icon v-if="!widgetParams.isViewMode&&presetFilters.length" name="ion-chevron-down" color="white" size=39></bui-icon>
+            <div  @click="titleClicked" slot="center" class="page-title-wrapper">
+                <text :ref="'titleText'" class="page-title">{{widgetParams.isViewMode?widgetParams.headerTitle:title}}</text>
+                <bui-icon @click="titleClicked" style="margin-top: 2px;" v-if="!widgetParams.isViewMode&&presetFilters.length&&!showDropdown" name="ion-android-arrow-dropdown" color="white" size=38></bui-icon>
+                <bui-icon @click="titleClicked" style="margin-top: 2px;" v-if="!widgetParams.isViewMode&&presetFilters.length&&showDropdown" name="ion-android-arrow-dropup" color="white" size=38></bui-icon>
+                <!--<div @click="titleClicked" style="position: absolute; flex: 1; background-color: #000; left: 0; top: 0;"></div>-->
             </div>
             <div slot="right" class="header-right-wrapper">
                 <div class="header-button" @click="filterClicked" v-if="widgetParams.showFilterView&&showFilterView">
@@ -113,6 +115,7 @@ import buiweex from "bui-weex";
 const linkapi = require('linkapi');
 
 const globalEvent = weex.requireModule('globalEvent');
+const dom = weex.requireModule('dom');
 
 module.exports = {
     props:{
@@ -143,7 +146,7 @@ module.exports = {
             filters: {}, // 高级搜索 filter
             quickSearchFilters: '', // 快捷搜索 filter
             selectedFilter: null, // 预设 filter
-            showDropdown: false,
+            //showDropdown: false,
             showPopup: false,
             showOperationsDropdown:false,
             isRefreshing: false,
@@ -185,6 +188,9 @@ module.exports = {
                 }
             });
             return _opts;
+        },
+        showDropdown(){
+            return this.$refs.dropdown.value
         }
     },
     methods: {
@@ -324,8 +330,17 @@ module.exports = {
             // 没有分类则无动作
             if (!this.presetFilters.length) return;
             if(this.widgetParams.isViewMode) return;
-            this.$refs.dropdown.show(e);
-            this.showDropdown = true;
+            if(!this.dropdownE){
+                dom.getComponentRect(this.$refs.titleText, option => {
+                    e.position.x = option.size.left;
+                    e.position.width = option.size.width;
+                    this.dropdownE = e;//记录下节点的信息.
+                    this.$refs.dropdown.show(e);
+                });
+            }else{
+                this.$refs.dropdown.show(this.dropdownE);//不需要再去获取
+            }
+            //this.showDropdown = true;
         },
         titleOperationClicked(e){
             //通用操作弹窗
@@ -431,9 +446,16 @@ module.exports = {
             this.isRefreshing = true;
             this.fetchData(1).then(data => {
                 this.dataInited = true; // 控制 viewAppear 时是否刷新页面，只有获取数据成功过才刷新
-                this.listData = data;
-                //console.log(data);
+                this.listData = [];
                 this.$forceUpdate();//更新下视图
+                //console.log(data);
+                let _this = this;
+                setTimeout(function(d){
+                    //滑块不会进行初始化--需要清空下数据更新视图后再设置
+                    _this.listData = data;
+                    _this.$forceUpdate();//更新下视图
+                },1);
+            //this.$forceUpdate();//更新下视图
                 this.isRefreshing = false;
                 this.currentPage = 1;
                 this.loadingStatus = 'init';
@@ -854,7 +876,8 @@ module.exports = {
     components: {
         'filter-view': require('../views/filter.vue')
     },
-    mounted(){}
+    mounted(){
+    }
 }
 </script>
 <style lang="css">
@@ -883,7 +906,7 @@ module.exports = {
 .header-button {
     padding-bottom: 20px;
     padding-top: 20px;
-    padding-left: 20px;
+    /*padding-left: 20px;*/
     padding-right: 20px;
 }
 

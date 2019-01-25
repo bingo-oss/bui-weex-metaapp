@@ -60,6 +60,11 @@
                     return true;
                 }
 
+                if (this.definition.componentParams.required && this.value === undefined) {
+                    this.$toast(`${this.definition.componentParams.title} 的输入不能为空`)
+                    return false;
+                }
+
                 let pattern = /^-?\d+(\.\d+)?$/;
                 let result = pattern.exec(this.value);
                 if (!result) {
