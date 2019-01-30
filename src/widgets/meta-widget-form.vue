@@ -139,8 +139,8 @@
 
         <scroller class="container" style="background-color: #F8F8F8;" >
             <div class="panel" v-if="fields.length" @appear="appear('form')" @disappear="disappear('form')" :ref="'form'">
-                <div class="scrollerDiv" v-for="o in data.layout" :key="o.id" style="padding-right:15px; padding-left: 15px;">
-                    <component :is="'Meta'+o.componentType"
+                <div class="scrollerDiv" v-for="o in data.layout" :key="o.id">
+                    <component style="padding-right: 15px; padding-left: 15px;" :is="'Meta'+o.componentType"
                                :ref = "o.id"
                                :definition = "o"
                                :value =  "result[o.dataField]"
@@ -471,7 +471,8 @@
                     let result = validateFunc();
                     if (!result) {
                         validated = false;
-                        break;
+                        continue;
+                        //break;
                     }
                 }
                 return validated;

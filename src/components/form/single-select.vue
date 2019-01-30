@@ -1,5 +1,5 @@
 <template lang="html">
-    <div v-if="showComponent" class="">
+    <div v-if="showComponent" class="" :style="{'background-color':(validatorErrorBag?'#FAA':'')}">
         <template v-if="viewMode||forceView">
             <div class="form-group">
                 <div class="label-wrapper">
@@ -38,7 +38,7 @@ export default {
         },
         valueText() {
             let opt = this.definition.componentParams.options.find(o => o.id === this.value);
-            return ""//opt && opt.text;
+            return opt && opt.text;
         }
     },
     methods: {

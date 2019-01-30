@@ -1,5 +1,5 @@
 <template lang="html">
-    <div v-if="showComponent" class="">
+    <div v-if="showComponent" class="" :style="{'background-color':(validatorErrorBag?'#FAA':'')}">
         <template v-if="viewMode||forceView">
             <div class="form-group">
                 <div class="label-wrapper">
@@ -14,7 +14,7 @@
                     <text class="form-label">{{definition.componentParams.title}}</text>
                     <text class="required-mark" v-if="definition.componentParams.required">*</text>
                 </div>
-                <input @input="input" :disabled="readonly" class="form-input-native" type="text" :value="valueText" :placeholder="definition.componentParams.placeholder"/>
+                <input ref="input" @input="input" :disabled="readonly" class="form-input-native" type="text" :value="valueText" :placeholder="definition.componentParams.placeholder" />
             </div>
         </template>
     </div>
@@ -63,9 +63,10 @@ export default {
             let patternOk = true;
             let lengthOk = true;
             let errorTips = ''
-
-            if (this.definition.componentParams.required && this.value === undefined) {
-                this.$toast(`${this.definition.componentParams.title} 的输入不能为空`)
+            if (this.definition.componentParams.required && !this.value/*this.value === undefined*/) {
+                this.validatorErrorBag = `${this.definition.componentParams.title} 的输入不能为空`;
+                this.$refs['input'].focus();
+                //this.$toast(`${this.definition.componentParams.title} 的输入不能为空`)
                 return false;
             }
 
@@ -91,7 +92,11 @@ export default {
 
             let validated = lengthOk && patternOk;
             if (!validated) {
-                this.$toast(`${this.definition.componentParams.title}: ${errorTips}`);
+                this.validatorErrorBag = `${this.definition.componentParams.title}: ${errorTips}`
+                this.$refs['input'].focus();
+                //this.$toast(`${this.definition.componentParams.title}: ${errorTips}`);
+            }else{
+                this.validatorErrorBag = null;
             }
             return validated;
         },

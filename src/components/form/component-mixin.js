@@ -9,7 +9,8 @@ export default {
         return {
             showComponent: true,  // 每个组件都可以被控制展示与否
             readonly:false, //组件只读模式
-            forceView:false//组件视图模式
+            forceView:false,//组件视图模式
+            validatorErrorBag:""//校验文字
         }
     },
     props: {
@@ -61,10 +62,12 @@ export default {
             return _data[id]&&_data[id][constants.entityModelTitleKey];
         },
         validate() {
-            if (this.definition.componentParams.required && this.value === undefined) {
-                this.$toast(`${this.definition.componentParams.title} 的输入不能为空`)
+            if (this.definition.componentParams.required && !this.value/*this.value === undefined*/) {
+                this.validatorErrorBag = `${this.definition.componentParams.title} 的输入不能为空`;
+                //this.$toast(`${this.definition.componentParams.title} 的输入不能为空`);
                 return false;
             }
+            this.validatorErrorBag = null;
             return true;
         },
         log(any) {

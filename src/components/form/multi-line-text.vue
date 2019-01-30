@@ -1,5 +1,5 @@
 <template lang="html">
-    <div v-if="showComponent" class="">
+    <div v-if="showComponent" class="" :style="{'background-color':(validatorErrorBag?'#FAA':'')}">
         <template v-if="viewMode||forceView">
             <div class="form-group-vertical">
                 <div class="label-wrapper-vertical">
@@ -14,7 +14,7 @@
                     <text class="form-label">{{definition.componentParams.title}}</text>
                     <text class="required-mark" v-if="definition.componentParams.required">*</text>
                 </div>
-                <textarea @input="input" :disabled="readonly" class="form-input-textarea" :value="value" :placeholder="definition.componentParams.placeholder" rows="3"/>
+                <textarea ref="textarea" @input="input" :disabled="readonly" class="form-input-textarea" :value="value" :placeholder="definition.componentParams.placeholder" rows="3"/>
             </div>
         </template>
     </div>
@@ -27,6 +27,13 @@ import SingleLineText from './single-line-text.vue'
 export default {
     componentType: 'MultiLineText',
     extends: SingleLineText,
+    watch:{
+        validatorErrorBag(val){
+            if(val){
+                this.$refs['textarea'].focus();
+            }
+        }
+    }
 }
 </script>
 <style src="../../styles/common.css" scoped="false"></style>
