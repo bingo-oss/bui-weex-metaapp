@@ -733,9 +733,17 @@
                     };
                     let _formDefaultValues = this.widgetParams.formDefaultValues
                     if(_formDefaultValues){
-                        if(_.isString(_formDefaultValues)){
-                            _formDefaultValues = JSON.parse(_formDefaultValues);
+                        try{
+                            if(_.isString(_formDefaultValues)){
+                                _formDefaultValues = eval('('+_formDefaultValues+')');
+                            }
+                        }catch (e){
+                            console.log("脚本输出参数语法错误")
+                            console.log(e)
                         }
+                        /*if(_.isString(_formDefaultValues)){
+                            _formDefaultValues = JSON.parse(_formDefaultValues);
+                        }*/
                         this.defaultValues = _formDefaultValues;
                     }//传入了表单默认值了
                 }
