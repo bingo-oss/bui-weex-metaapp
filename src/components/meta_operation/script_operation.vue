@@ -11,6 +11,23 @@
         :operation="operation"
       ></meta-opt-btn>
     </slot>
+
+
+    <!--脚本内调用跳转页面,类型为弹窗-->
+    <div class="bui-dialog" :style="{top:top,width:modalInfo.width,left:(750-modalInfo.width)/2,opacity:(modalInfo.show?1:0)}">
+      <div class="bui-dialog-title">
+        <text class="dialog-title-text">{{modalInfo.title}} </text>
+        <bui-icon class="dialog-close" @click="_maskClick" name="ion-ios-close" size=50></bui-icon>
+      </div>
+      <div class="bui-dialog-content" :style="{height:modalInfo.height}">
+          <scroller :style="{height:modalInfo.height}">
+            <div :style="{height:modalInfo.height}">
+              <meta-widget-page :widget-params="modalInfo.pageParams"></meta-widget-page>
+            </div>
+          </scroller>
+      </div>
+    </div>
+
   </div>
 </template>
 <script>
@@ -39,9 +56,18 @@ export default {
     uiType: {}
   },
   data() {
+    let _this = this;
     return {
       mustStopRepeatedClick: false, //阻止点击操作重复触发
-      implCode: "" //存入执行代码
+      implCode: "", //存入执行代码
+      //弹窗信息
+      modalInfo:{
+        width:500,
+        height:340,
+        title:_this.operation.title||"",
+        show:false,
+        pageParams:{}
+      }
     };
   },
   created(){
@@ -86,6 +112,7 @@ export default {
         _widgetCtx,
         "beforeExecCode",this
       ).then(res => {
+        OperationUtils.setUrlParam(this.operation, this); //按钮输入参数处理
         var fun = this.operation.onClick;
         try{
           if (_.isFunction(fun)) {
@@ -103,8 +130,38 @@ export default {
         this.$emit("triggered", "script");
         OperationUtils.execution(this.operation, _widgetCtx, "afterExecCode",this); //执行后
       });
+    },
+    _maskClick(){
+      //关闭弹出窗
+      this.modalInfo.show = false;
+      this.modalInfo.pageParams = {pageId:""};
     }
   }
 };
 </script>
 <style src="../../styles/common.css"></style>
+<style>
+  .bui-dialog {
+    position: fixed;
+    background-color: #ffffff;
+    border-radius: 10px;
+    top: 300px;
+    left: 50px;
+    right: 50px; }
+  .dialog-close{ position: absolute; right: 18px; top: 15px;}
+  .bui-dialog-title {
+    justify-content: center;
+    height: 80px;
+    padding-left: 30px;
+    padding-right: 30px; }
+
+  .dialog-title-text {
+    color: #000000;
+    font-size: 35px; }
+
+  .bui-dialog-content {
+    height: 220px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 32px; }
+</style>

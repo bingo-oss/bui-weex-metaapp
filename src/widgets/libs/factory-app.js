@@ -5,6 +5,7 @@ import i18n from '../../js/i18n/index';
 import buiweex from "bui-weex";
 import linkapi from "linkapi";
 import Util from '../../js/utils'
+import Utils from "../../js/tool/utils";
 import _ from '../../js/tool/lodash';
 import ajax from '../../js/ajax.js';
 var _this=this;//用于初始化指向
@@ -219,6 +220,54 @@ var factoryApp = Object.assign({},buiweex,linkapi,{
                 reject(erro)
             })
         })
+    },
+    alert(msg){
+        /**
+         * 弹出警告
+         * @param msg {string} 提示文本
+         */
+        buiweex.alert(msg);
+    },
+    confirm(msg, callback, option){
+        /**
+         * 弹出确认框
+         * @param msg {string} 提示文本
+         * @param callback {function} 点击确定/取消后回调函数
+         * @param option {object} 参数
+         * @param option.okTitle {string} 确定按钮文本
+         * @param option.cancelTitle {string} 取消按钮文本
+         */
+        buiweex.confirm(msg, callback, option);
+    },
+    toPage(pageId,option){
+        /**
+         * 跳转页面
+         * @param pageId {string} 页面id
+         * @param option {object} 参数
+         * @param option.openType {string} 打开方式,默认是新窗口 0, 1弹出
+         * @param option.displayRegion {Object} 窗口模式
+         * width: 宽度
+         * height: 高度
+         * title:"名称"
+         */
+        /*app.toPge("test",{
+         openType:1,
+         displayRegion:{
+         width:500,
+         height:500
+         }
+         })*/
+        if(option&&option.openType==1){
+            //弹出窗口
+            _this.modalInfo.width = option.displayRegion&&option.displayRegion.width||500;
+            _this.modalInfo.height = option.displayRegion&&option.displayRegion.height||340;
+            //_this.modalInfo.height = option.displayRegion&&option.displayRegion.title||_this.modalInfo.title;
+            _this.modalInfo.pageParams = {"pageId" :pageId};
+            _this.modalInfo.show = true;
+        }else{
+            //跳入新页面
+            _this.$push(Utils.pageEntry(), {pageId:pageId,byOperation:false});
+        }
     }
 });
 
