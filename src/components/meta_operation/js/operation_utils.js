@@ -38,7 +38,7 @@ var utils={
                 //无权时-不能点击
                 resolve(false)
             } else {
-                utils.fnAnalysis(operation).then((res)=> {
+                utils.fnAnalysis(operation,null,_this).then((res)=> {
                     let value = true;
                     if (operation[before_after]) {
                         if (_.isFunction(operation[before_after])) {
@@ -309,11 +309,15 @@ var utils={
         }
 
     },
-    fnAnalysis(button,resolve){
+    fnAnalysis(button,resolve,_t){
         //函数解析
         //beforeExecCode,afterExecCode,dynamicPageFunc,checkFunc,onClick--需要解析的函数
         var promises = [];
         _.each(["beforeExecCode","afterExecCode","dynamicPageFunc","checkFunc","onClick"],(name)=>{
+            if(button[`${name}_com`]){
+                button[name] = button[`${name}_com`];
+                delete button[`${name}_com`];
+            }
             var str = button[name];
             if(button[name]&&button[name].indexOf("function(")!=0){
                 str = `function(context,app,resolve){${button[name]}}`;
@@ -325,28 +329,19 @@ var utils={
             }
             let res = new RegExp(/sys.\w*.\w*\(\)/,'g');
             let _res_com = new RegExp(/com.\w*.\w*/,'g');
+            let _res_api = new RegExp(/api.\w*\(/,'g');
+
             let _match = str.match(res);
             let _match_com = str.match(_res_com);
-            if((_match&&_match.length)||(_match_com&&_match_com.length)){
-                //引用了sys或者com的关键字
-                //com方法
-                str.replace(_res_com,function(_prop,b){
-                    let __props = _prop.split(".");;
-                    let _widgetCode = "",_key = ""
-                    if(__props.length){
-                        _widgetCode = __props[1];
-                        _key = __props[2];
-                    }
-                    let _prop_val = (utils.getWidgetExportParams(_t,_key,_widgetCode));
-                    //获取到的参数处理
-                    if(_.isObject(_prop_val)){
-                        _prop_val = JSON.stringify(_prop_val)
-                    }else if(typeof _prop_val!="string"){
-                        _prop_val = `"${_prop_val}"`;
-                    }
-                    str = str.replace(_prop,_prop_val);//添加匹配到的值
-                });
-                //sys方法
+            let _match_api = str.match(_res_api);
+            //累计需要发请求的语法
+            let _regExp_promises = 0;
+            if(_match&&_match.length)_regExp_promises+=_match.length;//sys语法
+            if(_match_api&&_match_api.length)_regExp_promises+=_match_api.length;//api语法
+
+            if((_match_com&&_match_com.length)||_regExp_promises){
+                //引用了sys,api或者com的语法
+                //sys语法解析
                 str.replace(res,function(a,b){
                     //提取的格式可能是 sys.实体.操作code;
                     let strArrys = a.split(".");//截取格式数据
@@ -367,28 +362,92 @@ var utils={
                                         _code = _code.replace("function(){","");
                                         _code = _code.substring(0,_code.lastIndexOf("}"));//提除外层的function;
                                     }
-                                    button[name] = str.replace(a,_code);//提取到的系统调用格式替换为操作的执行脚本
+                                    str = str.replace(a,_code);//提取到的系统调用格式替换为操作的执行脚本
+                                    com_replace();
                                     resolve(true);
                                 }).catch(()=>{
+                                    com_replace();
                                     resolve(true);
                                 });
                             });
                         }));
                     }
                 });
-
-                if(!(_match&&_match.length)){
-                    //不存在调用sys方法,直接输出
+                //api语法解析
+                str.replace(_res_api,function(a,b){
+                    //提取的格式可能是 sys.实体.操作code;
+                    let strArrys = a.split(".");//截取格式数据
+                    if(strArrys.length>=2){
+                        let apiId = strArrys[1].replace("(","");
+                        promises.push(new Promise(function(resolve, reject) {
+                            //获取执行代码
+                            config.readRuntimeConfig().then(runtimeConfig => {
+                                ax.get(
+                                    `${runtimeConfig["service.metad.api.endpoint"]}/meta_swagger_api`,
+                                    {
+                                        filters:`operationId eq ${apiId}`
+                                    }
+                                ).then(({data}) => {
+                                    str = str.replace(a,`app.api(${JSON.stringify(data[0])},`);
+                                    com_replace();
+                                    resolve(true);
+                                }).catch(()=>{
+                                    com_replace();
+                                    resolve(true);
+                                });
+                            });
+                        }));
+                    }
+                });
+                function com_replace(){
+                    _regExp_promises-=1;
+                    if(_regExp_promises>0){
+                        return false;
+                    }
+                    if(_match_com&&_match_com.length){
+                        //存在动态com语法
+                        button[`${name}_com`] = str;
+                    }
+                    //com语法解析
+                    str.replace(_res_com,function(_prop,b){
+                        let __props = _prop.split(".");;
+                        let _widgetCode = "",_key = ""
+                        if(__props.length){
+                            _widgetCode = __props[1];
+                            _key = __props[2];
+                        }
+                        let _prop_val = (utils.getWidgetExportParams(_t,_key,_widgetCode));
+                        //获取到的参数处理
+                        if(typeof _prop_val=="object"){
+                            _prop_val = JSON.stringify(_prop_val)
+                        }else if(typeof _prop_val=="string"){
+                            _prop_val = `"${_prop_val}"`;
+                        }else if(typeof _prop_val!="string"){
+                            _prop_val = `"${_prop_val}"`;
+                        }
+                        str = str.replace(_prop,_prop_val);//添加匹配到的值
+                    });
                     button[name] = str;
+                }
+
+                if(!_regExp_promises){
+                    //不存在调用sys,api方法,直接输出
+                    //button[name] = str;
+                    com_replace();
                     promises.push(new Promise(function(resolve,reject){resolve(true)}));
                 }
             }else{
-                //没有使用,
+                //没有特殊语法,
                 button[name] = str;
                 promises.push(new Promise(function(resolve,reject){resolve(true)}));
             }
         });
         return Promise.all(promises);
+    },
+    conversionApi(apiInfo,data){
+        if(apiInfo){
+            service.getEngineUrl(apiInfo.projectId).then()
+        }
     }
 
 };

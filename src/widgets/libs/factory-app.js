@@ -8,6 +8,9 @@ import Util from '../../js/utils'
 import Utils from "../../js/tool/utils";
 import _ from '../../js/tool/lodash';
 import ajax from '../../js/ajax.js';
+import service from '../../js/service.js';
+import metabase from '../../js/metadata/metabase.js';
+
 var _this=this;//用于初始化指向
 var factoryApp = Object.assign({},buiweex,linkapi,{
     init(t){
@@ -268,6 +271,28 @@ var factoryApp = Object.assign({},buiweex,linkapi,{
             //跳入新页面
             _this.$push(Utils.pageEntry(), {pageId:pageId,byOperation:false});
         }
+    },
+    api(apiInfo,data){
+        /**
+         * 运行api
+         * @param apiInfo {Object} api信息
+         * @data data {Object} 请求参数
+         */
+        if(typeof apiInfo=="string"){
+            apiInfo = JSON.parse(apiInfo);
+        }
+        return service.getEngineUrl(apiInfo.projectId).then(function(res){
+          apiInfo.path.replace(/\{\w*\}/g,function(a,b){
+              var field = a.replace("{","").replace("}","");
+              apiInfo.path = apiInfo.path.replace(a,data[field]);
+          });
+          var _params = {url:`${res}${apiInfo.path}`,data:JSON.stringify(data)}
+          if(["PATCH"].indexOf(apiInfo.method)!=-1){
+              _params.headers = {"x-http-method-override":apiInfo.method}
+              apiInfo.method = "POST"
+          }
+          return factoryApp[apiInfo.method.toLowerCase()](_params);
+        });
     }
 });
 
