@@ -385,7 +385,8 @@ var utils={
                                 ax.get(
                                     `${runtimeConfig["service.metad.api.endpoint"]}/meta_swagger_api`,
                                     {
-                                        filters:`operationId eq ${apiId}`
+                                        filters:`projectId eq ${button.projectId} and operationId eq ${apiId}`,
+                                        select:"contentType,id,endpoint,path,projectId,method"
                                     }
                                 ).then(({data}) => {
                                     str = str.replace(a,`app.api(${JSON.stringify(data[0])},`);
