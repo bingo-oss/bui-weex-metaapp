@@ -584,8 +584,8 @@ module.exports = {
                         params.filters = filtersParts.join('and');
                         params.total=true;
                         service.getEngineUrl(viewDef.projectId).then(engineUrl => {
-                            var a = `${engineUrl}/${viewDef.metaEntityName.toLowerCase()}`;
-                                ajax.get(`${engineUrl}/${viewDef.metaEntityName.toLowerCase()}`, params).then(resp => {
+                            var a = `${engineUrl}/${metabase.lowerUnderscore(viewDef.metaEntityName)}`;
+                                ajax.get(`${engineUrl}/${metabase.lowerUnderscore(viewDef.metaEntityName)}`, params).then(resp => {
                                     this.presetFilters[_index].count = (resp.headers["X-Total-Count"]>0)?`(${resp.headers["X-Total-Count"]})`:"";//对应标签的总数
 
                                     this.presetFilters[_index].title =  `${this.presetFilters[_index].text}${this.presetFilters[_index].count}`;
