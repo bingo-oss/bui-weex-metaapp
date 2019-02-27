@@ -2,19 +2,22 @@ const linkapi = require('linkapi');
 import i18n from '../js/i18n/index';
 import buiweex from 'bui-weex';
 import ajax from '../js/ajax.js';
-/*
-const configServerUrl = "https://developer.bingosoft.net:12100/services/tool/system/config";
-*/
-
+const configServerUrl =
+    /*"https://appfactoryservice.bingolink.biz/services/tool/system/config";*/
+    "https://developer.bingosoft.net:12100/services/tool/system/config";
+    /*"http://20.97.71.73/services/tool/system/config";*/
 /**
  * 在开发调试时，可以将 debug 设为 true，并设置相应的 token，viewId 和 formId 来调试
  * 发布时记得将 debug 设为 false
  *
+ *https://developer.bingosoft.net:12100/forewarning_suite/shiti1?filters=&orderby=&viewId=all&page_size=1&page=1&total=true
+ *
+ * https://developer.bingosoft.net:12100/forewarning_suite/shiti1?filters=&viewId=all&orderby=updatedAt+desc&page=1&page_size=1&total=true
  */
 var configData = null;
 export default {
-    debug: true,
-    token: 'c2Fhc3Nzbzo2NmZkYjQ4NS1jNmU1LTQwZWYtYTkzMS1kNjJjZWUyYWNiYTQ',
+    debug: false,
+    token: 'c2Fhc3Nzbzo5MGJmMzJiYi1iZmIxLTQ5ZTItYjBlNC0zNzM5YzM4MDVkYjI',
     configFilename: 'config.json',
     serverConfig: {},
     // 读取与 list.weex.js、form.weex.js 同级的配置文件
@@ -25,7 +28,7 @@ export default {
                 this.serverConfig = configData;
                 resolve(configData);
             } else {
-                /*configData=Object.assign({},{
+/*                configData=Object.assign({},{
                     "configServerUrl":configServerUrl,
                     "blogApi": "",
                     "uamUrl": "",
@@ -33,20 +36,26 @@ export default {
                 });
                 this.serverConfig = {};
                 resolve(configData);*/
-                /*                ajax.get(configServerUrl).then((resp) => {
-                                    configData=Object.assign(resp.data,{
-                                        "configServerUrl":configServerUrl,
-                                        "blogApi": resp.data["service.blog.endpoint"],
-                                        "uamUrl": resp.data["service.link.endpoint"],
-                                        "engineService": resp.data["service.gateway.endpoint"]+"/services"
-                                    });
-                                    this.serverConfig = configData;
-                                    resolve(configData);
-                                },()=>{
-                                    this.serverConfig = {};
-                                    resolve({})
-                                });*/
-                contextPath = contextPath.replace('file://', ''); // 消除 file:
+
+                //读取全局配置地址方式
+                ajax.get(configServerUrl).then((resp) => {
+                    configData=Object.assign(resp.data,{
+                        "configServerUrl":configServerUrl,
+                        "blogApi": resp.data["service.blog.endpoint"],
+                        "uamUrl": resp.data["service.link.endpoint"],
+                        "engineService": resp.data["service.gateway.endpoint"]+"/services"
+                    });
+                    this.serverConfig = configData;
+                    resolve(configData);
+                },()=>{
+                    this.serverConfig = {};
+                    resolve({})
+                });
+                //end
+
+/*
+                 //读取文件config.json 配置方式
+                 contextPath = contextPath.replace('file://', ''); // 消除 file:
                 let absPath = `${contextPath}/${this.configFilename}`;
                 linkapi.readTextFromFile(absPath, 'utf-8', data => {
                     try {
@@ -73,6 +82,8 @@ export default {
                 }, err => {
                     reject(err);
                 })
+                 //end
+*/
             }
         })
 
