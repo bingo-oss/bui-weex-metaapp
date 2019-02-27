@@ -5,7 +5,7 @@
         </bui-header>
         <bui-searchbar-center placeholder="请输入搜索内容" @search="onSearchInput" @clear="onSearchClear"></bui-searchbar-center>
         <scroller class="scroller">
-            <bui-cell v-for="item in dataList" :key="item.id" :title="item.title" @cellClick="itemClicked(item)"></bui-cell>
+            <bui-cell v-for="item in dataList" :key="item.id" :title="item[definition.componentParams.titleField]||item.title" @cellClick="itemClicked(item)"></bui-cell>
             <loading-wrapper v-if="dataList.length && dataList.length >= pageSize" @loading="onloading" :status="loadingStatus">
             </loading-wrapper>
         </scroller>

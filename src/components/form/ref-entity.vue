@@ -83,7 +83,7 @@ export default {
                 return;
             }
             ajax.get(`${this.entityResourceUrl}/${id}`).then(resp => {
-                this.valueText = resp.data.title;
+                this.valueText = resp.data[this.definition.componentParams.titleField]||resp.data.title;
             });
         },
         inputClicked() {

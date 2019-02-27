@@ -691,7 +691,7 @@
             }else if((weex.config.env.deviceModel.indexOf("iPhone")==-1)){
                 mobileType = 1;
             }
-            let setData={terminalType:mobileType};
+            let setData={terminalType:mobileType,resolve:true};
             if(!formId&&pageParam.entity){
                 //不存在视图id--则存入实体id
                 setData.getDefaultForm = true;
@@ -708,6 +708,7 @@
             console.log('fetch data')
             // 获取表单定义
             return service.getMetaFormDef(formId,setData).then(formDef => {
+
                 this.data = formDef;
             this.metaForm = formDef;//用于暴露表单定义
             this.entityName = metabase.lowerUnderscore(formDef.metaEntityName)//formDef.metaEntityName.toLowerCase();
