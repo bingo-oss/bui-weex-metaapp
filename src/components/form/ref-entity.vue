@@ -84,6 +84,7 @@ export default {
             }
             ajax.get(`${this.entityResourceUrl}/${id}`).then(resp => {
                 this.valueText = resp.data[this.definition.componentParams.titleField]||resp.data.title;
+                this.emitExData(id,this.valueText);
             });
         },
         inputClicked() {
@@ -100,6 +101,12 @@ export default {
                 this.$emit('input', item.id);
             }
             this.showPopup = false;
+        },
+        emitExData:function(id,text){
+            var exData={};
+            exData[id]=this.buildExData(text);
+            let _dataField = this.definition.dataField;
+            this.$emit("exDataChanged",exData,_dataField);
         }
     },
     components: {
