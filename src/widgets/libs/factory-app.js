@@ -166,6 +166,10 @@ var factoryApp = Object.assign({},buiweex,linkapi,{
                     reject(res)
                 }
             },erro=>{
+                if(params.erroHint===true||params.erroHint==null){
+                    //使用错误信息处理提示
+                    factoryApp.erroHint(erro)
+                }
                 reject(erro)
             })
         })
@@ -184,6 +188,10 @@ var factoryApp = Object.assign({},buiweex,linkapi,{
                     reject(res)
                 }
             },erro=>{
+                if(params.erroHint===true||params.erroHint==null){
+                    //使用错误信息处理提示
+                    factoryApp.erroHint(erro)
+                }
                 reject(erro)
             })
         })
@@ -202,6 +210,10 @@ var factoryApp = Object.assign({},buiweex,linkapi,{
                     reject(res)
                 }
             },erro=>{
+                if(params.erroHint===true||params.erroHint==null){
+                    //使用错误信息处理提示
+                    factoryApp.erroHint(erro)
+                }
                 reject(erro)
             })
         })
@@ -220,6 +232,10 @@ var factoryApp = Object.assign({},buiweex,linkapi,{
                     reject(res)
                 }
             },erro=>{
+                if(params.erroHint===true||params.erroHint==null){
+                    //使用错误信息处理提示
+                    factoryApp.erroHint(erro)
+                }
                 reject(erro)
             })
         })
@@ -272,11 +288,13 @@ var factoryApp = Object.assign({},buiweex,linkapi,{
             _this.$push(Utils.pageEntry(), {pageId:pageId,byOperation:false});
         }
     },
-    api(apiInfo,data){
+    api(apiInfo,data,option){
         /**
          * 运行api
          * @param apiInfo {Object} api信息
          * @data data {Object} 请求参数
+         * @option {Object} 扩展参数
+         * @option.erroHint 是否开启失败提示
          */
         if(typeof apiInfo=="string"){
             apiInfo = JSON.parse(apiInfo);
@@ -291,8 +309,40 @@ var factoryApp = Object.assign({},buiweex,linkapi,{
               _params.headers = {"x-http-method-override":apiInfo.method}
               apiInfo.method = "POST"
           }
+          if(option){
+            //合并下扩展参数
+            _.extend(_params,option);
+          }
           return factoryApp[apiInfo.method.toLowerCase()](_params);
         });
+    },
+    erroHint(xhr, textStatus, errorThrown){
+        /**
+         * 请求错误信息处理提示
+         * @param xhr {Object} 错误信息
+         * @param textStatus {String} 状态位
+         */
+        if(xhr.status==403){
+            buiweex.alert("您没有此操作权限");
+        }else if (xhr.status == 400) {
+            buiweex.alert("服务器异常:" + errorThrown);
+        } else {
+            var errorMsg = "服务器内部错误！";
+            try {
+                var jsonExceptionResp = JSON.parse(xhr.responseText);
+                if (jsonExceptionResp.responseJSON && jsonExceptionResp.responseJSON.message) {
+                    errorMsg = jsonExceptionResp.responseJSON.message;
+                } else {
+                    errorMsg = jsonExceptionResp.message || jsonExceptionResp.error.reason;
+                }
+            } catch (ex) {
+
+            }
+            if (typeof errorMsg == "undefined") {
+                errorMsg = "服务器内部错误！";
+            }
+            buiweex.alert(errorMsg);
+        }
     }
 });
 
