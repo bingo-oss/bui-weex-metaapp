@@ -462,18 +462,22 @@
             },
             formCheck(){//页面部件执行校验
                 var validated = true;
-                for (let id in this.$refs) {
-                    //if(["actionsheet"].indexOf(id)!=-1)continue;//过滤下拉菜单组件
-                    let validateFunc = this.$refs[id]&&this.$refs[id][0]&&this.$refs[id][0].validate;
-                    if (!validateFunc) {
-                        continue;
+                try{
+                    for (let id in this.$refs) {
+                        //if(["actionsheet"].indexOf(id)!=-1)continue;//过滤下拉菜单组件
+                        let validateFunc = this.$refs[id]&&this.$refs[id][0]&&this.$refs[id][0].validate;
+                        if (!validateFunc) {
+                            continue;
+                        }
+                        let result = validateFunc();
+                        if (!result) {
+                            validated = false;
+                            continue;
+                            //break;
+                        }
                     }
-                    let result = validateFunc();
-                    if (!result) {
-                        validated = false;
-                        continue;
-                        //break;
-                    }
+                }catch(erro) {
+                    validated = false;
                 }
                 return validated;
             },
