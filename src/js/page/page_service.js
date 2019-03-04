@@ -19,17 +19,17 @@ const pageService = {
                 } else if (isAndroid) {
                     mobileType = 1
                 }
-                // ax.get(runtimeConfig["service.metabase.endpoint"]+`/mp_page/${pageId}?terminalType=${mobileType}&byOperation=${byOperation}`).then(({data})=>{
-                //     resolve(data);
-                // },()=>{
-                ax.get(`http://10.200.206.43:8686/dist/test_page/${pageId}.json`).then(({
-                    data
-                }) => {
-                    resolve(data);
-                }, () => {
-                    reject();
-                });
-                // });
+                 ax.get(runtimeConfig["service.metabase.endpoint"]+`/mp_page/${pageId}?terminalType=${mobileType}&byOperation=${byOperation}`).then(({data})=>{
+                     resolve(data);
+                 },()=>{
+                    ax.get(`http://10.200.84.133:8686/dist/test_page/${pageId}.json`).then(({
+                        data
+                    }) => {
+                        resolve(data);
+                    }, () => {
+                        reject();
+                    });
+                 });
             }, (erro) => {
                 reject(erro);
             });

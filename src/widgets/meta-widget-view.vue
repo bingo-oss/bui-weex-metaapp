@@ -709,6 +709,10 @@ module.exports = {
                     if (viewDef.config.orderby) {
                         params.orderby = viewDef.config.orderby.map(o => `${o.name} ${o.type}`).join(',')
                     }
+                    if(!params.orderby){
+                        //没有设置排序,默认按更新时间排序
+                        params.orderby = "updatedAt desc";
+                    }
                     // 预设的过滤器
                     /*if (viewDef.config.multipleFilters.support) {
                      this.presetFilters = viewDef.config.multipleFilters.filters;
