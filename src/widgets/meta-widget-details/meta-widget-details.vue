@@ -1,10 +1,12 @@
 <template>
     <div class="wrapper">
+
         <div class="details-header" v-if="titleInfo.title">
             <div class="escape" v-if="titleInfo.title">
                 <text class="escape-in">{{titleInfo.title}}</text>
             </div>
             <div class="flex-row" style="margin-bottom: 25px;">
+                <!--<text class="warn">抓拍时间：xxxxxxx</text>-->
                 <text class="warn" v-if="titleInfo.forewarningTime">预警时间：{{titleInfo.forewarningTime | timeformat}}</text>
                 <text class="warn" v-if="titleInfo.title">预警状态：{{titleInfo.forewarningStatus ? '已处理':'未处理'}}</text>
             </div>
@@ -31,6 +33,11 @@
                            :src="Config.serverConfig.engineService+'/stream?filePath='+(picture.relativePath||picture.url)+'&width=300&height=400'" @click="handlePreview(picture)"></image>
                     <text class="nonal" style="text-align: center; margin-top: 15px;">库中原图</text>
                 </div>
+                <!--<div class="_picture" v-if="comparePic.originalPicture" v-for="picture in comparePic.originalPicture" @click="handlePreview(picture)">
+                    <image class="_picture_img"
+                           :src="Config.serverConfig.engineService+'/stream?filePath='+(picture.relativePath||picture.url)+'&width=300&height=400'" @click="handlePreview(picture)"></image>
+                    <text class="nonal" style="text-align: center; margin-top: 15px;">抓拍全景图</text>
+                </div>-->
             </div>
         </div>
         <div v-if="titleInfo.title" class="person-info">
@@ -64,14 +71,26 @@
                     <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">出生日期</text>
                     <text style="font-size: 28px">{{infomation.birthday}}</text>
                 </div>
-                <div class="flex-row" v-if="infomation.registryAddress" style="padding-bottom: 18px;">
+                <!--<div class="flex-row" v-if="infomation.registryAddress" style="padding-bottom: 18px;">
                     <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">户籍地址</text>
                     <text style="font-size: 28px">{{infomation.registryAddress}}</text>
-                </div>
-                <div class="flex-row" v-if="infomation.caseCause" style="padding-bottom: 18px;">
+                </div>-->
+                <!--<div class="flex-row" style="padding-bottom: 18px;">
+                    <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">来源库</text>
+                    <text style="font-size: 28px">这是来源库的信息。。。</text>
+                </div>-->
+                <!--<div class="flex-row" style="padding-bottom: 18px;">
+                    <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">预警时间</text>
+                    <text style="font-size: 28px">这是预警时间的信息。。。</text>
+                </div>-->
+                <!--<div class="flex-row" style="padding-bottom: 18px;">
+                    <text class="nonal" style="padding-right: 20px;width: 160px;">抓拍机名称</text>
+                    <text style="font-size: 28px">这是抓拍机名称的信息。。。</text>
+                </div>-->
+                <!--<div class="flex-row" v-if="infomation.caseCause" style="padding-bottom: 18px;">
                     <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">案由</text>
                     <text style="font-size: 28px; width:560px;">{{infomation.caseCause}}</text>
-                </div>
+                </div>-->
             </div>
         </div>
         <!--处理结果-->
@@ -106,6 +125,7 @@
                 </div>
             </div>
         </div>
+        <!--<div class="water-mark"><text class="mark-text">#我是水印</text></div>-->
     </div>
 </template>
 <script>
@@ -261,52 +281,44 @@
     ._picture_img{
         width: 300px;height: 400px;
     }
-
     .details-header {
        /*height: 200px;*/
         padding-left: 25px;
         background-color: #4DA4FE
     }
-
     .wrapper {
         background-color: #FFF;
         border-bottom-color: #ececec;
         border-bottom-width: 1px;
         border-bottom-style: solid;
+        position: relative;
     }
-
     .flex-row {
         flex-direction: row;
     }
-
     .escape-in {
         color: #FFFFFF;
         font-size: 38px;
         padding-top: 10px;
         padding-bottom: 25px;
     }
-
     .warn {
         font-size: 28px;
         color: #C4E1FE;
         padding-right: 40px;
     }
-
     .compare-title {
         padding-top: 30px;
         padding-bottom: 30px;
     }
-
     .nonal {
         font-size: 28px;
         color: #c6c7c8;
     }
-
     .similar {
         font-size: 40px;
         color: crimson;
     }
-
     .person-title {
         border-bottom-color: #f1f1f1;
         border-bottom-width: 1px;
@@ -322,12 +334,23 @@
         padding-left: 25px;
         padding-right: 25px;
     }
-
     .info-detail {
         padding-left: 25px;
         padding-right: 25px;
         padding-top: 20px;
         padding-bottom: 20px;
     }
+    .water-mark{
+        position: absolute;
+        top: 100px;
+        left: 50px;
+        z-index: -9;
+        transform:rotate(-45deg);
+    }
+    .mark-text{
+
+        color: #666;
+        font-size: 45px;
+        }
 
 </style>
