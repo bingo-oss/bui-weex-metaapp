@@ -1,13 +1,57 @@
 <template>
     <div class="wrapper">
+        <!--水印-->
+        <div class="mark">
+            <div class="water-mark">
+                <text class="mark-text" style="margin-top: 120px;">#我是水印</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印</text>
+            </div>
+            <div class="water-mark1">
+                <text class="mark-text" style="margin-top: 120px;">#我是水印1</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印1</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印1</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印1</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印1</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印1</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印1</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印1</text>
+            </div>
+            <div class="water-mark2">
+                <text class="mark-text" style="margin-top: 120px;">#我是水印2</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印2</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印2</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印2</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印2</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印2</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印2</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印2</text>
+            </div>
+            <div class="water-mark3">
+                <text class="mark-text" style="margin-top: 120px;">#我是水印3</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印3</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印3</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印3</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印3</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印3</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印3</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印3</text>
+                <text class="mark-text" style="margin-top: 120px;">#我是水印3</text>
+            </div>
+        </div>
 
         <div class="details-header" v-if="titleInfo.title">
             <div class="escape" v-if="titleInfo.title">
                 <text class="escape-in">{{titleInfo.title}}</text>
             </div>
             <div class="flex-row" style="margin-bottom: 25px;">
-                <!--<text class="warn">抓拍时间：xxxxxxx</text>-->
-                <text class="warn" v-if="titleInfo.forewarningTime">预警时间：{{titleInfo.forewarningTime | timeformat}}</text>
+                <text class="warn" v-if="titleInfo.snapTime">抓拍时间：{{titleInfo.snapTime | timeformat}}</text>
+                <!--<text class="warn" v-if="titleInfo.forewarningTime">预警时间：{{titleInfo.forewarningTime | timeformat}}</text>-->
                 <text class="warn" v-if="titleInfo.title">预警状态：{{titleInfo.forewarningStatus ? '已处理':'未处理'}}</text>
             </div>
             <div class="flex-row" style="padding-bottom: 25px;">
@@ -23,7 +67,7 @@
                 <text class="similar">{{comparePic.similarityDegree}}%</text>
             </div>
             <div class="pic-con flex-row" style="flex-wrap:wrap; padding-bottom: 15px;">
-                <div class="_picture" v-if="comparePic.snapPicture" v-for="picture in comparePic.snapPicture" @click="handlePreview(picture)">
+                <div class="_picture"  v-if="comparePic.snapPicture" v-for="picture in comparePic.snapPicture" @click="handlePreview(picture)">
                     <image class="_picture_img"
                            :src="Config.serverConfig.engineService+'/stream?filePath='+(picture.relativePath||picture.url)+'&width=300&height=400'" @click="handlePreview(picture)"></image>
                     <text class="nonal" style="text-align: center; margin-top: 15px;">抓拍图片</text>
@@ -33,11 +77,11 @@
                            :src="Config.serverConfig.engineService+'/stream?filePath='+(picture.relativePath||picture.url)+'&width=300&height=400'" @click="handlePreview(picture)"></image>
                     <text class="nonal" style="text-align: center; margin-top: 15px;">库中原图</text>
                 </div>
-                <!--<div class="_picture" v-if="comparePic.originalPicture" v-for="picture in comparePic.originalPicture" @click="handlePreview(picture)">
+                <div class="_picture" v-if="comparePic.snapPanorama" v-for="picture in comparePic.snapPanorama" @click="handlePreview(picture)">
                     <image class="_picture_img"
                            :src="Config.serverConfig.engineService+'/stream?filePath='+(picture.relativePath||picture.url)+'&width=300&height=400'" @click="handlePreview(picture)"></image>
                     <text class="nonal" style="text-align: center; margin-top: 15px;">抓拍全景图</text>
-                </div>-->
+                </div>
             </div>
         </div>
         <div v-if="titleInfo.title" class="person-info">
@@ -75,18 +119,18 @@
                     <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">户籍地址</text>
                     <text style="font-size: 28px">{{infomation.registryAddress}}</text>
                 </div>-->
-                <!--<div class="flex-row" style="padding-bottom: 18px;">
+                <div class="flex-row" v-if="infomation.executeControlLib" style="padding-bottom: 18px;">
                     <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">来源库</text>
-                    <text style="font-size: 28px">这是来源库的信息。。。</text>
-                </div>-->
-                <!--<div class="flex-row" style="padding-bottom: 18px;">
+                    <text style="font-size: 28px">{{infomation.executeControlLib}}</text>
+                </div>
+                <div class="flex-row" style="padding-bottom: 18px;">
                     <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">预警时间</text>
-                    <text style="font-size: 28px">这是预警时间的信息。。。</text>
-                </div>-->
-                <!--<div class="flex-row" style="padding-bottom: 18px;">
+                    <text style="font-size: 28px">{{titleInfo.forewarningTime | timeformat}}</text>
+                </div>
+                <div class="flex-row" v-if="infomation.snapCamera" style="padding-bottom: 18px;">
                     <text class="nonal" style="padding-right: 20px;width: 160px;">抓拍机名称</text>
-                    <text style="font-size: 28px">这是抓拍机名称的信息。。。</text>
-                </div>-->
+                    <text style="font-size: 28px">{{infomation.snapCamera}}</text>
+                </div>
                 <!--<div class="flex-row" v-if="infomation.caseCause" style="padding-bottom: 18px;">
                     <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">案由</text>
                     <text style="font-size: 28px; width:560px;">{{infomation.caseCause}}</text>
@@ -125,7 +169,6 @@
                 </div>
             </div>
         </div>
-        <!--<div class="water-mark"><text class="mark-text">#我是水印</text></div>-->
     </div>
 </template>
 <script>
@@ -184,14 +227,25 @@
                         _this.infomation.nation = res.data.nation;  //名族
                         _this.infomation.sex = res.data.sex;  //性别
                         _this.infomation.birthday = res.data.birthday;  //出生日期
-                        _this.infomation.registryAddress = res.data.registryAddress;  //户籍所在地
-                        _this.infomation.caseCause = res.data.caseCause;  //案由
+                        _this.infomation.snapCamera = res.data.snapCamera; //抓拍机名称
+                        _this.infomation.snapTime = res.data.snapTime; //抓拍时间
+                        _this.infomation.executeControlLib = res.data.executeControlLib; //来源库
+
+                        /*_this.infomation.registryAddress = res.data.registryAddress; */ //户籍所在地
+                        /*_this.infomation.caseCause = res.data.caseCause;*/  //案由
                         _this.comparePic.similarityDegree = res.data.similarityDegree; //相似度
                         if(res.data.snapPicture){
                             if(_.isString(res.data.snapPicture)){
                                 _this.comparePic.snapPicture = eval('(' + res.data.snapPicture + ')')  //抓拍图片
                             }else{
                                 _this.comparePic.snapPicture = res.data.snapPicture;  //抓拍图片
+                            }
+                        }
+                        if(res.data.snapPanorama){
+                            if(_.isString(res.data.snapPanorama)){
+                                _this.comparePic.snapPanorama = eval('(' + res.data.snapPanorama + ')')  //抓拍全景图
+                            }else{
+                                _this.comparePic.snapPanorama = res.data.snapPanorama;  //抓拍全景图
                             }
                         }
                         if(res.data.originalPicture){
@@ -276,10 +330,14 @@
         font-size: 28px;
     }
     ._picture{
-        justify-content:center; margin-top: 15px; margin-right: 20px; width: 300px;
+        justify-content:center;
+        margin-top: 15px;
+        margin-right: 20px;
+        width: 300px;
     }
     ._picture_img{
-        width: 300px;height: 400px;
+        width: 300px;
+        height: 400px;
     }
     .details-header {
        /*height: 200px;*/
@@ -291,7 +349,7 @@
         border-bottom-color: #ececec;
         border-bottom-width: 1px;
         border-bottom-style: solid;
-        position: relative;
+        /*position: relative;*/
     }
     .flex-row {
         flex-direction: row;
@@ -340,17 +398,33 @@
         padding-top: 20px;
         padding-bottom: 20px;
     }
+    .mark{
+    }
     .water-mark{
-        position: absolute;
-        top: 100px;
-        left: 50px;
-        z-index: -9;
-        transform:rotate(-45deg);
+        position: fixed;
+        top: 0px;
+        left: 0px;
+    }
+    .water-mark1{
+        position: fixed;
+        top: -20px;
+        left: 220px;
+    }
+    .water-mark2{
+        position: fixed;
+        top: -40px;
+        left: 440px;
+    }
+    .water-mark3{
+        position: fixed;
+        top: -60px;
+        left: 660px;
     }
     .mark-text{
-
         color: #666;
-        font-size: 45px;
+        font-size: 35px;
+        opacity: 0.1;
+        transform:rotate(-30deg);
         }
 
 </style>

@@ -17,7 +17,7 @@ const configServerUrl =
 var configData = null;
 export default {
     debug: false,
-    token: 'c2Fhc3Nzbzo5MGJmMzJiYi1iZmIxLTQ5ZTItYjBlNC0zNzM5YzM4MDVkYjI',
+    token: 'c2Fhc3Nzbzo5NjBjYjhkNC03ODY3LTRmYzEtOTQ4MC00ZTM5ZjIzYmMzZTA',
     configFilename: 'config.json',
     serverConfig: {},
     // 读取与 list.weex.js、form.weex.js 同级的配置文件
