@@ -3,45 +3,45 @@
         <!--水印-->
         <div class="mark">
             <div class="water-mark">
-                <text class="mark-text" style="margin-top: 120px;">#我是水印</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
             </div>
             <div class="water-mark1">
-                <text class="mark-text" style="margin-top: 120px;">#我是水印1</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印1</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印1</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印1</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印1</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印1</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印1</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印1</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
             </div>
             <div class="water-mark2">
-                <text class="mark-text" style="margin-top: 120px;">#我是水印2</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印2</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印2</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印2</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印2</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印2</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印2</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印2</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
             </div>
             <div class="water-mark3">
-                <text class="mark-text" style="margin-top: 120px;">#我是水印3</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印3</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印3</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印3</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印3</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印3</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印3</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印3</text>
-                <text class="mark-text" style="margin-top: 120px;">#我是水印3</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
             </div>
         </div>
 
@@ -204,6 +204,7 @@
                 resultshow: null,
                 Config:config,
                 metaEntit:{},
+                user:""
             }
         },
         methods: {
@@ -214,6 +215,7 @@
                 factoryApp.startLoading(this);//显示加载圈
                 let _this = this;
                     ajax.get(`${_this.metaEntit.project.engine.externalUrl}/${_this.metaEntit.name}/${_this.widgetParams.dataId}`).then(res => {
+                        console.log(res);
                         let cameraId = res.data.cameraId;
                         _this.titleInfo.personName = res.data.personName;
                         _this.titleInfo.forewarningStatus = res.data.forewarningStatus; //预警状态
@@ -227,7 +229,7 @@
                         _this.infomation.nation = res.data.nation;  //名族
                         _this.infomation.sex = res.data.sex;  //性别
                         _this.infomation.birthday = res.data.birthday;  //出生日期
-                        _this.infomation.snapCamera = res.data.snapCamera; //抓拍机名称
+                        _this.infomation.snapCamera = res.data.camera; //抓拍机名称
                         _this.infomation.snapTime = res.data.snapTime; //抓拍时间
                         _this.infomation.executeControlLib = res.data.executeControlLib; //来源库
 
@@ -317,6 +319,11 @@
             });
             globalEvent.addEventListener("resume", e => {
                 this.getDetailsInfo();
+            });
+
+            linkapi.getLoginInfo(function (res){
+                //buiweex.alert(JSON.stringify(res.userName));
+                _this.user = res.userName;
             });
         },
         created(){
