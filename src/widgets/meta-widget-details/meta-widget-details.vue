@@ -3,45 +3,16 @@
         <!--水印-->
         <div class="mark">
             <div class="water-mark">
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" v-for="item in markArr" style="margin-top: 120px;">#{{item.userName}}</text>
             </div>
             <div class="water-mark1">
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" v-for="item in markArr" style="margin-top: 120px;">#{{item.userName}}</text>
             </div>
             <div class="water-mark2">
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" v-for="item in markArr" style="margin-top: 120px;">#{{item.userName}}</text>
             </div>
             <div class="water-mark3">
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
-                <text class="mark-text" style="margin-top: 120px;">#{{user}}</text>
+                <text class="mark-text" v-for="item in markArr" style="margin-top: 120px;">#{{item.userName}}</text>
             </div>
         </div>
 
@@ -204,7 +175,16 @@
                 resultshow: null,
                 Config:config,
                 metaEntit:{},
-                user:""
+                markArr:[
+                    {userName:""},
+                    {userName:""},
+                    {userName:""},
+                    {userName:""},
+                    {userName:""},
+                    {userName:""},
+                    {userName:""},
+                    {userName:""}
+                ]
             }
         },
         methods: {
@@ -324,6 +304,9 @@
             linkapi.getLoginInfo(function (res){
                 //buiweex.alert(JSON.stringify(res.userName));
                 _this.user = res.userName;
+                for (let i = 0; i < _this.markArr.length; i++) {
+                    _this.markArr[i].userName = res.userName;
+                }
             });
         },
         created(){
