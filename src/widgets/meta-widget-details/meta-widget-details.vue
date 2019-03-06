@@ -82,7 +82,7 @@
                     <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">性别</text>
                     <text style="font-size: 28px">{{(infomation.sex==1)?"男":"女"}}</text>
                 </div>
-                <div class="flex-row" style="padding-bottom: 18px;">
+                <div class="flex-row" v-if="infomation.birthday" style="padding-bottom: 18px;">
                     <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">出生日期</text>
                     <text style="font-size: 28px">{{infomation.birthday}}</text>
                 </div>
@@ -94,9 +94,9 @@
                     <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">来源库</text>
                     <text style="font-size: 28px">{{infomation.executeControlLib}}</text>
                 </div>
-                <div class="flex-row" style="padding-bottom: 18px;">
+                <div class="flex-row" v-if="infomation.forewarningTime" style="padding-bottom: 18px;">
                     <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">预警时间</text>
-                    <text style="font-size: 28px">{{titleInfo.forewarningTime | timeformat}}</text>
+                    <text style="font-size: 28px">{{infomation.forewarningTime | timeformat}}</text>
                 </div>
                 <div class="flex-row" v-if="infomation.snapCamera" style="padding-bottom: 18px;">
                     <text class="nonal" style="padding-right: 20px;width: 160px;">抓拍机名称</text>
@@ -199,7 +199,7 @@
                         let cameraId = res.data.cameraId;
                         _this.titleInfo.personName = res.data.personName;
                         _this.titleInfo.forewarningStatus = res.data.forewarningStatus; //预警状态
-                        _this.titleInfo.forewarningTime = res.data.forewarningTime; //预警时间
+                        _this.titleInfo.snapTime = res.data.snapTime; //抓拍时间
                         _this.titleInfo.title = res.data.title; //预警标题
                         if(res.data._data&&res.data._data.cameraId){
                             _this.titleInfo.Camera = res.data._data.cameraId[cameraId].title; //摄像头
@@ -209,8 +209,9 @@
                         _this.infomation.nation = res.data.nation;  //名族
                         _this.infomation.sex = res.data.sex;  //性别
                         _this.infomation.birthday = res.data.birthday;  //出生日期
+                        _this.infomation.forewarningTime = res.data.forewarningTime; //预警时间
                         _this.infomation.snapCamera = res.data.camera; //抓拍机名称
-                        _this.infomation.snapTime = res.data.snapTime; //抓拍时间
+
                         _this.infomation.executeControlLib = res.data.executeControlLib; //来源库
 
                         /*_this.infomation.registryAddress = res.data.registryAddress; */ //户籍所在地
