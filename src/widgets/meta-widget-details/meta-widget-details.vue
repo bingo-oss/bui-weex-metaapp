@@ -201,6 +201,7 @@
                         _this.titleInfo.forewarningStatus = res.data.forewarningStatus; //预警状态
                         _this.titleInfo.snapTime = res.data.snapTime; //抓拍时间
                         _this.titleInfo.title = res.data.title; //预警标题
+
                         if(res.data._data&&res.data._data.cameraId){
                             _this.titleInfo.Camera = res.data._data.cameraId[cameraId].title; //摄像头
                         }
@@ -277,7 +278,7 @@
                 //return Object.assign({}, this.widgetParams, this.titleInfo);
                 return Object.assign({},{
                     widgetParams: _this.widgetParams,
-                    selectedItem: _this.titleInfo
+                    selectedItem: Object.assign({},_this.titleInfo,_this.infomation)
                 })
             },
             handlePreview(file) {
