@@ -1,7 +1,9 @@
 import ajax from '../js/ajax.js'
+import ax from "./ajax";
 
 const keyMetaBaseEndpoint = 'service.metabase.endpoint';
 const keyGatewayEndpoint = 'service.gateway.endpoint';
+const keyMetadAPI = 'service.metad.api.endpoint';
 
 let CachedConfig = null;
 let ConfigUrl = '';
@@ -105,7 +107,7 @@ export default {
         return this._getConfig().then((data) => {
             let metaApiEndpoint = data[keyMetaBaseEndpoint]
             let url = `${metaApiEndpoint}/meta_form/default/short/${formId}`
-            return ajax.get(url,param).then((resp) => {
+            return ajax.get(url, param).then((resp) => {
                 return Promise.resolve(resp.data);
             })
         })
@@ -115,11 +117,11 @@ export default {
      * 获取视图定义
      * @return {Promise} Promise 对象，成功返回定义对象，失败返回 error
      */
-    getMetaViewDef(viewId,param) {
+    getMetaViewDef(viewId, param) {
         return this._getConfig().then((data) => {
             let metaApiEndpoint = data[keyMetaBaseEndpoint];
             let url = `${metaApiEndpoint}/meta_view/default/short/${viewId}`
-            return ajax.get(url,param).then((resp) => {
+            return ajax.get(url, param).then((resp) => {
                 return Promise.resolve(resp.data);
             })
         })
@@ -175,6 +177,27 @@ export default {
                 return resp.data;
             })
         })
+    },
+    getEntityFields(projectId, entityName, entityId) {
+        return this._getConfig().then((data) => {
+            let metabaseUrl = data[keyMetadAPI]
+            var filters = 'projectId eq ' + projectId
+            if (entityName) {
+                filters += ' and entityName eq ' + entityName
+            } else if (entityId) {
+                filters += ' and entityId eq ' + entityId
+            }
+            let filterParam = {
+                'orderby': 'updatedAt desc',
+                filters: filters
+            }
+            return ajax.get(`${metabaseUrl}/meta_field`, {filters: filters})
+                .then(({data}) => {
+                return data;
+            });
+        })
+
+
     },
     /**
      * 获取项目的引擎地址--通过实体id获取
