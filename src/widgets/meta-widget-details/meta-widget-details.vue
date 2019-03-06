@@ -205,7 +205,10 @@
                             _this.titleInfo.Camera = res.data._data.cameraId[cameraId].title; //摄像头
                         }
                         _this.infomation.identityNo = res.data.identityNo;  //证件号
-                        _this.infomation.belongLibCode = res.data.belongLibCode;  //所在库
+
+                        let beCode = res.data.belongLibCode; //所在库编码
+                        _this.infomation.belongLibCode = res.data._data.belongLibCode[beCode].title;  //所在库
+
                         _this.infomation.nation = res.data.nation;  //名族
                         _this.infomation.sex = res.data.sex;  //性别
                         _this.infomation.birthday = res.data.birthday;  //出生日期
