@@ -40,6 +40,7 @@
     import DetailsUtils from './js/DetailsUtils.js';
     import _ from '../../js/tool/lodash';
     import buiweex from "bui-weex";
+    import metabase from '../../js/metadata/metabase.js';
 
     const globalEvent = weex.requireModule('globalEvent');
     import factoryApp from "../libs/factory-app";
@@ -81,7 +82,8 @@
             getDetailsInfo() {
                 factoryApp.startLoading(this);//显示加载圈
                 let _this = this;
-                ajax.get(`${_this.metaEntit.project.engine.externalUrl}/${_this.metaEntit.name}/${_this.widgetParams.dataId}`)
+                this.content = [];//清除下数据
+                ajax.get(`${_this.metaEntit.project.engine.externalUrl}/${metabase.lowerUnderscore(_this.metaEntit.name)}/${_this.widgetParams.dataId}`)
                     .then(res => {
                         service.getEntityFields(
                             _this.metaEntit.projectId,
