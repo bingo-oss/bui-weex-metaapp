@@ -269,8 +269,8 @@
             this.tapLabels[0].highlight =  true;
             service.init(Config.serverConfig.configServerUrl); //初始化请求地址
             service.getMetaEntity(_this.widgetParams.entityId).then(res => {
-                _this.metaEntit = res;
-            _this.metaEntit.resourceUrl = `${_this.metaEntit.project.engine.externalUrl}/${metabase.lowerUnderscore(_this.metaEntit.name)}`;
+                _this.metaEntity = res;
+                _this.metaEntity.resourceUrl = `${_this.metaEntity.project.engine.externalUrl}/${metabase.lowerUnderscore(_this.metaEntity.name)}`;
         });
         }
     }
