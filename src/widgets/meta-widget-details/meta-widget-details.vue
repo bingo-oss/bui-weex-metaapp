@@ -70,9 +70,9 @@
                     <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">证件号</text>
                     <text style="font-size: 28px;">{{infomation.identityNo}}</text>
                 </div>
-                <div class="flex-row" v-if="infomation.belongLib" style="padding-bottom: 18px;">
+                <div class="flex-row" v-if="infomation.belongLibCode" style="padding-bottom: 18px;">
                     <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">所在库</text>
-                    <text style="font-size: 28px">{{infomation.belongLib}}</text>
+                    <text style="font-size: 28px">{{infomation.belongLibCode}}</text>
                 </div>
                 <div class="flex-row" v-if="infomation.nation" style="padding-bottom: 18px;">
                     <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">民族</text>
@@ -205,7 +205,7 @@
                             _this.titleInfo.Camera = res.data._data.cameraId[cameraId].title; //摄像头
                         }
                         _this.infomation.identityNo = res.data.identityNo;  //证件号
-                        _this.infomation.belongLib = res.data.belongLib;  //所在库
+                        _this.infomation.belongLibCode = res.data.belongLibCode;  //所在库
                         _this.infomation.nation = res.data.nation;  //名族
                         _this.infomation.sex = res.data.sex;  //性别
                         _this.infomation.birthday = res.data.birthday;  //出生日期
