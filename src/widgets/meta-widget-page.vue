@@ -1,6 +1,6 @@
 <template>
-    <div class="full-column" v-if="pageConfig" >
-        <scroller class="full-column" style="background-color:#F8F8F8" @scroll="scrollHandler">
+    <div class="full-column">
+        <scroller class="full-column" style="background-color:#F8F8F8" @scroll="scrollHandler" v-if="pageConfig">
             <div :style="scrollerStyle">
                 <template v-for="(widget,index) in pageConfig.columnWidgets" :style="{
                     width:widget.frame.width+'px',
@@ -26,6 +26,7 @@
     const dom = weex.requireModule('dom');
     const storage = weex.requireModule('storage');
     import linkapi from "linkapi";
+    import factoryApp from './libs/factory-app.js';
 
     var co = require('co');
     export default {
@@ -77,12 +78,15 @@
             loadPageConfig(){
                 var _this=this;
                 //linkapi.showLoading({"title":"加载中"})
+                this.isShowLoading=true;//显示加载圈
                 if(this.widgetParams&&this.widgetParams.pageId){
                     pageService.get(this.widgetParams.pageId,this.widgetParams.byOperation).then(function(pageConfig){
                         _this.pageConfig=_this.convert(pageConfig);
+                        _this.isShowLoading=false//关闭加载圈
                         _this.pageScrollUpdate();
                     },(erro)=>{
-                        buiweex.toast("请求失败,请重试")
+                        buiweex.toast("请求失败,请重试");
+                        _this.isShowLoading=false//关闭加载圈
                     });
                 }
             },
