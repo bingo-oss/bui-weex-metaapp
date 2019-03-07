@@ -26,8 +26,6 @@
     const dom = weex.requireModule('dom');
     const storage = weex.requireModule('storage');
     import linkapi from "linkapi";
-    import factoryApp from './libs/factory-app.js';
-
     var co = require('co');
     export default {
         props: {
