@@ -101,10 +101,6 @@
                     <text class="nonal" style="padding-right: 20px;width: 160px;">抓拍机名称</text>
                     <text style="font-size: 28px">{{infomation.snapCamera}}</text>
                 </div>
-                <!--<div class="flex-row" v-if="infomation.caseCause" style="padding-bottom: 18px;">
-                    <text class="nonal" style="padding-right: 20px;width: 140px;text-align: right;">案由</text>
-                    <text style="font-size: 28px; width:560px;">{{infomation.caseCause}}</text>
-                </div>-->
             </div>
         </div>
         <!--处理结果-->
