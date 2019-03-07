@@ -47,11 +47,11 @@
                             <text class="title-text">{{getFieldValue(o, p1)}}</text>
                         </div>
                         <div class="list-item-row">
-                            <text class="sub-text">{{getFieldValue(o, p2)}}</text>
+                            <text class="sub-text" :style="{'max-width':(p3?'400px':'700px')}">{{getFieldValue(o, p2)}}</text>
                             <text class="sub-text">{{getFieldValue(o, p3)}}</text>
                         </div>
                         <div class="list-item-row">
-                            <text class="sub-text" style="text-align: right;">{{getFieldValue(o, p4)}}</text>
+                            <text class="sub-text" :style="{'max-width':(p5?'400px':'700px')}" style="text-align: right;">{{getFieldValue(o, p4)}}</text>
                             <text class="sub-text" style="text-align: right;">{{getFieldValue(o, p5)}}</text>
                         </div>
                     </div>
@@ -945,7 +945,7 @@ module.exports = {
 
 .sub-text {
     font-size: 32px;
-    max-width: 400px;
+    /*max-width: 400px;*/
     color: #BEBCBC;
     text-overflow: ellipsis;
     overflow: hidden;
