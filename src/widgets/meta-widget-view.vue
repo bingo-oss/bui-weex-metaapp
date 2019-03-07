@@ -21,7 +21,9 @@
             </div>
         </bui-header>
         <bui-tabbar :titleSize="30" v-if="widgetParams.isViewMode&&(presetFilters.length>1)" :tabItems="presetFilters" showSelectedLine=true @change="onItemChange" v-model="currentTab" :background="'#fff'" :selectedBackground="'#fff'" :containerStyle="{'border-bottom-color': '#F2F2F2','border-bottom-width': '1px','border-bottom-style':'solid'}" ></bui-tabbar>
-        <bui-searchbar-center v-if="widgetParams.showSearchbar" @search="onSearch" @clear="onSearchClear" placeholder="请输入搜索内容"></bui-searchbar-center>
+        <template v-for="searchbar in searchbars">
+            <bui-searchbar-center v-if="widgetParams.showSearchbar" @search="onSearch" @clear="onSearchClear" placeholder="请输入搜索内容" @input="onInput"></bui-searchbar-center>
+        </template>
         <list class="scroller">
             <refresh-wrapper @refresh="onrefresh" :isRefreshing="isRefreshing"></refresh-wrapper>
             <cell v-for="(o, index) in listData">
@@ -157,7 +159,8 @@ module.exports = {
             showFilterView:false,//判断是否设置了支持高级搜索的字段
             currentTab:0,//默认选择第一个
             selectedItem:{},//记录选择对象--合并暴露对象
-            isloadingHide:false//是否隐藏加载更新
+            isloadingHide:false,//是否隐藏加载更新
+            searchbars:[1]//为了改变input的值不清空现象
         }
     },
     computed: {
@@ -502,7 +505,12 @@ module.exports = {
         onloading() {
             this.loadMore();
         },
+        onInput(event){
+        },
         onSearch(keyword) {
+            if(!keyword){
+                this.inputViewReset();
+            }
             let filtersStr = keyword && this.quickSearchableField
                 .map(name => `${name} like '%${keyword}%'`)
                 .join(' or ')
@@ -512,6 +520,14 @@ module.exports = {
         onSearchClear() {
             this.quickSearchFilters = '';
             this.refreshData();
+            this.inputViewReset();
+        },
+        inputViewReset(){
+            //重置搜索款结构--解决安卓无法删除输入的文字
+            this.searchbars = [];
+            setTimeout(()=>{
+                this.searchbars = [1];
+            },1)
         },
         pop() {
             this.$pop();
@@ -706,7 +722,7 @@ module.exports = {
                     fields.add(this.p4);
                     fields.add(this.p5);
                     if(!this.p4&&!this.p5){
-                        this.buiSwipeCellHeight = "150"
+                        this.buiSwipeCellHeight = ""
                     }else{
                         this.buiSwipeCellHeight = "200"
                     }
