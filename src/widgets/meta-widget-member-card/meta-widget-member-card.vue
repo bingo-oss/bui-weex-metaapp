@@ -125,7 +125,7 @@
                     }],
                     searchScope: 1 //0：本企业和好友,1所有企业用户 2：本企业
                 };
-                linkapi.startContactMulitSelector("邀请成员", 7, extraParams, result=> {
+                linkapi.startContactMulitSelector("邀请成员", 7, {}, result=> {
                     if (!result || JSON.stringify(result) == "{}") {
                         return;
                     }
