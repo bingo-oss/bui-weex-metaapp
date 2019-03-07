@@ -85,10 +85,13 @@
                 this.content = [];//清除下数据
                 ajax.get(`${_this.metaEntit.project.engine.externalUrl}/${metabase.lowerUnderscore(_this.metaEntit.name)}/${_this.widgetParams.dataId}`)
                     .then(res => {
+                        var data = res.data
+                        var _data = res.data._data
+                        delete data._data
                         service.getEntityFields(
                             _this.metaEntit.projectId,
                             null,
-                            _this.metaEntit.id,
+                            _this.metaEntit.id
                         )
                             .then(fieldInfos => {
                                 for (var index in fieldInfos) {
@@ -100,32 +103,36 @@
 
                                 //副标题
                                 var sub = []
-                                var subTitleKeys = _this.widgetParams.key4subTitles ? _this.widgetParams.key4subTitles.split(',') : null
+                                // var subTitleKeys = _this.widgetParams.key4subTitles ? _this.widgetParams.key4subTitles.split(',') : null
                                 var subValueKeys = _this.widgetParams.Valueskey4SubTitles ? _this.widgetParams.Valueskey4SubTitles.split(',') : null
                                 _this.headerInfo.subTitle = ''
-                                if (subTitleKeys && subValueKeys) {
-                                    for (var index in subTitleKeys) {
-                                        var titleKey = subTitleKeys[index]
-                                        var valueKey = subValueKeys[index]
-                                        var kv = {}
-                                        kv.titleKey = titleKey
-                                        kv.valueKey = valueKey
-                                        kv[titleKey] = null
-                                        kv[valueKey] = null
-                                        sub.push(kv)
-                                    }
-                                    DetailsUtils.findValuesByJSON(sub, res.data)
-                                    for (var index in sub) {
-                                        var value = sub[index]
-                                        var v = value[value.valueKey] == null ? '' : value[value.valueKey]
-                                        _this.headerInfo.subTitle += value[value.titleKey] + ':' + v + '    '
-                                    }
-                                } else if (subTitleKeys || subValueKeys) {
-                                    sub = DetailsUtils.findValuesByKeys(subTitleKeys || subValueKeys, res.data)
+                                // if (subTitleKeys && subValueKeys) {
+                                //     for (var index in subTitleKeys) {
+                                //         var titleKey = subTitleKeys[index]
+                                //         var valueKey = subValueKeys[index]
+                                //         var kv = {}
+                                //         kv.titleKey = titleKey
+                                //         kv.valueKey = valueKey
+                                //         kv[titleKey] = null
+                                //         kv[valueKey] = null
+                                //         sub.push(kv)
+                                //     }
+                                //     DetailsUtils.findValuesByJSON(sub, res.data)
+                                //     for (var index in sub) {
+                                //         var value = sub[index]
+                                //         var v = value[value.valueKey] == null ? '' : value[value.valueKey]
+                                //         v = _this.transformData(v)
+                                //         _this.headerInfo.subTitle += value[value.titleKey] + ':' + v + '    '
+                                //     }
+                                // } else
+                                if (subValueKeys) {
+                                    sub = DetailsUtils.findValuesByKeys(subValueKeys, data)
                                     for (var index in sub) {
                                         var kv = sub[index]
                                         if (_this.entityTableInfo[kv.key]) {
-                                            _this.headerInfo.subTitle += _this.entityTableInfo[kv.key].title + ':' + kv.value + '    '
+                                            var v = _this.getRealValue(kv.key, kv.value, _data)
+                                            v = _this.transformData(v)
+                                            _this.headerInfo.subTitle += _this.entityTableInfo[kv.key].title + ':' + v + '    '
                                         }
                                     }
                                 }
@@ -133,35 +140,38 @@
 
                                 //内容
                                 var content = []
-                                var contentTitleKeys = _this.widgetParams.key4Contents ? _this.widgetParams.key4Contents.split(",") : null
+                                // var contentTitleKeys = _this.widgetParams.key4Contents ? _this.widgetParams.key4Contents.split(",") : null
                                 var contentValueKeys = _this.widgetParams.Valueskey4Contents ? _this.widgetParams.Valueskey4Contents.split(",") : null
-                                if (contentTitleKeys && contentValueKeys) {
-                                    for (var index in contentTitleKeys) {
-                                        var titleKey = contentTitleKeys[index]
-                                        var valueKey = contentValueKeys[index]
-                                        var kv = {}
-                                        kv.titleKey = titleKey
-                                        kv.valueKey = valueKey
-                                        kv[titleKey] = null
-                                        kv[valueKey] = null
-                                        content.push(kv)
-                                    }
-                                    DetailsUtils.findValuesByJSON(content, res.data)
-                                    for (var index in content) {
-                                        var value = content[index]
-                                        var kv = {
-                                            title: value[value.titleKey],
-                                            value: value[value.valueKey] == null ? '' : value[value.valueKey],
-                                        }
-                                        _this.content.push(kv)
-                                    }
-                                } else if (contentTitleKeys || contentValueKeys) {
-                                    // content = DetailsUtils.findValuesByKeys(contentTitleKeys || contentValueKeys, res.data)
-                                    content = DetailsUtils.findValuesByKeysFromJson((contentTitleKeys || contentValueKeys).concat(), res.data)
+                                // if (contentTitleKeys && contentValueKeys) {
+                                //     for (var index in contentTitleKeys) {
+                                //         var titleKey = contentTitleKeys[index]
+                                //         var valueKey = contentValueKeys[index]
+                                //         var kv = {}
+                                //         kv.titleKey = titleKey
+                                //         kv.valueKey = valueKey
+                                //         kv[titleKey] = null
+                                //         kv[valueKey] = null
+                                //         content.push(kv)
+                                //     }
+                                //     DetailsUtils.findValuesByJSON(content, res.data)
+                                //     for (var index in content) {
+                                //         var value = content[index]
+                                //         var kv = {
+                                //             title: value[value.titleKey],
+                                //             value: value[value.valueKey] == null ? '' : _this.transformData(value[value.valueKey]),
+                                //         }
+                                //         _this.content.push(kv)
+                                //     }
+                                // } else
+                                if (contentValueKeys) {
+                                    // content = DetailsUtils.findValuesByKeys(contentTitleKeys || contentValueKeys, data)
+                                    content = DetailsUtils.findValuesByKeysFromJson((contentValueKeys).concat(), data)
                                     for (var index in content) {
                                         var kv = content[index]
                                         var k = DetailsUtils.getAllJsonKeys(kv)[0]
                                         var v = kv[k]
+                                        v = _this.getRealValue(k, v, _data)
+                                        v = _this.transformData(v)
                                         if (_this.analysisValueContent(v) && _this.entityTableInfo[k]) {
                                             _this.content.push({
                                                 title: _this.entityTableInfo[k].title,
@@ -169,21 +179,8 @@
                                             })
                                         }
                                     }
-
-                                    // for (var index in content) {
-                                    //     var kv = content[index]
-                                    //     if (_this.entityTableInfo[kv.key]) {
-                                    //         _this.content.push({
-                                    //             title: _this.entityTableInfo[kv.key].title,
-                                    //             value: kv.value
-                                    //         })
-                                    //     }
-                                    // }
                                 }
-
                                 _this.$forceUpdate()
-
-
                             })
 
 
@@ -192,28 +189,11 @@
                         var title = {
                             key: _this.widgetParams.titleKey
                         }
-                        DetailsUtils.findValueFromJSONByDeep(title, res.data)
+                        DetailsUtils.findValueFromJSONByDeep(title, data)
                         _this.headerInfo.title = title.value
-
-
-                        // projectId, entityName, entityId, successCallback, failCallback
-
-
-                        // var aa = Utils.isAllKeyHasValue(sub)
-
-                        // headerInfo.subTitle =
-                        // _this.headerInfo.subTitle = ''
-                        // for (var index in subTitle) {
-                        //     _this.headerInfo.subTitle += subTitle[index].value + '    '
-                        // }
-                        // console.log('HXB', 'subTitle==', JSON.stringify(subTitle))
 
                         factoryApp.stopLoading(this);//关闭加载圈
                         _this.$forceUpdate()
-
-
-                        // console.log('HXB', "data==", JSON.stringify(res.data))
-                        // console.log('HXB', 'title==', JSON.stringify(title))
                     })
                     .then(function (res) {
                     })
@@ -241,6 +221,30 @@
                 } else {
                     return true
                 }
+            },
+            transformData(value) {
+                if (typeof value == 'number' && (value + '').length != 13) {
+                    return value
+                }
+                var date = new Date(value)
+                if (date != 'Invalid Date') {
+                    return DetailsUtils.dateFormat('yyyy-MM-dd hh:mm:ss', date)
+                } else {
+                    return value
+                }
+            },
+            getRealValue(key, value, _data) {
+                for (var tKey in _data) {
+                    if (tKey == key) {
+                        var tData = _data[tKey]
+                        for (var tDataKey in tData) {
+                            if (tDataKey == value) {
+                                return (tData[tDataKey])['title']
+                            }
+                        }
+                    }
+                }
+                return value
             },
             refresh() {
                 //部件刷新的实现
