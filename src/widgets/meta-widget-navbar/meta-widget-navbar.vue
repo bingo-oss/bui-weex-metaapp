@@ -102,9 +102,9 @@
                 linkapi.registerReceiver(2, curVal);
                 globalEvent.addEventListener(curVal, (e)=> {
                     linkapi.getUnreadMessageCountById(curVal, res=> {
-                        this.unReadGroupMsgCount = res;
-                    })
-                });
+                    this.unReadGroupMsgCount = res;
+            })
+            });
             },
             widgetParams(val){
             }
@@ -118,10 +118,11 @@
             },
             getWidgetContext(){
                 //传入操作的上下文内容
-               return {
-                   widgetParams:this.widgetParams,
-                   module:this
-               };
+                return {
+                    widgetParams:this.widgetParams,
+                    module:this,
+                    metaEntity:this.metaEntity
+                };
             },
             openGroupChat(){
                 if (this.groupId == '') {
@@ -132,77 +133,76 @@
                 }
             },
             checkGroupIsExit(isOpen){
-                let params = {
-                    url: Config.serverConfig.uamUrl + '/webWidget/getOrCreateGroup',
-                    data: {
-                        sourceId: this.widgetParams.dataId,//数据id
-                        entityName: this.widgetParams.entityId//实体id
+                Config.readRuntimeConfig().then(runtimeConfig => {
+                    let params = {
+                        url: `${runtimeConfig["service.metabase.endpoint"]}/meta_data_group/${this.widgetParams.entityId}/${this.widgetParams.dataId}`,
+                        data: {}
+                    };
+                ajax.get(params.url).then(res => {
+                    if (res.ok) {
+                    if (!res.data) {
+                        if (!isOpen) {
+                            return;
+                        }
+                        this.createGroupAndOpen();
+                    } else {
+                        this.groupId = res.data;
+                        if (isOpen) {
+                            linkapi.startGroupChat(this.groupId, null, null)
+                        }
+                        linkapi.getUnreadMessageCountById(this.groupId, res=> {
+                            this.unReadGroupMsgCount = res;
+                    })
                     }
                 }
-                linkapi.get(params).then(res => {
-                    if (res.success) {
-                        if (res.data.isShowTips) {
-                            if (!isOpen) {
-                                return;
-                            }
-                            this.createGroupAndOpen();
-                        } else {
-                            this.groupId = res.data.groupId;
-                            if (isOpen) {
-                                linkapi.startGroupChat(this.groupId, null, null)
-                            }
-                            linkapi.getUnreadMessageCountById(this.groupId, res=> {
-                                this.unReadGroupMsgCount = res;
-                            })
-                        }
-                    }
-                }).catch(error => {
+            }).catch(error => {
                     //this.$toast(Utils.handleException(error))
                 })
+            })
+
             },
             createGroupAndOpen(){
                 this.isShowLoading = true;
                 this.loadingText = "创建群组中...";
-                let params = {
-                    url: Config.serverConfig.uamUrl + '/webWidget/getOrCreateGroup',
-                    data: {
-                        sourceId: this.widgetParams.dataId,//数据id
-                        entityName: this.widgetParams.entity,//实体id
-                        isConfirmCreate: 1
-                    }
+                Config.readRuntimeConfig().then(runtimeConfig => {
+                    let params = {
+                        url: `${runtimeConfig["service.metabase.endpoint"]}/meta_data_group/${this.widgetParams.entityId}/${this.widgetParams.dataId}/create_group`,
+                        data: {}
+                    };
+                ajax.post(params.url).then(res => {
+                    this.isShowLoading = false;
+                this.loadingText = "";
+                if (res.ok) {
+                    this.groupId = res.data;
+                    linkapi.execSyncService(1, res=> {
+                        linkapi.startGroupChat(this.groupId, null, null);
+                }, error=> {
+                        //this.$toast(error)
+                    });
+                    this.$toast("创建群组成功")
+                } else {
+                    //this.$toast(res.msg)
                 }
-                linkapi.get(params).then(res => {
+            }).catch(error => {
                     this.isShowLoading = false;
-                    this.loadingText = "";
-                    if (res.success) {
-                        this.groupId = res.data.groupId;
-                        linkapi.execSyncService(1, res=> {
-                            linkapi.startGroupChat(this.groupId, null, null);
-                        }, error=> {
-                            //this.$toast(error)
-                        });
-                        this.$toast("创建群组成功")
-                    } else {
-                        //this.$toast(res.msg)
-                    }
-                }).catch(error => {
-                    this.isShowLoading = false;
-                    this.loadingText = "";
-                    //this.$toast(Utils.handleException(error))
-                })
+                this.loadingText = "";
+                //this.$toast(Utils.handleException(error))
+            })
+            })
+
             },
             goto(tapLabel,index){
                 //滚到指定区域
                 _.each(this.tapLabels,(tapLabel)=>{
                     tapLabel.highlight = false;
-                });
+            });
                 this.tapLabels[index].highlight = true;
                 //const el = this.$parent.$refs.childWidgets[index];
                 const el = this.$parent.$refs.childWidgets.filter((obj)=>{
-                    if(obj==tapLabel.childWidget){
-                        return obj
-                    }
-                })[0];
+                            if(obj==tapLabel.childWidget){
+                    return obj
+                }
+            })[0];
                 this.$parent.dom.scrollToElement(el, {});
                 this.gotoOpt = false;
             },
@@ -211,14 +211,14 @@
                 if(widget){
                     _.each(this.tapLabels,(tapLabel,index)=>{
                         if(tapLabel.childWidget==widget&&!tapLabel.highlight){
-                            //this.goto(tapLabel,index);
-                            _.each(this.tapLabels,(tapLabel)=>{
-                                tapLabel.highlight = false;
-                            });
-                            tapLabel.highlight = true;
-                            return false;
-                        }
+                        //this.goto(tapLabel,index);
+                        _.each(this.tapLabels,(tapLabel)=>{
+                            tapLabel.highlight = false;
                     });
+                        tapLabel.highlight = true;
+                        return false;
+                    }
+                });
                 }
 
             },
@@ -243,31 +243,35 @@
             if(this.widgetParams.groupId)this.groupId = this.widgetParams.groupId;
         },
         mounted(){
-
+            let _this = this;
             this.tapLabels = (this.widgetParams.tapLabels?this.widgetParams.tapLabels:[]);//读取
             this.gradualChangeOpacity = (this.widgetParams.isGradualChange?0:1);//是否开启渐变效果
 
             let _childWidgets = this.$parent.$refs.childWidgets.filter((obj)=>{
-                let _tagName = obj.$attrs.tagName;
-                if(_tagName!="meta-widget-navbar"){
-                    return obj
-                }
-            });
+                        let _tagName = obj.$attrs.tagName;
+            if(_tagName!="meta-widget-navbar"){
+                return obj
+            }
+        });
             _.each(this.tapLabels,(tapLabel,index)=>{
                 tapLabel.childWidget = _childWidgets[index];//记录标签对应的部件对象
-                if(!tapLabel.name){
-                    //标签不存在名称--怎默认读取内嵌部件的名称
-                    let el = _childWidgets[index];
-                    if(el){
-                        let _name = el.$attrs.widgetName;
-                        let _tagName = el.$attrs.tagName;
-                        tapLabel.name = _name;
-                    }
+            if(!tapLabel.name){
+                //标签不存在名称--怎默认读取内嵌部件的名称
+                let el = _childWidgets[index];
+                if(el){
+                    let _name = el.$attrs.widgetName;
+                    let _tagName = el.$attrs.tagName;
+                    tapLabel.name = _name;
                 }
-                tapLabel.highlight = false;
-            });
+            }
+            tapLabel.highlight = false;
+        });
             this.tapLabels[0].highlight =  true;
-
+            service.init(Config.serverConfig.configServerUrl); //初始化请求地址
+            service.getMetaEntity(_this.widgetParams.entityId).then(res => {
+                _this.metaEntity = res;
+                _this.metaEntity.resourceUrl = `${_this.metaEntity.project.engine.externalUrl}/${metabase.lowerUnderscore(_this.metaEntity.name)}`;
+        });
         }
     }
 </script>

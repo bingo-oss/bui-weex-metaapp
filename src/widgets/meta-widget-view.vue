@@ -20,10 +20,8 @@
                 </div>
             </div>
         </bui-header>
-        <bui-searchbar-center v-if="widgetParams.showSearchbar" @search="onSearch" @clear="onSearchClear" placeholder="请输入搜索内容"></bui-searchbar-center>
-
         <bui-tabbar :titleSize="30" v-if="widgetParams.isViewMode&&(presetFilters.length>1)" :tabItems="presetFilters" showSelectedLine=true @change="onItemChange" v-model="currentTab" :background="'#fff'" :selectedBackground="'#fff'" :containerStyle="{'border-bottom-color': '#F2F2F2','border-bottom-width': '1px','border-bottom-style':'solid'}" ></bui-tabbar>
-
+        <bui-searchbar-center v-if="widgetParams.showSearchbar" @search="onSearch" @clear="onSearchClear" placeholder="请输入搜索内容"></bui-searchbar-center>
         <list class="scroller">
             <refresh-wrapper @refresh="onrefresh" :isRefreshing="isRefreshing"></refresh-wrapper>
             <cell v-for="(o, index) in listData">
@@ -49,11 +47,11 @@
                             <text class="title-text">{{getFieldValue(o, p1)}}</text>
                         </div>
                         <div class="list-item-row">
-                            <text class="sub-text">{{getFieldValue(o, p2)}}</text>
+                            <text class="sub-text" :style="{'max-width':(p3?'400px':'700px')}">{{getFieldValue(o, p2)}}</text>
                             <text class="sub-text">{{getFieldValue(o, p3)}}</text>
                         </div>
                         <div class="list-item-row">
-                            <text class="sub-text" style="text-align: right;">{{getFieldValue(o, p4)}}</text>
+                            <text class="sub-text" :style="{'max-width':(p5?'400px':'700px')}" style="text-align: right;">{{getFieldValue(o, p4)}}</text>
                             <text class="sub-text" style="text-align: right;">{{getFieldValue(o, p5)}}</text>
                         </div>
                     </div>
@@ -947,7 +945,7 @@ module.exports = {
 
 .sub-text {
     font-size: 32px;
-    max-width: 400px;
+    /*max-width: 400px;*/
     color: #BEBCBC;
     text-overflow: ellipsis;
     overflow: hidden;
