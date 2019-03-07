@@ -1,7 +1,7 @@
 <template>
-    <div class="wrapper">
+    <div class="wrapper"ref="viewBox">
         <!--水印-->
-        <div class="mark">
+        <div class="mark" v-if="waterMarkHide">
             <div class="water-mark">
                 <text class="mark-text" v-for="item in markArr" style="margin-top: 120px;">#{{item.userName}}</text>
             </div>
@@ -174,6 +174,7 @@
                 titleInfo: {},  //详情顶部信息
                 resultshow: null,
                 Config:config,
+                waterMarkHide:true,
                 metaEntit:{},
                 markArr:[
                     {userName:""},
@@ -188,6 +189,11 @@
             }
         },
         methods: {
+            isIos(){
+                if(weex.config.env.deviceModel.indexOf("iPhone") !== -1){//ios暂时先隐藏水印
+                    this.waterMarkHide = false;
+                }
+            },
             infoShow() {
                 this.personInfo = !this.personInfo;
             },
@@ -208,8 +214,9 @@
                         _this.infomation.identityNo = res.data.identityNo;  //证件号
 
                         let beCode = res.data.belongLibCode; //所在库编码
-                        _this.infomation.belongLibCode = res.data._data.belongLibCode[beCode].title;  //所在库
-
+                        if(beCode){
+                            _this.infomation.belongLibCode = res.data._data.belongLibCode[beCode].title;  //所在库
+                        }
                         _this.infomation.nation = res.data.nation;  //名族
                         _this.infomation.sex = res.data.sex;  //性别
                         _this.infomation.birthday = res.data.birthday;  //出生日期
@@ -289,7 +296,6 @@
                 linkapi.openLinkBroswer(file.name?file.name:"预览",`${config.serverConfig.engineService}/stream?filePath=${file.relativePath||file.url}`);
             }
         },
-        component: {},
         filters: {
             timeformat(val) {  //时间格式转换
                 return Utils.formatDate(val,"yyyy-MM-dd hh:mm");
@@ -316,6 +322,7 @@
         },
         created(){
             factoryApp.init(this);//初始化全局api的指向
+            this.isIos();//判断ios或android
         }
 
     }
@@ -337,6 +344,7 @@
     .details-header {
        /*height: 200px;*/
         padding-left: 25px;
+        padding-right: 25px;
         background-color: #4DA4FE
     }
     .wrapper {
