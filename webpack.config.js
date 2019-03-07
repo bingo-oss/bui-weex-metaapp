@@ -20,7 +20,8 @@ var bannerPlugin = new webpack.BannerPlugin(
 var copyPlugin = new copy([
     {from: './static/test_page', to: "./test_page"},
     {from: './static/config.json', to: "./"},//复制静态配置文件到dist目录
-    {from: './node_modules/bui-weex/src/font', to: "./font"}
+    {from: './node_modules/bui-weex/src/font', to: "./font"},
+    {from: './src/image', to: "./image"}
 ]);
 
 // 遍历文件入口,动态生成入口
