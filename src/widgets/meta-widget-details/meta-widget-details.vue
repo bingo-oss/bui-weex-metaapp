@@ -34,7 +34,7 @@
             </div>
             <div class="flex-row" style="padding-bottom: 10px">
                 <text class="nonal" style="padding: 10px">相似度：</text>
-                <text class="similar">{{comparePic.similarityDegree}}%</text>
+                <text class="similar">{{comparePic.similarityDegree}}</text>
             </div>
             <div class="pic-con flex-row" style="flex-wrap:wrap; padding-bottom: 15px;">
                 <div class="_picture"  v-if="comparePic.snapPicture" v-for="picture in comparePic.snapPicture" @click="handlePreview(picture)">
