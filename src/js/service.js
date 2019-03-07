@@ -3,7 +3,6 @@ import ax from "./ajax";
 
 const keyMetaBaseEndpoint = 'service.metabase.endpoint';
 const keyGatewayEndpoint = 'service.gateway.endpoint';
-const keyMetadAPI = 'service.metad.api.endpoint';
 
 let CachedConfig = null;
 let ConfigUrl = '';
@@ -180,7 +179,7 @@ export default {
     },
     getEntityFields(projectId, entityName, entityId) {
         return this._getConfig().then((data) => {
-            let metabaseUrl = data[keyMetadAPI]
+            let metabaseUrl = data[keyMetaBaseEndpoint]
             var filters = 'projectId eq ' + projectId
             if (entityName) {
                 filters += ' and entityName eq ' + entityName
@@ -191,6 +190,7 @@ export default {
                 'orderby': 'updatedAt desc',
                 filters: filters
             }
+
             return ajax.get(`${metabaseUrl}/meta_field`, {filters: filters})
                 .then(({data}) => {
                 return data;

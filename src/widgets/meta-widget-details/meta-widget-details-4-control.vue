@@ -94,11 +94,13 @@
                             _this.metaEntit.id
                         )
                             .then(fieldInfos => {
+
                                 for (var index in fieldInfos) {
                                     var fieldInfo = fieldInfos[index]
                                     var field = {title: fieldInfo.title}
                                     _this.entityTableInfo[fieldInfo.name] = field
                                 }
+
 
 
                                 //副标题
@@ -126,13 +128,20 @@
                                 //     }
                                 // } else
                                 if (subValueKeys) {
+
                                     sub = DetailsUtils.findValuesByKeys(subValueKeys, data)
+
                                     for (var index in sub) {
                                         var kv = sub[index]
+
                                         if (_this.entityTableInfo[kv.key]) {
+
                                             var v = _this.getRealValue(kv.key, kv.value, _data)
+
                                             v = _this.transformData(v)
+
                                             _this.headerInfo.subTitle += _this.entityTableInfo[kv.key].title + ':' + v + '    '
+
                                         }
                                     }
                                 }
