@@ -99,7 +99,7 @@
                 </div>
                 <div class="flex-row" v-if="infomation.snapCamera" style="padding-bottom: 18px;">
                     <text class="nonal" style="padding-right: 20px;width: 160px;">抓拍机名称</text>
-                    <text style="font-size: 28px">{{infomation.snapCamera}}</text>
+                    <text style="font-size: 28px;width:500px;">{{infomation.snapCamera}}</text>
                 </div>
             </div>
         </div>
