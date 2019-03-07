@@ -57,6 +57,11 @@
 import Config from "../../js/config";
 import service from "../../js/service.js";
 import Util from "../../js/utils";
+import OperationUtils from "./js/operation_utils";
+import _ from "../../js/tool/lodash";
+import factoryApp from "../../widgets/libs/factory-app.js";
+import config from "../../js/config.js";
+import ax from "../../js/ajax.js";
 
 export default {
   props: {
@@ -86,6 +91,57 @@ export default {
       this.$emit("on_btn_click");
       if (this.child_operations && this.child_operations.length > 0) {
         this.menu_window_show = true;
+      }
+      this.executeOnClick();
+      // this.$alert("aaaa");
+    },
+    executeOnClick() {
+      let _t = this;
+      if (_t.operation.onClick) {
+        console.log("has Click");
+        var _widgetCtx = Object.assign(_t.widgetContext, {
+          buttonInfo: _t.operation
+        });
+        OperationUtils.execution(
+          _t.operation,
+          _widgetCtx,
+          "beforeExecCode"
+        ).then(res => {
+          if (_.isFunction(this.operation.onClick)) {
+            this.mustStopRepeatedClick = true;
+            this.operation.onClick(
+              Object.assign(this.widgetContext, { buttonInfo: this.operation }),
+              factoryApp
+            );
+          } else {
+            this.mustStopRepeatedClick = true;
+            var onclick = Function(
+              '"use strict";return ' + this.operation.onClick
+            )();
+            onclick(
+              Object.assign(this.widgetContext, { buttonInfo: this.operation }),
+              factoryApp
+            );
+          }
+          this.mustStopRepeatedClick = false;
+          this.$emit("triggered", "script");
+          OperationUtils.execution(this.operation, _widgetCtx, "afterExecCode"); //执行后
+        });
+      } else {
+        if (_t.implCode) {
+          _t.cellExecScript();
+        } else {
+          //获取执行代码
+          config.readRuntimeConfig().then(runtimeConfig => {
+            ax.get(
+              runtimeConfig["service.metabase.endpoint"] +
+                `/meta_operation/${_t.operation.operationId}`
+            ).then(({ data }) => {
+              _t.implCode = data.implCode;
+              _t.cellExecScript();
+            });
+          });
+        }
       }
     },
     cancel() {

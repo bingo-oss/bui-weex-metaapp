@@ -1,6 +1,7 @@
 import ax from '../ajax.js';
 import config from '../config.js';
 import buiweex from 'bui-weex';
+
 const linkapi = require('linkapi');
 var isIPhone = (weex.config.env.deviceModel.indexOf("iPhone") != -1)
 var isAndroid = (weex.config.env.deviceModel.indexOf("iPhone") == -1)
@@ -19,17 +20,18 @@ const pageService = {
                 } else if (isAndroid) {
                     mobileType = 1
                 }
-                 ax.get(runtimeConfig["service.metabase.endpoint"]+`/mp_page/${pageId}?terminalType=${mobileType}&byOperation=${byOperation}`).then(({data})=>{
-                     resolve(data);
-                 },()=>{
-                    ax.get(`http://10.200.84.133:8686/dist/test_page/${pageId}.json`).then(({
-                        data
-                    }) => {
+
+                ax.get(runtimeConfig["service.metabase.endpoint"] + `/mp_page/${pageId}?terminalType=${mobileType}&byOperation=${byOperation}`)
+                    .then(({data}) => {
                         resolve(data);
-                    }, () => {
-                        reject();
+                    }, (error) => {
+                        ax.get(`http://10.200.206.43:8686/dist/test_page/${pageId}.json`)
+                            .then(({data}) => {
+                                resolve(data);
+                            }, () => {
+                                reject();
+                            });
                     });
-                 });
             }, (erro) => {
                 reject(erro);
             });
