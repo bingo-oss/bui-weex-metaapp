@@ -1,0 +1,72 @@
+{
+  "name": "bui-weex-template",
+  "description": "bui-weex template project",
+  "version": "1.0.3",
+  "main": "",
+  "keywords": [
+    "weex",
+    "vue"
+  ],
+  "author": "BingoSoft",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bingo-oss/bui-weex-template.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bingo-oss/bui-weex-template/issues"
+  },
+  "homepage": "https://github.com/bingo-oss/bui-weex-template",
+  "ports": {
+    "serverPort": 8686,
+    "debugPort": 8088
+  },
+  "scripts": {
+    "start": "concurrently \"npm run serve\" \"npm run dev\" \"npm run debug\"",
+    "dev": "webpack --watch",
+    "serve": "serve -p  %npm_package_ports_serverPort%",
+    "debug": "weex-devtool -p  %npm_package_ports_debugPort%",
+    "publish": "node build/publish.js",
+    "build": "webpack"
+  },
+  "dependencies": {
+    "bui-weex": "^0.3.7",
+    "co": "^4.6.0",
+    "linkapi": "^0.3.20",
+    "lodash": "^4.17.4",
+    "path-to-regexp": "1.7.0",
+    "style-loader": "^0.23.1",
+    "url-template": "^2.0.8",
+    "vue": "^2.4.2"
+  },
+  "devDependencies": {
+    "axios": "^0.17.1",
+    "babel-core": "^6.23.1",
+    "babel-loader": "^6.2.4",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-runtime": "^6.11.6",
+    "babili-webpack-plugin": "^0.1.2",
+    "copy-webpack-plugin": "^4.0.1",
+    "css-loader": "^0.26.4",
+    "glob": "^7.1.2",
+    "ip": "^1.1.4",
+    "json-loader": "^0.5.7",
+    "moment": "^2.20.1",
+    "node-sass": "^4.10.0",
+    "punycode": "^2.1.0",
+    "sass-loader": "^6.0.7",
+    "serve": "^1.4.0",
+    "vue-loader": "^10.0.2",
+    "vue-router": "^2.1.1",
+    "vue-template-compiler": "^2.4.2",
+    "vuex": "^2.1.1",
+    "vuex-router-sync": "^4.0.1",
+    "webpack": "^1.15.0",
+    "webpack-bundle-analyzer": "^2.0.0",
+    "weex-devtool": "^0.3.8",
+    "weex-loader": "^0.4.1",
+    "weex-vue-loader": "^0.2.5",
+    "weex-vue-render": "^0.11.2"
+  }
+}
