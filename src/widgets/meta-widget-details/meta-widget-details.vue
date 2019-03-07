@@ -22,7 +22,6 @@
             </div>
             <div class="flex-row" style="margin-bottom: 25px;">
                 <text class="warn" v-if="titleInfo.snapTime">抓拍时间：{{titleInfo.snapTime | timeformat}}</text>
-                <!--<text class="warn" v-if="titleInfo.forewarningTime">预警时间：{{titleInfo.forewarningTime | timeformat}}</text>-->
                 <text class="warn" v-if="titleInfo.title">预警状态：{{titleInfo.forewarningStatus ? '已处理':'未处理'}}</text>
             </div>
             <div class="flex-row" style="padding-bottom: 25px;">
@@ -154,8 +153,6 @@
     import linkapi from "linkapi"
     /*
     * 数据获取：通过实体id获取容器地址，拼接参数"数据id"去get
-    *
-    * 已经创建的实例，需要使用vue.set方法，才能响应data里的数据
     * */
     module.exports = {
         props: {
