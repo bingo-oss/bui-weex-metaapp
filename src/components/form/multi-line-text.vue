@@ -11,7 +11,7 @@
         <template v-else>
             <div class="form-group-vertical form-hrb">
                 <div class="label-wrapper-vertical">
-                    <text class="form-label">123213123{{definition.componentParams.title}}</text>
+                    <text class="form-label">{{definition.componentParams.title}}</text>
                     <text class="required-mark" v-if="definition.componentParams.required">*</text>
                 </div>
                 <textarea ref="textarea" @input="input" :disabled="readonly" class="form-input-textarea" :value="value" :placeholder="definition.componentParams.placeholder" rows="4"/>
