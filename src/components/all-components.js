@@ -18,6 +18,7 @@ const formComponents= {
     'MultiOrgSelect': require('./form/multi-org-select.vue'),
     'PictureUpload': require('./form/picture-upload.vue'),
     'RefEntity': require('./form/ref-entity.vue'),
+    'MultiRefEntity': require('./form/multi-ref-entity.vue'),
     'DateTime': require('./form/datetime.vue'),
     'IssuedNumber': require('./form/issued_number.vue'),
 }

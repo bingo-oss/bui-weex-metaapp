@@ -14,7 +14,7 @@
                     <text class="form-label">{{definition.componentParams.title}}</text>
                     <text class="required-mark" v-if="definition.componentParams.required">*</text>
                 </div>
-                <textarea ref="textarea" @input="input" :disabled="readonly" class="form-input-textarea" :value="value" :placeholder="definition.componentParams.placeholder" rows="4"/>
+                <textarea ref="textarea" @input="input" :disabled="readonly" class="form-input-textarea" :value="value" :placeholder="definition.componentParams.placeholder" rows="3"/>
             </div>
         </template>
     </div>
@@ -39,7 +39,6 @@ export default {
 <style src="../../styles/common.css" scoped="false"></style>
 <style scoped="">
 .form-input-textarea {
-    background-color: #fff;
     flex: 1;
     font-size: 36px;
 }

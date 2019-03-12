@@ -55,7 +55,8 @@
                         _.each(v,(refEntity)=>{
                             this.tabItems.push({
                                title:refEntity.title,
-                               entityResourceUrl:refEntity.entityResourceUrl
+                               entityResourceUrl:refEntity.entityResourceUrl,
+                               filter:refEntity.filter
                             })
                         });//组装tab标签
                     }
@@ -75,6 +76,13 @@
             fetchData(page) {
                 this.queryObject.page = page || 1;
                 this.queryObject.page_size = this.pageSize;
+                if(this.tabItems[this.currentTab].filter){
+                    if(this.queryObject.filters){
+                        this.queryObject.filters += `and ${this.tabItems[this.currentTab].filter}`;
+                    }else{
+                        this.queryObject.filters = `${this.tabItems[this.currentTab].filter}`;
+                    }
+                }
                 return ajax.get(this.dataUrlPath, this.queryObject).then(resp => {
                         return resp.data;
                 });
