@@ -80,6 +80,7 @@
                 this.personInfo = !this.personInfo;
             },
             getDetailsInfo() {
+
                 factoryApp.startLoading(this);//显示加载圈
                 let _this = this;
                 this.content = [];//清除下数据
@@ -100,7 +101,6 @@
                                     var field = {title: fieldInfo.title}
                                     _this.entityTableInfo[fieldInfo.name] = field
                                 }
-
 
 
                                 //副标题
@@ -151,6 +151,7 @@
                                 var content = []
                                 // var contentTitleKeys = _this.widgetParams.key4Contents ? _this.widgetParams.key4Contents.split(",") : null
                                 var contentValueKeys = _this.widgetParams.Valueskey4Contents ? _this.widgetParams.Valueskey4Contents.split(",") : null
+
                                 // if (contentTitleKeys && contentValueKeys) {
                                 //     for (var index in contentTitleKeys) {
                                 //         var titleKey = contentTitleKeys[index]
@@ -213,14 +214,14 @@
                     if (value.length) {
                         for (var index in value) {
                             var tValue = value[index]
-                            if (tValue.title && tValue.value) {
+                            // if (tValue.title && tValue.value) {
                                 _this.content.push({
                                     title: tValue.title,
                                     value: tValue.value
                                 })
-                            }
+                            // }
                         }
-                    } else if (value.title && value.value) {
+                    } else /*if (value.title && value.value)*/ {
                         _this.content.push({
                             title: value.title,
                             value: value.value
