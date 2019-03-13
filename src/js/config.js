@@ -10,14 +10,11 @@ const configServerUrl =
  * 在开发调试时，可以将 debug 设为 true，并设置相应的 token，viewId 和 formId 来调试
  * 发布时记得将 debug 设为 false
  *
- *https://developer.bingosoft.net:12100/forewarning_suite/shiti1?filters=&orderby=&viewId=all&page_size=1&page=1&total=true
- *
- * https://developer.bingosoft.net:12100/forewarning_suite/shiti1?filters=&viewId=all&orderby=updatedAt+desc&page=1&page_size=1&total=true
  */
 var configData = null;
 export default {
     debug: false,
-    token: 'c2Fhc3NzbzoyODFjZjZkZC01YThhLTQ3MTMtYTc1Ny1mODA4ZDQ2MWQ2YWY',
+    token: 'c2Fhc3Nzbzo2NTA0YTE5NS04NWEzLTRlZTctYWQ2ZS05NGVkYTQ0YmZjMTk',
     configFilename: 'config.json',
     serverConfig: {},
     // 读取与 list.weex.js、form.weex.js 同级的配置文件
@@ -38,23 +35,22 @@ export default {
                 resolve(configData);*/
 
                 //读取全局配置地址方式
-                ajax.get(configServerUrl).then((resp) => {
-                    configData=Object.assign(resp.data,{
-                        "configServerUrl":configServerUrl,
-                        "blogApi": resp.data["service.blog.endpoint"],
-                        "uamUrl": resp.data["service.link.endpoint"],
-                        "engineService": resp.data["service.gateway.endpoint"]+"/services"
-                    });
-                    this.serverConfig = configData;
-                    resolve(configData);
-                },()=>{
-                    this.serverConfig = {};
-                    resolve({})
+            ajax.get(configServerUrl).then((resp) => {
+                configData=Object.assign(resp.data,{
+                    "configServerUrl":configServerUrl,
+                    "blogApi": resp.data["service.blog.endpoint"],
+                    "uamUrl": resp.data["service.link.endpoint"],
+                    "engineService": resp.data["service.gateway.endpoint"]+"/services"
                 });
+                this.serverConfig = configData;
+                resolve(configData);
+            },()=>{
+                this.serverConfig = {};
+                resolve({})
+            });
                 //end
 
-/*
-                 //读取文件config.json 配置方式
+                 /*//读取文件config.json 配置方式
                  contextPath = contextPath.replace('file://', ''); // 消除 file:
                 let absPath = `${contextPath}/${this.configFilename}`;
                 linkapi.readTextFromFile(absPath, 'utf-8', data => {
@@ -82,8 +78,7 @@ export default {
                 }, err => {
                     reject(err);
                 })
-                 //end
-*/
+                 //end*/
             }
         })
 
