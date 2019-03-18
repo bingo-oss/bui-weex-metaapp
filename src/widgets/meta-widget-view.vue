@@ -32,7 +32,7 @@
                         @swipeleft="cellSwiped(o.id)"
                         :items="[]"
                         :ref="o.id"
-                        :height="((o.swipeHeight>buiSwipeCellDefaultHeight)?o.swipeHeight:buiSwipeCellDefaultHeight)"
+                        :height="buiSwipeCellDefaultHeight"
                 >
                     <template slot="action">
                         <meta-operation class="bui-list-swipe-btn-custom" v-for="(commonOpt,index) in widgetParams.listOperations" :key="index" @triggered="closeSwipeCell(o)" @on_btn_click="selectedItemChange(o)" @successed="onrefresh" btn-type="swipe-cell" :operation="commonOpt" :widget-context="getWidgetContext(o)">
@@ -427,6 +427,10 @@
                 if (this.selectedFilter && this.selectedFilter.value) {
                     filtersParts.push(this.selectedFilter.value);
                 }
+                if (this.widgetParams && this.widgetParams.filters) {
+                    //部件参数,过滤条件
+                    filtersParts.push(this.widgetParams.filters);
+                }
                 this.queryParam.filters = filtersParts.join(' and ');
                 this.queryParam.total=true;
                 return ajax.get(this.dataUrlPath, this.queryParam).then(resp => {
@@ -487,7 +491,7 @@
                      _this.listData = concat_listData;
                      _this.$forceUpdate();//更新下视图
                      },1);*/
-                    if(this.dataCount>=this.listData.length){
+                    if(this.dataCount<=this.listData.length){
                         this.isloadingHide = true;
                     }else{
                         this.isloadingHide = false;
