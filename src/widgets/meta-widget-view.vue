@@ -32,7 +32,7 @@
                         @swipeleft="cellSwiped(o.id)"
                         :items="[]"
                         :ref="o.id"
-                        :height="buiSwipeCellDefaultHeight"
+                        :height="o.swipeHeight>buiSwipeCellDefaultHeight?o.swipeHeight:buiSwipeCellDefaultHeight"
                 >
                     <template slot="action">
                         <meta-operation class="bui-list-swipe-btn-custom" v-for="(commonOpt,index) in widgetParams.listOperations" :key="index" @triggered="closeSwipeCell(o)" @on_btn_click="selectedItemChange(o)" @successed="onrefresh" btn-type="swipe-cell" :operation="commonOpt" :widget-context="getWidgetContext(o)">
@@ -412,8 +412,10 @@
              * @param  {Number} page 页码
              */
             fetchData(page) {
-                this.queryParam.page_size = this.pageSize;
-                this.queryParam.page = page || 1;
+                if(this.widgetParams.pager){
+                    this.queryParam.page_size = this.pageSize;
+                    this.queryParam.page = page || 1;
+                }
                 let filtersParts = [];
                 // 最终参数里的 filters 由 this.filters, this.quickSearchFilters, this.selectedFilter 三大部分组成
                 if (this.filters) {
@@ -480,6 +482,10 @@
                 let _this = this;
                 if (this.loadingStatus == 'loading') return;
                 this.loadingStatus = 'loading';
+                if(!this.widgetParams.pager){
+                    setTimeout(()=>{this.loadingStatus = 'init'},500);
+                    return
+                }
                 this.fetchData(this.currentPage + 1).then(data => {
                     if (data.length) {
                     this.listData = this.listData.concat(data);
@@ -626,15 +632,18 @@
 
             },
             getView() {
+                if(!this.widgetParams.pager){
+                    this.isloadingHide = true;
+                }//是否显示分页
                 factoryApp.startLoading(this);//显示加载圈
                 //this.isShowLoading = true;
                 this.contextPath = this.$getContextPath();
                 globalEvent.addEventListener("androidback", e => {
                     this.$pop();
-            });
+                });
                 globalEvent.addEventListener("resume", e => {
                     this.viewAppear();
-            });
+                });
                 let pageParam = this.$getPageParams();
 
                 let viewId = this.selectedFilter.viewId;
@@ -850,11 +859,6 @@
         created(){
             //读取部件参数的设置
             this.pageSize  = this.widgetParams.pageSize||10;//设置的页数
-
-            if(!this.widgetParams.pager){
-                this.isloadingHide = true;
-            }//是否显示分页
-
             if(this.widgetParams.views){
                 let contextPath = this.$getContextPath(),
                         _views = this.widgetParams.views, _getMetaViewDefNumber = 0,_t = this,
