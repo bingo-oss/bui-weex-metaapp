@@ -5,9 +5,9 @@
                 <template v-for="(widget,index) in pageConfig.columnWidgets" :style="{
                     width:widget.frame.width+'px',
                     'margin':widget.frame.margin+'px'
-                    }">
+                    }" v-if="!widget.hide">
                     <text v-if="widget.frame&&widget.frame.isFrame&&widget.frame.title" class="frame_name">{{widget.frame.title}}</text>
-                    <component :style="{height:(widget.frame.height?widget.frame.height+'px':'')}" :is="widget.tagName" ref="childWidgets" :key="index" :widget-params="widget.params" :vue-modal="vueModal" :tag-name="widget.tagName" :widget-name="widget.widgetName"></component>
+                    <component :style="{height:(widget.frame.height?widget.frame.height+'px':'')}" :is="widget.tagName" ref="childWidgets" :key="index" :widget-params="widget.params" :vue-modal="vueModal" :tag-name="widget.tagName" :widget-name="widget.widgetName" v-if="!widget.params.mode||(['view','editable'].indexOf(widget.params.mode)!=-1)"></component>
                 </template>
             </div>
             <!--<div class="full-column" v-for="(col,colIndex) in pageConfig.style.columns" :key="colIndex">
@@ -26,6 +26,9 @@
     const dom = weex.requireModule('dom');
     const storage = weex.requireModule('storage');
     import linkapi from "linkapi";
+    import EventBus from '../js/bus';
+    import factoryApp from './libs/factory-app.js';
+
     var co = require('co');
     export default {
         props: {
@@ -53,10 +56,21 @@
                 widgetContainer:true,//用于判断是否是部件容器
                 isShowLoading:false,
                 dom:dom,//方便其他部件调用滚动
-                urlParam:{},//存储的页面参数
+                urlParam:null,//存储页面间输出参数
                 scrollerStyle:{"flex":1,height:scrollerHeight},//ios的scroller标签内的flex不生效-需要做个兼容
                 frameStyle:{},//窗口样式
-                widgetsInfo:[]//用于存入出现过的部件信息（高度）
+                widgetsInfo:[],//用于存入出现过的部件信息（高度）
+                pageEvent:{
+                    beforeCreate:"",
+                    created:"",
+                    beforeMount:"",
+                    mounted:"",
+                    beforeUpdate:"",
+                    updated:"",
+                    beforeDestroy:"",
+                    destroyed:""
+                },//存储页面事件
+                pageParams:{}//定义在页面配置的参数
             };
         },
         watch:{
@@ -64,13 +78,51 @@
                 this.loadPageConfig();
             }
         },
+        beforeCreate: function () {
+            console.log('beforeCreate 创建前状态===============》');
+        },
         created(){
             let _this = this;
             storage.getItem("urlParam", (res)=>{
-                if(res.data&&res.data!="undefined"){
+                if(res.data&&res.data!="undefined"&&res.data!="{}"){
                     _this.urlParam = JSON.parse(res.data);
                 }
+                if(!EventBus.historyParam)EventBus.historyParam = {};//初始化数据
+                let historyTime = _this.$getPageParams()['_t']//获取历史参数
+                if (_this.urlParam && !EventBus.historyParam[historyTime]&&historyTime) {
+                    //记录下页面参数
+                    EventBus.historyParam[historyTime] = _this.urlParam
+                } else if (!_this.urlParam && EventBus.historyParam[historyTime]) {
+                    //没有页面参数,但存在历史记录,则判断为返回操作
+                    _this.urlParam = EventBus.historyParam[historyTime]
+                }
             });//存储起来需要传递的参数
+            this.loadPageConfig();
+            this.hookExecution("created")
+        },
+        beforeMount: function () {
+            console.log('beforeMount 挂载前状态===============》');
+            this.hookExecution("beforeMount")
+        },
+        mounted: function () {
+            console.log('mounted 挂载结束状态===============》');
+            this.hookExecution("mounted")
+        },
+        beforeUpdate: function () {
+            console.log('beforeUpdate 更新前状态===============》');
+            this.hookExecution("beforeUpdate")
+        },
+        updated: function () {
+            console.log('updated 更新完成状态===============》');
+            this.hookExecution("updated")
+        },
+        beforeDestroy: function () {
+            console.log('beforeDestroy 销毁前状态===============》');
+            this.hookExecution("beforeDestroy")
+        },
+        destroyed: function () {
+            console.log('destroyed 销毁完成状态===============》');
+            this.hookExecution("destroyed")
         },
         methods:Object.assign({},pageMethods,{
             loadPageConfig(){
@@ -96,6 +148,17 @@
                 }else{
                     _layout = pageConfig
                 }
+
+                //页面事件
+                _.each(_this.pageEvent,(val,key)=>{
+                    if(pageConfig[`${key}Event`]){
+                        _this.pageEvent[key] = pageConfig[`${key}Event`];
+                    }
+                });
+
+                //页面定义参数
+                _this.pageParams = pageConfig.params;
+
                 _layout.columnWidgets = []//合并到一行内,布局处理
                 //每一列有自己的部件集合
                 _.each(_layout.widgets,function(columnWidgets){
@@ -197,26 +260,44 @@
                 //需要部件去调用下更新
                 var _this=this;
                 //特殊处理-暂时先这样定义高度的变化--不然没法兼容
-                var _setTimeout = setTimeout(function(){
-                    let _widgetHeights = 0;
-                    if(_this.pageConfig&&_this.$refs.childWidgets.length==_this.pageConfig.columnWidgets.length){
-                        _.each(_this.$refs.childWidgets,(cw)=>{
-                            dom.getComponentRect(cw,function(res){
-                                //存入部件信息
-                                _this.widgetsInfo.push({widget:cw,info:res});
-                                //计算下当前部件的总高--若超出则不需要定制高度
-                                _widgetHeights+=res.size.height;
-                                if(_widgetHeights>(_this.scrollerStyle.height)){
-                                    _this.scrollerStyle = {};
-                                    _this.$forceUpdate();//更新下视图
-                                }
+                try{
+                    var _setTimeout = setTimeout(function(){
+                        let _widgetHeights = 0;
+                        if(_this.pageConfig&&_this.$refs.childWidgets.length==_this.pageConfig.columnWidgets.length){
+                            _.each(_this.$refs.childWidgets,(cw)=>{
+                                dom.getComponentRect(cw,function(res){
+                                    //存入部件信息
+                                    _this.widgetsInfo.push({widget:cw,info:res});
+                                    //计算下当前部件的总高--若超出则不需要定制高度
+                                    _widgetHeights+=res.size.height;
+                                    if(_widgetHeights>(_this.scrollerStyle.height)){
+                                        _this.scrollerStyle = {};
+                                        _this.$forceUpdate();//更新下视图
+                                    }
+                                });
                             });
-                        });
-                    }else{
-                        _setTimeout();
+                        }else{
+                            _setTimeout();
+                        }
+                    },1000);
+                }catch (e){
+
+                }
+            },
+            hookExecution(name){
+                //钩子执行
+                let fun = this.pageEvent[name];
+                try{
+                    if (_.isFunction(fun)) {
+                        fun(this, factoryApp);
+                    } else if(fun){
+                        var onclick = Function('"use strict";return ' + fun)();
+                        onclick(this, factoryApp);
                     }
-                },1000);
-            }
+                }catch (e){
+                    this.$toast("脚本语法有误");
+                }
+            },
             /*,
             submit(){
                 var submitWidgets=[];

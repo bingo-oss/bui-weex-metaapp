@@ -128,7 +128,8 @@ export default {
         var queryParam = _.extend(
           {
             pageId: pageId,
-            byOperation: false
+            byOperation: false,
+            _t:(new Date().getTime())
           } /*,this.getIdFromContext(),this.operation.queryParams*/
         );
         OperationUtils.setUrlParam(this.operation, this); //按钮输入参数处理

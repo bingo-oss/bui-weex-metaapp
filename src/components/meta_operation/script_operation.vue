@@ -19,7 +19,7 @@
         <text class="dialog-title-text">{{modalInfo.title}} </text>
         <bui-icon class="dialog-close" @click="_maskClick" name="ion-ios-close" size=50></bui-icon>
       </div>
-      <div class="bui-dialog-content" :style="{height:modalInfo.height}">
+      <div class="bui-dialog-content" :style="{height:modalInfo.height}" v-if="modalInfo.show">
           <scroller :style="{height:modalInfo.height}">
             <div :style="{height:modalInfo.height}">
               <meta-widget-page :widget-params="modalInfo.pageParams"></meta-widget-page>

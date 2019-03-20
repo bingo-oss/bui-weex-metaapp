@@ -10,11 +10,14 @@ import _ from '../../js/tool/lodash';
 import ajax from '../../js/ajax.js';
 import service from '../../js/service.js';
 import metabase from '../../js/metadata/metabase.js';
+import config from '../../js/config';
+import EventBus from '../../js/bus';
+const storage = weex.requireModule('storage');
 
 var _this=this;//用于初始化指向
 var factoryApp = Object.assign({},buiweex,linkapi,{
     init(t){
-      _this = t;
+        _this = t;
     },
     goback(context, $optInst) {
         //返回
@@ -138,19 +141,19 @@ var factoryApp = Object.assign({},buiweex,linkapi,{
         }
     },
     stopLoading(){
-      //关闭加载圈
-      //全局部件刷新方法
-      if(_this.widgetContainer){
-          //关闭加载圈
-          _this.startLoadingNumber--;//需要累加的加载圈
-          if(_this.startLoadingNumber==0){
-              _this.isShowLoading = false;
-              //linkapi.hideLoading();
-          }
-      }else if(_this.$parent) {
-          _this = _this.$parent;//转移指向
-          factoryApp.stopLoading()//寻找父级
-      }
+        //关闭加载圈
+        //全局部件刷新方法
+        if(_this.widgetContainer){
+            //关闭加载圈
+            _this.startLoadingNumber--;//需要累加的加载圈
+            if(_this.startLoadingNumber==0){
+                _this.isShowLoading = false;
+                //linkapi.hideLoading();
+            }
+        }else if(_this.$parent) {
+            _this = _this.$parent;//转移指向
+            factoryApp.stopLoading()//寻找父级
+        }
     },
     post(params){
         return new Promise((resolve, reject) => {
@@ -285,7 +288,7 @@ var factoryApp = Object.assign({},buiweex,linkapi,{
             _this.modalInfo.show = true;
         }else{
             //跳入新页面
-            _this.$push(Utils.pageEntry(), {pageId:pageId,byOperation:false});
+            _this.$push(Utils.pageEntry(), {pageId:pageId,byOperation:false,_t:(new Date().getTime())});
         }
     },
     api(apiInfo,data,option){
@@ -299,22 +302,38 @@ var factoryApp = Object.assign({},buiweex,linkapi,{
         if(typeof apiInfo=="string"){
             apiInfo = JSON.parse(apiInfo);
         }
-        return service.getEngineUrl(apiInfo.projectId).then(function(res){
-          apiInfo.path.replace(/\{\w*\}/g,function(a,b){
-              var field = a.replace("{","").replace("}","");
-              apiInfo.path = apiInfo.path.replace(a,data[field]);
-          });
-          var _params = {url:`${res}${apiInfo.path}`,data:JSON.stringify(data)}
-          if(["PATCH"].indexOf(apiInfo.method)!=-1){
-              _params.headers = {"x-http-method-override":apiInfo.method}
-              apiInfo.method = "POST"
-          }
-          if(option){
-            //合并下扩展参数
-            _.extend(_params,option);
-          }
-          return factoryApp[apiInfo.method.toLowerCase()](_params);
-        });
+        var _engineUrl = apiInfo.endpoint;
+        if(apiInfo.endpoint){
+            if((/\{engineUrl\}/g).test(apiInfo.endpoint)){
+                return service.getEngineUrl(apiInfo.projectId).then(function(res){
+                    _engineUrl = apiInfo.endpoint.replace(/\{engineUrl\}/g,res)
+                    return returnAjax(_engineUrl)
+                });
+            }else if((/\{services\}/g).test(apiInfo.endpoint)){
+                return config.readRuntimeConfig().then(runtimeConfig => {
+                    _engineUrl = apiInfo.endpoint.replace(/\{services\}/g,runtimeConfig["service.metabase.endpoint"])
+                    return returnAjax(_engineUrl);
+                })
+            }else{
+                return returnAjax(_engineUrl);
+            }
+        }
+        function returnAjax(_engineUrl){
+            apiInfo.path.replace(/\{\w*\}/g,function(a,b){
+                var field = a.replace("{","").replace("}","");
+                apiInfo.path = apiInfo.path.replace(a,data[field]);
+            });
+            var _params = {url:`${_engineUrl}${apiInfo.path}`,data:JSON.stringify(data)}
+            if(["PATCH"].indexOf(apiInfo.method)!=-1){
+                _params.headers = {"x-http-method-override":apiInfo.method}
+                apiInfo.method = "POST"
+            }
+            if(option){
+                //合并下扩展参数
+                _.extend(_params,option);
+            }
+            return factoryApp[apiInfo.method.toLowerCase()](_params);
+        }
     },
     erroHint(xhr, textStatus, errorThrown){
         /**
@@ -343,6 +362,31 @@ var factoryApp = Object.assign({},buiweex,linkapi,{
             }
             buiweex.alert(errorMsg);
         }
+    },
+    reload(){
+        //页面重载
+        EventBus.$emit("reload",true);
+    },
+    setItem(key, value, callback){
+        /**
+         * 本地存储
+         * @param key {String} key
+         * @param value {String} 值
+         * @param callback {function} function
+         */
+        storage.setItem(key, value, function(res){
+            callback&&callback(res.data);
+        })
+    },
+    getItem(key, callback){
+        /**
+         * 读取本地存储
+         * @param key {String} key
+         * @param callback {function} function
+         */
+        storage.getItem(key, function(res){
+            callback&&callback(res.data);
+        })
     }
 });
 
