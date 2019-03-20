@@ -1,7 +1,5 @@
 <template>
     <div class="wrapper">
-        <div>{{widgetParams.entityId}}</div>
-        <div>{{widgetParams.dataId}}</div>
         <div class="details-header" v-if="headerInfo">
             <div class="escape" v-if="headerInfo.title">
                 <text class="escape-in">{{headerInfo.title}}</text>
