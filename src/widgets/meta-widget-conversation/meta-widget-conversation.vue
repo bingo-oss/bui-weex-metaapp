@@ -459,7 +459,7 @@
                             "iconField":this.widgetParams.iconField||"",// 图标字段名
                             "countNumber":this.widgetParams.countNumber||true,
                             "countFilters":this.widgetParams.countFilters||"",// 统计数字角标时的过滤条件
-                            "orderBy":{},  // 排序字段
+                            "orderBy":[],  // 排序字段
                             "page":{}
                         };//组装会话部件请求的参数
                         // 选择字段
@@ -486,7 +486,7 @@
                         params.selectFields.push(this.p2)
                         // 排序
                         if (viewDef.config.orderby) {
-                            params.orderBy = viewDef.config.orderby[0];
+                            params.orderBy = viewDef.config.orderby;
                         }
                         if(this.selectedFilter.filterId){
                             params.viewId = this.selectedFilter.filterId;
