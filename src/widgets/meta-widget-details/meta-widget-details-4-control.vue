@@ -1,5 +1,7 @@
 <template>
     <div class="wrapper">
+        <div>{{widgetParams.entityId}}</div>
+        <div>{{widgetParams.dataId}}</div>
         <div class="details-header" v-if="headerInfo">
             <div class="escape" v-if="headerInfo.title">
                 <text class="escape-in">{{headerInfo.title}}</text>
@@ -104,6 +106,7 @@
                 ajax.get(`${_this.metaEntit.project.engine.externalUrl}/${metabase.lowerUnderscore(_this.metaEntit.name)}/${_this.widgetParams.dataId}`)
                     .then(res => {
                         _this.data = res
+                        console.log('HXB', 'details data==', JSON.stringify(res))
                         var data = res.data
                         var _data = res.data._data
                         delete data._data
@@ -259,68 +262,82 @@
                 var _this = this
                 let params = {};
                 // console.log('HXB', 'widgetParams==', JSON.stringify(_this.widgetParams))
-                var referenceEntityName = _this.widgetParams.ReferenceEntityName || 'forewarningprocessingrecord'
-                params.filters = "forewarningEntityId eq " + _this.widgetParams.entityId + " and forewarningId eq " + _this.widgetParams.dataId
-                ajax.get(`${_this.metaEntit.project.engine.externalUrl}/${referenceEntityName}`, params).then(res => {//处理结果
-                    _this.processResult = res
-                    if (!res || !res.data) {
-                        return
-                    }
+                var referenceEntityName = _this.widgetParams.ReferenceEntityName
+                var associateField4ReferenceEntity = _this.widgetParams.AssociateField4ReferenceEntity
+                var AssociateField4Now = _this.widgetParams.AssociateField4Now ? DetailsUtils.traversingJson(_this.widgetParams.AssociateField4Now, _this.data) : null
+                if (associateField4ReferenceEntity && AssociateField4Now && referenceEntityName) {
+                    params.filters = associateField4ReferenceEntity + ' eq ' + AssociateField4Now
+                    ajax.get(`${_this.metaEntit.project.engine.externalUrl}/${referenceEntityName}`, params).then(res => {//处理结果
+                        // console.log('HXB', 'getExpandInfo--res', JSON.stringify(res))
+                        _this.processResult = res
+                        if (!res || !res.data) {
+                            return
+                        }
 
-                    var data = res.data.length ? res.data[0] : res.data
-                    var _data = res.data.length ? res.data[0]._data : res.data._data
-                    delete data._data
+                        var data = res.data.length ? res.data[0] : res.data
+                        var _data = res.data.length ? res.data[0]._data : res.data._data
+                        delete data._data
 
-                    service.getEntityFields(
-                        _this.metaEntit.projectId,
-                        'forewarningprocessingrecord',
-                        null
-                    )
-                        .then(fieldInfos => {
-                            for (var index in fieldInfos) {
-                                var fieldInfo = fieldInfos[index]
-                                var field = {
-                                    title: fieldInfo.title,
-                                    inputType: fieldInfo.inputType,
-                                    dataType: fieldInfo.dataType,
-                                    columnType: fieldInfo.columnType
+                        service.getEntityFields(
+                            _this.metaEntit.projectId,
+                            'forewarningprocessingrecord',
+                            null
+                        )
+                            .then(fieldInfos => {
+                                for (var index in fieldInfos) {
+                                    var fieldInfo = fieldInfos[index]
+                                    var field = {
+                                        title: fieldInfo.title,
+                                        inputType: fieldInfo.inputType,
+                                        dataType: fieldInfo.dataType,
+                                        columnType: fieldInfo.columnType
+                                    }
+                                    _this.processResultEntityTableInfo[fieldInfo.name] = field
                                 }
-                                _this.processResultEntityTableInfo[fieldInfo.name] = field
-                            }
-                            //处理结果内容
-                            var processResultContents = []
-                            var contentValueKeys = _this.widgetParams.Valueskey4ProcessResult ? _this.widgetParams.Valueskey4ProcessResult.split(",") : null
+                                //处理结果内容
+                                var processResultContents = []
+                                var contentValueKeys = _this.widgetParams.Valueskey4ProcessResult ? _this.widgetParams.Valueskey4ProcessResult.split(",") : null
 
-                            if (contentValueKeys) {
-                                processResultContents = DetailsUtils.findValuesByKeysFromJson((contentValueKeys).concat(), data)
-                                for (var index in processResultContents) {
-                                    var kv = processResultContents[index]
-                                    var k = DetailsUtils.getAllJsonKeys(kv)[0]
-                                    var v = kv[k]
-                                    v = _this.getRealValue(k, v, _data)
-                                    if (_this.processResultEntityTableInfo[k]) {
-                                        v = _this.analysisValueByFieldInfo(v, _this.processResultEntityTableInfo[k])
-                                        if (typeof v != 'string') {
-                                            if (v.join) {
-                                                _.each(v.content, function (item) {
-                                                    _this.processResultContent.push({
-                                                        title: item.title,
-                                                        value: item.value,
+                                if (contentValueKeys) {
+                                    processResultContents = DetailsUtils.findValuesByKeysFromJson((contentValueKeys).concat(), data)
+                                    for (var index in processResultContents) {
+                                        var kv = processResultContents[index]
+                                        var k = DetailsUtils.getAllJsonKeys(kv)[0]
+                                        var v = kv[k]
+                                        v = _this.getRealValue(k, v, _data)
+                                        if (_this.processResultEntityTableInfo[k]) {
+                                            v = _this.analysisValueByFieldInfo(v, _this.processResultEntityTableInfo[k])
+                                            if (typeof v != 'string') {
+                                                if (v.join) {
+                                                    _.each(v.content, function (item) {
+                                                        _this.processResultContent.push({
+                                                            title: item.title,
+                                                            value: item.value,
+                                                        })
                                                     })
+                                                }
+                                            } else {
+                                                _this.processResultContent.push({
+                                                    title: _this.processResultEntityTableInfo[k].title,
+                                                    value: v,
                                                 })
                                             }
-                                        } else {
-                                            _this.processResultContent.push({
-                                                title: _this.processResultEntityTableInfo[k].title,
-                                                value: v,
-                                            })
                                         }
                                     }
                                 }
-                            }
-                            _this.$forceUpdate()
-                        })
-                });
+                                _this.$forceUpdate()
+                            })
+                    });
+                }
+            },
+            getFiltersByKey(keys) {
+                var values = []
+                _.each(keys, function (key) {
+                    var value = DetailsUtils.traversingJson(key, this.data)
+                    value = value ? value : DetailsUtils.traversingJson(key, this.widgetParams)
+                    values.push(value)
+                })
+                return values
             },
             joinValue(value) {
                 if (typeof value != 'string') {
@@ -473,15 +490,10 @@
             },
             getWidgetContext() { //本部件暴露的参数
                 let _this = this;
-                //return Object.assign({}, this.widgetParams, this.titleInfo);
                 return Object.assign({}, {
                     widgetParams: _this.widgetParams,
-                    selectedItem: _this.titleInfo,
-                    selectedId: _this.widgetParams.dataId,
-                    selectedItem: _this.data,
-                    metaEntity: _this.metaEntit,
-                    metaEntityId: _this.metaEntit.metaEntityId,
-                    widgetParams: _this.widgetParams
+                    selectedItem: Object.assign({}, _this.data.data),
+                    metaEntity: Object.assign({}, _this.metaEntit)
                 })
             },
             handlePreview(file) {
@@ -501,7 +513,7 @@
             service.getMetaEntity(_this.widgetParams.entityId).then(res => {
                 _this.metaEntit = res;
                 _this.getDetailsInfo();
-                _this.getExpandInfo();
+                // _this.getExpandInfo();
             });
             globalEvent.addEventListener("resume", e => {
                 this.getDetailsInfo();
@@ -509,8 +521,14 @@
         },
         created() {
             factoryApp.init(this);//初始化全局api的指向
+        },
+        watch: {
+            data: {
+                handler: function () {
+                    this.getExpandInfo();
+                }
+            }
         }
-
     }
 </script>
 <style lang="css">
