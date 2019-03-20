@@ -1,7 +1,5 @@
 <template>
     <div class="wrapper">
-        <!--<text>{{headerInfo}}</text>-->
-        <!--<text>{{aaa}}</text>-->
         <div class="details-header" v-if="headerInfo">
             <div class="escape" v-if="headerInfo.title">
                 <text class="escape-in">{{headerInfo.title}}</text>
@@ -27,6 +25,33 @@
                     </div>
                     <div style="width: 500px">
                         <text class="text_detail_content">{{item.value}}</text>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div style="padding-left: 25px;" v-if="data.data.forewarningStatus == 1">
+            <div class="compare-title">
+                <text style="font-size: 28px;">处理结果</text>
+            </div>
+
+            <div>
+                <div v-for="item in processResultContent"
+                     class="flex-row" style="padding-bottom: 18px;">
+                    <div style="width: 150px; margin-right: 20px; ">
+                        <!--flex-direction:row-->
+                        <text class="text_detail_title">{{item.title}}</text>
+                    </div>
+                    <div style="width: 500px">
+                        <text class="text_detail_content"
+                              v-if="typeof item.value == 'string'">{{item.value}}
+                        </text>
+                        <div v-else
+                             v-for="pic in item.value">
+                            <image style="width: 170px;height: 220px;"
+                                   :src="pic"
+                            ></image>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -59,33 +84,26 @@
         },
         data() {
             return {
-                personInfo: true,
-                entityName: "",
-                infomation: {},  //人员信息
-                result: {},  //处理结果
-                comparePic: {},  //照片对比
                 titleInfo: {},  //详情顶部信息
-                resultshow: null,
                 Config: config,
                 metaEntit: {},
-                aaa: {},
-                title: '',
+                data: {},
                 headerInfo: {},
                 content: [],
-                entityTableInfo: {}
+                entityTableInfo: {},//实体表信息
+                processResult: {},//处理结果
+                processResultContent: [],//处理结果（用于显示）
+                processResultEntityTableInfo: []//实体表信息（处理结果）
             }
         },
         methods: {
-            infoShow() {
-                this.personInfo = !this.personInfo;
-            },
             getDetailsInfo() {
-
                 factoryApp.startLoading(this);//显示加载圈
                 let _this = this;
                 this.content = [];//清除下数据
                 ajax.get(`${_this.metaEntit.project.engine.externalUrl}/${metabase.lowerUnderscore(_this.metaEntit.name)}/${_this.widgetParams.dataId}`)
                     .then(res => {
+                        _this.data = res
                         var data = res.data
                         var _data = res.data._data
                         delete data._data
@@ -95,10 +113,14 @@
                             _this.metaEntit.id
                         )
                             .then(fieldInfos => {
-
                                 for (var index in fieldInfos) {
                                     var fieldInfo = fieldInfos[index]
-                                    var field = {title: fieldInfo.title}
+                                    var field = {
+                                        title: fieldInfo.title,
+                                        inputType: fieldInfo.inputType,
+                                        dataType: fieldInfo.dataType,
+                                        columnType: fieldInfo.columnType
+                                    }
                                     _this.entityTableInfo[fieldInfo.name] = field
                                 }
 
@@ -128,20 +150,21 @@
                                 //     }
                                 // } else
                                 if (subValueKeys) {
-
                                     sub = DetailsUtils.findValuesByKeys(subValueKeys, data)
-
                                     for (var index in sub) {
                                         var kv = sub[index]
-
                                         if (_this.entityTableInfo[kv.key]) {
-
                                             var v = _this.getRealValue(kv.key, kv.value, _data)
-
-                                            v = _this.transformData(v)
-
-                                            _this.headerInfo.subTitle += _this.entityTableInfo[kv.key].title + ':' + v + '    '
-
+                                            v = _this.analysisValueByFieldInfo(v, _this.entityTableInfo[kv.key])
+                                            if (typeof v != 'string') {
+                                                if (v.join) {
+                                                    _.each(v.content, function (item) {
+                                                        _this.headerInfo.subTitle += item.title + ':' + item.value + '    '
+                                                    })
+                                                }
+                                            } else {
+                                                _this.headerInfo.subTitle += _this.entityTableInfo[kv.key].title + ':' + v + '    '
+                                            }
                                         }
                                     }
                                 }
@@ -181,20 +204,44 @@
                                         var k = DetailsUtils.getAllJsonKeys(kv)[0]
                                         var v = kv[k]
                                         v = _this.getRealValue(k, v, _data)
-                                        v = _this.transformData(v)
-                                        if (_this.analysisValueContent(v) && _this.entityTableInfo[k]) {
-                                            _this.content.push({
-                                                title: _this.entityTableInfo[k].title,
-                                                value: v
-                                            })
+                                        if (_this.entityTableInfo[k]) {
+                                            v = _this.analysisValueByFieldInfo(v, _this.entityTableInfo[k])
+                                            if (typeof v != 'string') {
+                                                if (v.join) {
+                                                    _.each(v.content, function (item) {
+                                                        _this.content.push({
+                                                            title: item.title,
+                                                            value: item.value,
+                                                        })
+                                                    })
+                                                }
+                                            } else {
+                                                _this.content.push({
+                                                    title: _this.entityTableInfo[k].title,
+                                                    value: v,
+                                                })
+                                            }
                                         }
                                     }
+                                    // for (var index in content) {
+                                    //     var kv = content[index]
+                                    //     var k = DetailsUtils.getAllJsonKeys(kv)[0]
+                                    //     var v = kv[k]
+                                    //     v = _this.getRealValue(k, v, _data)
+                                    //     v = _this.transformData(v)
+                                    //     if (_this.analysisValueContent(v) && _this.entityTableInfo[k]) {
+                                    //         _this.content.push({
+                                    //             title: _this.entityTableInfo[k].title,
+                                    //             value: v
+                                    //         })
+                                    //     }
+                                    // }
                                 }
                                 _this.$forceUpdate()
                             })
 
 
-                        console.log('HXB', 'subTitle==', JSON.stringify(res))
+                        // console.log('HXB', 'subTitle==', JSON.stringify(res))
                         //标题
                         var title = {
                             key: _this.widgetParams.titleKey
@@ -208,17 +255,181 @@
                     .then(function (res) {
                     })
             },
-            analysisValueContent(value) {
+            getExpandInfo() {
                 var _this = this
+                let params = {};
+                // console.log('HXB', 'widgetParams==', JSON.stringify(_this.widgetParams))
+                var referenceEntityName = _this.widgetParams.ReferenceEntityName || 'forewarningprocessingrecord'
+                params.filters = "forewarningEntityId eq " + _this.widgetParams.entityId + " and forewarningId eq " + _this.widgetParams.dataId
+                ajax.get(`${_this.metaEntit.project.engine.externalUrl}/${referenceEntityName}`, params).then(res => {//处理结果
+                    _this.processResult = res
+                    if (!res || !res.data) {
+                        return
+                    }
+
+                    var data = res.data.length ? res.data[0] : res.data
+                    var _data = res.data.length ? res.data[0]._data : res.data._data
+                    delete data._data
+
+                    service.getEntityFields(
+                        _this.metaEntit.projectId,
+                        'forewarningprocessingrecord',
+                        null
+                    )
+                        .then(fieldInfos => {
+                            for (var index in fieldInfos) {
+                                var fieldInfo = fieldInfos[index]
+                                var field = {
+                                    title: fieldInfo.title,
+                                    inputType: fieldInfo.inputType,
+                                    dataType: fieldInfo.dataType,
+                                    columnType: fieldInfo.columnType
+                                }
+                                _this.processResultEntityTableInfo[fieldInfo.name] = field
+                            }
+                            //处理结果内容
+                            var processResultContents = []
+                            var contentValueKeys = _this.widgetParams.Valueskey4ProcessResult ? _this.widgetParams.Valueskey4ProcessResult.split(",") : null
+
+                            if (contentValueKeys) {
+                                processResultContents = DetailsUtils.findValuesByKeysFromJson((contentValueKeys).concat(), data)
+                                for (var index in processResultContents) {
+                                    var kv = processResultContents[index]
+                                    var k = DetailsUtils.getAllJsonKeys(kv)[0]
+                                    var v = kv[k]
+                                    v = _this.getRealValue(k, v, _data)
+                                    if (_this.processResultEntityTableInfo[k]) {
+                                        v = _this.analysisValueByFieldInfo(v, _this.processResultEntityTableInfo[k])
+                                        if (typeof v != 'string') {
+                                            if (v.join) {
+                                                _.each(v.content, function (item) {
+                                                    _this.processResultContent.push({
+                                                        title: item.title,
+                                                        value: item.value,
+                                                    })
+                                                })
+                                            }
+                                        } else {
+                                            _this.processResultContent.push({
+                                                title: _this.processResultEntityTableInfo[k].title,
+                                                value: v,
+                                            })
+                                        }
+                                    }
+                                }
+                            }
+                            _this.$forceUpdate()
+                        })
+                });
+            },
+            joinValue(value) {
+                if (typeof value != 'string') {
+                    if (value.join) {
+                        _.each(value.content, function (item) {
+                            _this.headerInfo.subTitle += item.title + ':' + item.value + '    '
+                        })
+                    }
+                }
+            },
+            //根据字段信息，解析正确数据
+            analysisValueByFieldInfo(value, fieldInfo) {
+                var _this = this
+                // var field = {
+                //     title: fieldInfo.title,
+                //     inputType: fieldInfo.inputType,
+                //     dataType: fieldInfo.dataType,
+                //     columnType: fieldInfo.columnType
+                // }
+
+                // if (!fieldInfo.inputType) {
+                //     fieldInfo.inputType = ''
+                // }
+                // if (!fieldInfo.columnType) {
+                //     fieldInfo.columnType = ''
+                // }
+                switch (fieldInfo.inputType) {
+                    case 'SingleLineText':
+                    case 'MultiLineText':
+                    case 'Boolean':
+                        return value;
+                    case 'PictureUpload':
+                        var pics = []
+                        for (var index in value) {
+                            var item = value[index]
+                            item = _this.Config.serverConfig.engineService + '/stream?filePath=' + (item.relativePath || item.url) + '&width=180&height=220'
+                            console.log('HXB', "pic====", item)
+                            pics.push(item)
+                        }
+                        return pics
+                    case 'DateTime':
+                        return this.transformData(value)
+                    default:
+                        if (fieldInfo.dataType) {
+                            switch (fieldInfo.dataType) {
+                                case 'map':
+                                    //是JSONObj
+                                    var arr = []
+                                    var res = {
+                                        join: true,
+                                        content: arr
+                                    }
+                                    arr.push({
+                                        title: value.title,
+                                        value: value.value
+                                    })
+                                    return res
+                                case 'array':
+                                    //是JSONArr
+                                    var arr = []
+                                    var res = {
+                                        join: true,
+                                        content: arr
+                                    }
+                                    for (var index in value) {
+                                        var tValue = value[index]
+                                        arr.push({
+                                            title: tValue.title,
+                                            value: tValue.value
+                                        })
+                                    }
+                                    return res
+                                default:
+                                    //单条数据
+                                    return value
+                            }
+                        } else {
+                            switch (fieldInfo.columnType) {
+                                case 'timestamp':
+                                    return this.transformData(value)
+                                case 'varchar':
+                                    return value
+                                default:
+                                    return value
+                            }
+                        }
+                }
+            },
+            analysisValueContent(value, fieldInfo) {
+                var _this = this
+                switch (fieldInfo.type) {
+                    case 'PictureUpload':
+
+                        break;
+                    case 'SingleLineText':
+
+                        break;
+                    case 'DateTime':
+                        break
+                }
                 if (typeof value != 'string') {
                     if (value.length) {
                         for (var index in value) {
                             var tValue = value[index]
                             // if (tValue.title && tValue.value) {
-                                _this.content.push({
-                                    title: tValue.title,
-                                    value: tValue.value
-                                })
+                            _this.content.push({
+                                title: tValue.title,
+                                value: tValue.value
+                            })
                             // }
                         }
                     } else /*if (value.title && value.value)*/ {
@@ -265,15 +476,17 @@
                 //return Object.assign({}, this.widgetParams, this.titleInfo);
                 return Object.assign({}, {
                     widgetParams: _this.widgetParams,
-                    selectedItem: _this.titleInfo
+                    selectedItem: _this.titleInfo,
+                    selectedId: _this.widgetParams.dataId,
+                    selectedItem: _this.data,
+                    metaEntity: _this.metaEntit,
+                    metaEntityId: _this.metaEntit.metaEntityId,
+                    widgetParams: _this.widgetParams
                 })
             },
             handlePreview(file) {
                 //预览
                 linkapi.openLinkBroswer(file.name ? file.name : "预览", `${config.serverConfig.engineService}/stream?filePath=${file.relativePath || file.url}`);
-            },
-            aaaaa() {
-                this.aaa = 'qqqqqqqqqqqqqqqq'
             }
         },
         component: {},
@@ -288,6 +501,7 @@
             service.getMetaEntity(_this.widgetParams.entityId).then(res => {
                 _this.metaEntit = res;
                 _this.getDetailsInfo();
+                _this.getExpandInfo();
             });
             globalEvent.addEventListener("resume", e => {
                 this.getDetailsInfo();
