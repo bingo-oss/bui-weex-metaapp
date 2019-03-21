@@ -1,6 +1,6 @@
 <template>
     <div class="full-column">
-        <scroller class="full-column" style="background-color:#F8F8F8" @scroll="scrollHandler" v-if="pageConfig">
+        <scroller class="full-column" style="background-color:#F8F8F8" @scroll="scrollHandler" v-if="pageShow">
             <div :style="scrollerStyle">
                 <template v-for="(widget,index) in pageConfig.columnWidgets" :style="{
                     width:widget.frame.width+'px',
@@ -52,6 +52,7 @@
         data(){
             var scrollerHeight = ((750/weex.config.env.deviceWidth)*weex.config.env.deviceHeight);
             return {
+                pageShow:false,
                 pageConfig:null,
                 widgetContainer:true,//用于判断是否是部件容器
                 isShowLoading:false,
@@ -129,11 +130,15 @@
                 var _this=this;
                 //linkapi.showLoading({"title":"加载中"})
                 this.isShowLoading=true;//显示加载圈
+                _this.pageShow = false;
                 if(this.widgetParams&&this.widgetParams.pageId){
                     pageService.get(this.widgetParams.pageId,this.widgetParams.byOperation).then(function(pageConfig){
                         _this.pageConfig=_this.convert(pageConfig);
                         _this.isShowLoading=false//关闭加载圈
                         _this.pageScrollUpdate();
+                        setTimeout(function(){
+                            _this.pageShow = true;
+                        },100)
                     },(erro)=>{
                         buiweex.toast("请求失败,请重试");
                         _this.isShowLoading=false//关闭加载圈
