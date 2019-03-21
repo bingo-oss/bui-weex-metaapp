@@ -874,6 +874,7 @@
                                  EventBus.$emit("widget-push-title","");
                                  _t.getView();//获取视图配置和数据
                                  }*/
+                                factoryApp.startLoading(_t);//显示加载圈
                                 service.getMetaViewFilter(view.filterId).then((res)=>{
                                     _getMetaViewDefNumber++;
                                     if(res.type==1){
