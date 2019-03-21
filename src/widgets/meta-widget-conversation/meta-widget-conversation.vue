@@ -47,7 +47,7 @@
                                 <text class="sub-text" style="text-align: right;">{{getFieldValue(o, p2)}}</text>
                             </div>
                             <div class="list-item-row">
-                                <text class="sub-text" :style="{'text-align': 'right','max-width':'500px'}">{{getFieldValue(o, p1)}}</text>
+                                <text class="sub-text" :style="{'max-width':'500px'}">{{getFieldValue(o, p1)}}</text>
                                 <div class="sub-text" :style="{'text-align':'right'}" v-if="widgetParams.countNumber">
                                     <text class="fillet" v-if="o['_count']">{{(o["_count"]>99?'99+':o["_count"])}}</text>
                                 </div>
