@@ -81,11 +81,8 @@
     const globalEvent = weex.requireModule('globalEvent');
     import factoryApp from "../libs/factory-app";
     import linkapi from "linkapi"
-    import Text from "weex-vue-render/src/render/vue/components/text";
 
-    export default {
-        components: {Text}
-    }
+    export default {}
     /*
     * 数据获取：通过实体id获取容器地址，拼接参数"数据id"去get
     *
