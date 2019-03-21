@@ -49,7 +49,7 @@
                             <div class="list-item-row">
                                 <text class="sub-text" :style="{'max-width':'500px'}">{{getFieldValue(o, p1)}}</text>
                                 <div class="sub-text" :style="{'text-align':'right'}" v-if="widgetParams.countNumber">
-                                    <text class="fillet" :style="{'width':((o['_count']>99)?'60px':'46px')}" v-if="o['_count']">{{(o["_count"]>99?'99+':o["_count"])}}</text>
+                                    <text class="fillet" :style="{'width':((o['_count']>99)?'60px':'40px')}" v-if="o['_count']">{{(o["_count"]>99?'99+':o["_count"])}}</text>
                                 </div>
                             </div>
                         </div>
@@ -706,10 +706,10 @@
         align-items: center;
         justify-content: center;
     }
-    .fillet{ border-radius: 80px; background-color: red; color: #fff; font-size: 24px; text-align: center;
+    .fillet{ border-radius: 80px; background-color: red; color: #fff; font-size: 22px; text-align: center;
         padding-top:8px;
-        padding-left:8px;
-        padding-right:8px;
+        /*padding-left:8px;
+        padding-right:8px;*/
         padding-bottom:8px;
     }
 </style>
