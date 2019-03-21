@@ -24,15 +24,25 @@
                         <text class="text_detail_title">{{item.title}}</text>
                     </div>
                     <div style="width: 500px">
-                        <text class="text_detail_content">{{item.value}}</text>
+                        <div v-if="typeof item.value != 'string' && item.value.length">
+                            <div class="flex-row" v-for="childItem in item.value">
+                                <image style="width: 170px;height: 220px; margin:3px 0px 0px 3px;"
+                                       v-if="childItem.relativePath"
+                                       :src="transformPic(childItem).url + transformPic(childItem).sizeConfig"
+                                       @click="handlePreview(transformPic(childItem))"
+                                ></image>
+                                <text v-else>{{childItem}}</text>
+                            </div>
+                        </div>
+                        <text class="text_detail_content" v-else>{{item.value}}</text>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div style="padding-left: 25px;" v-if="data.data.forewarningStatus == 1">
+        <div style="padding-left: 25px;" v-if="processResult && processResult.data">
             <div class="compare-title">
-                <text style="font-size: 28px;">处理结果</text>
+                <text style="font-size: 28px;">{{expandInfoTitle}}</text>
             </div>
 
             <div>
@@ -42,14 +52,15 @@
                         <!--flex-direction:row-->
                         <text class="text_detail_title">{{item.title}}</text>
                     </div>
-                    <div style="width: 500px">
+                    <div class="flex-row" style="width: 500px">
                         <text class="text_detail_content"
                               v-if="typeof item.value == 'string'">{{item.value}}
                         </text>
                         <div v-else
                              v-for="pic in item.value">
-                            <image style="width: 170px;height: 220px;"
-                                   :src="pic"
+                            <image style="width: 170px;height: 220px; margin:3px 0px 0px 3px;"
+                                   :src="pic.url + pic.sizeConfig"
+                                   @click="handlePreview(pic)"
                             ></image>
                         </div>
                     </div>
@@ -70,6 +81,11 @@
     const globalEvent = weex.requireModule('globalEvent');
     import factoryApp from "../libs/factory-app";
     import linkapi from "linkapi"
+    import Text from "weex-vue-render/src/render/vue/components/text";
+
+    export default {
+        components: {Text}
+    }
     /*
     * 数据获取：通过实体id获取容器地址，拼接参数"数据id"去get
     *
@@ -93,13 +109,27 @@
                 entityTableInfo: {},//实体表信息
                 processResult: {},//处理结果
                 processResultContent: [],//处理结果（用于显示）
-                processResultEntityTableInfo: []//实体表信息（处理结果）
+                processResultEntityTableInfo: [],//实体表信息（处理结果）
+                expandInfoTitle: ''//扩展信息title
             }
         },
         methods: {
             getDetailsInfo() {
                 factoryApp.startLoading(this);//显示加载圈
                 let _this = this;
+
+
+                _this.titleInfo = {}
+                _this.data = {}
+                _this.headerInfo = {}
+                _this.content = []
+                _this.entityTableInfo = {}
+                _this.processResult = {}
+                _this.processResultContent = []
+                _this.processResultEntityTableInfo = []
+                _this.expandInfoTitle = _this.widgetParams.ExpandInfoTitle
+
+
                 this.content = [];//清除下数据
                 ajax.get(`${_this.metaEntit.project.engine.externalUrl}/${metabase.lowerUnderscore(_this.metaEntit.name)}/${_this.widgetParams.dataId}`)
                     .then(res => {
@@ -157,12 +187,10 @@
                                         if (_this.entityTableInfo[kv.key]) {
                                             var v = _this.getRealValue(kv.key, kv.value, _data)
                                             v = _this.analysisValueByFieldInfo(v, _this.entityTableInfo[kv.key])
-                                            if (typeof v != 'string') {
-                                                if (v.join) {
-                                                    _.each(v.content, function (item) {
-                                                        _this.headerInfo.subTitle += item.title + ':' + item.value + '    '
-                                                    })
-                                                }
+                                            if (typeof v != 'string' && v.join2Content) {
+                                                _.each(v.content, function (item) {
+                                                    _this.headerInfo.subTitle += item.title + ':' + item.value + '    '
+                                                })
                                             } else {
                                                 _this.headerInfo.subTitle += _this.entityTableInfo[kv.key].title + ':' + v + '    '
                                             }
@@ -207,15 +235,13 @@
                                         v = _this.getRealValue(k, v, _data)
                                         if (_this.entityTableInfo[k]) {
                                             v = _this.analysisValueByFieldInfo(v, _this.entityTableInfo[k])
-                                            if (typeof v != 'string') {
-                                                if (v.join) {
-                                                    _.each(v.content, function (item) {
-                                                        _this.content.push({
-                                                            title: item.title,
-                                                            value: item.value,
-                                                        })
+                                            if (typeof v != 'string' && v.join2Content) {
+                                                _.each(v.content, function (item) {
+                                                    _this.content.push({
+                                                        title: item.title,
+                                                        value: item.value,
                                                     })
-                                                }
+                                                })
                                             } else {
                                                 _this.content.push({
                                                     title: _this.entityTableInfo[k].title,
@@ -305,15 +331,13 @@
                                         v = _this.getRealValue(k, v, _data)
                                         if (_this.processResultEntityTableInfo[k]) {
                                             v = _this.analysisValueByFieldInfo(v, _this.processResultEntityTableInfo[k])
-                                            if (typeof v != 'string') {
-                                                if (v.join) {
-                                                    _.each(v.content, function (item) {
-                                                        _this.processResultContent.push({
-                                                            title: item.title,
-                                                            value: item.value,
-                                                        })
+                                            if (typeof v != 'string' && v.join2Content) {
+                                                _.each(v.content, function (item) {
+                                                    _this.processResultContent.push({
+                                                        title: item.title,
+                                                        value: item.value,
                                                     })
-                                                }
+                                                })
                                             } else {
                                                 _this.processResultContent.push({
                                                     title: _this.processResultEntityTableInfo[k].title,
@@ -339,7 +363,7 @@
             },
             joinValue(value) {
                 if (typeof value != 'string') {
-                    if (value.join) {
+                    if (value.join2Content) {
                         _.each(value.content, function (item) {
                             _this.headerInfo.subTitle += item.title + ':' + item.value + '    '
                         })
@@ -371,7 +395,16 @@
                         var pics = []
                         for (var index in value) {
                             var item = value[index]
-                            item = _this.Config.serverConfig.engineService + '/stream?filePath=' + (item.relativePath || item.url) + '&width=180&height=220'
+                            item = {
+                                url: _this.Config.serverConfig.engineService + '/stream?filePath=' + (item.relativePath || item.url),
+                                sizeConfig: '&width=180&height=220',
+                                name: item.name
+                            }
+                            // item = {
+                            //     url: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png',
+                            //     sizeConfig: '',
+                            //     name: item.name
+                            // }
                             console.log('HXB', "pic====", item)
                             pics.push(item)
                         }
@@ -385,7 +418,7 @@
                                     //是JSONObj
                                     var arr = []
                                     var res = {
-                                        join: true,
+                                        join2Content: true,
                                         content: arr
                                     }
                                     arr.push({
@@ -397,7 +430,7 @@
                                     //是JSONArr
                                     var arr = []
                                     var res = {
-                                        join: true,
+                                        join2Content: true,
                                         content: arr
                                     }
                                     for (var index in value) {
@@ -494,9 +527,19 @@
                     metaEntity: Object.assign({}, _this.metaEntit)
                 })
             },
-            handlePreview(file) {
+            handlePreview(pic) {
                 //预览
-                linkapi.openLinkBroswer(file.name ? file.name : "预览", `${config.serverConfig.engineService}/stream?filePath=${file.relativePath || file.url}`);
+                linkapi.openLinkBroswer(pic.name || "预览", pic.url);
+                // linkapi.openLinkBroswer('预览', 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png');
+            },
+            transformPic(picValue) {
+                var _this = this
+                return {
+                    url: _this.Config.serverConfig.engineService + '/stream?filePath=' + (picValue.relativePath || picValue.url),
+                    // url: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png',
+                    sizeConfig: '&width=180&height=220',
+                    name: picValue.fileName || picValue.name
+                }
             }
         },
         component: {},
@@ -507,6 +550,7 @@
         },
         mounted() {
             let _this = this;
+
             service.init(config.serverConfig.configServerUrl); //初始化请求地址
             service.getMetaEntity(_this.widgetParams.entityId).then(res => {
                 _this.metaEntit = res;
@@ -563,6 +607,7 @@
 
     .flex-row {
         flex-direction: row;
+        flex-wrap: wrap;
     }
 
     .escape-in {
