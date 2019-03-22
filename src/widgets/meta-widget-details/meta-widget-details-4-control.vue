@@ -49,8 +49,8 @@
                         </div>
                         <div v-else>
                             <text class="text_detail_title">{{item.title}}</text>
-                            <div class="flex-row">
-                                <image style="width:340px; height: 415px; padding-right: 25px; margin-bottom: 16px;"
+                            <div class="flex-row" style="margin-top: 16px;">
+                                <image style="width:340px; height: 415px; padding-right: 25px;"
                                        v-for="pic in item.value"
                                        :src="pic.url + pic.sizeConfig"
                                        @click="handlePreview(pic)"
@@ -109,7 +109,7 @@
                         <!--</div>-->
                         <div class="flex-row">
                             <div class="content_title">
-                                <text class="text_detail_title">{{item.title}}</text>
+                                <text class="text_detail_title">{{item.title}}67676</text>
                             </div>
                             <div class="flex-row text_detail_content _500_content">
                                 <image style="width: 170px;height: 220px; margin:3px 0px 0px 3px;"
@@ -674,9 +674,10 @@
     .text_detail_title {
         font-size: 28px;
         color: #cccccc;
-        lines: 1;
+        flex-direction:row;flex-wrap:wrap;
+        /*lines: 1;
         text-overflow: ellipsis;
-        text-align: end;
+        text-align: end;*/
     }
 
     .text_detail_content {
