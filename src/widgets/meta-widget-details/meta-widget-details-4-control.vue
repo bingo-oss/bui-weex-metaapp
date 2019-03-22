@@ -23,7 +23,7 @@
                         <!--flex-direction:row-->
                         <text class="text_detail_title">{{item.title}}</text>
                     </div>
-                    <div style="width: 500px">
+                    <div style="width: 500px" v-if="item.value">
                         <div v-if="typeof item.value != 'string' && item.value.length">
                             <div class="flex-row" v-for="childItem in item.value">
                                 <image style="width: 170px;height: 220px; margin:3px 0px 0px 3px;"
