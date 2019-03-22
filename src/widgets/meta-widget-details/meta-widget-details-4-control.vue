@@ -17,25 +17,54 @@
             </div>
 
             <div>
-                <div v-for="item in content"
-                     class="flex-row" style="padding-bottom: 18px;">
-                    <div style="width: 150px; margin-right: 20px; ">
-                        <!--flex-direction:row-->
-                        <text class="text_detail_title">{{item.title}}</text>
+                <div v-for="(item, index) in content"
+                     style="padding-bottom: 18px;">
+                    <div class="flex-row"
+                         v-if="item.type == 'text'">
+                        <div class="content_title">
+                            <text class="text_detail_title">{{item.title}}</text>
+                        </div>
+                        <text class="text_detail_content _500_content">{{item.value}}</text>
                     </div>
-                    <div style="width: 500px">
-                        <div v-if="typeof item.value != 'string' && item.value.length">
-                            <div class="flex-row" v-for="childItem in item.value">
-                                <image style="width: 170px;height: 220px; margin:3px 0px 0px 3px;"
-                                       v-if="childItem.relativePath"
-                                       :src="transformPic(childItem).url + transformPic(childItem).sizeConfig"
-                                       @click="handlePreview(transformPic(childItem))"
+                    <div v-else-if="item.type == 'picture'">
+                        <div v-if="item.tag =='merge_first'"
+                             class="flex-row">
+                            <div style="width: 100px; flex: 1;">
+                                <text class="text_detail_title">{{item.title}}</text>
+                                <image style="height: 380px; padding-right: 25px"
+                                       :src="item.value[0].url + item.value[0].sizeConfig"
+                                       @click="handlePreview(item.value[0])"
                                 ></image>
-                                <text v-else>{{childItem}}</text>
+                            </div>
+                            <div style="width: 100px; flex: 1;">
+                                <text class="text_detail_title">{{content[index].title}}</text>
+                                <image style="height: 380px; padding-right: 25px"
+                                       :src="content[index].value[0].url + content[index].value[0].sizeConfig"
+                                       @click="handlePreview(content[index].value[0])"
+                                ></image>
                             </div>
                         </div>
-                        <text class="text_detail_content" v-else>{{item.value}}</text>
+                        <div v-else-if="item.tag =='merge_second'">
+                            <!--<text>{{item}}</text>-->
+                        </div>
+                        <div v-else>
+                            <text class="text_detail_title">{{item.title}}</text>
+                            <div class="flex-row">
+                                <image style="width:340px; height: 415px; padding-right: 25px; margin-bottom: 16px;"
+                                       v-for="pic in item.value"
+                                       :src="pic.url + pic.sizeConfig"
+                                       @click="handlePreview(pic)"
+                                ></image>
+                            </div>
+                        </div>
                     </div>
+                    <div v-else class="flex-row">
+                        <div class="content_title">
+                            <text class="text_detail_title">{{item.title}}</text>
+                        </div>
+                        <text class="text_detail_content _500_content">{{item.value}}</text>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -46,24 +75,56 @@
             </div>
 
             <div>
-                <div v-for="item in processResultContent"
-                     class="flex-row" style="padding-bottom: 18px;">
-                    <div style="width: 150px; margin-right: 20px; ">
-                        <!--flex-direction:row-->
-                        <text class="text_detail_title">{{item.title}}</text>
+                <div v-for="(item, index) in processResultContent"
+                     style="padding-bottom: 18px;">
+                    <div class="flex-row"
+                         v-if="item.type == 'text'">
+                        <div class="content_title">
+                            <text class="text_detail_title">{{item.title}}</text>
+                        </div>
+                        <text class="text_detail_content _500_content">{{item.value}}</text>
                     </div>
-                    <div class="flex-row" style="width: 500px">
-                        <text class="text_detail_content"
-                              v-if="typeof item.value == 'string'">{{item.value}}
-                        </text>
-                        <div v-else
-                             v-for="pic in item.value">
-                            <image style="width: 170px;height: 220px; margin:3px 0px 0px 3px;"
-                                   :src="pic.url + pic.sizeConfig"
-                                   @click="handlePreview(pic)"
-                            ></image>
+                    <div v-else-if="item.type == 'picture'">
+                        <!--<div v-if="item.tag =='merge_first'"-->
+                             <!--class="flex-row">-->
+                            <!--<div style="width: 100px; flex: 1;">-->
+                                <!--<text class="text_detail_title">{{item.title}}</text>-->
+                                <!--<image style="width: 170px;height: 220px; margin:3px 0px 0px 3px;"-->
+                                       <!--:src="item.value[0].url + item.value[0].sizeConfig"-->
+                                       <!--@click="handlePreview(item.value[0])"-->
+                                <!--&gt;</image>-->
+                            <!--</div>-->
+                            <!--<div style="width: 100px; flex: 1;">-->
+                                <!--<text class="text_detail_title">-->
+                                    <!--{{processResultContent[index].title}}-->
+                                <!--</text>-->
+                                <!--<image style="width: 170px;height: 220px; margin:3px 0px 0px 3px;"-->
+                                       <!--:src="processResultContent[index].value[0].url + processResultContent[index].value[0].sizeConfig"-->
+                                       <!--@click="handlePreview(processResultContent[index].value[0])"-->
+                                <!--&gt;</image>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <!--<div v-else-if="item.tag =='merge_second'">-->
+                            <!--&lt;!&ndash;<text>{{item}}</text>&ndash;&gt;-->
+                        <!--</div>-->
+                        <div >
+                            <text class="text_detail_title">{{item.title}}</text>
+                            <div class="flex-row">
+                                <image style="width: 170px;height: 220px; margin:3px 0px 0px 3px;"
+                                       v-for="pic in item.value"
+                                       :src="pic.url + pic.sizeConfig"
+                                       @click="handlePreview(pic)"
+                                ></image>
+                            </div>
                         </div>
                     </div>
+                    <div v-else class="flex-row">
+                        <div class="content_title">
+                            <text class="text_detail_title">{{item.title}}</text>
+                        </div>
+                        <text class="text_detail_content _500_content">{{item.value}}</text>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -81,8 +142,11 @@
     const globalEvent = weex.requireModule('globalEvent');
     import factoryApp from "../libs/factory-app";
     import linkapi from "linkapi"
+    import Text from "weex-vue-render/src/render/vue/components/text";
 
-    export default {}
+    export default {
+        components: {Text}
+    }
     /*
     * 数据获取：通过实体id获取容器地址，拼接参数"数据id"去get
     *
@@ -151,32 +215,12 @@
                                     }
                                     _this.entityTableInfo[fieldInfo.name] = field
                                 }
-
+                                console.log('HXB', '_this.entityTableInfo==', JSON.stringify(fieldInfos))
 
                                 //副标题
                                 var sub = []
-                                // var subTitleKeys = _this.widgetParams.key4subTitles ? _this.widgetParams.key4subTitles.split(',') : null
                                 var subValueKeys = _this.widgetParams.Valueskey4SubTitles ? _this.widgetParams.Valueskey4SubTitles.split(',') : null
                                 _this.headerInfo.subTitle = ''
-                                // if (subTitleKeys && subValueKeys) {
-                                //     for (var index in subTitleKeys) {
-                                //         var titleKey = subTitleKeys[index]
-                                //         var valueKey = subValueKeys[index]
-                                //         var kv = {}
-                                //         kv.titleKey = titleKey
-                                //         kv.valueKey = valueKey
-                                //         kv[titleKey] = null
-                                //         kv[valueKey] = null
-                                //         sub.push(kv)
-                                //     }
-                                //     DetailsUtils.findValuesByJSON(sub, res.data)
-                                //     for (var index in sub) {
-                                //         var value = sub[index]
-                                //         var v = value[value.valueKey] == null ? '' : value[value.valueKey]
-                                //         v = _this.transformData(v)
-                                //         _this.headerInfo.subTitle += value[value.titleKey] + ':' + v + '    '
-                                //     }
-                                // } else
                                 if (subValueKeys) {
                                     sub = DetailsUtils.findValuesByKeys(subValueKeys, data)
                                     for (var index in sub) {
@@ -198,68 +242,41 @@
 
                                 //内容
                                 var content = []
-                                // var contentTitleKeys = _this.widgetParams.key4Contents ? _this.widgetParams.key4Contents.split(",") : null
                                 var contentValueKeys = _this.widgetParams.Valueskey4Contents ? _this.widgetParams.Valueskey4Contents.split(",") : null
-
-                                // if (contentTitleKeys && contentValueKeys) {
-                                //     for (var index in contentTitleKeys) {
-                                //         var titleKey = contentTitleKeys[index]
-                                //         var valueKey = contentValueKeys[index]
-                                //         var kv = {}
-                                //         kv.titleKey = titleKey
-                                //         kv.valueKey = valueKey
-                                //         kv[titleKey] = null
-                                //         kv[valueKey] = null
-                                //         content.push(kv)
-                                //     }
-                                //     DetailsUtils.findValuesByJSON(content, res.data)
-                                //     for (var index in content) {
-                                //         var value = content[index]
-                                //         var kv = {
-                                //             title: value[value.titleKey],
-                                //             value: value[value.valueKey] == null ? '' : _this.transformData(value[value.valueKey]),
-                                //         }
-                                //         _this.content.push(kv)
-                                //     }
-                                // } else
                                 if (contentValueKeys) {
-                                    // content = DetailsUtils.findValuesByKeys(contentTitleKeys || contentValueKeys, data)
+                                    // 找出指定key的对应键值对，返回数组
                                     content = DetailsUtils.findValuesByKeysFromJson((contentValueKeys).concat(), data)
                                     for (var index in content) {
                                         var kv = content[index]
                                         var k = DetailsUtils.getAllJsonKeys(kv)[0]
                                         var v = kv[k]
+                                        //去_data找出映射的真实值
                                         v = _this.getRealValue(k, v, _data)
                                         if (_this.entityTableInfo[k]) {
+                                            //根据字段类型解析值
                                             v = _this.analysisValueByFieldInfo(v, _this.entityTableInfo[k])
                                             if (typeof v != 'string' && v.join2Content) {
+                                                console.log('HXB', 'v==', JSON.stringify(v))
                                                 _.each(v.content, function (item) {
-                                                    _this.content.push({
+                                                    var newItem = {
                                                         title: item.title,
                                                         value: item.value,
-                                                    })
+                                                        type: item.type
+                                                    }
+                                                    newItem = _this.transformDataByType(newItem, item.type)
+                                                    _this.content.push(newItem)
                                                 })
                                             } else {
                                                 _this.content.push({
                                                     title: _this.entityTableInfo[k].title,
                                                     value: v,
+                                                    type: v[0] ? v[0].type : v.type
                                                 })
                                             }
                                         }
                                     }
-                                    // for (var index in content) {
-                                    //     var kv = content[index]
-                                    //     var k = DetailsUtils.getAllJsonKeys(kv)[0]
-                                    //     var v = kv[k]
-                                    //     v = _this.getRealValue(k, v, _data)
-                                    //     v = _this.transformData(v)
-                                    //     if (_this.analysisValueContent(v) && _this.entityTableInfo[k]) {
-                                    //         _this.content.push({
-                                    //             title: _this.entityTableInfo[k].title,
-                                    //             value: v
-                                    //         })
-                                    //     }
-                                    // }
+                                    _this.setupContentTag(_this.content)
+                                    console.log('HXB', '_this.content==', JSON.stringify(_this.content))
                                 }
                                 _this.$forceUpdate()
                             })
@@ -329,20 +346,27 @@
                                         if (_this.processResultEntityTableInfo[k]) {
                                             v = _this.analysisValueByFieldInfo(v, _this.processResultEntityTableInfo[k])
                                             if (typeof v != 'string' && v.join2Content) {
+                                                console.log('HXB', 'v==', JSON.stringify(v))
                                                 _.each(v.content, function (item) {
-                                                    _this.processResultContent.push({
+                                                    var newItem = {
                                                         title: item.title,
                                                         value: item.value,
-                                                    })
+                                                        type: item.type
+                                                    }
+                                                    newItem = _this.transformDataByType(newItem, item.type)
+                                                    _this.processResultContent.push(newItem)
                                                 })
                                             } else {
                                                 _this.processResultContent.push({
                                                     title: _this.processResultEntityTableInfo[k].title,
                                                     value: v,
+                                                    type: v[0] ? v[0].type : v.type
                                                 })
                                             }
                                         }
                                     }
+                                    _this.setupContentTag(_this.processResultContent)
+                                    console.log('HXB', '_this.processResultContent==', JSON.stringify(_this.processResultContent))
                                 }
                                 _this.$forceUpdate()
                             })
@@ -370,19 +394,6 @@
             //根据字段信息，解析正确数据
             analysisValueByFieldInfo(value, fieldInfo) {
                 var _this = this
-                // var field = {
-                //     title: fieldInfo.title,
-                //     inputType: fieldInfo.inputType,
-                //     dataType: fieldInfo.dataType,
-                //     columnType: fieldInfo.columnType
-                // }
-
-                // if (!fieldInfo.inputType) {
-                //     fieldInfo.inputType = ''
-                // }
-                // if (!fieldInfo.columnType) {
-                //     fieldInfo.columnType = ''
-                // }
                 switch (fieldInfo.inputType) {
                     case 'SingleLineText':
                     case 'MultiLineText':
@@ -392,16 +403,12 @@
                         var pics = []
                         for (var index in value) {
                             var item = value[index]
-                            item = {
-                                url: _this.Config.serverConfig.engineService + '/stream?filePath=' + (item.relativePath || item.url),
-                                sizeConfig: '&width=180&height=220',
-                                name: item.name
-                            }
-                            // item = {
-                            //     url: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png',
-                            //     sizeConfig: '',
-                            //     name: item.name
-                            // }
+                            item.url = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png'
+                            item.sizeConfig = ''
+                            // item.url = _this.Config.serverConfig.engineService + '/stream?filePath=' + (item.relativePath || item.url)
+                            // item.sizeConfig = '&width=180&height=220'
+                            item.type = 'picture'
+                            item.title = item.name
                             console.log('HXB', "pic====", item)
                             pics.push(item)
                         }
@@ -420,7 +427,8 @@
                                     }
                                     arr.push({
                                         title: value.title,
-                                        value: value.value
+                                        value: value.value,
+                                        type: value.type
                                     })
                                     return res
                                 case 'array':
@@ -434,7 +442,8 @@
                                         var tValue = value[index]
                                         arr.push({
                                             title: tValue.title,
-                                            value: tValue.value
+                                            value: tValue.value,
+                                            type: tValue.type
                                         })
                                     }
                                     return res
@@ -526,17 +535,56 @@
             },
             handlePreview(pic) {
                 //预览
-                linkapi.openLinkBroswer(pic.name || "预览", pic.url);
+                linkapi.openLinkBroswer(pic.name || pic.title || "预览", pic.url);
                 // linkapi.openLinkBroswer('预览', 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png');
             },
-            transformPic(picValue) {
+            //给正文内容设置标记
+            setupContentTag(content) {
                 var _this = this
-                return {
-                    url: _this.Config.serverConfig.engineService + '/stream?filePath=' + (picValue.relativePath || picValue.url),
-                    // url: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png',
-                    sizeConfig: '&width=180&height=220',
-                    name: picValue.fileName || picValue.name
+                for (var index in content) {
+                    var item = content[index]
+                    var preItem = content[index - 1]
+                    switch (item.type) {
+                        case 'picture':
+                            if (typeof item.value != 'string' && item.value.length == 1) {
+                                if (preItem && preItem.tag == 'first') {
+                                    item.tag = 'merge_second'
+                                    preItem.tag = 'merge_first'
+                                } else {
+                                    item.tag = 'first'
+                                }
+                            } else {
+                                item.tag = ''
+                            }
+                            break;
+                        default:
+                    }
                 }
+            },
+            transformDataByType(data, type) {
+                var _this = this
+                switch (type) {
+                    case 'picture':
+                        if (data.value.length) {
+                            for (var index in data.value) {
+                                var item = data.value[index]
+                                item.url = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png'
+                                item.sizeConfig = ''
+                                // item.url = _this.Config.serverConfig.engineService + '/stream?filePath=' + (item.relativePath || item.url)
+                                // item.sizeConfig = '&width=180&height=220'
+                                item.name = item.fileName || item.name
+                            }
+                        } else {
+                            data.value.url = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png'
+                            data.value.sizeConfig = ''
+                            // data.value.url = _this.Config.serverConfig.engineService + '/stream?filePath=' + (data.value.relativePath || data.value.url)
+                            // data.value.sizeConfig = '&width=180&height=220'
+                            data.value.name = data.value.fileName || data.value.name
+                        }
+                        break;
+                    default:
+                }
+                return data
             }
         },
         component: {},
@@ -679,6 +727,15 @@
 
         color: #666;
         font-size: 45px;
+    }
+
+    ._500_content {
+        width: 500px;
+    }
+
+    .content_title {
+        width: 150px;
+        margin-right: 20px;
     }
 
 </style>
