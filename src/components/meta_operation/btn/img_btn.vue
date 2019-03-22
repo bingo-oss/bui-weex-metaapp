@@ -1,7 +1,7 @@
 <template>
   <div style="padding-left: 10px; padding-right: 10px;">
     <image
-      style="width:50px;height:50px;"
+      style="width:45px;height:45px;"
       :src="getImageUrl(operation.icon)"
     />
   </div>
