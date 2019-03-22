@@ -109,7 +109,7 @@
                         <!--</div>-->
                         <div class="flex-row">
                             <div class="content_title">
-                                <text class="text_detail_title">{{item.title}}67676</text>
+                                <text class="text_detail_title">{{item.title}}</text>
                             </div>
                             <div class="flex-row text_detail_content _500_content">
                                 <image style="width: 170px;height: 220px; margin:3px 0px 0px 3px;"
