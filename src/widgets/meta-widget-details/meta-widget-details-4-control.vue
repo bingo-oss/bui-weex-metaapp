@@ -69,7 +69,7 @@
             </div>
         </div>
 
-        <div style="padding-left: 25px;" v-if="processResult && processResult.data">
+        <div style="padding-left: 25px;" v-if="processResultContent && processResultContent.length">
             <div class="compare-title">
                 <text style="font-size: 28px;">{{expandInfoTitle}}</text>
             </div>
@@ -107,9 +107,11 @@
                         <!--<div v-else-if="item.tag =='merge_second'">-->
                             <!--&lt;!&ndash;<text>{{item}}</text>&ndash;&gt;-->
                         <!--</div>-->
-                        <div >
-                            <text class="text_detail_title">{{item.title}}</text>
-                            <div class="flex-row">
+                        <div class="flex-row">
+                            <div class="content_title">
+                                <text class="text_detail_title">{{item.title}}</text>
+                            </div>
+                            <div class="flex-row text_detail_content _500_content">
                                 <image style="width: 170px;height: 220px; margin:3px 0px 0px 3px;"
                                        v-for="pic in item.value"
                                        :src="pic.url + pic.sizeConfig"
@@ -142,11 +144,6 @@
     const globalEvent = weex.requireModule('globalEvent');
     import factoryApp from "../libs/factory-app";
     import linkapi from "linkapi"
-    import Text from "weex-vue-render/src/render/vue/components/text";
-
-    export default {
-        components: {Text}
-    }
     /*
     * 数据获取：通过实体id获取容器地址，拼接参数"数据id"去get
     *
@@ -403,10 +400,10 @@
                         var pics = []
                         for (var index in value) {
                             var item = value[index]
-                            item.url = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png'
-                            item.sizeConfig = ''
-                            // item.url = _this.Config.serverConfig.engineService + '/stream?filePath=' + (item.relativePath || item.url)
-                            // item.sizeConfig = '&width=180&height=220'
+                            //item.url = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png'
+                            //item.sizeConfig = ''
+                            item.url = _this.Config.serverConfig.engineService + '/stream?filePath=' + (item.relativePath || item.url)
+                            item.sizeConfig = '&width=180&height=220'
                             item.type = 'picture'
                             item.title = item.name
                             console.log('HXB', "pic====", item)
@@ -568,17 +565,17 @@
                         if (data.value.length) {
                             for (var index in data.value) {
                                 var item = data.value[index]
-                                item.url = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png'
-                                item.sizeConfig = ''
-                                // item.url = _this.Config.serverConfig.engineService + '/stream?filePath=' + (item.relativePath || item.url)
-                                // item.sizeConfig = '&width=180&height=220'
+                                //item.url = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png'
+                                //item.sizeConfig = ''
+                                item.url = _this.Config.serverConfig.engineService + '/stream?filePath=' + (item.relativePath || item.url)
+                                item.sizeConfig = '&width=180&height=220'
                                 item.name = item.fileName || item.name
                             }
                         } else {
-                            data.value.url = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png'
-                            data.value.sizeConfig = ''
-                            // data.value.url = _this.Config.serverConfig.engineService + '/stream?filePath=' + (data.value.relativePath || data.value.url)
-                            // data.value.sizeConfig = '&width=180&height=220'
+                            //data.value.url = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png'
+                            //data.value.sizeConfig = ''
+                            data.value.url = _this.Config.serverConfig.engineService + '/stream?filePath=' + (data.value.relativePath || data.value.url)
+                            data.value.sizeConfig = '&width=180&height=220'
                             data.value.name = data.value.fileName || data.value.name
                         }
                         break;
