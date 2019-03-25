@@ -1,5 +1,5 @@
 <template>
-    <div class="full-column">
+    <div class="full-column" ref="page">
         <scroller class="full-column" style="background-color:#F8F8F8" @scroll="scrollHandler" v-if="pageShow">
             <div :style="scrollerStyle">
                 <template v-for="(widget,index) in pageConfig.columnWidgets" :style="{
@@ -266,25 +266,28 @@
                 var _this=this;
                 //特殊处理-暂时先这样定义高度的变化--不然没法兼容
                 try{
-                    var _setTimeout = setTimeout(function(){
-                        let _widgetHeights = 0;
-                        if(_this.pageConfig&&_this.$refs.childWidgets.length==_this.pageConfig.columnWidgets.length){
-                            _.each(_this.$refs.childWidgets,(cw)=>{
-                                dom.getComponentRect(cw,function(res){
-                                    //存入部件信息
-                                    _this.widgetsInfo.push({widget:cw,info:res});
-                                    //计算下当前部件的总高--若超出则不需要定制高度
-                                    _widgetHeights+=res.size.height;
-                                    if(_widgetHeights>(_this.scrollerStyle.height)){
-                                        _this.scrollerStyle = {};
-                                        _this.$forceUpdate();//更新下视图
-                                    }
+                    dom.getComponentRect(_this.$refs.page,function(size){
+                        _this.scrollerStyle.height = size.size.height;
+                        var _setTimeout = setTimeout(function(){
+                            let _widgetHeights = 0;
+                            if(_this.pageConfig&&_this.$refs.childWidgets.length==_this.pageConfig.columnWidgets.length){
+                                _.each(_this.$refs.childWidgets,(cw)=>{
+                                    dom.getComponentRect(cw,function(res){
+                                        //存入部件信息
+                                        _this.widgetsInfo.push({widget:cw,info:res});
+                                        //计算下当前部件的总高--若超出则不需要定制高度
+                                        _widgetHeights+=res.size.height;
+                                        if(_widgetHeights>(_this.scrollerStyle.height)){
+                                            _this.scrollerStyle = {};
+                                            _this.$forceUpdate();//更新下视图
+                                        }
+                                    });
                                 });
-                            });
-                        }else{
-                            _setTimeout();
-                        }
-                    },1000);
+                            }else{
+                                _setTimeout();
+                            }
+                        },1000);
+                    });
                 }catch (e){
 
                 }
