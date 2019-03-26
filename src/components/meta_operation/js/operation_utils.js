@@ -170,23 +170,25 @@ var utils={
             }
         }*/
         return new Promise(function(resolve, reject) {
-            if(!operation.hasPermission&&operation.securityControlType&&operation.securityControlType==1){
-                //无权时-隐藏
-                resolve(false)
-            }else {
-                let value = true;
-                if (operation.checkFunc) {
-                    if (_.isFunction(operation.checkFunc)) {
-                        operation.checkFunc(operation, factoryApp, resolve);
-                    } else {
-                        var onclick = Function('"use strict";return ' + operation.checkFunc)();
-                        onclick(operation, factoryApp, resolve);
-                    }
-                    //resolve(value);
+            utils.fnAnalysis(operation,null,_this).then((res)=> {
+                if (!operation.hasPermission && operation.securityControlType && operation.securityControlType == 1) {
+                    //无权时-隐藏
+                    resolve(false)
                 } else {
-                    resolve(value);
+                    let value = true;
+                    if (operation.checkFunc) {
+                        if (_.isFunction(operation.checkFunc)) {
+                            operation.checkFunc(operation, factoryApp, resolve);
+                        } else {
+                            var onclick = Function('"use strict";return ' + operation.checkFunc)();
+                            onclick(operation, factoryApp, resolve);
+                        }
+                        //resolve(value);
+                    } else {
+                        resolve(value);
+                    }
                 }
-            }
+            });
         });
     },
     operationClick(_rowSingleData,_widgetCtx,_t){

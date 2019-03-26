@@ -311,7 +311,7 @@ var factoryApp = Object.assign({},buiweex,linkapi,{
                 });
             }else if((/\{services\}/g).test(apiInfo.endpoint)){
                 return config.readRuntimeConfig().then(runtimeConfig => {
-                    _engineUrl = apiInfo.endpoint.replace(/\{services\}/g,runtimeConfig["service.metabase.endpoint"])
+                    _engineUrl = apiInfo.endpoint.replace(/\{services\}/g,runtimeConfig["engineService"]);
                     return returnAjax(_engineUrl);
                 })
             }else{
