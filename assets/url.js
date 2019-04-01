@@ -8,8 +8,8 @@ var pageTestUrl = protocol + hostname + port + location.pathname.replace(/\/inde
 /*var viewPageTestUrl = protocol + hostname + port + location.pathname.replace(/\/index\.html$/, '/')
         .replace(/\/$/, '/dist/page.weex.js?pageId=onduty');*/
 var viewPageTestUrl = protocol + hostname + port + location.pathname.replace(/\/index\.html$/, '/')
-    .replace(/\/$/, '/dist/page.weex.js?pageId=4ev9H8FWYhSXcQmkFmVEJW');
+    .replace(/\/$/, '/dist/page.weex.js?pageId=8RsNiu5BT3QREDSmx6Sko5');
 /*var viewPageTestUrl = protocol + hostname + port + location.pathname.replace(/\/index\.html$/, '/')
         .replace(/\/$/, '/dist/page.weex.js?pageId=c053754b-bce5-404b-8b33-4b7ffaacce8c');*/
 var activityListTestUrl = protocol + hostname + port + location.pathname.replace(/\/index\.html$/, '/')
-    .replace(/\/$/, '/dist/list.weex.js?viewId=n34Zs9i2qAeEeqnZvfwUnW');
+    .replace(/\/$/, '/dist/page.weex.js?pageId=1e34f042-4b0f-4157-a264-1b9fa75426e6&id=HINvgvu_q');

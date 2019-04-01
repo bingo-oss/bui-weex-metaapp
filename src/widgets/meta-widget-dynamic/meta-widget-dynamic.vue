@@ -2024,7 +2024,7 @@
                             e.createBlog = true;//支持过滤
                         }//0:通用,1:快捷
                     });
-                    _t.tools = res.mpHomePageOprationList;
+                    _t.tools = res.mpHomePageOprationList||[];
                     _t.getAdminInfo();
                     _t.handleTabMenu();
                     _t.handleCreateMenu();
