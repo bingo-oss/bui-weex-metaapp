@@ -401,6 +401,7 @@
                 });
             },
             loadMore() {
+                clearTimeout(this.isShow);
                 let _this = this;
                 if (this.loadingStatus == 'loading') return;
                 this.loadingStatus = 'loading';
@@ -434,9 +435,11 @@
                 })
             },
             onrefresh() {
+                clearTimeout(this.isShow);
                 this.refreshData();
             },
             onloading() {
+                clearTimeout(this.isShow);
                 this.loadMore();
             },
             onInput(event){
