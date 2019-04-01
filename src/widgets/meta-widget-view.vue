@@ -162,7 +162,7 @@
                 selectedItem:{},//记录选择对象--合并暴露对象
                 isloadingHide:false,//是否隐藏加载更新
                 searchbars:[1],//为了改变input的值不清空现象
-                buiSwipeCellDefaultHeight:"",//默认列表高度
+                buiSwipeCellDefaultHeight:180,//默认列表高度
             }
         },
         computed: {

@@ -26,7 +26,6 @@
             <refresh-wrapper @refresh="onrefresh" :isRefreshing="isRefreshing"></refresh-wrapper>
             <cell v-for="(o, index) in listData" @appear="buiCellAppear(o)">
                 <bui-swipe-cell
-                        @click="rowSingleClick(o)"
                         @swipeleft="cellSwiped(o.id)"
                         :items="[]"
                         :ref="o.id"
@@ -37,7 +36,10 @@
                         </meta-operation>
                     </template>
 
-                    <div class="list-item-row" slot="content" :ref="'title_'+o.id">
+                    <div class="list-item-row" slot="content" :ref="'title_'+o.id"
+                         @click.stop="rowSingleClick(o)"
+                         @touchstart.stop="start(o)"
+                         @touchend.stop="end">
                         <div class="list-item-image" v-if="widgetParams.iconField">
                             <bui-image :src="Config.serverConfig.engineService+'/stream?filePath='+o[widgetParams.iconField]" width="80px" height="80px" style="border-radius:40px;"></bui-image>
                         </div>
@@ -48,7 +50,7 @@
                             </div>
                             <div class="list-item-row">
                                 <text class="sub-text" :style="{'max-width':'540px'}">{{getFieldValue(o, p1)}}</text>
-                                <div class="sub-text" :style="{'text-align':'right'}" v-if="widgetParams.countNumber">
+                                <div class="sub-text" @click.stop="setRead(o)" :style="{'text-align':'right'}" v-if="widgetParams.countNumber">
                                     <text class="fillet" :style="{'width':((o['_count']>99)?'60px':'40px')}" v-if="o['_count']">{{(o["_count"]>99?'99+':o["_count"])}}</text>
                                 </div>
                             </div>
@@ -82,6 +84,18 @@
             </filter-view>
         </bui-popup>
 
+
+        <!--单行事件-->
+        <meta-operation class="bui-list-swipe-btn-custom" v-for="(commonOpt,index) in [widgetParams.rowSingleClick[0]]" :ref="'metaOperationRow'" :key="index" :operation="commonOpt" :widget-context="getWidgetContext()">
+            <div></div>
+        </meta-operation>
+
+        <!--长按事件-->
+        <meta-operation class="bui-list-swipe-btn-custom" v-for="(commonOpt,index) in [widgetParams.longPressClick[0]]" :ref="'metaOperationLongPress'" :key="index" :operation="commonOpt" :widget-context="getWidgetContext()">
+            <div></div>
+        </meta-operation>
+
+
     </div>
 </template>
 <script>
@@ -110,6 +124,7 @@
             }
         },
         data() {
+            let _this = this;
             return {
                 Config:config,
                 engineUrl: '',
@@ -143,6 +158,23 @@
                 isloadingHide:false,//是否隐藏加载更新
                 searchbars:[1],//为了改变input的值不清空现象
                 buiSwipeCellDefaultHeight:130,//默认列表高度
+                isShow:"",
+                conversationParams:{
+                    "mainEntity":{
+                        "entityName":"",//实体名称
+                        "alias":""//别名
+                    },
+                    "viewId":"",//视图id
+                    "filters":"isRead eq 1",//过滤条件
+                    "aggregateField":_this.widgetParams.aggregateField||"",//汇总字段名
+                    "selectFields":[],// 选中字段，视图的第一个和第二个字段
+                    "iconField":_this.widgetParams.iconField||"",// 图标字段名
+                    "countNumber":_this.widgetParams.countNumber||true,
+                    "countFilters":_this.widgetParams.countFilters||"",// 统计数字角标时的过滤条件
+                    "orderBy":_this.widgetParams.orderBy||[],  // 排序字段
+                    "page":{}
+                },//会话请求参数
+                longPressClick:false//标记是否长按操作
             }
         },
         computed: {
@@ -174,6 +206,44 @@
             }
         },
         methods: {
+            setRead(item){
+                //设置已读
+                let _this = this;
+                buiweex.confirm("是否确定全部标为已读?",function(res){
+                    if(res=="确定"){
+                        return ajax.post(`${_this.engineUrl}/${metabase.lowerUnderscore(_this.entityName)}/${item[_this.widgetParams.aggregateField]}/read`,{}).then(resp => {
+                            _this.refresh();//刷新数据
+                        });
+                    }
+                });
+            },
+            start(rowData) {
+                //数据长按
+                const self = this;
+                self.longPressClick = false;//标记是否长按操作
+                self.isShow = setTimeout(()=>{
+                    self.longPressClick = true;//标记是否长按操作
+                    self.selectedItem = rowData;//设置点击对象
+                    if(self.$refs.metaOperationLongPress&&self.$refs.metaOperationLongPress.length){
+                        var _operation = self.$refs.metaOperationLongPress[0].$children[0];
+                        if(_operation){
+                            if(_operation.openMenu)_operation.openMenu();
+                            if(_operation.execScript)_operation.execScript();
+                        }
+                    }
+                    //var _longPressClick=self.widgetParams.longPressClick[0];
+                    //var _widgetCtx=self.getWidgetContext(rowData);
+                    //if(!_longPressClick.show||_longPressClick.hide)return false;
+                    //OperationUtils.setUrlParam(_longPressClick, self); //按钮输入参数处理
+                    //OperationUtils.operationClick(_longPressClick,_widgetCtx,self);
+                },1000);
+            },
+            end () {
+                //结束
+                clearTimeout(this.isShow);
+                //this.longPressClick = false;//标记是否长按操作
+
+            },
             toPage(queryParam){
                 //跳转页面--暴露给外部使用
                 buiweex.push(Utils.pageEntry(),queryParam);
@@ -189,12 +259,23 @@
             },
             //单击行执行
             rowSingleClick(rowData) {
+                if(this.longPressClick){
+                    return false;
+                }
+                clearTimeout(this.isShow);
                 this.selectedItem = rowData;//设置点击对象
-                var _rowSingleClick=this.widgetParams.rowSingleClick[0];
+                /*var _rowSingleClick=this.widgetParams.rowSingleClick[0];
                 var _widgetCtx=this.getWidgetContext(rowData);
                 if(!_rowSingleClick.show||_rowSingleClick.hide)return false;
                 OperationUtils.setUrlParam(_rowSingleClick, this); //按钮输入参数处理
-                OperationUtils.operationClick(_rowSingleClick,_widgetCtx,this);
+                OperationUtils.operationClick(_rowSingleClick,_widgetCtx,this);*/
+                if(this.$refs.metaOperationRow&&this.$refs.metaOperationRow.length){
+                    var _operation = this.$refs.metaOperationRow[0].$children[0];
+                    if(_operation){
+                        if(_operation.openMenu)_operation.openMenu();//菜单-按钮
+                        if(_operation.execScript)_operation.execScript();//脚本-按钮
+                    }
+                }
             },
             titleOperationClicked(e){
                 //通用操作弹窗
@@ -447,21 +528,12 @@
                         }
                         this.viewDef = viewDef;
                         this.formId = viewDef.metaFormShortId;
-                        let params = {
+                        let params = Object.assign({},this.conversationParams,{
                             "mainEntity":{
                                 "entityName":viewDef.metaEntityName,//实体名称
                                 "alias":""//别名
-                            },
-                            "viewId":"",//视图id
-                            "filters":"isRead eq 1",//过滤条件
-                            "aggregateField":this.widgetParams.aggregateField||"",//汇总字段名
-                            "selectFields":[],// 选中字段，视图的第一个和第二个字段
-                            "iconField":this.widgetParams.iconField||"",// 图标字段名
-                            "countNumber":this.widgetParams.countNumber||true,
-                            "countFilters":this.widgetParams.countFilters||"",// 统计数字角标时的过滤条件
-                            "orderBy":[],  // 排序字段
-                            "page":{}
-                        };//组装会话部件请求的参数
+                            }
+                        });//组装会话部件请求的参数
                         // 选择字段
                         let fields = new Set();
                         fields.add('_data'); // _data 字段里会有冗余信息
@@ -486,11 +558,14 @@
                         params.selectFields.push(this.p2)
                         // 排序
                         if (viewDef.config.orderby) {
-                            params.orderBy = viewDef.config.orderby;
-                            _.each(params.orderBy,(orderBy,index)=>{
+                            //合并过滤条件
+                            var _orderBy = viewDef.config.orderby;
+                            _.each(_orderBy,(orderBy,index)=>{
                                 orderBy.orderType = orderBy.type;
                             });
+                            params.orderBy = this.widgetParams.orderBy.concat(_orderBy);
                         }
+
                         if(this.selectedFilter.filterId){
                             params.viewId = this.selectedFilter.filterId;
                         }else if(this.selectedFilter.filterVal){
