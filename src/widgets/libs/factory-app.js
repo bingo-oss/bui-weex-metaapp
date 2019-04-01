@@ -169,7 +169,7 @@ var factoryApp = Object.assign({},buiweex,linkapi,{
                     reject(res)
                 }
             },erro=>{
-                if(params.erroHint===true||params.erroHint==null){
+                if(params.erroHint===true/*||params.erroHint==null*/){
                     //使用错误信息处理提示
                     factoryApp.erroHint(erro)
                 }
@@ -191,7 +191,7 @@ var factoryApp = Object.assign({},buiweex,linkapi,{
                     reject(res)
                 }
             },erro=>{
-                if(params.erroHint===true||params.erroHint==null){
+                if(params.erroHint===true/*||params.erroHint==null*/){
                     //使用错误信息处理提示
                     factoryApp.erroHint(erro)
                 }
@@ -213,7 +213,7 @@ var factoryApp = Object.assign({},buiweex,linkapi,{
                     reject(res)
                 }
             },erro=>{
-                if(params.erroHint===true||params.erroHint==null){
+                if(params.erroHint===true/*||params.erroHint==null*/){
                     //使用错误信息处理提示
                     factoryApp.erroHint(erro)
                 }
@@ -235,7 +235,7 @@ var factoryApp = Object.assign({},buiweex,linkapi,{
                     reject(res)
                 }
             },erro=>{
-                if(params.erroHint===true||params.erroHint==null){
+                if(params.erroHint===true/*||params.erroHint==null*/){
                     //使用错误信息处理提示
                     factoryApp.erroHint(erro)
                 }
