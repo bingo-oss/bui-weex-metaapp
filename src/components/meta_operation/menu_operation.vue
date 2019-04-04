@@ -14,27 +14,24 @@
       </slot>
     </div>
 
-
    <!--平铺弹窗样式-->
     <bui-popup
             v-if="operation.menuType=='tile'"
             :height="tile_windowHeight"
             backgroundColor="transparent"
             v-model="menu_window_show"
-            :rgba="0"
     >
       <scroller
               class="scl_content"
               style="width:750px; border-top-style:solid; border-top-color:#EAEAEA; border-top-width: 1px; "
       >
-        <div style="width: 750px; " class="flex-row">
-          <div
-                  :style="{'height':'100px','background-color':'','width':tile_width}"
-                  v-if="child_operations"
-                  v-for="(button,index) in child_operations"
-                  v-bind:key="index"
-          >
+        <div style="width: 750px;" class="flex-row">
             <meta-operation
+                    style="flex: 1; height: 100px;"
+                    v-if="child_operations"
+                    v-for="(button,index) in child_operations"
+                    v-bind:key="index"
+
                     :btnType="'item'"
                     :operation="button"
                     :widgetContext="widgetContext"
@@ -42,7 +39,8 @@
                     @on_btn_click="cancel"
                     :uiType="getUIType(index)"
             >
-              <div style="flex: 1; height: 100px; align-items: center; background-color: #F8F8F8; justify-content: center;">
+              <div style="flex: 1; height: 100px; align-items: center; background-color: #F8F8F8; justify-content: center;"
+              >
                 <image
                         v-if="button.icon"
                         style="width:40px;height:40px;margin-bottom: 10px; margin-top: 10px;"
@@ -51,7 +49,6 @@
                 <text class="flex-row" style="font-size: 20px;">{{button.title}}</text>
               </div>
             </meta-operation>
-          </div>
 
           <!--<meta-opt-btn
                   @on_btn_click="cancel"
@@ -348,6 +345,7 @@ export default {
   padding-bottom: 10px;
   padding-left: 20px;
   padding-right: 20px;
+  background-color: #F8F8F8
 }
 .flex-row {
   flex-direction: row;

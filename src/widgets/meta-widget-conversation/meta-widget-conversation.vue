@@ -25,6 +25,18 @@
         <list class="scroller">
             <refresh-wrapper @refresh="onrefresh" :isRefreshing="isRefreshing"></refresh-wrapper>
             <cell v-for="(o, index) in listData" @appear="buiCellAppear(o)">
+
+                <!--单行事件-->
+                <meta-operation class="bui-list-swipe-btn-custom" v-for="(commonOpt,index) in [widgetParams.rowSingleClick[0]]" :ref="'metaOperationRow'" :key="index" :operation="commonOpt" :widget-context="getWidgetContext(o)">
+                    <div></div>
+                </meta-operation>
+
+                <!--长按事件-->
+                <meta-operation class="bui-list-swipe-btn-custom" v-for="(commonOpt,index) in [widgetParams.longPressClick[0]]" :ref="'metaOperationLongPress'" :key="index" :operation="commonOpt" :widget-context="getWidgetContext(o)">
+                    <div></div>
+                </meta-operation>
+
+
                 <bui-swipe-cell
                         @swipeleft="cellSwiped(o.id)"
                         :items="[]"
@@ -37,8 +49,8 @@
                     </template>
 
                     <div class="list-item-row" slot="content" :ref="'title_'+o.id"
-                         @click.stop="rowSingleClick(o)"
-                         @touchstart.stop="start(o)"
+                         @click.stop="rowSingleClick(o,index)"
+                         @touchstart.stop="start(o,index)"
                          @touchend.stop="end">
                         <div class="list-item-image" v-if="widgetParams.iconField">
                             <bui-image :src="Config.serverConfig.engineService+'/stream?filePath='+o[widgetParams.iconField]" width="80px" height="80px" style="border-radius:40px;"></bui-image>
@@ -83,18 +95,6 @@
                     @cancel="showPopup = false">
             </filter-view>
         </bui-popup>
-
-
-        <!--单行事件-->
-        <meta-operation class="bui-list-swipe-btn-custom" v-for="(commonOpt,index) in [widgetParams.rowSingleClick[0]]" :ref="'metaOperationRow'" :key="index" :operation="commonOpt" :widget-context="getWidgetContext()">
-            <div></div>
-        </meta-operation>
-
-        <!--长按事件-->
-        <meta-operation class="bui-list-swipe-btn-custom" v-for="(commonOpt,index) in [widgetParams.longPressClick[0]]" :ref="'metaOperationLongPress'" :key="index" :operation="commonOpt" :widget-context="getWidgetContext()">
-            <div></div>
-        </meta-operation>
-
 
     </div>
 </template>
@@ -217,7 +217,7 @@
                     }
                 });
             },
-            start(rowData) {
+            start(rowData,index) {
                 //数据长按
                 const self = this;
                 self.longPressClick = false;//标记是否长按操作
@@ -225,7 +225,7 @@
                     self.longPressClick = true;//标记是否长按操作
                     self.selectedItem = rowData;//设置点击对象
                     if(self.$refs.metaOperationLongPress&&self.$refs.metaOperationLongPress.length){
-                        var _operation = self.$refs.metaOperationLongPress[0].$children[0];
+                        var _operation = self.$refs.metaOperationLongPress[index].$children[0];
                         if(_operation){
                             if(_operation.openMenu)_operation.openMenu();
                             if(_operation.execScript)_operation.execScript();
@@ -258,7 +258,7 @@
                 this.refreshData();
             },
             //单击行执行
-            rowSingleClick(rowData) {
+            rowSingleClick(rowData,index) {
                 if(this.longPressClick){
                     return false;
                 }
@@ -270,7 +270,7 @@
                 OperationUtils.setUrlParam(_rowSingleClick, this); //按钮输入参数处理
                 OperationUtils.operationClick(_rowSingleClick,_widgetCtx,this);*/
                 if(this.$refs.metaOperationRow&&this.$refs.metaOperationRow.length){
-                    var _operation = this.$refs.metaOperationRow[0].$children[0];
+                    var _operation = this.$refs.metaOperationRow[index].$children[0];
                     if(_operation){
                         if(_operation.openMenu)_operation.openMenu();//菜单-按钮
                         if(_operation.execScript)_operation.execScript();//脚本-按钮
