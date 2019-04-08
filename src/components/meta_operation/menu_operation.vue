@@ -279,8 +279,8 @@ export default {
     tile_windowHeight(){
       var hei = 0;
       if (this.child_operations) {
-        var len = parseInt(this.child_operations.length/3);
-        if(this.child_operations.length%3!=0){
+        var len = parseInt(this.child_operations.length/4);
+        if(this.child_operations.length%4!=0){
           len+=1;
         }
         if (len > 10) {
@@ -289,17 +289,6 @@ export default {
         hei = len * 110;
       }
       return hei;
-    },
-    tile_width(){
-      if(this.child_operations){
-        if(this.child_operations.length==1){
-          return "750px"
-        }else if(this.child_operations.length==2) {
-          return "375px"
-        }else{
-          return "240px"
-        }
-      }
     },
     actionsheetItems() {
       if (this.child_operations) {

@@ -63,7 +63,7 @@
             <cell class="list-item no-data" v-if="listData.length === 0">
                 <text class="empty-tips">暂无数据</text>
             </cell>
-            <loading-wrapper v-if="!isloadingHide" @loading="onloading" :status="loadingStatus">
+            <loading-wrapper v-if="!isloadingHide&&listData.length>=10" @loading="onloading" :status="loadingStatus">
             </loading-wrapper>
         </list>
 
