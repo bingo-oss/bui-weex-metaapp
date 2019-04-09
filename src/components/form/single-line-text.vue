@@ -9,12 +9,12 @@
             </div>
         </template>
         <template v-else>
-            <div class="form-group form-hrb" style="padding-top:10px; padding-bottom: 10px;">
+            <div class="form-group form-hrb" style="padding-top:10px; padding-bottom: 10px; height: 120px;">
                 <div class="label-wrapper">
                     <text class="form-label">{{definition.componentParams.title}}</text>
                     <text class="required-mark" v-if="definition.componentParams.required">*</text>
                 </div>
-                <input style="padding-top:30px; padding-bottom: 30px;"  ref="input" @input="input" :disabled="readonly" class="form-input-native" type="text" :value="valueText" :placeholder="definition.componentParams.placeholder" />
+                <input style="padding-top:20px; padding-bottom: 20px;"  ref="input" @input="input" :disabled="readonly" class="form-input-native" type="text" :value="valueText" :placeholder="definition.componentParams.placeholder" />
             </div>
         </template>
     </div>
