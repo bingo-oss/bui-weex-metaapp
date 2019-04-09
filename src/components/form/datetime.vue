@@ -1,5 +1,5 @@
 <template lang="html">
-    <div v-if="showComponent">
+    <div v-if="showComponent" :style="{'background-color':(validatorErrorBag?'#FAA':'')}">
         <template v-if="viewMode||forceView">
             <div class="form-group">
                 <div class="label-wrapper">
