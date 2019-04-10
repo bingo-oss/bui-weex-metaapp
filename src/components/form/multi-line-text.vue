@@ -41,5 +41,6 @@ export default {
 .form-input-textarea {
     flex: 1;
     font-size: 36px;
+    height: 200px;
 }
 </style>
