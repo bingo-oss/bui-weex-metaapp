@@ -768,7 +768,7 @@
 
     .sub-text {
         font-size: 28px;
-        max-width: 300px;
+        max-width: 350px;
         color: #BEBCBC;
         text-overflow: ellipsis;
         overflow: hidden;
