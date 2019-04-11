@@ -3,6 +3,9 @@ const DetailsUtils = {
         if (kv.value) {
             return
         }
+        if(json==null){
+            json = [];
+        }
         if (typeof json == 'string') {
             return
         } else if (json.length) {
@@ -27,6 +30,9 @@ const DetailsUtils = {
     findValueFromJSONByDeep(kv, json) {
         if (kv.value) {
             return
+        }
+        if(json==null){
+            json = [];
         }
         if (typeof json == 'string') {
             return
@@ -130,6 +136,9 @@ const DetailsUtils = {
 
     traversingJson(key, json) {
         var res
+        if(json==null){
+            json = [];
+        }
         if (typeof json == 'string') {
 
         } else if (json.length) {
@@ -156,6 +165,9 @@ const DetailsUtils = {
 
     findValuesByKeysFromJson(keys, json) {
         var res = []
+        if(json==null){
+            json = [];
+        }
         if (typeof json == 'string') {
 
         } else if (json.length) {
