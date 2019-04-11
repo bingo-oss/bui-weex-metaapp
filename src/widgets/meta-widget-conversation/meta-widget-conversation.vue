@@ -384,7 +384,7 @@
                     let _this = this;
                     setTimeout(function(d){
                         //滑块不会进行初始化--需要清空下数据更新视图后再设置
-                        _this.listData = data;
+                        _this.listData = _this.changeData(data);
                         _this.$forceUpdate();//更新下视图
                     },1);
                     this.isRefreshing = false;
@@ -411,7 +411,7 @@
                 }
                 this.fetchData(this.currentPage + 1).then(data => {
                     if (data.length) {
-                        this.listData = this.listData.concat(data);
+                        this.listData = this.changeData(this.listData.concat(data));
                         /*var concat_listData = this.listData.concat(data);
                          this.listData = [];
                          this.$forceUpdate();//更新下视图
@@ -644,6 +644,10 @@
                     });
                     }
                 }
+            },
+            changeData(data){
+                //改变数据
+                return data;
             }
         },
         created(){
