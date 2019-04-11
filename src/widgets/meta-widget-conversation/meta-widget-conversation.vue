@@ -58,7 +58,7 @@
                         <div class="list-item">
                             <div class="list-item-row">
                                 <text class="title-text" :style="{'max-width':(p2?'350px':'600px')}">{{o[widgetParams.aggregateField+"DisplayValue"]}}</text>
-                                <text class="sub-text" style="text-align: right;">{{getFieldValue(o, p2)}}</text>
+                                <text class="sub-text" style="text-align: right;">{{getFieldValue(o, p2)}}{{getFieldValue(o, extend2)}}</text>
                             </div>
                             <div class="list-item-row">
                                 <text class="sub-text" :style="{'max-width':'540px'}">{{getFieldValue(o, p1)}}</text>
@@ -140,6 +140,7 @@
                 layoutType: "0",
                 p1: 'title',
                 p2: '',
+                extend2:"",
                 filters: {}, // 高级搜索 filter
                 quickSearchFilters: '', // 快捷搜索 filter
                 selectedFilter: null, // 预设 filter
@@ -767,7 +768,7 @@
 
     .sub-text {
         font-size: 28px;
-        max-width: 250px;
+        max-width: 300px;
         color: #BEBCBC;
         text-overflow: ellipsis;
         overflow: hidden;
