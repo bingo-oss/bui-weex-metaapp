@@ -82,7 +82,7 @@ export default {
   },
   created() {
     let _t = this;
-    _t.operation.show = false;
+    //_t.operation.show = false;
     _t.operation.widgetContext = this.extendedWidgetContext; //暴露部件参数出去提供更多的校验手段
     _t.showOperation();
     //用于监听激活刷新校验

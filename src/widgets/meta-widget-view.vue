@@ -457,15 +457,22 @@
                 this.isRefreshing = true;
                 this.fetchData(1).then(data => {
                     this.dataInited = true; // 控制 viewAppear 时是否刷新页面，只有获取数据成功过才刷新
-                    this.listData = [];
-                    this.$forceUpdate();//更新下视图
                     //console.log(data);
-                    let _this = this;
-                    setTimeout(function(d){
-                        //滑块不会进行初始化--需要清空下数据更新视图后再设置
-                        _this.listData = _this.changeData(data);
-                        _this.$forceUpdate();//更新下视图
-                    },1);
+                    this.listData = this.changeData(data);
+                    //处理安卓下拉刷新后滑块无效
+                    /*if(weex.config.env.deviceModel.indexOf("iPhone")==-1){
+                        this.listData = [];
+                        this.$forceUpdate();//更新下视图
+                        let _this = this;
+                        setTimeout(function(d){
+                            //滑块不会进行初始化--需要清空下数据更新视图后再设置
+                            _this.listData = _this.changeData(data);
+                            _this.$forceUpdate();//更新下视图
+                        },1);
+                    }else{
+                        this.listData = [];
+                        this.listData = this.changeData(data);
+                    }*/
                     this.isRefreshing = false;
                     this.currentPage = 1;
                     this.loadingStatus = 'init';
@@ -474,6 +481,7 @@
                     }else{
                         this.isloadingHide = false;
                     }
+
                 }).catch(err => {
                         this.isRefreshing = false;
                     this.$alert("请求失败,请重试");
