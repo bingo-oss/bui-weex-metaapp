@@ -286,7 +286,7 @@ export default {
         if (len > 10) {
           len = 10;
         }
-        hei = len * 110;
+        hei = len * 115;
       }
       return hei;
     },
