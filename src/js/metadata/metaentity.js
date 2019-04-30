@@ -159,7 +159,7 @@ export default function (options) {
      */
     metaEntity.fillDefault = function (model) {
         var ds = this.dataResource();
-        return ds.calc(model).then(function ({data}) {
+        return ds.calc(model).then(function (data) {
             return data;
         });
     }
@@ -277,7 +277,7 @@ export default function (options) {
         }
         if (_.isString(this.ui)) {
             var resource = this.dataResource();
-            return resource.ui().then(({data}) => {
+            return resource.ui().then((data) => {
                 configUI(data, this);
                 var defaultSetting = defaultUI(this);
                 var formSt=data["form"];
