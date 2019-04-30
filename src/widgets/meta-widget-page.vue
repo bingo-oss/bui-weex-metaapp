@@ -2,7 +2,7 @@
     <div class="full-column" ref="page">
         <scroller class="full-column" style="background-color:#F8F8F8" @scroll="scrollHandler" v-if="pageShow">
             <div :style="scrollerStyle">
-                <template v-for="(widget,index) in pageConfig.columnWidgets" :style="{
+                <template v-for="(widget,index) in columnWidgets" :style="{
                     width:widget.frame.width+'px',
                     'margin':widget.frame.margin+'px'
                     }" v-if="!widget.hide">
@@ -71,7 +71,8 @@
                     beforeDestroy:"",
                     destroyed:""
                 },//存储页面事件
-                pageParams:{}//定义在页面配置的参数
+                pageParams:{},//定义在页面配置的参数
+                columnWidgets:[]//解析出排版的所有部件
             };
         },
         watch:{
@@ -133,7 +134,8 @@
                 _this.pageShow = false;
                 if(this.widgetParams&&this.widgetParams.pageId){
                     pageService.get(this.widgetParams.pageId,this.widgetParams.byOperation).then(function(pageConfig){
-                        _this.pageConfig=_this.convert(pageConfig);
+                        _this.convert(pageConfig);
+                        //_this.pageConfig=_this.convert(pageConfig);
                         _this.isShowLoading=false//关闭加载圈
                         _this.pageScrollUpdate();
                         setTimeout(function(){
@@ -153,90 +155,16 @@
                 }else{
                     _layout = pageConfig
                 }
-
                 //页面事件
                 _.each(_this.pageEvent,(val,key)=>{
                     if(pageConfig[`${key}Event`]){
                         _this.pageEvent[key] = pageConfig[`${key}Event`];
                     }
                 });
-
                 //页面定义参数
                 _this.pageParams = pageConfig.params;
-
-                _layout.columnWidgets = []//合并到一行内,布局处理
-                //每一列有自己的部件集合
-                _.each(_layout.widgets,function(columnWidgets){
-                    //遍历每一列的所有部件
-                    _.each(columnWidgets,function(w){
-                        var props={},operations={};
-                        //设置默认值
-                        w.frame  = {
-                            isFrame:false,
-                            title:"",//名称
-                            height:"",//高度
-                            width:"",//宽度
-                            margin:0//外边距
-                        };
-                        if(pageConfig.widgetParams&&pageConfig.widgetParams.length&&w.widgetParamId){
-                            //存在对应部件参数的数据
-                            pageConfig.widgetParams.filter((obj)=>{
-                                if(w.widgetParamId==obj.id){
-                                    //读取对应的部件参数进行设置
-                                    props = obj.params;
-                                    //操作
-                                    _.each(obj.buttons,(e)=>{
-                                        if(!operations[e.location]){
-                                            operations[e.location] = [];//不存在操作区域则声明
-                                        }
-                                        operations[e.location].push(e)
-                                    });
-                                    //部件窗体信息
-                                    if(obj.frame){
-                                        Object.assign(w.frame,obj.frame);
-                                    };
-                                }
-                            });
-                        }else{
-                            props=w.props,operations=w.operations;
-                        }
-                        w.params={widgetCode: w.widgetCode?w.widgetCode:""};//传入部件code--用于读取页面参数
-                        //遍历每一个部件的属性
-                        _.each(props,function(propValue,propKey){
-                            var parsedValue=propParser.parse(propValue,_this);
-                            w.params[propKey]=parsedValue;
-                        });
-                        //遍历每一个部件的操作区
-                        _.each(operations,function(optValue,optKey){
-                            w.params[optKey]=optValue;
-                        });
-
-                        //判断是否存入部件与字段的控制
-                        if(_this.widgetParams.widgetSettings){
-                            Object.assign(w.params,_this.widgetParams.widgetSettings[w.id]);
-                        }
-                        /*//移动端处理是否隐藏头部
-                        if(_this.widgetParams.hideHeader){
-                            Object.assign(w.params,{hideHeader:true});
-                        }*/
-                        _.each(_this.urlParam,function(propValue,propKey){
-                            if(((propKey.indexOf(".")!=-1)&&(propKey.indexOf(w.widgetCode)!=-1))||propKey.indexOf(".")==-1){
-                                //特定code的组件参数 以及 code.key标符的就直接都传入
-                                let _key = propKey;
-                                if(_key.indexOf(".")!=-1){
-                                    _key = _key.slice((_key.indexOf(".")+1))
-                                }
-                                if(_.isEmpty(w.params[_key])){
-                                    //过滤已经在部件上定值和从url上取到值的部件参数
-                                    w.params[_key] = propValue;
-                                }
-                            }
-                        });
-                        _layout.columnWidgets.push(w);//添加组装好的部件
-                    });
-                });
+                this.getOrSetWidget(pageConfig);
                 storage.removeItem("urlParam");//取出后立即清除-防止参数错乱
-                return _layout;
             },
             viewEvent(widget,Event){
                 //if(widget.tagName=="meta-widget-navbar")return false;
@@ -306,31 +234,67 @@
                     this.$toast("脚本语法有误");
                 }
             },
-            /*,
-            submit(){
-                var submitWidgets=[];
-                _.each(this.$refs.childWidgets,function(cw){
-                    if(_.isFunction(cw.submit)){
-                        submitWidgets.push(cw);
+            setWidgetParams(widget,toRoute){
+                //处理配置的部件参数且处理页面参数
+                let _this = this;
+                var props = widget.params, operations = {}
+
+                widget.frame  = {
+                    isFrame:false,
+                    title:"",//名称
+                    height:"",//高度
+                    width:"",//宽度
+                    margin:0//外边距
+                };
+
+                _.each(widget.buttons, (e) => {
+                    if (!operations[e.location]) {
+                        operations[e.location] = []//不存在操作区域则声明
+                    }
+                    operations[e.location].push(e)
+                });
+
+                widget.widgetParams = {widgetCode: widget.widgetCode ? widget.widgetCode : ''}//传入部件code--用于读取页面参数
+                //遍历每一个部件的属性
+                _.each(props,function(propValue,propKey){
+                    var parsedValue=propParser.parse(propValue,_this);
+                    widget.params[propKey]=parsedValue;
+                });
+                //遍历每一个部件的操作区
+                _.each(operations,function(optValue,optKey){
+                    widget.params[optKey]=optValue;
+                });
+
+                //判断是否存入部件与字段的控制
+                if(_this.widgetParams.widgetSettings){
+                    Object.assign(widget.params,_this.widgetParams.widgetSettings[widget.id]);
+                }
+
+                _.each(_this.urlParam,function(propValue,propKey){
+                    if(((propKey.indexOf(".")!=-1)&&(propKey.indexOf(widget.widgetCode)!=-1))||propKey.indexOf(".")==-1){
+                        //特定code的组件参数 以及 code.key标符的就直接都传入
+                        let _key = propKey;
+                        if(_key.indexOf(".")!=-1){
+                            _key = _key.slice((_key.indexOf(".")+1))
+                        }
+                        if(_.isEmpty(widget.params[_key])){
+                            //过滤已经在部件上定值和从url上取到值的部件参数
+                            widget.params[_key] = propValue;
+                        }
                     }
                 });
-                if(submitWidgets.length===0){
-                    return Promise.resolve();
-                }
-                //利用co和generator函数顺序调用部件的submit
-                function* nextSubmit(){
-                    var toYield=[];
-                    for(let i=0;i<submitWidgets.length;++i){
-                        let sw=submitWidgets[i];
-                        toYield.push(new Promise((resolve, reject)=>{
-                            let res=sw.submit();
-                            res.then((data)=>{resolve(data)},()=>{reject()});
-                        }));
+                this.columnWidgets.push(widget);//添加组装好的部件
+            },
+            getOrSetWidget(layout,toRoute){
+                //获取并且设置按钮脚本
+                _.each((layout.layout||layout),(widget)=>{
+                    if(_.isArray(widget)){
+                        this.getOrSetWidget(widget)
+                    }else if(widget&&widget.widgetCode){
+                        this.setWidgetParams(widget,toRoute);
                     }
-                    return yield toYield;
-                }
-                return co(nextSubmit);
-            }*/
+                });
+            }
         })
     }
 </script>
