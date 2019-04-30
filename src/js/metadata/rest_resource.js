@@ -1,4 +1,5 @@
 import ajax from '../ajax';
+import _ from '../tool/lodash';
 var template = require('url-template');
 function resource(restResourceUrl,customActions,options){
     let root=options&&options.root;
