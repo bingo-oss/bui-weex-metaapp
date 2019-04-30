@@ -218,118 +218,6 @@
                 if(!_rowSingleClick.show||_rowSingleClick.hide)return false;
                 OperationUtils.setUrlParam(_rowSingleClick, this); //按钮输入参数处理
                 OperationUtils.operationClick(_rowSingleClick,_widgetCtx,this);
-                /*
-                 //目前支持通用操作和脚本操作
-                 let commonOptName=operation.name;
-                 if(commonOptName&&commonOperation.createOperation(commonOptName)){
-                 let commonOpt=commonOperation.createOperation(commonOptName);
-                 if(commonOpt){
-                 operation= _.extend(operation,commonOpt);
-                 operation.onclick(_widgetCtx,factoryApp);
-                 }
-                 }else if(operation.onClick){//脚本操作
-                 OperationUtils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
-                 if(_.isFunction(operation.onclick)){
-                 operation.onClick(_widgetCtx,factoryApp);
-                 }else{
-                 var onclick=Function('"use strict";return ' + operation.onClick  )();
-                 onclick(_widgetCtx,factoryApp);
-                 }
-                 OperationUtils.execution(operation,_widgetCtx,"afterExecCode")//执行后
-                 });
-                 }else if(operation.operationType=="execOperation"){//脚本操作
-                 let _t = this;
-                 function cellExecScript() {
-                 OperationUtils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
-                 if (_.isFunction(_t.implCode)) {
-                 _t.implCode(Object.assign(_widgetCtx, operation),factoryApp);
-                 } else {
-                 var onclick = Function('"use strict";return ' + _t.implCode)();
-                 onclick(Object.assign(_widgetCtx, operation),factoryApp);
-                 }
-                 OperationUtils.execution(operation,_widgetCtx,"afterExecCode")//执行后
-                 });
-                 }
-                 if(_t.implCode){
-                 cellExecScript();
-                 }else {
-                 //获取执行代码
-                 config.readRuntimeConfig().then(runtimeConfig => {
-                 ajax.get(runtimeConfig["service.metabase.endpoint"]+`/meta_operation/${operation.operationId}`).then(({data})=>{
-                 _t.implCode=data.implCode;
-                 cellExecScript();
-                 });
-                 });
-                 }
-                 }else if(operation.operationType=="toPage"||operation.operationType=="toOperation"||operation.operationType=="toDynamicPage"){
-                 //赋予选择值
-                 var context = _.extend(_widgetCtx, operation);
-                 if(!context.selectedItem&&context.selectedItems){
-                 //按钮放置的是在工具栏
-                 this.selectedItem = context.selectedItems[(context.selectedItems.length-1)]
-                 }else{
-                 this.selectedItem=context.selectedItem;
-                 }
-                 OperationUtils.setUrlParam(operation,this);
-                 var pageId=operation.pageId,byOperation= false;
-                 if(operation.operationType=="toOperation"){
-                 byOperation = true;
-                 }
-                 OperationUtils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
-                 OperationUtils.execution(operation,_widgetCtx,"afterExecCode")//执行后
-                 if(operation.operationType=="toDynamicPage"){
-                 this.selectedItem.actionParams={"ios":"[aaa] \n pageId=navbar \n entityId=abcdefgh","android":"[aaa] \n pageId=navber \n entityId=abcdefgh"}
-                 operation.dynamicPageFunc = function(obj,factoryApp){
-                 var _actionParams = {"type":"factoryApp", "pageId":"", "url":"", "params":{}}
-                 if(obj.selectedItem&&obj.selectedItem.actionParams){
-                 //存在跳入的配置页面
-                 var actionParams = ""
-                 if(weex.config.env.deviceModel.indexOf("iPhone")==-1){
-                 actionParams = obj.selectedItem.actionParams.ios;
-                 }else{
-                 actionParams = obj.selectedItem.actionParams.android;
-                 }
-                 actionParams = actionParams.split("\n");
-                 _.each(actionParams,function(param){
-                 if(param.indexOf("=")!=-1){
-                 param = param.split("=");
-                 _actionParams.params[param[0].replace(/^\s+|\s+$/g,"")]= param[1].replace(/^\s+|\s+$/g,"");
-                 }
-                 })
-                 }
-                 return _actionParams
-                 }//模拟校验方法
-
-                 var pageParams={};
-                 if(operation.dynamicPageFunc){
-                 //进行数据解析
-                 if (_.isFunction(operation.dynamicPageFunc)) {
-                 this.mustStopRepeatedClick = true;
-                 pageParams = operation.dynamicPageFunc(_widgetCtx,factoryApp);
-                 } else {
-                 var dynamicPageFunc = Function('"use strict";return ' + operation.dynamicPageFunc)();
-                 pageParams = dynamicPageFunc(_widgetCtx,factoryApp);
-                 }
-                 }
-                 if(pageParams.type=="factoryApp"){
-                 //跳入的是应用工厂应用
-                 this.$push(Utils.pageEntry(),Object.assign({pageId:pageParams.pageId},pageParams.params));
-                 }else if(pageParams.type=="url"){
-                 //跳入的是第三方url
-                 let _urlParams = []
-                 _.each(pageParams.params,(val,key)=>{
-                 _urlParams.push(`${key}=${val}`);
-                 });
-                 if(pageParams.url.indexOf("?")==-1){pageParams.url+="?"}
-                 linkapi.openLinkBroswer(pageParams.url+_urlParams.join("&"));
-                 }
-                 }else{
-                 var queryParam=_.extend({pageId:pageId,byOperation:byOperation}/!*,getIdFromContext()*!/);
-                 this.$push(Utils.pageEntry(),queryParam);
-                 }
-                 });
-                 }
-                 */
             },
             titleClicked(e) {
                 // 没有分类则无动作
@@ -376,7 +264,7 @@
                     }
                 } else {
                     // 对于非引用实体字段，针对日期作处理
-                    let fieldDef = this.swaggerEntiyDef.properties[field];
+                    let fieldDef = this.swaggerEntiyDef.properties&&this.swaggerEntiyDef.properties[field];
                     if (fieldDef&&obj[field]) {
                         //只对格林时间格式处理
                         //undefined
@@ -419,7 +307,7 @@
                     this.queryParam.page = page || 1;
                 }
                 let filtersParts = [];
-                // 最终参数里的 filters 由 this.filters, this.quickSearchFilters, this.selectedFilter 三大部分组成
+                //最终参数里的 filters 由 this.filters, this.quickSearchFilters, this.selectedFilter 三大部分组成
                 if (this.filters) {
                     for (let k in this.filters) {
                         if (this.filters[k]) filtersParts.push(this.filters[k]);
@@ -438,41 +326,26 @@
                 this.queryParam.filters = filtersParts.join(' and ');
                 this.queryParam.total=true;
                 return ajax.get(this.dataUrlPath, this.queryParam).then(resp => {
-                            factoryApp.stopLoading(this);//关闭加载圈
-                //this.isShowLoading = false
-                if(resp.headers){
-                    this.dataCount = resp.headers["X-Total-Count"]
-                }
-                if(this.presetFilters[this.currentTab]){
-                    if(this.presetFilters[this.currentTab].showCount) {//是否显示数字
-                        this.presetFilters[this.currentTab].count = (resp.headers["X-Total-Count"]>0)?`(${resp.headers["X-Total-Count"]})`:"";
-                        this.presetFilters[this.currentTab].title = `${this.presetFilters[this.currentTab].text}${this.presetFilters[this.currentTab].count}`;
+                    factoryApp.stopLoading(this);//关闭加载圈
+                    //this.isShowLoading = false
+                    if(resp.headers){
+                        this.dataCount = resp.headers["X-Total-Count"]
                     }
-                }
-                return resp.data;
-            });
+                    if(this.presetFilters[this.currentTab]){
+                        if(this.presetFilters[this.currentTab].showCount) {//是否显示数字
+                            this.presetFilters[this.currentTab].count = (resp.headers["X-Total-Count"]>0)?`(${resp.headers["X-Total-Count"]})`:"";
+                            this.presetFilters[this.currentTab].title = `${this.presetFilters[this.currentTab].text}${this.presetFilters[this.currentTab].count}`;
+                        }
+                    }
+                    return resp.data;
+                });
             },
             refreshData() {
                 if (this.isRefreshing) return;
                 this.isRefreshing = true;
                 this.fetchData(1).then(data => {
                     this.dataInited = true; // 控制 viewAppear 时是否刷新页面，只有获取数据成功过才刷新
-                    //console.log(data);
                     this.listData = this.changeData(data);
-                    //处理安卓下拉刷新后滑块无效
-                    /*if(weex.config.env.deviceModel.indexOf("iPhone")==-1){
-                        this.listData = [];
-                        this.$forceUpdate();//更新下视图
-                        let _this = this;
-                        setTimeout(function(d){
-                            //滑块不会进行初始化--需要清空下数据更新视图后再设置
-                            _this.listData = _this.changeData(data);
-                            _this.$forceUpdate();//更新下视图
-                        },1);
-                    }else{
-                        this.listData = [];
-                        this.listData = this.changeData(data);
-                    }*/
                     this.isRefreshing = false;
                     this.currentPage = 1;
                     this.loadingStatus = 'init';
@@ -481,9 +354,8 @@
                     }else{
                         this.isloadingHide = false;
                     }
-
                 }).catch(err => {
-                        this.isRefreshing = false;
+                    this.isRefreshing = false;
                     this.$alert("请求失败,请重试");
                     //this.$alert(err);
                 });
@@ -499,14 +371,6 @@
                 this.fetchData(this.currentPage + 1).then(data => {
                     if (data.length) {
                         this.listData = this.changeData(this.listData.concat(data));
-                        /*var concat_listData = this.listData.concat(data);
-                         this.listData = [];
-                         this.$forceUpdate();//更新下视图
-                         setTimeout(function(d){
-                         //滑块不会进行初始化--需要清空下数据更新视图后再设置
-                         _this.listData = concat_listData;
-                         _this.$forceUpdate();//更新下视图
-                         },1);*/
                         if(this.dataCount<=this.listData.length){
                             this.isloadingHide = true;
                         }else{
@@ -582,62 +446,27 @@
                 _.each(this.presetFilters,(selectedFilter,_index)=>{
                     if(!selectedFilter.showCount)return false;//是否显示数字
                     let _selectedFilter = selectedFilter;
-                    let pageParam = this.$getPageParams();
-                    let viewId = _selectedFilter.viewId;
-                    let readRuntimeConfigPromise;
-                    let mobileType = "";
-                    if((weex.config.env.deviceModel.indexOf("iPhone")!=-1)){
-                        mobileType = 2
-                    }else if((weex.config.env.deviceModel.indexOf("iPhone")==-1)){
-                        mobileType = 1
+                    let _metabase = metabase.findMetaEntity(_selectedFilter.entityName);//获取设置当前实体
+                    let params = {
+                        filters: _selectedFilter.value, // 过滤
+                        page_size:1,
+                        page:1,
+                        viewId:_selectedFilter.filterId,
+                        orderby:_selectedFilter.orderby
+                    };
+                    let filtersParts = [];
+                    if (_selectedFilter && _selectedFilter.value) {
+                        filtersParts.push(_selectedFilter.value);
                     }
-                    let setData={terminalType:mobileType};
-                    if(!viewId&&pageParam.entity){
-                        //不存在视图id--则存入实体id
-                        setData.getDefaultForm = true;
-                        viewId = pageParam.entity;
+                    if (this.widgetParams && this.widgetParams.filters) {
+                        //部件参数,过滤条件
+                        filtersParts.push(this.widgetParams.filters);
                     }
-                    let contextPath = this.$getContextPath();
-                    readRuntimeConfigPromise = config.readRuntimeConfig(contextPath).catch(err => {}).then(() => {
-                        // 获取视图定义
-                        service.getMetaViewDef(viewId,setData).then(viewDef => {
-                            if(setData.getDefaultForm&&viewDef.viewFields){
-                                //取的是默认视图
-                                viewDef = viewDef.viewFields
-                            }
-                            this.viewDef = viewDef;
-                            this.formId = viewDef.metaFormShortId;
-                            let params = {
-                                filters: viewDef.config.filters, // 过滤
-                            };
-                            // 排序
-                            if (viewDef.config.orderby&&viewDef.config.orderby.length) {
-                                params.orderby = viewDef.config.orderby.map(o => `${o.name} ${o.type}`).join(',')
-                            }
-                            if(_selectedFilter.filterId){
-                                params.viewId = _selectedFilter.filterId;
-                            }
-                            params.page_size = 1;
-                            params.page = 1;
-                            let filtersParts = [];
-                            if (_selectedFilter && _selectedFilter.value) {
-                                filtersParts.push(_selectedFilter.value);
-                            }
-                            if (this.widgetParams && this.widgetParams.filters) {
-                                //部件参数,过滤条件
-                                filtersParts.push(this.widgetParams.filters);
-                            }
-                            params.filters = filtersParts.join('and');
-                            params.total=true;
-                            service.getEngineUrl(viewDef.projectId).then(engineUrl => {
-                                var a = `${engineUrl}/${metabase.lowerUnderscore(viewDef.metaEntityName)}`;
-                                ajax.get(`${engineUrl}/${metabase.lowerUnderscore(viewDef.metaEntityName)}`, params).then(resp => {
-                                    this.presetFilters[_index].count = (resp.headers["X-Total-Count"]>0)?`(${resp.headers["X-Total-Count"]})`:"";//对应标签的总数
-                                    this.presetFilters[_index].title =  `${this.presetFilters[_index].text}${this.presetFilters[_index].count}`;
-                                });
-                            });
-                        });
-
+                    params.filters = filtersParts.join('and');
+                    params.total=true;
+                    ajax.get(_metabase.engineUrl+_metabase.entityPath, params).then(resp => {
+                        this.presetFilters[_index].count = (resp.headers["X-Total-Count"]>0)?`(${resp.headers["X-Total-Count"]})`:"";//对应标签的总数
+                        this.presetFilters[_index].title =  `${this.presetFilters[_index].text}${this.presetFilters[_index].count}`;
                     });
                 });
             },
@@ -646,180 +475,56 @@
                     this.isloadingHide = true;
                 }//是否显示分页
                 factoryApp.startLoading(this);//显示加载圈
-                //this.isShowLoading = true;
                 this.contextPath = this.$getContextPath();
-                globalEvent.addEventListener("androidback", e => {
-                    this.$pop();
-                });
-                globalEvent.addEventListener("resume", e => {
-                    this.viewAppear();
-                });
-                let pageParam = this.$getPageParams();
-
+                this.remainingPageParam = this.$getPageParams();
                 let viewId = this.selectedFilter.viewId;
-                // 以下变量由外部配置
-                // 获取这些变量之后，将其从 pageParam 里删除，pageParam 剩下的参数将会被透传
-                //let viewId = pageParam.viewId;
-                //delete pageParam.viewId;
-
-                // TODO: 暂时写死删除 title 键，聆客启动时写死带上了这个参数
-                //delete pageParam.title;
-
-                this.remainingPageParam = pageParam;
-
-                let readRuntimeConfigPromise;
-                /*if (!viewId) {
-                 this.$alert('缺少参数 viewId');
-                 return;
-                 }*/
-                let mobileType = "";
-                if((weex.config.env.deviceModel.indexOf("iPhone")!=-1)){
-                    mobileType = 2
-                }else if((weex.config.env.deviceModel.indexOf("iPhone")==-1)){
-                    mobileType = 1
-                }
-                let setData={terminalType:mobileType};
-                if(!viewId&&pageParam.entity){
-                    //不存在视图id--则存入实体id
-                    setData.getDefaultForm = true;
-                    viewId = pageParam.entity;
-                }
-                let contextPath = this.$getContextPath();
-                config.readRuntimeConfig(contextPath).catch(err => {}).then(runtimeConfig => {
-                    service.init(runtimeConfig.configServerUrl);
-                    // 获取视图定义
-                    service.getMetaViewDef(viewId,setData).then(viewDef => {
-                        if(setData.getDefaultForm&&viewDef.viewFields){
-                            //取的是默认视图
-                            viewDef = viewDef.viewFields
-                        }
-                        this.viewDef = viewDef;
-                        this.formId = viewDef.metaFormShortId;
-                        let params = {
-                            filters: viewDef.config.filters, // 过滤
-                        };
-                        // 选择字段
-                        let fields = new Set();
-                        fields.add('_data'); // _data 字段里会有冗余信息
-                        fields.add('id'); // id 是一定要获取的，否则删改操作都无法进行
-                        viewDef.viewFields.forEach(col => {
-                            fields.add(col.fieldName)
-                            /*if (col.quicksearchable) {
-                             this.quickSearchableField.push(col.fieldName);
-                             }*/
-                            if (col.key) {
-                                this.quickSearchableField.push(col.fieldName);
-                            }
-                            if(col.searchable){
-                                this.showFilterView = true;//存在高级筛选 显示按钮
-                            }
-                        });
-                        /*if (viewDef.config.mLayout) {
-                         // 处理手机端布局
-                         this.layoutType = viewDef.config.mLayout.template;
-                         if (this.layoutType == '1') {
-                         let layout = viewDef.config.mLayout.params;
-                         this.p1 = layout.p1;
-                         this.p2 = layout.p2;
-                         this.p3 = layout.p3;
-                         this.p4 = layout.p4;
-                         this.p5 = layout.p5;
-                         fields.add(this.p1);
-                         fields.add(this.p2);
-                         fields.add(this.p3);
-                         fields.add(this.p4);
-                         fields.add(this.p5);
-                         }
-                         }*/
-                        let layout = viewDef.viewFields;
-                        if(layout[0])this.p1 = layout[0]?layout[0].fieldName:"";
-                        if(layout[1])this.p2 = layout[1]?layout[1].fieldName:"";
-                        if(layout[2])this.p3 = layout[2]?layout[2].fieldName:"";
-                        if(layout[3])this.p4 = layout[3]?layout[3].fieldName:"";
-                        if(layout[4])this.p5 = layout[4]?layout[4].fieldName:"";
-                        fields.add(this.p1);
-                        fields.add(this.p2);
-                        fields.add(this.p3);
-                        fields.add(this.p4);
-                        fields.add(this.p5);
-                        //定义下默认高度值
-                        if(!this.p4&&!this.p5){
-                            this.buiSwipeCellDefaultHeight = 180;
-                        }else{
-                            this.buiSwipeCellDefaultHeight = 200;
-                        }
-                        //params.select = Array.from(fields).join(',');
-                        // 排序
-                        if (viewDef.config.orderby) {
-                            params.orderby = viewDef.config.orderby.map(o => `${o.name} ${o.type}`).join(',')
-                        }
-                        if(!params.orderby){
-                            //没有设置排序,默认按更新时间排序
-                            params.orderby = "updatedAt desc";
-                        }
-                        // 预设的过滤器
-                        /*if (viewDef.config.multipleFilters.support) {
-                         this.presetFilters = viewDef.config.multipleFilters.filters;
-                         this.selectedFilter = this.presetFilters.find(f => f.checked);
-                         if (this.selectedFilter) {
-                         params.viewId = this.selectedFilter.viewId;
-                         }
-                         }*/
-                        if(this.selectedFilter.filterId){
-                            params.viewId = this.selectedFilter.filterId;
-                        }else if(this.selectedFilter.filterVal){
-
-                        }
-
-                        metabase.initMetabase(viewDef.projectId,true).then(ddd=>{
-                            var mentity=metabase.findMetaEntity(viewDef.metaEntityName/*'Activity'*/);
-                            this.metaEntity = mentity;
-                            this.metaEntity.metaEntityId = viewDef.metaEntityId;
-                            this.metaEntity.resourceUrl = this.dataUrlPath;//引擎地址
-                        });
-
-                        service.getEngineUrl(viewDef.projectId).then((engineUrl)=>{
-                            this.engineUrl = engineUrl;
-                            this.entityName = viewDef.metaEntityName;
-                            this.entityId = viewDef.metaEntityId;
-                            // 转成小写，否则不认
-                            this.dataUrlPath = `${engineUrl}/${metabase.lowerUnderscore(viewDef.metaEntityName)}`;
-                            this.queryParam = params;
-                            service.getSwaggerEntityDef(engineUrl, this.entityName).then(entityDef => {
-                                // 对于实体类型的字段，这里构造其 entityResourceUrl，参考以下 swagger.json 片段
-                                // "channelId": {
-                                //     "x-input": "RefEntity",
-                                // },
-                                // "channel": {
-                                //     "x-target-entity": "Channel",
-                                //     "x-join-fields": [
-                                //         "channelId"
-                                //     ],
-                                // },
-                                for (let k in entityDef.properties) {
-                                    let p = entityDef.properties[k];
-                                    if (p['x-join-fields']) {
-                                        let entityRefProp = p['x-join-fields'][0];
-                                        let entityName = p['x-target-entity'].toLowerCase();
-                                        if (entityDef.properties[entityRefProp]) {
-                                            entityDef.properties[entityRefProp].entityResourceUrl = `${engineUrl}/${entityName}`
-                                        }
-                                    }
-                                }
-                                this.swaggerEntiyDef = entityDef;
-                                // 对于 pageParam 里的 query，遇到属于字段的 query 要在获取实体数据时带上
-                                /*for (let k in this.swaggerEntiyDef.properties) {
-                                 if (pageParam[k]) {
-                                 params[k] = pageParam[k];
-                                 }
-                                 }*/
-                                this.refreshData();
-                            });
-                        });
-                    })
-                }).catch(err => {
-                    console.log(err)
+                // 获取视图定义
+                this.metaEntity = metabase.findMetaEntity(this.selectedFilter.entityName);//获取设置当前实体
+                this.metaEntity.resourceUrl = this.dataUrlPath = /*this.metaEntity.engineUrl*/this.config.apiBaseUrl+this.metaEntity.entityPath;//完整请求地址
+                this.engineUrl = this.metaEntity.engineUrl;
+                this.entityName = this.selectedFilter.entityName;
+                this.entityId = "";
+                let viewDef = this.selectedFilter.viewConfig
+                this.queryParam = {
+                    orderby:this.selectedFilter.orderby,
+                    viewId:this.selectedFilter.filterId
+                };
+                // 选择字段
+                viewDef.columns.forEach(col => {
+                    if (col.key) {
+                        this.quickSearchableField.push(col.fieldName);
+                    }
+                    if(col.searchable){
+                        this.showFilterView = true;//存在高级筛选 显示按钮
+                    }
                 });
+                let layout = viewDef.columns;
+                if(layout[0])this.p1 = layout[0]?layout[0].key:"";
+                if(layout[1])this.p2 = layout[1]?layout[1].key:"";
+                if(layout[2])this.p3 = layout[2]?layout[2].key:"";
+                if(layout[3])this.p4 = layout[3]?layout[3].key:"";
+                if(layout[4])this.p5 = layout[4]?layout[4].key:"";
+                //定义下默认高度值
+                if(!this.p4&&!this.p5){
+                    this.buiSwipeCellDefaultHeight = 180;
+                }else{
+                    this.buiSwipeCellDefaultHeight = 200;
+                }
+                this.refreshData();
+                /*service.getSwaggerEntityDef(this.engineUrl, this.entityName).then(entityDef => {
+                    for (let k in entityDef.properties) {
+                        let p = entityDef.properties[k];
+                        if (p['x-join-fields']) {
+                            let entityRefProp = p['x-join-fields'][0];
+                            let entityName = p['x-target-entity'].toLowerCase();
+                            if (entityDef.properties[entityRefProp]) {
+                                entityDef.properties[entityRefProp].entityResourceUrl = `${engineUrl}/${entityName}`
+                            }
+                        }
+                    }
+                    this.swaggerEntiyDef = entityDef;
+                    this.refreshData();
+                });*/
             },
             getWidgetContext(obj){
                 //传入操作的上下文内容
@@ -866,12 +571,20 @@
             }
         },
         created(){
-            //读取部件参数的设置
+            globalEvent.addEventListener("androidback", e => {
+                this.$pop();
+            });
+            globalEvent.addEventListener("resume", e => {
+                this.viewAppear();
+            });
             this.pageSize  = this.widgetParams.pageSize||10;//设置的页数
             if(this.widgetParams.views){
-                let contextPath = this.$getContextPath(), _views = this.widgetParams.views, _getMetaViewDefNumber = 0,_t = this, readRuntimeConfigPromise = config.readRuntimeConfig(contextPath).catch(err => {}).then(runtimeConfig => {
+                config.getMetabase().then(res=>{
+                    //初始化实体信息
+                    let contextPath = this.$getContextPath(), _views = this.widgetParams.views, _getMetaViewDefNumber = 0,_t = this, readRuntimeConfigPromise = config.readRuntimeConfig(contextPath).catch(err => {}).then(runtimeConfig => {
                             factoryApp.init(_t);//初始化全局api的指向
                             service.init(runtimeConfig.configServerUrl);
+                            _t.config = runtimeConfig;
                             _t.presetFilters = _views;
                             _t.selectedFilter = _views[0];
                             _.each(_views,(view,_i)=>{
@@ -882,22 +595,19 @@
                                     _t.selectedFilter = view;
                                     _t.currentTab = _i;
                                 }
-                                /*if((_i+1)==_views.length){
-                                 EventBus.$emit("widget-push-title","");
-                                 _t.getView();//获取视图配置和数据
-                                 }*/
                                 factoryApp.startLoading(_t);//显示加载圈
-                                service.getMetaViewFilter(view.filterId).then((res)=>{
-                                    _getMetaViewDefNumber++;
-                                    if(res.type==1){
-                                        //系统过滤条件
-                                        view.filterId = res.queryViewId;
+                                //读取部件参数的设置
+                                metabase.findMetaEntity(view.entityName).getPage(view.viewId).then((res)=>{
+                                    //读取对应视图配置
+                                    view.filterId = res.queryOptions.viewId;//内置条件
+                                    view.value = res.queryOptions.filters;//自定义过滤条件
+                                    view.viewConfig = res;//存入视图配置--方便切换
+                                    if (res.defaultSort) {
+                                        view.orderby = `${res.defaultSort.key} ${res.defaultSort.order}`
                                     }else{
-                                        //自定义过滤条件
-                                        view.filterId = "";
-                                        view.value = res.value;
-                                    }
-                                    if(_views.length==_getMetaViewDefNumber){
+                                        view.orderby = "updatedAt desc";
+                                    }//排序字段
+                                    if(_views.length==(_i+1)){
                                         //请求完成后
                                         EventBus.$emit("widget-push-title","");
                                         _t.getViewTotal();//获取数字
@@ -906,6 +616,7 @@
                                 });
                             });
                         });
+                    });
                 }//获取对应视图下的过滤条件
 
                 _.each(this.widgetParams.rowSingleClick,(button)=>{
