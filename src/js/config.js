@@ -3,8 +3,9 @@ import i18n from '../js/i18n/index';
 import buiweex from 'bui-weex';
 import ajax from '../js/ajax.js';
 const configServerUrl =
+    "http://10.200.84.125:9596/api/web.json";
     /*"https://appfactoryservice.bingolink.biz/services/tool/system/config";*/
-    "https://developer.bingosoft.net:12100/services/tool/system/config";
+    /*"https://developer.bingosoft.net:12100/services/tool/system/config";*/
     /*"http://20.97.71.73/services/tool/system/config";*/
 /**
  * 在开发调试时，可以将 debug 设为 true，并设置相应的 token，viewId 和 formId 来调试
@@ -13,7 +14,7 @@ const configServerUrl =
  */
 var configData = null;
 export default {
-    debug: false,
+    debug: true,
     token: 'c2Fhc3Nzbzo2NTA0YTE5NS04NWEzLTRlZTctYWQ2ZS05NGVkYTQ0YmZjMTk',
     configFilename: 'config.json',
     serverConfig: {},
@@ -36,6 +37,9 @@ export default {
 
                 //读取全局配置地址方式
             ajax.get(configServerUrl).then((resp) => {
+                resp.data.apiBaseUrl = "http://10.200.84.125:9596/api"
+                resp.data["service.menu.endpoint"] = "http://10.200.84.125:9596/api" 
+                resp.data["service.metad.api.endpoint"] = "http://10.200.84.125:9596/api"
                 configData=Object.assign(resp.data,{
                     "configServerUrl":configServerUrl,
                     "blogApi": resp.data["service.blog.endpoint"],

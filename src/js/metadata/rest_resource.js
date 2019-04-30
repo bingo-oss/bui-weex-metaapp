@@ -1,6 +1,10 @@
 import ajax from '../ajax';
 var template = require('url-template');
-function resource(restResourceUrl){
+function resource(restResourceUrl,customActions,options){
+    let root=options&&options.root;
+    if(root&&(!_.startsWith(restResourceUrl,'http'))){
+        restResourceUrl=`${root}/${restResourceUrl}`;
+    }
     var defaultActions={
         get(id){
             let url=template.parse(restResourceUrl).expand({id:id});
@@ -43,8 +47,33 @@ function resource(restResourceUrl){
             return ajax.post(url).then((resp) => {
                 return Promise.resolve(resp.data);
             },e=>{return Promise.reject(resp);});
+        },
+        ui(){
+            let url=template.parse(`${restResourceUrl}/_ui.json`).expand({id:null});
+            return ajax.get(url).then((resp) => {
+                return Promise.resolve(resp.data);
+            },e=>{return Promise.reject(resp);});
+        },
+        relationUI(params){///
+            let url=template.parse(`${restResourceUrl}/$relations{/relation}/_ui.json`).expand({id:null,relation:params&&params.relation});
+            return ajax.get(url).then((resp) => {
+                return Promise.resolve(resp.data);
+            },e=>{return Promise.reject(resp);});
         }
     }
+    //一对多关系查询
+    _.forIn(customActions,(value,name)=>{
+        let method=value.method,url=value.url;
+        if(root&&(!_.startsWith(url,'http'))){
+            url=`${root}/${restResourceUrl}`;
+        }
+        defaultActions[name]=function(params){
+            let url=template.parse(`${restResourceUrl}/$relations{/relation}/_ui.json`).expand({id:null,parentEntityId:params&&params.parentEntityId});
+            return ajax.get(url).then((resp) => {
+                return Promise.resolve(resp.data);
+            },e=>{return Promise.reject(resp);});
+        }
+    });
     return defaultActions;
 }
 export default resource;

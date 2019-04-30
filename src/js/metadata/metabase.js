@@ -4,11 +4,14 @@
  */
 
 //import controlTypeService from '../../components/form/js/control_type_service';
+//这里避免引用mvue-core，所以复制controlTypeService被使用的属性和方法
 var controlTypeService={
   componentTypes:{
     RefEntity:{id:'RefEntity'},
-    SingleLineText:{id:'SingleLineText'}
+    SingleLineText:{id:'SingleLineText'},
+    MultiLineText:{id:'MultiLineText'}
   },
+  //这里由于后端的配置都有inputType所以，只作简单的意外处理，未设置时统一为单行文本
   getMetaFieldComponentType(metaField){
     return controlTypeService.componentTypes.SingleLineText.id;
   }
@@ -20,7 +23,10 @@ import ajax from '../ajax';
 import i18n from '../i18n/index';
 import _ from '../tool/lodash';
 
-var MetaEntityCls=require("./metaentity");
+import MetaEntityCls from "./metaentity";
+
+import consts from "../consts";
+
 //当前项目的id
 var currentProjectId=null;
 //当前项目的engine地址
@@ -111,8 +117,11 @@ function loadMetabase(swagger,projectId){
   var context={
     swagger:swagger
   };
+  var options=loadMetaOptions(context,firstNotNaN(swagger["x-option-sets"],{}));
+    context["options"]=options;
+
   var entities={};
-  _.forEach(swagger.definitions,function(val,key){
+  _.forIn(swagger.definitions,function(val,key){
     var isEntity=firstNotNaN(val["x-entity"],true);
     if(!isEntity){
       return;
@@ -122,26 +131,46 @@ function loadMetabase(swagger,projectId){
   });
   var metabase={};
   metabase.entities=entities;
+  metabase.options=options;
   var cachedKey=mbCacheKey(projectId);
   metabases[cachedKey]=metabase;
   //store.set(cachedKey,metabase);
 }
 
+function loadMetaOptions(context,optionsModel) {
+    var options={};
+    _.forIn(optionsModel,function(opItem,key){
+       var option= optionsConvert(opItem.items,{});
+        options[key.toLowerCase()]=option;
+    });
+    return options;
+}
+//计算实体是否开启行级权限
+function rowSecurityEnabled(model){
+  let rs=firstNotNaN(model["x-row-securities"]);
+  if(rs){
+    return rs.enabled;
+  }
+  return false;
+}
 /**
  * 将swagger的model转为MetaEntity
  * @param context
  * @param model
  */
 function loadMetaEntityFromMode(context,modelName,model){
-  var entityPath=_.snakeCase(modelName);
-  var opt={
-    name:modelName,
-    title:model.title,
-    description:model.description,
-    _model:model,
-    resourceUrl:`${currentEngineUrl}/${entityPath}`,
-    projectId:currentProjectId
-  };
+  var opt= {
+      name: modelName,
+      title: model.title,
+      rowSecurityEnabled:rowSecurityEnabled(model),
+      entityPath: _.trim(firstNotNaN(model["x-entity-path"], ("/"+_.snakeCase(modelName)))),
+      ui: (firstNotNaN(model["x-entity-ui"], false)?"conf":"none"),
+      description: model.description,
+      _model: model,
+      engineUrl: _.trim(currentEngineUrl, '/'),
+      projectId: currentProjectId
+  }
+
   var metaEntity=MetaEntityCls(opt);
   var propertyContext=_.extend({
     metaEntity:metaEntity,
@@ -149,7 +178,7 @@ function loadMetaEntityFromMode(context,modelName,model){
   },context);
   var index=0;
   var relations=[];
-  _.forEach(model.properties,function (val,key) {
+  _.forIn(model.properties,function (val,key) {
     var isRelation=firstNotNaN(val["x-relation"],false);
     if(isRelation){
       var metaRelation=loadMetaRelationFromProperty(propertyContext,key,val);
@@ -174,18 +203,22 @@ function loadMetaEntityFromMode(context,modelName,model){
       if(relationField!=null){
         relationField.isRelationField=true;
         relationField.relations.push(metaRelation);
-        //多对一关系的字段修正为引用实体控件类型
-        if(metaRelation.type=="many-to-one"&&
-          ((!relationField.inputType)||
-          (relationField.inputType==controlTypeService.componentTypes.RefEntity.id)||
-          (relationField.inputType==controlTypeService.componentTypes.SingleLineText.id))){
-          relationField.inputType=controlTypeService.componentTypes.RefEntity.id;
-          relationField.manyToOneRelation=metaRelation;
+        if(metaRelation.type==consts.manyToOne){
+               relationField.manyToOneRelation=metaRelation;
+          relationField.title=_.isUndefined(metaRelation["title"])?relationField.title:metaRelation["title"];
+          relationField.description=relationField.title;
+          //多对一关系的字段修正为引用实体控件类型
+          if(((!relationField.inputType)||
+            (relationField.inputType==controlTypeService.componentTypes.RefEntity.id)||
+            (relationField.inputType==controlTypeService.componentTypes.SingleLineText.id))){
+            relationField.inputType=controlTypeService.componentTypes.RefEntity.id;
+          }
+        }else if(metaRelation.type==consts.manyToMany && metaRelation.embedded){
+            relationField.embeddedRelation=metaRelation;
         }
       }
     });
-
-      metaEntity.relations[metaRelation.name]=metaRelation;
+    metaEntity.relations[metaRelation.name]=metaRelation;
   });
   //初始化实体模型数据
   metaEntity.defaultModel=metaEntity.getDefaultModel();
@@ -199,92 +232,123 @@ function loadMetaEntityFromMode(context,modelName,model){
  * @param property
  */
 function loadMetaFieldFromProperty(context,propertyName,property){
-  var metaField={
-    name:propertyName,
-    title:firstNotNaN(property["title"],property["description"],propertyName),
-    entityName:context.metaEntity.name,
-    published:true,
-    summary:property["description"],
-    description:property["description"],
-    default:property["default"]||null,
-    isSystem:true,
-    isDisplay:true,
-    displayOrder:0,
-    identity:firstNotNaN(property["x-identity"],false),
-    readonly:!!property["readOnly"],
-    autoIncrement:false,
-    unique:firstNotNaN(property["x-unique"],property["uniqueItems"],false),
-    required:firstNotNaN(property["x-required"],false),
-    creatable:firstNotNaN(property["x-creatable"],true),
-    updatable:firstNotNaN(property["x-updatable"],property["readOnly"],true),
-    sortable:firstNotNaN(property["x-sortable"],false),
-    filterable:firstNotNaN(property["x-filterable"],false),
-    inputType:property["x-input"],
-    inputTypeParams:{},
-    semantics:property["x-meaning"],
-    isTitleField:"title"===property["x-meaning"],
-    maxLength:property["maxLength"],
-    minLength:property["minLength"],
-    pattern:property["pattern"],
-    maximum:property["maximum"],
-    minimum:property["minimum"],
-    enum:property["enum"],
-    type:property["type"],
-    format:property["format"],
-    isRelationField:false,
-    relations:[],
-    _property:property
+  var metaField= {
+      name: propertyName,
+      title: firstNotNaN(property["title"], property["description"], propertyName),
+      entityName: context.metaEntity.name,
+      published: true,
+      summary: property["description"],
+      description: property["description"],
+      default: property["default"] || null,
+      hasDefault: firstNotNaN(property["x-has-default"], false),
+      isSystem: true,
+      isDisplay: true,
+      displayOrder: 0,
+      identity: firstNotNaN(property["x-identity"], false),
+      readonly: !!property["readOnly"],
+      autoIncrement: false,
+      unique: firstNotNaN(property["x-unique"], property["uniqueItems"], false),
+      required: firstNotNaN(property["x-required"], false),
+      creatable: firstNotNaN(property["x-creatable"], true),
+      updatable: firstNotNaN(property["x-updatable"], property["readOnly"], true),
+      sortable: firstNotNaN(property["x-sortable"], false),
+      filterable: firstNotNaN(property["x-filterable"], false),
+      selectable: firstNotNaN(property["x-selectable"], true),
+      inputType: property["x-input"],
+      inputTypeParams: firstNotNaN(property["x-input-params"], {}),
+      semantics: property["x-meaning"],
+      isTitleField: "title" === property["x-meaning"],
+      maxLength: property["maxLength"],
+      minLength: property["minLength"],
+      pattern: property["pattern"],
+      maximum: property["maximum"],
+      minimum: property["minimum"],
+      enum: property["enum"],
+      type: property["type"],
+      format: property["format"],
+      isRelationField: false,
+      relations: [],
+      _property: property,
+      xAttrs: property["x-attrs"] || {}//扩展属性
   };
   //设置inputTypeParams
-  fillInputTypeParams(metaField,property);
+  fillInputTypeParams(context,metaField,property);
   return metaField;
 }
-
+//转换选项集
+function optionsConvert(options,metaField){
+  let _options=[];
+  _.each(options,function (item,index) {
+    _options.push({
+      id:item.value,
+      text:item.title,
+      checked:false
+    });
+  });
+  if(options.children){
+    _options.children=optionsConvert(options.children,metaField);
+  }
+  return _options;
+}
 /**
  * 设置metaField的inputTypeParams参数
  * @param metaField
  * @param property
  */
-function fillInputTypeParams(metaField,property) {
+function fillInputTypeParams(context,metaField,property) {
   //如果metaField的inputType为空，设置默认
   if(!metaField.inputType){
     let inputType=controlTypeService.getMetaFieldComponentType(metaField);
     metaField.inputType=inputType;
   }
-  if(_.isNaN(property["maxLength"])){
+  if(!_.isNaN(property["maxLength"])){
     metaField.inputTypeParams["maxLength"]=property["maxLength"];
+    if(metaField.inputType==controlTypeService.componentTypes.SingleLineText.id
+        || metaField.inputType==controlTypeService.componentTypes.MultiLineText.id){
+        if(property["maxLength"]>50){
+            metaField.inputTypeParams["maxLength"]=property["maxLength"]/2;
+        }else{
+            metaField.inputTypeParams["maxLength"]=property["maxLength"];
+        }
+    }
   }
-  if(_.isNaN(property["minLength"])){
+  if(!_.isNaN(property["minLength"])){
     metaField.inputTypeParams["minLength"]=property["minLength"];
   }
-  if(_.isNaN(property["pattern"])){
+  if(!_.isNaN(property["pattern"])){
     metaField.inputTypeParams["pattern"]=property["pattern"];
   }
-  if(_.isNaN(property["maximum"])){
+  if(!_.isNaN(property["maximum"])){
     metaField.inputTypeParams["max"]=property["maximum"];
   }
-  if(_.isNaN(property["minimum"])){
+  if(!_.isNaN(property["minimum"])){
     metaField.inputTypeParams["min"]=property["minimum"];
   }
-  if(_.isNaN(property["enum"])){
+  if(!_.isNaN(property["enum"])){
     metaField.inputTypeParams["enums"]=property["enum"];
   }
-  if(_.isNaN(property["format"])){
+  if(!_.isNaN(property["format"])){
     metaField.inputTypeParams["format"]=property["format"];
   }
-  if(property["x-options"]&&property["x-options"].items){
-    let options=[];
-    _.each(property["x-options"].items,function (item,index) {
-      options.push({
-        id:item.value,
-        text:item.title,
-        checked:metaField.default==item.value?true:false
-      });
-    });
-    metaField.inputTypeParams["options"]=options;
+  let xOptions=property["x-options"];
+  if(xOptions){
+    let fieldOption=null;
+    if(_.isString(xOptions)){
+        let _fieldOption=context.options[xOptions.toLowerCase()];
+        fieldOption=_.cloneDeep(_fieldOption);
+    }else{
+        if(xOptions.items){
+            fieldOption=optionsConvert(xOptions.items);
+        }
+    }
+    if(fieldOption){
+        if(metaField.default==fieldOption.value){
+            fieldOption.checked=true;
+        }
+        metaField.inputTypeParams["options"]=fieldOption;
+    }
   }
 }
-
 /**
  * 根据关系属性构造关系
  * @param context
@@ -292,16 +356,21 @@ function fillInputTypeParams(metaField,property) {
  * @param property
  */
 function loadMetaRelationFromProperty(context,propertyName,property){
-  var metaRelation={
-    name:propertyName,
-    type:firstNotNaN(property["x-relation-type"],"many-to-one"),
-    sourceEntity:context.metaEntity.name,
-    targetEntity:property["x-target-entity"],
-    joinEntity:property["x-join-entity"],
-    joinFields:property["x-join-fields"],     //[{"local":"updatedBy","target":"userId"}]
-    expandable:firstNotNaN(property["x-expandable"],false),
-    _property:property
+  var metaRelation= {
+      name: propertyName,
+      title: property["title"],
+      type: firstNotNaN(property["x-relation-type"], consts.manyToOne),
+      sourceEntity: context.metaEntity.name,
+      targetEntity: property["x-target-entity"],
+      joinEntity: property["x-join-entity"],
+      joinFields: property["x-join-fields"],     //[{"local":"updatedBy","target":"userId"}]
+      expandable: firstNotNaN(property["x-expandable"], false),
+      embedded: firstNotNaN(property["x-embedded"], false),
+      _property: property
   };
+  if(metaRelation.embedded){
+      metaRelation.joinFields=[property["x-embedded-field"]];
+  }
   return metaRelation;
 }
 
@@ -320,81 +389,88 @@ function firstNotNaN(){
   return reval;
 }
 
-//转换实体名称规则
-function lowerUnderscore(str){
-  if(str == null || str === '')
-    return str;
-  var strArray = str.split("");
-  var result = [];
-
-  for(var i = 1; i < strArray.length - 1; i++){
-    var previous = strArray[i-1];
-    result.push(previous);
-    if ((!/[A-Z]/.test(previous) || !isNaN(previous)) &&
-        /[A-Z]/.test(strArray[i]) &&
-        !/[A-Z]/.test(strArray[i+1])) {
-      result.push("_");
-    }
-  }
-  result.push(strArray[strArray.length - 2]);
-  result.push(strArray[strArray.length - 1]);
-  return result.join("").toLocaleLowerCase();
-}
-
-export default{
-  /**
-   * 根据实体名，查询实体
-   * @param metaEntityName
-   * @returns {*}
-   */
-  findMetaEntity:function (metaEntityName) {
-    if(!metaEntityName){
-      return null;
-    }
-    var metabase=getMetabase(currentProjectId);
-    var metaEntity= metabase.entities[metaEntityName.toLowerCase()];
-    if(_.isEmpty(metaEntity)){
-      return null;
-    }
-    var metaEntityCloned =MetaEntityCls(metaEntity);
-    return metaEntityCloned;
-  },
-  /**
-   * 获取所有实体
-   * @returns {null}
-   */
-  entities:function () {
-    var metabase=getMetabase(currentProjectId);
-    return metabase.entities;
-  },
-  initMetabase:initMetabase,
-  currentSwagger:currentSwagger,
-  routeForEntityList(entityName,params){
-    var router= {name: 'defaultEntityList', params: {entityName:entityName}};
-    if(!_.isEmpty(params)){
-      router.params= _.extend(router.params,params);
-    }
-    return router;
-  },
-  routeForEntityCreateForm(entityName,params){
-    var router= {name: 'defaultCreateForm', params: {entityName:entityName}};
-    if(!_.isEmpty(params)){
-      router.params= _.extend(router.params,params);
-    }
-    return router;
-  },
-  routeForEntityUpdateForm(entityName,id,params){
-    var router= {name: 'defaultEditForm', params: {entityName:entityName,id:id}};
-    if(!_.isEmpty(params)){
-      router.params= _.extend(router.params,params);
-    }
-    return router;
-  },
-    setEntityNameForRoute(router,entityName){
-      if(_.isEmpty(router)){
-          return;
-      }
-      router.params["entityName"]=entityName;
+export default {
+    /**
+     * 根据实体名，查询实体
+     * @param metaEntityName
+     * @returns {*}
+     */
+    findMetaEntity: function (metaEntityName) {
+        if (!metaEntityName) {
+            return null;
+        }
+        var metabase = getMetabase(currentProjectId);
+        var metaEntity = metabase.entities[metaEntityName.toLowerCase()];
+        if (_.isEmpty(metaEntity)) {
+            return null;
+        }
+        var metaEntityCloned = MetaEntityCls(metaEntity);
+        metaEntityCloned.getMetabase = function () {
+            return metabase;
+        };
+        metaEntityCloned.getRaw = function () {
+            return metaEntity;
+        };
+        return metaEntityCloned;
     },
-  lowerUnderscore:lowerUnderscore
+    /**
+     * 找到所有对metaEntityName有引用的实体
+     * @param metaEntityName
+     */
+    findSourceEntities: function (target) {
+        var metabase = getMetabase(currentProjectId);
+        var sourceEntities = [];
+        _.forIn(metabase.entities, (metaEntity,key) => {
+            var existedRelations = metaEntity.existRelation(target, [consts.manyToOne]);
+            if (existedRelations.length == 0) {
+                return;
+            }
+            var metaEntityCloned = MetaEntityCls(metaEntity);
+            metaEntityCloned.getMetabase = function () {
+                return metabase;
+            };
+            metaEntityCloned.getRaw = function () {
+                return metaEntity;
+            };
+            sourceEntities.push(metaEntityCloned);
+        });
+        return sourceEntities;
+    },
+    /**
+     * 获取所有实体
+     * @returns {null}
+     */
+    entities: function () {
+        var metabase = getMetabase(currentProjectId);
+        return metabase.entities;
+    },
+    initMetabase: initMetabase,
+    currentSwagger: currentSwagger,
+    routeForEntityList(entityName, params) {
+        var router = {name: 'defaultEntityList', params: {entityName: entityName}};
+        if (!_.isEmpty(params)) {
+            router.params = _.extend(router.params, params);
+        }
+        return router;
+    },
+    routeForEntityCreateForm(entityName, params) {
+        var router = {name: 'defaultCreateForm', params: {entityName: entityName}};
+        if (!_.isEmpty(params)) {
+            router.params = _.extend(router.params, params);
+        }
+        return router;
+    },
+    routeForEntityUpdateForm(entityName, id, params) {
+        var router = {name: 'defaultEditForm', params: {entityName: entityName, id: id}};
+        if (!_.isEmpty(params)) {
+            router.params = _.extend(router.params, params);
+        }
+        return router;
+    },
+    setEntityNameForRoute(router, entityName) {
+        if (_.isEmpty(router)) {
+            return;
+        }
+        router.params["entityName"] = entityName;
+    }
 }

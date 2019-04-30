@@ -25,7 +25,7 @@ const pageService = {
                     .then(({data}) => {
                         resolve(data);
                     }, (error) => {
-                        ax.get(`http://10.200.206.43:8686/dist/test_page/${pageId}.json`)
+                        ax.get(`http://10.200.210.4:8686/dist/test_page/${pageId}.json`)
                             .then(({data}) => {
                                 resolve(data);
                             }, () => {
