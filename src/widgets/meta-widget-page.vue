@@ -192,11 +192,12 @@
             pageScrollUpdate(){
                 //需要部件去调用下更新
                 var _this=this;
+                let _setTimeout = "";
                 //特殊处理-暂时先这样定义高度的变化--不然没法兼容
                 try{
                     dom.getComponentRect(_this.$refs.page,function(size){
                         _this.scrollerStyle.height = size.size.height;
-                        var _setTimeout = setTimeout(function(){
+                        _setTimeout = setTimeout(function(){
                             let _widgetHeights = 0;
                             if(_this.pageConfig&&_this.$refs.childWidgets.length==_this.pageConfig.columnWidgets.length){
                                 _.each(_this.$refs.childWidgets,(cw)=>{
@@ -212,7 +213,7 @@
                                     });
                                 });
                             }else{
-                                _setTimeout();
+                                clearTimeout(_setTimeout);
                             }
                         },1000);
                     });
