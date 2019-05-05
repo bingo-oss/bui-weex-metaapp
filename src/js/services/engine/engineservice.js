@@ -14,7 +14,7 @@ const service={
         //通过实体名称获取实体信息
         return new Promise(function(resolve,reject){
             config.readRuntimeConfig().then(runtimeConfig => {
-                ax.get(`${runtimeConfig.apiBaseUrl}/entities/${entityName}`)
+                ax.get(`${runtimeConfig.apiBaseUrl}/$meta/entities/${entityName}`)
                     .then(function ({data}) {
                         resolve(data);
                     },(err)=>{
