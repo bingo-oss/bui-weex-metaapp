@@ -185,7 +185,7 @@ export default {
           //获取执行代码
           config.readRuntimeConfig().then(runtimeConfig => {
             ax.get(
-              runtimeConfig["service.metabase.endpoint"] +
+              runtimeConfig["service.metaservice.endpoint"] +
                 `/meta_operation/${_t.operation.operationId}`
             ).then(({ data }) => {
               _t.implCode = data.implCode;
@@ -318,7 +318,6 @@ export default {
         filters: "parentId eq " + operation.id,
         total: true
       };
-
       service.getMenuItems(params).then(res => {
         this.child_operations = res;
       }); //获取引擎地址
