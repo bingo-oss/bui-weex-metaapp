@@ -54,6 +54,7 @@
     const linkapi = require("linkapi");
     const dom = weex.requireModule('dom');
     var globalEvent = weex.requireModule('globalEvent');
+    import engineService from "../../js/services/engine/engineservice";
 
     export default {
         props: {
@@ -248,30 +249,38 @@
             this.gradualChangeOpacity = (this.widgetParams.isGradualChange?0:1);//是否开启渐变效果
 
             let _childWidgets = this.$parent.$refs.childWidgets.filter((obj)=>{
-                        let _tagName = obj.$attrs.tagName;
-            if(_tagName!="meta-widget-navbar"){
-                return obj
-            }
-        });
+                let _tagName = obj.$attrs.tagName;
+                if(_tagName!="meta-widget-navbar"){
+                    return obj
+                }
+            });
             _.each(this.tapLabels,(tapLabel,index)=>{
                 tapLabel.childWidget = _childWidgets[index];//记录标签对应的部件对象
-            if(!tapLabel.name){
-                //标签不存在名称--怎默认读取内嵌部件的名称
-                let el = _childWidgets[index];
-                if(el){
-                    let _name = el.$attrs.widgetName;
-                    let _tagName = el.$attrs.tagName;
-                    tapLabel.name = _name;
+                if(!tapLabel.name){
+                    //标签不存在名称--怎默认读取内嵌部件的名称
+                    let el = _childWidgets[index];
+                    if(el){
+                        let _name = el.$attrs.widgetName;
+                        let _tagName = el.$attrs.tagName;
+                        tapLabel.name = _name;
+                    }
                 }
-            }
-            tapLabel.highlight = false;
-        });
+                tapLabel.highlight = false;
+            });
             this.tapLabels[0].highlight =  true;
             service.init(Config.serverConfig.configServerUrl); //初始化请求地址
-            service.getMetaEntity(_this.widgetParams.entityId).then(res => {
-                _this.metaEntity = res;
-                _this.metaEntity.resourceUrl = `${_this.metaEntity.project.engine.externalUrl}/${metabase.lowerUnderscore(_this.metaEntity.name)}`;
-        });
+            if(_this.widgetParams.entityId) {
+                service.getMetaEntity(_this.widgetParams.entityId).then(res => {
+                    _this.metaEntity = res;
+                    _this.metaEntity.resourceUrl = `${_this.metaEntity.project.engine.externalUrl}/${metabase.lowerUnderscore(_this.metaEntity.name)}`;
+                });
+            }else if(_this.widgetParams.entityName){
+                engineService.getEntity(_this.widgetParams.entityName).then(res=>{
+                    _this.metaEntity = res;
+                    _this.widgetParams.entityId = res.attrs.metaEntityId;
+                    _this.metaEntity.resourceUrl = `${res.engineUrl}${res.entityPath}`;//引擎地址
+                })
+            }
         }
     }
 </script>
@@ -280,7 +289,7 @@
 <style src="../../styles/common.css"></style>
 <style lang="css">
     .fixedStyleDiv{ height: 90px;}
-    .fixedStyle{ top: 0; /*position: fixed;*/ width: 750px; opacity:}
+    .fixedStyle{ top: 0; /*position: fixed;*/ width: 750px; opacity:1;}
     .page-title-wrapper{ flex-direction: row; flex: 1;}
     .page-title{ flex: 1; height: 90px; text-align: center; line-height: 90px; font-size: 32px; color: #fff;}
 </style>

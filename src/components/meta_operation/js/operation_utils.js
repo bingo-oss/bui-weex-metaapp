@@ -389,7 +389,7 @@ var utils={
                             //获取执行代码
                             config.readRuntimeConfig().then(runtimeConfig => {
                                 ax.get(
-                                    `${runtimeConfig["service.metad.api.endpoint"]}/meta_swagger_api`,
+                                    `${runtimeConfig["service.metaservice.endpoint"]}/meta_swagger_api`,
                                     {
                                         filters:`projectId eq ${button.projectId} and operationId eq ${apiId}`,
                                         select:"contentType,id,endpoint,path,projectId,method"

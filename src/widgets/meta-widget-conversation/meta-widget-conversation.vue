@@ -212,7 +212,7 @@
                 let _this = this;
                 buiweex.confirm("是否确定全部标为已读?",function(res){
                     if(res=="确定"){
-                        return ajax.post(`${_this.engineUrl}/${metabase.lowerUnderscore(_this.entityName)}/${item[_this.widgetParams.aggregateField]}/read`,{}).then(resp => {
+                        return ajax.post(`${_this.engineUrl}${this.metaEntity.entityPath}/${item[_this.widgetParams.aggregateField]}/read`,{}).then(resp => {
                             _this.refresh();//刷新数据
                         });
                     }
@@ -302,7 +302,7 @@
                     }
                 } else {
                     // 对于非引用实体字段，针对日期作处理
-                    let fieldDef = this.swaggerEntiyDef.properties[field];
+                    let fieldDef = this.swaggerEntiyDef.properties&&this.swaggerEntiyDef.properties[field];
                     if (fieldDef&&obj[field]) {
                         //只对格林时间格式处理
                         //undefined
@@ -380,19 +380,6 @@
                 this.fetchData(1).then(data => {
                     this.dataInited = true; // 控制 viewAppear 时是否刷新页面，只有获取数据成功过才刷新
                     this.listData = this.changeData(data);
-                /*                    //处理安卓下拉刷新后滑块无效
-                    if(weex.config.env.deviceModel.indexOf("iPhone")==-1){
-                        this.listData = [];
-                        this.$forceUpdate();//更新下视图
-                        let _this = this;
-                        setTimeout(function(d){
-                            //滑块不会进行初始化--需要清空下数据更新视图后再设置
-                            _this.listData = _this.changeData(data);
-                            _this.$forceUpdate();//更新下视图
-                        },1);
-                    }else{
-                        this.listData = this.changeData(data);
-                    }*/
                     this.isRefreshing = false;
                     this.currentPage = 1;
                     this.loadingStatus = 'init';
@@ -419,14 +406,6 @@
                 this.fetchData(this.currentPage + 1).then(data => {
                     if (data.length) {
                         this.listData = this.changeData(this.listData.concat(data));
-                        /*var concat_listData = this.listData.concat(data);
-                         this.listData = [];
-                         this.$forceUpdate();//更新下视图
-                         setTimeout(function(d){
-                         //滑块不会进行初始化--需要清空下数据更新视图后再设置
-                         _this.listData = concat_listData;
-                         _this.$forceUpdate();//更新下视图
-                         },1);*/
                         if(this.dataCount<=this.listData.length){
                             this.isloadingHide = true;
                         }else{
@@ -511,24 +490,69 @@
                 globalEvent.addEventListener("resume", e => {
                     this.viewAppear();
                 });
-                let pageParam = this.$getPageParams();
+
+                this.contextPath = this.$getContextPath();
+                this.remainingPageParam = this.$getPageParams();
                 let viewId = this.selectedFilter.viewId;
-                this.remainingPageParam = pageParam;
-                let readRuntimeConfigPromise;
-                let mobileType = "";
-                if((weex.config.env.deviceModel.indexOf("iPhone")!=-1)){
-                    mobileType = 2
-                }else if((weex.config.env.deviceModel.indexOf("iPhone")==-1)){
-                    mobileType = 1
+                // 获取视图定义
+                this.metaEntity = metabase.findMetaEntity(this.selectedFilter.entityName);//获取设置当前实体
+                this.metaEntity.resourceUrl = this.dataUrlPath = `${/*this.metaEntity.engineUrl*/this.config.apiBaseUrl}/aggregate${this.metaEntity.entityPath}/latest_info`;//完整请求地址
+                this.engineUrl = this.metaEntity.engineUrl;
+                this.entityName = this.selectedFilter.entityName;
+                this.entityId = "";
+                let viewDef = this.selectedFilter.viewConfig
+                // 选择字段
+                viewDef.columns.forEach(col => {
+                    if (col.key) {
+                        this.quickSearchableField.push(col.key);
+                    }
+                    if(col.searchable){
+                        this.showFilterView = true;//存在高级筛选 显示按钮
+                    }
+                });
+
+                let layout = viewDef.columns;
+                if(layout[0])this.p1 = layout[0]?layout[0].key:"";
+                if(layout[1])this.p2 = layout[1]?layout[1].key:"";
+
+                //请求参数
+                this.queryParam = Object.assign({},this.conversationParams,{
+                    "mainEntity":{
+                        "entityName":viewDef.entityName,//实体名称
+                        "alias":""//别名
+                    },
+                    selectFields:[this.p1,this.p2],//设置参数的选择字段,对应视图配置的第1,第2个字段
+                    orderby:this.widgetParams.orderBy,
+                    viewId:this.selectedFilter.filterId
+                });//组装会话部件请求的参数
+
+                if(this.selectedFilter.orderby){
+                    //排序
+                    if(this.queryParam.orderby){
+                        this.queryParam.orderby.concat(this.selectedFilter.orderby);
+                    }else{
+                        this.queryParam.orderby = this.selectedFilter.orderby;
+                    }
                 }
-                let setData={terminalType:mobileType};
-                if(!viewId&&pageParam.entity){
-                    //不存在视图id--则存入实体id
-                    setData.getDefaultForm = true;
-                    viewId = pageParam.entity;
-                }
-                let contextPath = this.$getContextPath();
-                config.readRuntimeConfig(contextPath).catch(err => {
+
+                /*service.getSwaggerEntityDef(this.engineUrl, this.entityName).then(entityDef => {
+                    for (let k in entityDef.properties) {
+                        let p = entityDef.properties[k];
+                        if (p['x-join-fields']) {
+                            let entityRefProp = p['x-join-fields'][0];
+                            let entityName = p['x-target-entity'].toLowerCase();
+                            if (entityDef.properties[entityRefProp]) {
+                                entityDef.properties[entityRefProp].entityResourceUrl = `${engineUrl}/${entityName}`
+                            }
+                        }
+                    }
+                    this.swaggerEntiyDef = entityDef;
+                    this.refreshData();
+                });*/
+                this.refreshData();
+
+
+                /*config.readRuntimeConfig(contextPath).catch(err => {
                 }).then(runtimeConfig => {
                     service.init(runtimeConfig.configServerUrl);
                     service.getMetaViewDef(viewId,setData).then(viewDef => {
@@ -582,7 +606,7 @@
                         }
 
                         metabase.initMetabase(viewDef.projectId,true).then(ddd=>{
-                            var mentity=metabase.findMetaEntity(viewDef.metaEntityName/*'Activity'*/);
+                            var mentity=metabase.findMetaEntity(viewDef.metaEntityName/!*'Activity'*!/);
                             this.metaEntity = mentity;
                             this.metaEntity.metaEntityId = viewDef.metaEntityId;
                             this.metaEntity.resourceUrl = this.dataUrlPath;//引擎地址
@@ -611,7 +635,7 @@
                             });
                         });
                     })
-                }).catch(err => {});
+                }).catch(err => {});*/
             },
             getWidgetContext(obj){
                 //传入操作的上下文内容
@@ -626,6 +650,7 @@
                 if(_t.metaEntity){
                     _obj.metaEntity = _t.metaEntity;
                     _obj.metaEntityId = _t.metaEntity.metaEntityId;
+                    _obj.entityName = _t.metaEntity.name;
                 }
                 _obj.model = this//模型自身
                 _obj.widgetParams = _t.widgetParams;//部件参数
@@ -664,7 +689,7 @@
                 if(_.isString(this.widgetParams.view)){
                     this.widgetParams.view = eval('('+this.widgetParams.view+')');
                 }
-                let contextPath = this.$getContextPath(),
+/*                let contextPath = this.$getContextPath(),
                         _view = this.widgetParams.view, _getMetaViewDefNumber = 0,_t = this,
                 readRuntimeConfigPromise = config.readRuntimeConfig(contextPath).catch(err => {}).then(runtimeConfig => {
                   factoryApp.init(_t);//初始化全局api的指向
@@ -683,7 +708,33 @@
                             _t.getView();//获取视图配置和数据
 
                     });
+                })*/;
+                config.getMetabase().then(res=>{
+                    //初始化实体信息
+                    let contextPath = this.$getContextPath(),
+                        _getMetaViewDefNumber = 0,
+                        view = this.selectedFilter = this.widgetParams.view,
+                        _t = this;
+                    config.readRuntimeConfig(contextPath).catch(err => {}).then(runtimeConfig => {
+                        factoryApp.init(this);//初始化全局api的指向
+                        service.init(runtimeConfig.configServerUrl);
+                        this.config = runtimeConfig;
+                        //读取部件参数的设置
+                        metabase.findMetaEntity(view.entityName).getPage(view.filterId).then((res)=>{
+                            //读取对应视图配置
+                            view.filterId = res.queryOptions.viewId;//内置条件
+                            view.value = res.queryOptions.filters;//自定义过滤条件
+                            view.viewConfig = res;//存入视图配置--方便切换
+                            if (res.defaultSort) {
+                                view.orderby = `${res.defaultSort.key} ${res.defaultSort.order}`
+                            }else{
+                                view.orderby = "updatedAt desc";
+                            }//排序字段
+                            this.getView();//获取视图配置和数据
+                        });
+                    });
                 });
+
             }//获取对应视图下的过滤条件
 
             _.each(this.widgetParams.rowSingleClick,(button)=>{

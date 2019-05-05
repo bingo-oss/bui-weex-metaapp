@@ -464,9 +464,9 @@
                     }
                     params.filters = filtersParts.join('and');
                     params.total=true;
-                    ajax.get(_metabase.engineUrl+_metabase.entityPath, params).then(resp => {
-                        this.presetFilters[_index].count = (resp.headers["X-Total-Count"]>0)?`(${resp.headers["X-Total-Count"]})`:"";//对应标签的总数
-                        this.presetFilters[_index].title =  `${this.presetFilters[_index].text}${this.presetFilters[_index].count}`;
+                    ajax.get(/*_metabase.engineUrl*/this.config.apiBaseUrl+_metabase.entityPath, params).then(resp => {
+                        selectedFilter.count = (resp.headers["x-total-count"]>0)?`(${resp.headers["x-total-count"]})`:"";//对应标签的总数
+                        selectedFilter.title =  `${this.presetFilters[_index].text}${this.presetFilters[_index].count}`;
                     });
                 });
             },
@@ -492,7 +492,7 @@
                 // 选择字段
                 viewDef.columns.forEach(col => {
                     if (col.key) {
-                        this.quickSearchableField.push(col.fieldName);
+                        this.quickSearchableField.push(col.key);
                     }
                     if(col.searchable){
                         this.showFilterView = true;//存在高级筛选 显示按钮
@@ -539,6 +539,7 @@
                 if(_t.metaEntity){
                     _obj.metaEntity = _t.metaEntity;
                     _obj.metaEntityId = _t.metaEntity.metaEntityId;
+                    _obj.entityName = _t.metaEntity.name;
                 }
                 _obj.model = this//模型自身
                 _obj.widgetParams = _t.widgetParams;//部件参数
@@ -581,12 +582,16 @@
             if(this.widgetParams.views){
                 config.getMetabase().then(res=>{
                     //初始化实体信息
-                    let contextPath = this.$getContextPath(), _views = this.widgetParams.views, _getMetaViewDefNumber = 0,_t = this, readRuntimeConfigPromise = config.readRuntimeConfig(contextPath).catch(err => {}).then(runtimeConfig => {
-                            factoryApp.init(_t);//初始化全局api的指向
+                    let contextPath = this.$getContextPath(),
+                        _views = this.widgetParams.views,
+                        _getMetaViewDefNumber = 0,
+                        _t = this;
+                        config.readRuntimeConfig(contextPath).catch(err => {}).then(runtimeConfig => {
+                            factoryApp.init(this);//初始化全局api的指向
                             service.init(runtimeConfig.configServerUrl);
                             _t.config = runtimeConfig;
                             _t.presetFilters = _views;
-                            _t.selectedFilter = _views[0];
+                            _t.selectedFilter = _views[0];//默认选择第一个数据范围
                             _.each(_views,(view,_i)=>{
                                 // 获取视图定义
                                 view.text = view.title;//用于记录一下tap文字拼接
@@ -595,9 +600,9 @@
                                     _t.selectedFilter = view;
                                     _t.currentTab = _i;
                                 }
-                                factoryApp.startLoading(_t);//显示加载圈
+                                factoryApp.startLoading(this);//显示加载圈
                                 //读取部件参数的设置
-                                metabase.findMetaEntity(view.entityName).getPage(view.viewId).then((res)=>{
+                                metabase.findMetaEntity(view.entityName).getPage(view.filterId).then((res)=>{
                                     //读取对应视图配置
                                     view.filterId = res.queryOptions.viewId;//内置条件
                                     view.value = res.queryOptions.filters;//自定义过滤条件
@@ -610,34 +615,34 @@
                                     if(_views.length==(_i+1)){
                                         //请求完成后
                                         EventBus.$emit("widget-push-title","");
-                                        _t.getViewTotal();//获取数字
-                                        _t.getView();//获取视图配置和数据
+                                        this.getViewTotal();//获取数字
+                                        this.getView();//获取视图配置和数据
                                     }
                                 });
                             });
                         });
                     });
-                }//获取对应视图下的过滤条件
+            }//获取对应视图下的过滤条件
 
-                _.each(this.widgetParams.rowSingleClick,(button)=>{
-                        button.show = true;
-                        button.hide = false;
-                        button.widgetContext = this.getWidgetContext();
-                        OperationUtils.showOperation(button).then(res=>{
-                            button.show = res;
-                        })
-                });//不是调用 meta-operation 渲染的按钮-需要单独执行校验函数 和显隐处理--会返回
+            _.each(this.widgetParams.rowSingleClick,(button)=>{
+                    button.show = true;
+                    button.hide = false;
+                    button.widgetContext = this.getWidgetContext();
+                    OperationUtils.showOperation(button).then(res=>{
+                        button.show = res;
+                    })
+            });//不是调用 meta-operation 渲染的按钮-需要单独执行校验函数 和显隐处理--会返回
 
-                //滑块默认色调
-                _.each(this.widgetParams.listOperations,(button,index)=>{
-                    if(!index%2){
-                        button.btnType = "primary"
-                    }else if(!index%3){
-                        button.btnType = "success"
-                    }else{
-                        button.btnType = "error"
-                    }
-                });//需要设置下默认值
+            //滑块默认色调
+            _.each(this.widgetParams.listOperations,(button,index)=>{
+                if(!index%2){
+                    button.btnType = "primary"
+                }else if(!index%3){
+                    button.btnType = "success"
+                }else{
+                    button.btnType = "error"
+                }
+            });//需要设置下默认值
 
         },
         components: {

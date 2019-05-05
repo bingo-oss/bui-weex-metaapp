@@ -607,6 +607,7 @@
     import service from './js/service'
     import _ from '../../js/tool/lodash';
     import ajax from '../../js/ajax.js';
+    import engineService from "../../js/services/engine/engineservice";
 
     module.exports = {
         props: {
@@ -1201,7 +1202,7 @@
                     startTime = this.blogList[0].blogInfo.publishTime + 1;
                 }
                 let params = {
-                    url:  `${Config.serverConfig.engineService}/metaservice/meta_blog/getHomePageBlogList`,
+                    url:  `${Config.serverConfig["service.endpoint"]}/metaservice/meta_blog/getHomePageBlogList`,
                     data: {
                         sourceModule: this.info.entityId,
                         offset: this.pageNo,
@@ -1345,7 +1346,7 @@
             },
             getArchive(isQuit){//是否归档
                 let params = {
-                    url: Config.serverConfig.engineService + '/metaservice/meta_suite_data_setting/' + this.info.dataId,
+                    url: Config.serverConfig["service.endpoint"] + '/metaservice/meta_suite_data_setting/' + this.info.dataId,
                 };
                 ajax.get(params.url).then((result) => {
                     if (result) {
@@ -1368,7 +1369,7 @@
             },
             getTopicInfo(){//用于发送动态的数据
                 let params = {
-                    url:`${Config.serverConfig.engineService}/metaservice/link_blog/${this.info.entityId}/${this.info.dataId}/topic`,
+                    url:`${Config.serverConfig["service.endpoint"]}/metaservice/link_blog/${this.info.entityId}/${this.info.dataId}/topic`,
                     //url: Config.serverConfig.uamUrl + '/extendApproval/getTopic',
                     data: {
                         //entityName: this.info.entityId,
@@ -1485,7 +1486,7 @@
             },
             getMetaEntity(fun){//获取实体信息
                 let params = {
-                    url: Config.serverConfig.engineService + '/metaservice/meta_entity/' + this.info.entityId,
+                    url: Config.serverConfig["service.endpoint"] + '/metaservice/meta_entity/' + this.info.entityId,
                 };
                 ajax.get(params.url).then((result) => {
                     result = result.data;
@@ -1509,7 +1510,7 @@
             },
             getAdminInfo(){
                 let params = {
-                    url: `${Config.serverConfig.engineService}/metaservice/judge_has_permissions/is_admin`,
+                    url: `${Config.serverConfig["service.endpoint"]}/metaservice/judge_has_permissions/is_admin`,
                     data: {
                         entityId: this.info.entityId,
                         dataId: this.info.dataId,
@@ -1601,17 +1602,39 @@
         },
         mounted(){
             let params =this.widgetParams,_t = this;//页面参
-            if (params != null && !Util.isEmpty(params.dataId) && !Util.isEmpty(params.entityId)) {
+            if (params != null && !Util.isEmpty(params.dataId) && (!Util.isEmpty(params.entityId)||!Util.isEmpty(params.entityName))) {
                 this.info.dataId = params.dataId;
-                this.info.entityId = params.entityId;
-                _t.getMetaEntity(function(){
-                    _t.refreshData();
-                })
-                _t.tools = [];
-                _t.getAdminInfo();
-                _t.handleTabMenu();
-                _t.handleCreateMenu();
-                _t.handleWriteMenu();
+                if(params.entityId){
+                    this.info.entityId = params.entityId;
+                    _init();
+                }else {
+                    engineService.getEntity(params.entityName).then((data)=>{
+                        //获取实体id
+                        this.info.entityId = data.attrs.metaEntityId;
+                        _init();
+                    })
+                }
+                function _init(){
+                    /*_t.getMetaEntity(function(){
+                        _t.refreshData();
+                    })*/
+                    Config.readRuntimeConfig(_t.$getContextPath()).catch(err => {}).then(runtimeConfig => {
+                        _t.metaSuite = {};
+                        _t.metaSuite.metaEntityName = "";//存储实体名称
+                        _t.metaSuite.relations = [];//用于动态过滤
+                        _t.metaSuite.settings= {tools:[]};//存快捷
+                        _t.externalUrl = runtimeConfig.engineUrl;
+                        _t.refreshData();
+                        _t.getTopicInfo();
+                    });
+
+
+                    _t.tools = [];
+                    _t.getAdminInfo();
+                    _t.handleTabMenu();
+                    _t.handleCreateMenu();
+                    _t.handleWriteMenu();
+                }
 /*                service.getHomePage(params.homePageId||this.$getPageParams().homePageId).then((res)=>{
                     //获取主页配置
                     //快捷操作

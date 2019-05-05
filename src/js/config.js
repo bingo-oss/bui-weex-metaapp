@@ -14,7 +14,7 @@ const configServerUrl = "https://saaslinkdev.projects.bingosoft.net:22283/servic
 var configData = null;
 export default {
     debug: false,
-    token: 'c2Fhc3Nzbzo1Y2MyZDQzZS03YTZlLTRiOTgtOTUyMy00N2YxMDUzNDVjZjg',
+    token: 'c2Fhc3NzbzpkMTBhZWE0YS1kNmMzLTRmMzAtOGI0My0wM2QwYmM2OWU3NmY',
     configFilename: 'config.json',
     serverConfig: {},
     // 读取与 list.weex.js、form.weex.js 同级的配置文件
@@ -29,11 +29,14 @@ export default {
                     //读取全局配置地址方式
                     metaservice.getProject(projectId).then((projectInfo)=>{
                         ajax.get(`${projectInfo.engine.externalUrl}/web.json`).then((resp) => {
+                        //ajax.get(`http://10.200.84.125:9596/api/web.json`).then((resp) => {
                             configData=Object.assign(resp.data,{
-                                "configServerUrl":configServerUrl,
+                                "apiBaseUrl":"http://10.200.84.125:9596/api",
+                                "configServerUrl":`${projectInfo.engine.externalUrl}/web.json`,
                                 "blogApi": resp.data["service.blog.endpoint"],
                                 "uamUrl": resp.data["service.link.endpoint"],
-                                "engineService": resp.data["service.gateway.endpoint"]+"/services"
+                                "engineService": resp.data["service.gateway.endpoint"]+"/services",
+                                "engineUrl":/*"http://10.200.84.125:9596/api"*/projectInfo.engine.externalUrl
                             });
                             this.serverConfig = configData;
                             resolve(configData);

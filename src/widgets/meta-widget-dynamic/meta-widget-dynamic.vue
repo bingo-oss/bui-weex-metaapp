@@ -682,6 +682,7 @@
     import popupmenu from './components/bui-popupmenu.vue'
     import service from './js/service'
     import _ from '../../js/tool/lodash';
+    import engineService from "../../js/services/engine/engineservice";
 
     module.exports = {
         props: {
@@ -2002,34 +2003,57 @@
         },
         mounted(){
             let params =this.widgetParams,_t = this;//页面参
-            if (params != null && !Util.isEmpty(params.dataId) && !Util.isEmpty(params.entityId)) {
-                this.info.dataId = params.dataId;
-                this.info.entityId = params.entityId;
-                factoryApp.startLoading(this);//显示加载圈
-                _t.getMetaEntity(function(){
-                    _t.initData(1);
-                    //_t.refreshData();
-                })
-                service.getHomePage(params.homePageId||this.$getPageParams().homePageId).then((res)=>{
-                    //获取主页配置
-                    //快捷操作
-                    if(!res){res={"mpHomePageOprationList":[]}}
-                    _.each(res.mpHomePageOprationList,(e,i)=>{
-                        e.target = e.collaborationToolId;
-                        e.title = e.name;
-                        if(e.type==1){
-                            e.terminalType = 2;
-                        }else{
-                            e.terminal = 2;
-                            e.createBlog = true;//支持过滤
-                        }//0:通用,1:快捷
+            if (params != null && !Util.isEmpty(params.dataId) && (!Util.isEmpty(params.entityId)||!Util.isEmpty(params.entityName))) {
+                function _init(){
+                    factoryApp.startLoading(_t);//显示加载圈
+                    /*_t.getMetaEntity(function(){
+                        _t.initData(1);
+                        //_t.refreshData();
+                    })*/
+
+                    Config.readRuntimeConfig(_t.$getContextPath()).catch(err => {}).then(runtimeConfig => {
+                        _t.metaSuite = {};
+                        _t.metaSuite.metaEntityName = "";//存储实体名称
+                        _t.metaSuite.relations = [];//用于动态过滤
+                        _t.metaSuite.settings= {tools:[]};//存快捷
+                        _t.externalUrl = runtimeConfig.engineUrl;
+                        _t.initData(1);
                     });
-                    _t.tools = res.mpHomePageOprationList||[];
-                    _t.getAdminInfo();
-                    _t.handleTabMenu();
-                    _t.handleCreateMenu();
-                    _t.handleWriteMenu();
-                });
+
+                    service.getHomePage(params.homePageId||_t.$getPageParams().homePageId).then((res)=>{
+                        //获取主页配置
+                        //快捷操作
+                        if(!res){res={"mpHomePageOprationList":[]}}
+                        _.each(res.mpHomePageOprationList,(e,i)=>{
+                            e.target = e.collaborationToolId;
+                            e.title = e.name;
+                            if(e.type==1){
+                                e.terminalType = 2;
+                            }else{
+                                e.terminal = 2;
+                                e.createBlog = true;//支持过滤
+                            }//0:通用,1:快捷
+                        });
+                        _t.tools = res.mpHomePageOprationList||[];
+                        _t.getAdminInfo();
+                        _t.handleTabMenu();
+                        _t.handleCreateMenu();
+                        _t.handleWriteMenu();
+                    });
+                }
+
+                this.info.dataId = params.dataId;
+                if(params.entityId){
+                    this.info.entityId = params.entityId;
+                    _init();
+                }else {
+                    engineService.getEntity(params.entityName).then((data)=>{
+                        //获取实体id
+                        this.info.entityId = data.attrs.metaEntityId;
+                        _init();
+                    })
+                }
+
             } else {
                 this.$toast("参数未传递");
                 //this.$pop();

@@ -305,10 +305,14 @@ var factoryApp = Object.assign({},buiweex,linkapi,{
         var _engineUrl = apiInfo.endpoint;
         if(apiInfo.endpoint){
             if((/\{engineUrl\}/g).test(apiInfo.endpoint)){
-                return service.getEngineUrl(apiInfo.projectId).then(function(res){
+                /*return service.getEngineUrl(apiInfo.projectId).then(function(res){
                     _engineUrl = apiInfo.endpoint.replace(/\{engineUrl\}/g,res)
                     return returnAjax(_engineUrl)
-                });
+                });*/
+                return config.readRuntimeConfig().then(runtimeConfig => {
+                    _engineUrl = apiInfo.endpoint.replace(/\{engineUrl\}/g,runtimeConfig["engineUrl"]);
+                    return returnAjax(_engineUrl);
+                })
             }else if((/\{services\}/g).test(apiInfo.endpoint)){
                 return config.readRuntimeConfig().then(runtimeConfig => {
                     _engineUrl = apiInfo.endpoint.replace(/\{services\}/g,runtimeConfig["engineService"]);

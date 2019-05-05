@@ -117,6 +117,7 @@
     import factoryApp from '../libs/factory-app.js';
     import service from '../../js/service.js';
     import ajax from '../../js/ajax.js';
+    import engineService from "../../js/services/engine/engineservice";
 
     module.exports = {
         props: {
@@ -605,17 +606,34 @@
         },
         mounted(){
             let params =this.widgetParams,_t = this;//页面参
-            if (params != null && !Util.isEmpty(params.dataId) && !Util.isEmpty(params.entityId)) {
+            if (params != null && !Util.isEmpty(params.dataId) && (!Util.isEmpty(params.entityId)||!Util.isEmpty(params.entityName))) {
                 this.info.dataId = params.dataId;
-                this.info.entityId = params.entityId;
+                //this.info.entityId = params.entityId;
                 //this.initData(1);
-                factoryApp.startLoading(this);//显示加载圈
-                service.init(Config.serverConfig.configServerUrl);//初始化请求到的地址
-                service.getEngineUrlMeta(params.entityId).then(res=>{
-                    _t.externalUrl = res;
-                    _t.initData(1);
-                    _t.getLoginInfo();
-                });//获取引擎地址
+                if(params.entityId){
+                    this.info.entityId = params.entityId;
+                    _init();
+                }else {
+                    engineService.getEntity(params.entityName).then((data)=>{
+                        //获取实体id
+                        this.info.entityId = data.attrs.metaEntityId;
+                        _init();
+                    })
+                }
+                function _init(){
+                    factoryApp.startLoading(_t);//显示加载圈
+                    service.init(Config.serverConfig.configServerUrl);//初始化请求到的地址
+                    Config.readRuntimeConfig(_t.$getContextPath()).catch(err => {}).then(runtimeConfig => {
+                        _t.externalUrl = runtimeConfig.engineUrl;
+                        _t.initData(1);
+                        _t.getLoginInfo();
+                    });
+                    /*service.getEngineUrlMeta(params.entityId).then(res=>{
+                        _t.externalUrl = res;
+                        _t.initData(1);
+                        _t.getLoginInfo();
+                    });//获取引擎地址*/
+                }
 
             } else {
                 this.$toast("参数未传递");

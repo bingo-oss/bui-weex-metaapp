@@ -86,6 +86,7 @@
     import ajax from '../../js/ajax.js';
     import buiweex from 'bui-weex';
     import service from '../../js/service.js';
+    import engineService from "../../js/services/engine/engineservice";
 
     module.exports = {
         components: {'dialog': dialog},
@@ -378,15 +379,28 @@
         },
         mounted(){
             let params =this.widgetParams,_t = this;//页面参
-            if (params != null && !Util.isEmpty(params.dataId) && !Util.isEmpty(params.entityId)) {
+            if (params != null && !Util.isEmpty(params.dataId)) {
                 this.info.dataId = params.dataId;
-                this.info.entityId = params.entityId;
-                //this.$alert(Config.serverConfig)
-                service.init(Config.serverConfig.configServerUrl);//初始化请求到的地址
-                service.getEngineUrlMeta(params.entityId).then(res=>{
-                    _t.externalUrl = res;
-                    _t.initData(1);
-                });//获取引擎地址
+                if(!Util.isEmpty(params.entityId)){
+                    this.info.entityId = params.entityId;
+                    //this.$alert(Config.serverConfig)
+                    service.init(Config.serverConfig.configServerUrl);//初始化请求到的地址
+                    /*service.getEngineUrlMeta(params.entityId).then(res=>{
+                        _t.externalUrl = res;
+                        _t.initData(1);
+                    });//获取引擎地址*/
+                    Config.readRuntimeConfig(this.$getContextPath()).catch(err => {}).then(runtimeConfig => {
+                        _t.externalUrl = runtimeConfig.engineUrl;
+                        _t.initData(1);
+                    })
+                }else if(!Util.isEmpty(params.entityName)){
+                    //只存在实体名称
+                    engineService.getEntity(params.entityName).then((data)=>{
+                        //获取实体id,引擎地址
+                        _t.info.entityId = data.attrs.metaEntityId;
+                        _t.externalUrl= data.engineUrl;
+                    })
+                }
             } else {
                 //this.$toast("参数未传递");
             }
