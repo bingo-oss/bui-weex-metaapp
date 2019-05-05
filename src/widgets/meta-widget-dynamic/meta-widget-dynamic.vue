@@ -1070,7 +1070,7 @@
                     entityId: this.info.entityId
                 };
                 let params = {
-                    url:  `${Config.serverConfig.engineService}/metaservice/meta_blog/deleteBlogOrComment`,
+                    url:  `${Config.serverConfig["service.endpoint"]}/metaservice/meta_blog/deleteBlogOrComment`,
                     data: Util.toHttpRequestParams(datas)
                 }
                 linkapi.post(params).then((result) => {
@@ -1392,7 +1392,7 @@
                     return;
                 }
                 let params = {
-                    url:  `${Config.serverConfig.engineService}/metaservice/meta_blog/getHomePageBlogList`,
+                    url:  `${Config.serverConfig["service.endpoint"]}/metaservice/meta_blog/getHomePageBlogList`,
                     data: {
                         sourceModule: this.info.entityId,
                         offset: this.pageNo,
@@ -1406,7 +1406,7 @@
                 params.data.labelId = this.currLabeId;
                 if (this.isSearching) {
                     params = {
-                        url:  `${Config.serverConfig.engineService}/metaservice/meta_blog/getHomePageBlogList`,
+                        url:  `${Config.serverConfig["service.endpoint"]}/metaservice/meta_blog/getHomePageBlogList`,
                         data: {
                             sourceModule: this.info.entityId,
                             ignoreEcode: 1,
@@ -1715,7 +1715,7 @@
             },
             getArchive(isQuit){//是否归档
                 let params = {
-                    url: Config.serverConfig.engineService + '/metaservice/meta_suite_data_setting/' + this.info.dataId,
+                    url: Config.serverConfig["service.endpoint"] + '/metaservice/meta_suite_data_setting/' + this.info.dataId,
                 };
                 linkapi.get(params).then((result) => {
                     if (result) {
@@ -1770,7 +1770,7 @@
             },
             getTopicInfo(){//用于发送动态的数据
                 let params = {
-                    url:`${Config.serverConfig.engineService}/metaservice/link_blog/${this.info.entityId}/${this.info.dataId}/topic`,
+                    url:`${Config.serverConfig["service.endpoint"]}/metaservice/link_blog/${this.info.entityId}/${this.info.dataId}/topic`,
                     data: {
                     }
                 };
@@ -1904,7 +1904,7 @@
             },
             getMetaEntity(fun){//获取实体信息
                 let params = {
-                    url: Config.serverConfig.engineService + '/metaservice/meta_entity/' + this.info.entityId,
+                    url: Config.serverConfig["service.endpoint"] + '/metaservice/meta_entity/' + this.info.entityId,
                 };
                 linkapi.get(params).then((result) => {
                     factoryApp.stopLoading(this);//关闭加载圈
@@ -1927,7 +1927,7 @@
             },
             getAdminInfo(){
                 let params = {
-                    url: `${Config.serverConfig.engineService}/metaservice/judge_has_permissions/is_admin`,
+                    url: `${Config.serverConfig["service.endpoint"]}/metaservice/judge_has_permissions/is_admin`,
                     data: {
                         entityId: this.info.entityId,
                         dataId: this.info.dataId,
@@ -2018,9 +2018,16 @@
                         _t.metaSuite.settings= {tools:[]};//存快捷
                         _t.externalUrl = runtimeConfig.engineUrl;
                         _t.initData(1);
+
+                        _t.tools = [];
+                        _t.getAdminInfo();
+                        _t.handleTabMenu();
+                        _t.handleCreateMenu();
+                        _t.handleWriteMenu();
+
                     });
 
-                    service.getHomePage(params.homePageId||_t.$getPageParams().homePageId).then((res)=>{
+                    /*service.getHomePage(params.homePageId||_t.$getPageParams().homePageId).then((res)=>{
                         //获取主页配置
                         //快捷操作
                         if(!res){res={"mpHomePageOprationList":[]}}
@@ -2039,7 +2046,7 @@
                         _t.handleTabMenu();
                         _t.handleCreateMenu();
                         _t.handleWriteMenu();
-                    });
+                    });*/
                 }
 
                 this.info.dataId = params.dataId;
