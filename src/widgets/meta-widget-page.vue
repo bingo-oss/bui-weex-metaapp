@@ -285,6 +285,7 @@
                     }
                 });
                 this.columnWidgets.push(widget);//添加组装好的部件
+                this.pageConfig = {columnWidgets:this.columnWidgets};//向下兼容下配置脚本-部件显隐
             },
             getOrSetWidget(layout,toRoute){
                 //获取并且设置按钮脚本
@@ -294,6 +295,7 @@
                     }else if(widget&&widget.widgetCode){
                         this.setWidgetParams(widget,toRoute);
                     }
+                    this.hookExecution("beforeUpdate");
                 });
             }
         })
