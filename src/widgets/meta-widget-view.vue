@@ -329,11 +329,11 @@
                     factoryApp.stopLoading(this);//关闭加载圈
                     //this.isShowLoading = false
                     if(resp.headers){
-                        this.dataCount = resp.headers["X-Total-Count"]
+                        this.dataCount = resp.headers["x-total-count"]
                     }
                     if(this.presetFilters[this.currentTab]){
                         if(this.presetFilters[this.currentTab].showCount) {//是否显示数字
-                            this.presetFilters[this.currentTab].count = (resp.headers["X-Total-Count"]>0)?`(${resp.headers["X-Total-Count"]})`:"";
+                            this.presetFilters[this.currentTab].count = (resp.headers["x-total-count"]>0)?`(${resp.headers["x-total-count"]})`:"";
                             this.presetFilters[this.currentTab].title = `${this.presetFilters[this.currentTab].text}${this.presetFilters[this.currentTab].count}`;
                         }
                     }
@@ -587,6 +587,7 @@
                         _getMetaViewDefNumber = 0,
                         _t = this;
                         config.readRuntimeConfig(contextPath).catch(err => {}).then(runtimeConfig => {
+
                             factoryApp.init(this);//初始化全局api的指向
                             service.init(runtimeConfig.configServerUrl);
                             _t.config = runtimeConfig;
@@ -602,6 +603,7 @@
                                 }
                                 factoryApp.startLoading(this);//显示加载圈
                                 //读取部件参数的设置
+                                var _a = metabase.findMetaEntity(view.entityName);
                                 metabase.findMetaEntity(view.entityName).getPage(view.filterId).then((res)=>{
                                     //读取对应视图配置
                                     view.filterId = res.queryOptions.viewId;//内置条件

@@ -255,7 +255,7 @@
                     operations[e.location].push(e)
                 });
 
-                widget.widgetParams = {widgetCode: widget.widgetCode ? widget.widgetCode : ''}//传入部件code--用于读取页面参数
+                widget.params = {widgetCode: widget.widgetCode ? widget.widgetCode : ''}//传入部件code--用于读取页面参数
                 //遍历每一个部件的属性
                 _.each(props,function(propValue,propKey){
                     var parsedValue=propParser.parse(propValue,_this);
