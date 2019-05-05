@@ -32,7 +32,7 @@ export default {
                         //ajax.get(`http://10.200.84.125:9596/api/web.json`).then((resp) => {
                             configData=Object.assign(resp.data,{
                                 "apiBaseUrl":projectInfo.engine.externalUrl/*"http://10.200.84.125:9596/api"*/,
-                                "configServerUrl":/*"http://10.200.84.125:9596/api/web.json"*/`${projectInfo.engine.externalUrl}/web.json`,
+                                "configServerUrl":`${projectInfo.engine.externalUrl}/web.json`/*"http://10.200.84.125:9596/api/web.json"*/,
                                 "blogApi": resp.data["service.blog.endpoint"],
                                 "uamUrl": resp.data["service.link.endpoint"],
                                 "engineService": resp.data["service.gateway.endpoint"]+"/services"
