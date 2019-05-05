@@ -31,12 +31,11 @@ export default {
                         ajax.get(`${projectInfo.engine.externalUrl}/web.json`).then((resp) => {
                         //ajax.get(`http://10.200.84.125:9596/api/web.json`).then((resp) => {
                             configData=Object.assign(resp.data,{
-                                "apiBaseUrl":"http://10.200.84.125:9596/api",
-                                "configServerUrl":`${projectInfo.engine.externalUrl}/web.json`,
+                                "apiBaseUrl":${projectInfo.engine.externalUrl}/*"http://10.200.84.125:9596/api"*/,
+                                "configServerUrl":"http://10.200.84.125:9596/api/web.json"/*`${projectInfo.engine.externalUrl}/web.json`*/,
                                 "blogApi": resp.data["service.blog.endpoint"],
                                 "uamUrl": resp.data["service.link.endpoint"],
-                                "engineService": resp.data["service.gateway.endpoint"]+"/services",
-                                "engineUrl":/*"http://10.200.84.125:9596/api"*/projectInfo.engine.externalUrl
+                                "engineService": resp.data["service.gateway.endpoint"]+"/services"
                             });
                             this.serverConfig = configData;
                             resolve(configData);

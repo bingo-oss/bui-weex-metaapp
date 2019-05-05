@@ -270,11 +270,12 @@
             this.tapLabels[0].highlight =  true;
             service.init(Config.serverConfig.configServerUrl); //初始化请求地址
             if(_this.widgetParams.entityId) {
-                service.getMetaEntity(_this.widgetParams.entityId).then(res => {
+                /*service.getMetaEntity(_this.widgetParams.entityId).then(res => {
                     _this.metaEntity = res;
                     _this.metaEntity.resourceUrl = `${_this.metaEntity.project.engine.externalUrl}/${metabase.lowerUnderscore(_this.metaEntity.name)}`;
-                });
-            }else if(_this.widgetParams.entityName){
+                });*/
+            }
+            if(_this.widgetParams.entityName){
                 engineService.getEntity(_this.widgetParams.entityName).then(res=>{
                     _this.metaEntity = res;
                     _this.widgetParams.entityId = res.attrs.metaEntityId;

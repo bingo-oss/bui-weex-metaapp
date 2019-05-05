@@ -2016,7 +2016,7 @@
                         _t.metaSuite.metaEntityName = "";//存储实体名称
                         _t.metaSuite.relations = [];//用于动态过滤
                         _t.metaSuite.settings= {tools:[]};//存快捷
-                        _t.externalUrl = runtimeConfig.engineUrl;
+                        _t.externalUrl = runtimeConfig.apiBaseUrl;
                         _t.initData(1);
 
                         _t.tools = [];

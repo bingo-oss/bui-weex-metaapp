@@ -624,7 +624,7 @@
                     factoryApp.startLoading(_t);//显示加载圈
                     service.init(Config.serverConfig.configServerUrl);//初始化请求到的地址
                     Config.readRuntimeConfig(_t.$getContextPath()).catch(err => {}).then(runtimeConfig => {
-                        _t.externalUrl = runtimeConfig.engineUrl;
+                        _t.externalUrl = runtimeConfig.apiBaseUrl;
                         _t.initData(1);
                         _t.getLoginInfo();
                     });

@@ -390,7 +390,7 @@
                         _t.initData(1);
                     });//获取引擎地址*/
                     Config.readRuntimeConfig(this.$getContextPath()).catch(err => {}).then(runtimeConfig => {
-                        _t.externalUrl = runtimeConfig.engineUrl;
+                        _t.externalUrl = runtimeConfig.apiBaseUrl;
                         _t.initData(1);
                     })
                 }else if(!Util.isEmpty(params.entityName)){
