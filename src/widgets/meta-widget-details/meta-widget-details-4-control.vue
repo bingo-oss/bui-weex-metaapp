@@ -144,11 +144,8 @@
     const globalEvent = weex.requireModule('globalEvent');
     import factoryApp from "../libs/factory-app";
     import linkapi from "linkapi"
-    /*
-    * 数据获取：通过实体id获取容器地址，拼接参数"数据id"去get
-    *
-    * 已经创建的实例，需要使用vue.set方法，才能响应data里的数据
-    * */
+    import engineservice from "../../../src/js/services/engine/engineservice";
+
     module.exports = {
         props: {
             widgetParams: {
@@ -168,15 +165,14 @@
                 processResult: {},//处理结果
                 processResultContent: [],//处理结果（用于显示）
                 processResultEntityTableInfo: [],//实体表信息（处理结果）
-                expandInfoTitle: ''//扩展信息title
+                expandInfoTitle: '',//扩展信息title
+                _entity:{}
             }
         },
         methods: {
             getDetailsInfo() {
                 factoryApp.startLoading(this);//显示加载圈
                 let _this = this;
-
-
                 _this.titleInfo = {}
                 _this.data = {}
                 _this.headerInfo = {}
@@ -186,100 +182,88 @@
                 _this.processResultContent = []
                 _this.processResultEntityTableInfo = []
                 _this.expandInfoTitle = _this.widgetParams.ExpandInfoTitle
-
-
                 this.content = [];//清除下数据
-                ajax.get(`${_this.metaEntit.project.engine.externalUrl}/${metabase.lowerUnderscore(_this.metaEntit.name)}/${_this.widgetParams.dataId}`)
-                    .then(res => {
+                //获取引擎地址
+
+                config.getMetabase().then((res)=>{//初始化
+                     _this._entity = metabase.findMetaEntity(this.widgetParams.entityName);
+                    ajax.get(`${_this._entity.engineUrl}${_this._entity.entityPath}/${_this.widgetParams.dataId}`).then(({data})=>{
+                        let res = data;
                         _this.data = res
-                        console.log('HXB', 'details data==', JSON.stringify(res))
-                        var data = res.data
-                        var _data = res.data._data
+                        var data = res;
+                        var _data = res._data;
                         delete data._data
-                        service.getEntityFields(
-                            _this.metaEntit.projectId,
-                            null,
-                            _this.metaEntit.id
-                        )
-                            .then(fieldInfos => {
-                                for (var index in fieldInfos) {
-                                    var fieldInfo = fieldInfos[index]
-                                    var field = {
-                                        title: fieldInfo.title,
-                                        inputType: fieldInfo.inputType,
-                                        dataType: fieldInfo.dataType,
-                                        columnType: fieldInfo.columnType
+                        let fieldInfos = _this.metaEntit.fields;
+                        for (var index in fieldInfos) {
+                            var fieldInfo = fieldInfos[index]
+                            var field = {
+                                title: fieldInfo.title,
+                                inputType: fieldInfo.inputType,
+                                dataType: fieldInfo.dataType,
+                                columnType: fieldInfo.columnType
+                            }
+                            _this.entityTableInfo[fieldInfo.name] = field
+                        }
+                        //console.log('HXB', '_this.entityTableInfo==', JSON.stringify(fieldInfos))
+                        //副标题
+                        var sub = []
+                        var subValueKeys = _this.widgetParams.Valueskey4SubTitles ? _this.widgetParams.Valueskey4SubTitles.split(',') : null
+                        _this.headerInfo.subTitle = ''
+                        if (subValueKeys) {
+                            sub = DetailsUtils.findValuesByKeys(subValueKeys, data)
+                            for (var index in sub) {
+                                var kv = sub[index]
+                                if (_this.entityTableInfo[kv.key]) {
+                                    var v = _this.getRealValue(kv.key, kv.value, _data)
+                                    v = _this.analysisValueByFieldInfo(v, _this.entityTableInfo[kv.key])
+                                    if (typeof v != 'string' && v.join2Content) {
+                                        _.each(v.content, function (item) {
+                                            _this.headerInfo.subTitle += item.title + ':' + item.value + '    '
+                                        })
+                                    } else {
+                                        _this.headerInfo.subTitle += _this.entityTableInfo[kv.key].title + ':' + v + '    '
                                     }
-                                    _this.entityTableInfo[fieldInfo.name] = field
                                 }
-                                console.log('HXB', '_this.entityTableInfo==', JSON.stringify(fieldInfos))
-
-                                //副标题
-                                var sub = []
-                                var subValueKeys = _this.widgetParams.Valueskey4SubTitles ? _this.widgetParams.Valueskey4SubTitles.split(',') : null
-                                _this.headerInfo.subTitle = ''
-                                if (subValueKeys) {
-                                    sub = DetailsUtils.findValuesByKeys(subValueKeys, data)
-                                    for (var index in sub) {
-                                        var kv = sub[index]
-                                        if (_this.entityTableInfo[kv.key]) {
-                                            var v = _this.getRealValue(kv.key, kv.value, _data)
-                                            v = _this.analysisValueByFieldInfo(v, _this.entityTableInfo[kv.key])
-                                            if (typeof v != 'string' && v.join2Content) {
-                                                _.each(v.content, function (item) {
-                                                    _this.headerInfo.subTitle += item.title + ':' + item.value + '    '
-                                                })
-                                            } else {
-                                                _this.headerInfo.subTitle += _this.entityTableInfo[kv.key].title + ':' + v + '    '
+                            }
+                        }
+                        //内容
+                        var content = []
+                        var contentValueKeys = _this.widgetParams.Valueskey4Contents ? _this.widgetParams.Valueskey4Contents.split(",") : null
+                        if (contentValueKeys) {
+                            // 找出指定key的对应键值对，返回数组
+                            content = DetailsUtils.findValuesByKeysFromJson((contentValueKeys).concat(), data)
+                            for (var index in content) {
+                                var kv = content[index]
+                                var k = DetailsUtils.getAllJsonKeys(kv)[0]
+                                var v = kv[k]
+                                //去_data找出映射的真实值
+                                v = _this.getRealValue(k, v, _data)
+                                if (_this.entityTableInfo[k]) {
+                                    //根据字段类型解析值
+                                    v = _this.analysisValueByFieldInfo(v, _this.entityTableInfo[k])
+                                    if (typeof v != 'string' && v.join2Content) {
+                                        //console.log('HXB', 'v==', JSON.stringify(v))
+                                        _.each(v.content, function (item) {
+                                            var newItem = {
+                                                title: item.title,
+                                                value: item.value,
+                                                type: item.type
                                             }
-                                        }
+                                            newItem = _this.transformDataByType(newItem, item.type)
+                                            _this.content.push(newItem)
+                                        })
+                                    } else {
+                                        _this.content.push({
+                                            title: _this.entityTableInfo[k].title,
+                                            value: v,
+                                            type: v[0] ? v[0].type : v.type
+                                        })
                                     }
                                 }
-
-
-                                //内容
-                                var content = []
-                                var contentValueKeys = _this.widgetParams.Valueskey4Contents ? _this.widgetParams.Valueskey4Contents.split(",") : null
-                                if (contentValueKeys) {
-                                    // 找出指定key的对应键值对，返回数组
-                                    content = DetailsUtils.findValuesByKeysFromJson((contentValueKeys).concat(), data)
-                                    for (var index in content) {
-                                        var kv = content[index]
-                                        var k = DetailsUtils.getAllJsonKeys(kv)[0]
-                                        var v = kv[k]
-                                        //去_data找出映射的真实值
-                                        v = _this.getRealValue(k, v, _data)
-                                        if (_this.entityTableInfo[k]) {
-                                            //根据字段类型解析值
-                                            v = _this.analysisValueByFieldInfo(v, _this.entityTableInfo[k])
-                                            if (typeof v != 'string' && v.join2Content) {
-                                                console.log('HXB', 'v==', JSON.stringify(v))
-                                                _.each(v.content, function (item) {
-                                                    var newItem = {
-                                                        title: item.title,
-                                                        value: item.value,
-                                                        type: item.type
-                                                    }
-                                                    newItem = _this.transformDataByType(newItem, item.type)
-                                                    _this.content.push(newItem)
-                                                })
-                                            } else {
-                                                _this.content.push({
-                                                    title: _this.entityTableInfo[k].title,
-                                                    value: v,
-                                                    type: v[0] ? v[0].type : v.type
-                                                })
-                                            }
-                                        }
-                                    }
-                                    _this.setupContentTag(_this.content)
-                                    console.log('HXB', '_this.content==', JSON.stringify(_this.content))
-                                }
-                                _this.$forceUpdate()
-                            })
-
-
-                        // console.log('HXB', 'subTitle==', JSON.stringify(res))
+                            }
+                            _this.setupContentTag(_this.content)
+                        }
+                        _this.$forceUpdate()
                         //标题
                         var title = {
                             key: _this.widgetParams.titleKey
@@ -290,8 +274,9 @@
                         factoryApp.stopLoading(this);//关闭加载圈
                         _this.$forceUpdate()
                     })
-                    .then(function (res) {
-                    })
+                 });
+
+
             },
             getExpandInfo() {
                 var _this = this
@@ -302,8 +287,9 @@
                 var AssociateField4Now = _this.widgetParams.AssociateField4Now ? DetailsUtils.traversingJson(_this.widgetParams.AssociateField4Now, _this.data) : null
                 if (associateField4ReferenceEntity && AssociateField4Now && referenceEntityName) {
                     params.filters = associateField4ReferenceEntity + ' eq ' + AssociateField4Now
-                    ajax.get(`${_this.metaEntit.project.engine.externalUrl}/${referenceEntityName}`, params).then(res => {//处理结果
-                        // console.log('HXB', 'getExpandInfo--res', JSON.stringify(res))
+
+                    ajax.get(`${_this._entity.engineUrl}/${referenceEntityName}`, params).then(res => {
+                        //处理结果
                         _this.processResult = res
                         if (!res || !res.data) {
                             return
@@ -312,61 +298,55 @@
                         var data = res.data.length ? res.data[0] : res.data
                         var _data = res.data.length ? res.data[0]._data : res.data._data
                         delete data._data
+                        let entity =  metabase.findMetaEntity(referenceEntityName);
+                        let fieldInfos = entity.fields;
+                        for (var index in fieldInfos) {
+                            var fieldInfo = fieldInfos[index]
+                            var field = {
+                                title: fieldInfo.title,
+                                inputType: fieldInfo.inputType,
+                                dataType: fieldInfo.dataType,
+                                columnType: fieldInfo.columnType
+                            }
+                            _this.processResultEntityTableInfo[fieldInfo.name] = field
+                        }
+                        //处理结果内容
+                        var processResultContents = []
+                        var contentValueKeys = _this.widgetParams.Valueskey4ProcessResult ? _this.widgetParams.Valueskey4ProcessResult.split(",") : null
 
-                        service.getEntityFields(
-                            _this.metaEntit.projectId,
-                            'forewarningprocessingrecord',
-                            null
-                        )
-                            .then(fieldInfos => {
-                                for (var index in fieldInfos) {
-                                    var fieldInfo = fieldInfos[index]
-                                    var field = {
-                                        title: fieldInfo.title,
-                                        inputType: fieldInfo.inputType,
-                                        dataType: fieldInfo.dataType,
-                                        columnType: fieldInfo.columnType
-                                    }
-                                    _this.processResultEntityTableInfo[fieldInfo.name] = field
-                                }
-                                //处理结果内容
-                                var processResultContents = []
-                                var contentValueKeys = _this.widgetParams.Valueskey4ProcessResult ? _this.widgetParams.Valueskey4ProcessResult.split(",") : null
-
-                                if (contentValueKeys) {
-                                    processResultContents = DetailsUtils.findValuesByKeysFromJson((contentValueKeys).concat(), data)
-                                    for (var index in processResultContents) {
-                                        var kv = processResultContents[index]
-                                        var k = DetailsUtils.getAllJsonKeys(kv)[0]
-                                        var v = kv[k]
-                                        v = _this.getRealValue(k, v, _data)
-                                        if (_this.processResultEntityTableInfo[k]) {
-                                            v = _this.analysisValueByFieldInfo(v, _this.processResultEntityTableInfo[k])
-                                            if (typeof v != 'string' && v.join2Content) {
-                                                console.log('HXB', 'v==', JSON.stringify(v))
-                                                _.each(v.content, function (item) {
-                                                    var newItem = {
-                                                        title: item.title,
-                                                        value: item.value,
-                                                        type: item.type
-                                                    }
-                                                    newItem = _this.transformDataByType(newItem, item.type)
-                                                    _this.processResultContent.push(newItem)
-                                                })
-                                            } else {
-                                                _this.processResultContent.push({
-                                                    title: _this.processResultEntityTableInfo[k].title,
-                                                    value: v,
-                                                    type: v[0] ? v[0].type : v.type
-                                                })
+                        if (contentValueKeys) {
+                            processResultContents = DetailsUtils.findValuesByKeysFromJson((contentValueKeys).concat(), data)
+                            for (var index in processResultContents) {
+                                var kv = processResultContents[index]
+                                var k = DetailsUtils.getAllJsonKeys(kv)[0]
+                                var v = kv[k]
+                                v = _this.getRealValue(k, v, _data)
+                                if (_this.processResultEntityTableInfo[k]) {
+                                    v = _this.analysisValueByFieldInfo(v, _this.processResultEntityTableInfo[k])
+                                    if (typeof v != 'string' && v.join2Content) {
+                                        console.log('HXB', 'v==', JSON.stringify(v))
+                                        _.each(v.content, function (item) {
+                                            var newItem = {
+                                                title: item.title,
+                                                value: item.value,
+                                                type: item.type
                                             }
-                                        }
+                                            newItem = _this.transformDataByType(newItem, item.type)
+                                            _this.processResultContent.push(newItem)
+                                        })
+                                    } else {
+                                        _this.processResultContent.push({
+                                            title: _this.processResultEntityTableInfo[k].title,
+                                            value: v,
+                                            type: v[0] ? v[0].type : v.type
+                                        })
                                     }
-                                    _this.setupContentTag(_this.processResultContent)
-                                    console.log('HXB', '_this.processResultContent==', JSON.stringify(_this.processResultContent))
                                 }
-                                _this.$forceUpdate()
-                            })
+                            }
+                            _this.setupContentTag(_this.processResultContent)
+                            console.log('HXB', '_this.processResultContent==', JSON.stringify(_this.processResultContent))
+                        }
+                        _this.$forceUpdate()
                     });
                 }
             },
@@ -592,13 +572,21 @@
         },
         mounted() {
             let _this = this;
-
             service.init(config.serverConfig.configServerUrl); //初始化请求地址
-            service.getMetaEntity(_this.widgetParams.entityId).then(res => {
+            engineservice.getEntity(_this.widgetParams.entityName).then((res)=>{
+                _this.metaEntit = res;
+                _this.getDetailsInfo();
+            })
+
+            /*config.getMetabase().then((res)=>{//初始化
+                _this.metaEntit = metabase.findMetaEntity(_this.widgetParams.entityName);
+                _this.getDetailsInfo();
+            });*/
+            /*service.getMetaEntity(_this.widgetParams.entityId).then(res => {
                 _this.metaEntit = res;
                 _this.getDetailsInfo();
                 // _this.getExpandInfo();
-            });
+            });*/
             globalEvent.addEventListener("resume", e => {
                 this.getDetailsInfo();
             });
