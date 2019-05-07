@@ -72,6 +72,8 @@ Vue.component('meta-widget-details', require("../widgets/meta-widget-details/met
 Vue.component('meta-widget-details-4-control', require("../widgets/meta-widget-details/meta-widget-details-4-control.vue"));
 //会话部件
 Vue.component('meta-widget-conversation', require("../widgets/meta-widget-conversation/meta-widget-conversation.vue"));
+//测试用
+Vue.component('meta-widget-hxb-test', require("../widgets/meta-widget-hxb-test/meta-widget-hxb-test.vue"));
 
 App.el = '#root'
 
