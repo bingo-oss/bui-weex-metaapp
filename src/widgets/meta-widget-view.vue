@@ -755,7 +755,7 @@
                         }
                         if(!params.orderby){
                             //没有设置排序,默认按更新时间排序
-                            params.orderby = "updatedAt desc";
+                            //params.orderby = "updatedAt desc";
                         }
                         // 预设的过滤器
                         /*if (viewDef.config.multipleFilters.support) {
