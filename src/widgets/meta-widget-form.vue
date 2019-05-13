@@ -323,6 +323,12 @@
                         _model[k]=v;
                     }
                 });
+
+                if(!this.metaEntity.findField(this.entityModelRedundantKey)){
+                    //实体模式上不存在_data字段;
+                    delete _model[this.entityModelRedundantKey];
+                }
+
                 return _model;
             },
             //返回所有字段组件
@@ -495,13 +501,21 @@
             },
             getWidgetContext(){
                 //传入操作的上下文内容
+                let formData = Object.assign({},this.result);
+                if(this.metaEntity&&this.metaEntity.findField){
+                    let is_data = this.metaEntity.findField(this.entityModelRedundantKey);
+                    if(!is_data){
+                        //实体模式上不存在_data字段;
+                        delete formData[this.entityModelRedundantKey];
+                    }
+                }
                 return {
                     "form": this,
                     "model":this,
                     "metaEntity": this.metaEntity,
                     "metaEntityId" : this.metaEntity.metaEntityId,
                     "selectedId": this.entityId,
-                    "selectedItem": this.result,
+                    "selectedItem": formData,
                     "widgetParams" : this.widgetParams//部件参数
                 }
             }
