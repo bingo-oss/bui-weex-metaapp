@@ -496,7 +496,7 @@
                 let viewId = this.selectedFilter.viewId;
                 // 获取视图定义
                 this.metaEntity = metabase.findMetaEntity(this.selectedFilter.entityName);//获取设置当前实体
-                this.metaEntity.resourceUrl = this.dataUrlPath = `${/*this.metaEntity.engineUrl*/this.config.apiBaseUrl}/aggregate${this.metaEntity.entityPath}/latest_info`;//完整请求地址
+                this.metaEntity.resourceUrl = this.dataUrlPath = `${this.metaEntity.engineUrl/*this.config.apiBaseUrl*/}/aggregate${this.metaEntity.entityPath}/latest_info`;//完整请求地址
                 this.engineUrl = this.metaEntity.engineUrl;
                 this.entityName = this.selectedFilter.entityName;
                 this.entityId = "";

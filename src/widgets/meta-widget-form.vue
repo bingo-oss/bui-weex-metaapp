@@ -580,8 +580,8 @@
                 return {
                     "form": this,
                     "model": this,
-                    "metaEntity": this.metaEntity,
-                    "metaEntityId": this.metaEntity.metaEntityId,
+                    "metaEntity": this.metaEntity?this.metaEntity:"",
+                    "metaEntityId": this.metaEntity?this.metaEntity.metaEntityId:"",
                     "selectedId": this.entityId,
                     "selectedItem": this.result,
                     "widgetParams": this.widgetParams//部件参数
@@ -806,29 +806,26 @@
                 console.log('fetch data')
                 // 获取表单定义
                 config.getMetabase().then(metabase => {
-                    _this.metaEntity = metabase.findMetaEntity(_this.widgetParams.metaEntityName)
-                    _this.entityName = _this.widgetParams.metaEntityName//metabase.lowerUnderscore(_this.widgetParams.metaEntityName)//formDef.metaEntityName.toLowerCase();
+                    _this.metaEntity = metabase.findMetaEntity(_this.widgetParams.form.entityName);
+                    _this.entityName = _this.widgetParams.form.entityName
                     var engineUrl = _this.metaEntity.engineUrl
-                    _this.metaEntity.resourceUrl = `${engineUrl}/${_this.entityName}`//存储引擎地址
+                    _this.metaEntity.resourceUrl = `${engineUrl}/${_this.metaEntity.entityPath}`//存储引擎地址
                     // console.log('HXB', 'entity==' + JSON.stringify(_this.metaEntity))
+                    _this.metaEntity.getPage(_this.widgetParams.form.id).then(res => {
+                        _this.data = res
+                        _this.data.layout.forEach(o => {
+                            if (o.componentParams.valueType === 'defaultValue') {
+                                this.requestDefaultValueParam = this.requestDefaultValueParam || {};
+                                this.requestDefaultValueParam[o.dataField] = null;
+                            }
+                        });
+                    });
                     if (!_this.entityId) {
                         // 在非编辑实体的情况下，才fetch defaultValues
-                        _this.metaEntity.getPage(_this.widgetParams.form.id).then(res => {
-                            _this.data = res
-                            _this.data.layout.forEach(o => {
-                                if (o.componentParams.valueType === 'defaultValue') {
-                                    this.requestDefaultValueParam = this.requestDefaultValueParam || {};
-                                    this.requestDefaultValueParam[o.dataField] = null;
-                                }
-                            });
-                        });
-
                         if (_this.requestDefaultValueParam) {
                             _this.fetchCalcDefaultValues();
                         }
-
-                        // let _formDefaultValues = _this.widgetParams.formDefaultValues
-                        let _formDefaultValues = "{\"forewarningEntityId\":\"KRdAtsSgoSwub5p94ZqqAf\",\"forewarningId\":\"Ayct6RGlaR\",\"forewarningTime\":\"undefined\",\"metaEntityName\":\"undefined\",\"title\":\"undefined\"}"
+                         let _formDefaultValues = _this.widgetParams.formDefaultValues
                         if (_formDefaultValues) {
                             try {
                                 if (_.isString(_formDefaultValues)) {
@@ -856,13 +853,13 @@
 
 
                     // 在编辑实体的情况下，才获取实体数据
-                    // if (this.entityId) {
-                    //     //this.result.id = this.entityId;
-                    //     service.getEntityDataForId(engineUrl, this.entityName, this.entityId).then(data => {
-                    //         this.existedRecord = data;
-                    //         this.permObj = perm.parseBits(data.permVal);
-                    //     });
-                    // }
+                     if (this.entityId) {
+                         //this.result.id = this.entityId;
+                         service.getEntityDataForId(engineUrl, _this.metaEntity.entityPath, this.entityId).then(data => {
+                             this.existedRecord = data;
+                             this.permObj = perm.parseBits(data.permVal);
+                         });
+                     }
                     factoryApp.stopLoading(this);//关闭加载圈
 
 

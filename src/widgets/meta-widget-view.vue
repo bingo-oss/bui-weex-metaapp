@@ -464,7 +464,7 @@
                     }
                     params.filters = filtersParts.join('and');
                     params.total=true;
-                    ajax.get(/*_metabase.engineUrl*/this.config.apiBaseUrl+_metabase.entityPath, params).then(resp => {
+                    ajax.get(_metabase.engineUrl/*this.config.apiBaseUrl*/+_metabase.entityPath, params).then(resp => {
                         selectedFilter.count = (resp.headers["x-total-count"]>0)?`(${resp.headers["x-total-count"]})`:"";//对应标签的总数
                         selectedFilter.title =  `${this.presetFilters[_index].text}${this.presetFilters[_index].count}`;
                     });
