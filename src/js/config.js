@@ -14,7 +14,7 @@ const configServerUrl = "https://saaslinkdev.projects.bingosoft.net:22283/servic
 var configData = null;
 export default {
     debug: false,
-    token: 'c2Fhc3NzbzpkMTBhZWE0YS1kNmMzLTRmMzAtOGI0My0wM2QwYmM2OWU3NmY',
+    token: 'bG9jYWw6MDhmMDM0MDgtMTA4YS00NjU0LWJiN2EtYjVkZWNjZjcxODY3',
     configFilename: 'config.json',
     serverConfig: {},
     // 读取与 list.weex.js、form.weex.js 同级的配置文件
@@ -35,7 +35,8 @@ export default {
                                 "configServerUrl":`${projectInfo.engine.externalUrl}/web.json`/*"http://10.200.84.125:9596/api/web.json"*/,
                                 "blogApi": resp.data["service.blog.endpoint"],
                                 "uamUrl": resp.data["service.link.endpoint"],
-                                "engineService": resp.data["service.gateway.endpoint"]+"/services"
+                                "engineService": resp.data["service.gateway.endpoint"]+"/services",
+                                "ufsUrl":projectInfo.engine.externalUrl.replace("api",resp.data["service.ufs.endpoint"])
                             });
                             this.serverConfig = configData;
                             resolve(configData);
