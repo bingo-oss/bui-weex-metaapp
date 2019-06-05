@@ -382,10 +382,7 @@
                             var item = value[index]
                             //item.url = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png'
                             //item.sizeConfig = ''
-                            _this.storageClient.urlFor({fileId:item.id}).then((res)=>{
-                                item.url = _this.ufsUrl +'/'+ res.url;
-                                _this.$forceUpdate();
-                            });
+                            _this.setPictureUrl(item)
                             /*item.url = _this.Config.serverConfig.engineService + '/stream?filePath=' + (item.relativePath || item.url)*/
                             item.sizeConfig = '&width=180&height=220'
                             item.type = 'picture'
@@ -551,10 +548,7 @@
                                 var item = data.value[index]
                                 //item.url = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png'
                                 //item.sizeConfig = ''
-                                _this.storageClient.urlFor({fileId:item.id}).then((res)=>{
-                                    item.url = _this.ufsUrl +'/'+ res.url;
-                                    _this.$forceUpdate();
-                                })
+                                _this.setPictureUrl(item)
                                 /*item.url = _this.Config.serverConfig.engineService + '/stream?filePath=' + (item.relativePath || item.url)*/
                                 item.sizeConfig = '';/*'&width=180&height=220'*/
                                 item.name = item.fileName || item.name
@@ -570,6 +564,12 @@
                     default:
                 }
                 return data
+            },
+            setPictureUrl(item){
+                this.storageClient.urlFor({fileId:item.id}).then((res)=>{
+                    item.url = this.ufsUrl +'/'+ res.url;
+                    this.$forceUpdate();
+                });
             }
         },
         component: {},
