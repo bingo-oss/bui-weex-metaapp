@@ -480,7 +480,7 @@
                 let viewId = this.selectedFilter.viewId;
                 // 获取视图定义
                 this.metaEntity = metabase.findMetaEntity(this.selectedFilter.entityName);//获取设置当前实体
-                this.metaEntity.resourceUrl = this.dataUrlPath = /*this.metaEntity.engineUrl*/this.config.apiBaseUrl+this.metaEntity.entityPath;//完整请求地址
+                this.metaEntity.resourceUrl = this.dataUrlPath = this.metaEntity.engineUrl/*this.config.apiBaseUrl*/+this.metaEntity.entityPath;//完整请求地址
                 this.engineUrl = this.metaEntity.engineUrl;
                 this.entityName = this.selectedFilter.entityName;
                 this.entityId = "";
@@ -612,7 +612,7 @@
                                     if (res.defaultSort) {
                                         view.orderby = `${res.defaultSort.key} ${res.defaultSort.order}`
                                     }else{
-                                        view.orderby = "updatedAt desc";
+                                        //view.orderby = "updatedAt desc";
                                     }//排序字段
                                     if(_views.length==(_i+1)){
                                         //请求完成后

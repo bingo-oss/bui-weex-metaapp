@@ -179,7 +179,7 @@ export default {
     },
     getEntityFields(projectId, entityName, entityId) {
         return this._getConfig().then((data) => {
-            let metabaseUrl = data[keyMetaBaseEndpoint]
+            let metabaseUrl = data["service.metaservice.endpoint"]
             var filters = 'projectId eq ' + projectId
             if (entityName) {
                 filters += ' and entityName eq ' + entityName
