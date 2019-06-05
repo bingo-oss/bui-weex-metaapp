@@ -36,7 +36,7 @@ export default {
                                 "blogApi": resp.data["service.blog.endpoint"],
                                 "uamUrl": resp.data["service.link.endpoint"],
                                 "engineService": resp.data["service.gateway.endpoint"]+"/services",
-                                "ufsUrl":projectInfo.engine.externalUrl.replace("api",resp.data["service.ufs.endpoint"])
+                                "ufsUrl":projectInfo.engine.externalUrl.replace("api","")+resp.data["service.ufs.endpoint"]
                             });
                             this.serverConfig = configData;
                             resolve(configData);

@@ -10,7 +10,6 @@
             </div>
 
         </div>
-
         <div style="padding-left: 25px;">
             <div class="compare-title">
                 <text style="font-size: 28px;">相关信息</text>
@@ -52,7 +51,7 @@
                             <div class="flex-row" style="margin-top: 16px;">
                                 <image style="width:340px; height: 415px; padding-right: 25px;"
                                        v-for="pic in item.value"
-                                       :src="pic.url + pic.sizeConfig"
+                                       :src="pic.url"
                                        @click="handlePreview(pic)"
                                 ></image>
                             </div>
@@ -114,7 +113,7 @@
                             <div class="flex-row text_detail_content _500_content">
                                 <image style="width: 170px;height: 220px; margin:3px 0px 0px 3px;"
                                        v-for="pic in item.value"
-                                       :src="pic.url + pic.sizeConfig"
+                                       :src="pic.url"
                                        @click="handlePreview(pic)"
                                 ></image>
                             </div>
@@ -145,7 +144,7 @@
     import factoryApp from "../libs/factory-app";
     import linkapi from "linkapi"
     import engineservice from "../../../src/js/services/engine/engineservice";
-
+    import {StorageClient,ConvertClient} from "../../js/ufs/ufs";
     module.exports = {
         props: {
             widgetParams: {
@@ -166,7 +165,8 @@
                 processResultContent: [],//处理结果（用于显示）
                 processResultEntityTableInfo: [],//实体表信息（处理结果）
                 expandInfoTitle: '',//扩展信息title
-                _entity:{}
+                _entity:{},
+                storageClient:""//ufs对象
             }
         },
         methods: {
@@ -382,7 +382,11 @@
                             var item = value[index]
                             //item.url = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png'
                             //item.sizeConfig = ''
-                            item.url = _this.Config.serverConfig.engineService + '/stream?filePath=' + (item.relativePath || item.url)
+                            _this.storageClient.urlFor({fileId:item.id}).then((res)=>{
+                                item.url = _this.ufsUrl +'/'+ res.url;
+                                _this.$forceUpdate();
+                            });
+                            /*item.url = _this.Config.serverConfig.engineService + '/stream?filePath=' + (item.relativePath || item.url)*/
                             item.sizeConfig = '&width=180&height=220'
                             item.type = 'picture'
                             item.title = item.name
@@ -506,7 +510,7 @@
                 let _this = this;
                 return Object.assign({}, {
                     widgetParams: _this.widgetParams,
-                    selectedItem: Object.assign({}, _this.data.data),
+                    selectedItem: Object.assign({}, _this.data),
                     metaEntity: Object.assign({}, _this.metaEntit)
                 })
             },
@@ -547,15 +551,19 @@
                                 var item = data.value[index]
                                 //item.url = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png'
                                 //item.sizeConfig = ''
-                                item.url = _this.Config.serverConfig.engineService + '/stream?filePath=' + (item.relativePath || item.url)
-                                item.sizeConfig = '&width=180&height=220'
+                                _this.storageClient.urlFor({fileId:item.id}).then((res)=>{
+                                    item.url = _this.ufsUrl +'/'+ res.url;
+                                    _this.$forceUpdate();
+                                })
+                                /*item.url = _this.Config.serverConfig.engineService + '/stream?filePath=' + (item.relativePath || item.url)*/
+                                item.sizeConfig = '';/*'&width=180&height=220'*/
                                 item.name = item.fileName || item.name
                             }
                         } else {
                             //data.value.url = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png'
                             //data.value.sizeConfig = ''
                             data.value.url = _this.Config.serverConfig.engineService + '/stream?filePath=' + (data.value.relativePath || data.value.url)
-                            data.value.sizeConfig = '&width=180&height=220'
+                            data.value.sizeConfig = '';/*'&width=180&height=220'*/
                             data.value.name = data.value.fileName || data.value.name
                         }
                         break;
@@ -572,11 +580,11 @@
         },
         mounted() {
             let _this = this;
-            service.init(config.serverConfig.configServerUrl); //初始化请求地址
+            /*service.init(config.serverConfig.configServerUrl); //初始化请求地址
             engineservice.getEntity(_this.widgetParams.entityName).then((res)=>{
                 _this.metaEntit = res;
                 _this.getDetailsInfo();
-            })
+            })*/
 
             /*config.getMetabase().then((res)=>{//初始化
                 _this.metaEntit = metabase.findMetaEntity(_this.widgetParams.entityName);
@@ -590,6 +598,34 @@
             globalEvent.addEventListener("resume", e => {
                 this.getDetailsInfo();
             });
+
+            //设置ufs图片读取
+            let contextPath = this.$getContextPath(), _t = this;
+            config.readRuntimeConfig(contextPath).catch(err => {}).then(runtimeConfig => {
+                _t.ufsUrl = runtimeConfig.ufsUrl;
+                if(config.debug){
+                    //调试模式
+                    _t.storageClient = new StorageClient(_t.ufsUrl,{
+                        accessToken:config.token
+                    });
+                }else{
+                    linkapi.getToken(obj => {
+                        _t.storageClient = new StorageClient(_t.ufsUrl,{
+                            accessToken:obj.accessToken
+                        });
+                    });
+                }
+
+                //请求数据逻辑
+                engineservice.getEntity(_this.widgetParams.entityName).then((res)=>{
+                    _this.metaEntit = res;
+                    _this.getDetailsInfo();
+                });
+
+            });//获取以及设置ufs对象
+
+
+
         },
         created() {
             factoryApp.init(this);//初始化全局api的指向
