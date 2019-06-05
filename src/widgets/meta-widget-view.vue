@@ -485,19 +485,27 @@
                 this.entityName = this.selectedFilter.entityName;
                 this.entityId = "";
                 let viewDef = this.selectedFilter.viewConfig
+                this.viewDef = viewDef;
                 this.queryParam = {
                     orderby:this.selectedFilter.orderby,
                     viewId:this.selectedFilter.filterId
                 };
-                // 选择字段
-                viewDef.columns.forEach(col => {
+                // 支持关键字搜索字段
+                if(viewDef.toolbar&&viewDef.toolbar.quicksearch&&viewDef.toolbar.quicksearch.fields){
+                    this.quickSearchableField = viewDef.toolbar.quicksearch.fields;
+                }
+                //存在高级搜索
+                if(viewDef.toolbar&&viewDef.toolbar.advanceSearchFields&&viewDef.toolbar.advanceSearchFields.length){
+                    this.showFilterView = true;
+                }
+                /*viewDef.columns.forEach(col => {
                     if (col.key) {
                         this.quickSearchableField.push(col.key);
                     }
                     if(col.searchable){
                         this.showFilterView = true;//存在高级筛选 显示按钮
                     }
-                });
+                });*/
                 let layout = viewDef.columns;
                 if(layout[0])this.p1 = layout[0]?layout[0].key:"";
                 if(layout[1])this.p2 = layout[1]?layout[1].key:"";
@@ -510,21 +518,21 @@
                 }else{
                     this.buiSwipeCellDefaultHeight = 200;
                 }
-                this.refreshData();
-                /*service.getSwaggerEntityDef(this.engineUrl, this.entityName).then(entityDef => {
+                //this.refreshData();
+                service.getSwaggerEntityDef(this.engineUrl, this.entityName).then(entityDef => {
                     for (let k in entityDef.properties) {
                         let p = entityDef.properties[k];
                         if (p['x-join-fields']) {
                             let entityRefProp = p['x-join-fields'][0];
                             let entityName = p['x-target-entity'].toLowerCase();
                             if (entityDef.properties[entityRefProp]) {
-                                entityDef.properties[entityRefProp].entityResourceUrl = `${engineUrl}/${entityName}`
+                                entityDef.properties[entityRefProp].entityResourceUrl = `${this.engineUrl}/${this.metaEntity.entityPath}`
                             }
                         }
                     }
                     this.swaggerEntiyDef = entityDef;
                     this.refreshData();
-                });*/
+                });
             },
             getWidgetContext(obj){
                 //传入操作的上下文内容
