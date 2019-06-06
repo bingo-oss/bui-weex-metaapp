@@ -17,7 +17,7 @@
         </template>
         <div class="form-hrb">
             <div v-if="!viewMode&&!forceView" class="file_image">
-                <bui-button class="ex-btn" size="small" value="文件上传" @click="inputClicked(2)">
+                <bui-button class="ex-btn" size="small" value="上 传" @click="inputClicked(2)">
                     <bui-icon style="margin-right: 10px;" name="ion-ios-cloud-upload-outline" color=""></bui-icon>
                 </bui-button>
             </div>
