@@ -17,7 +17,9 @@
         </template>
         <div class="form-hrb">
             <div v-if="!viewMode&&!forceView" class="file_image">
-                <bui-button class="ex-btn" size="small" value="文件上传" @click="inputClicked(2)"></bui-button>
+                <bui-button class="ex-btn" size="small" value="文件上传" @click="inputClicked(2)">
+                    <bui-icon style="margin-right: 10px;" name="ion-ios-cloud-upload-outline" color=""></bui-icon>
+                </bui-button>
             </div>
             <div class="file_li" v-for="(file,index) in files" @click="handlePreview(file)">
                 <text  @click="handlePreview(file)" width="120px" height="120px" style="font-size: 28px;">{{file.name}}</text>
@@ -155,7 +157,7 @@
 <style src="../../styles/common.css" scoped="false"></style>
 <style>
     .file_image{ margin-bottom: 15px; margin-left: 15px; }
-    .file_li{ padding-bottom: 5px; padding-top: 5px; min-height: 50px;}
+    .file_li{ padding-bottom: 15px; padding-top: 15px; min-height: 50px;}
     .image_del{ position: absolute; right: 5px; bottom:5px;}
     .wxc-loading {
         position: fixed;
