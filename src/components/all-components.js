@@ -21,6 +21,7 @@ const formComponents= {
     'MultiRefEntity': require('./form/multi-ref-entity.vue'),
     'DateTime': require('./form/datetime.vue'),
     'IssuedNumber': require('./form/issued_number.vue'),
+    'FileUpload': require('./form/file_upload.vue')
 }
 const tools={
     'refresh-wrapper': require('./common/refresh.vue'),
