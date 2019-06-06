@@ -59,9 +59,9 @@
             // 遍历 layout 里的所有表单项
             this.swaggerEntiyDef
             this.viewDef && this.swaggerEntiyDef && this.viewDef.columns.forEach((col) => {
-                if (!col.searchable&&this.filterCheck) {
+                /*if (!col.searchable&&this.filterCheck) {
                     return;
-                }
+                }*/
                 let properties = this.swaggerEntiyDef.properties[col.key];
                 if(!properties)return false;
                 let inputType = properties['x-input']
