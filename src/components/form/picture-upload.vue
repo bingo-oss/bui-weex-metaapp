@@ -4,9 +4,9 @@
             <div class="form-group">
                 <div class="label-wrapper">
                     <text class="form-label view-label">{{definition.componentParams.title}}</text>
-<!--
-                    <text class="view-text" :value="valueText"></text>
--->
+                    <!--
+                                        <text class="view-text" :value="valueText"></text>
+                    -->
                 </div>
             </div>
         </template>
@@ -21,11 +21,17 @@
         </template>
         <div class="form-hrb" style="flex-direction:row;flex-wrap:wrap;">
             <div class="file_image" v-for="(file,index) in files" @click="handlePreview(file)">
-                <bui-image  @click="handlePreview(file)" width="120px" height="120px" :src="getImageUrl(file.url)"></bui-image>
-                <bui-icon @click="del(file,index)" class="image_del" name="ion-android-delete" size="40" color="red"></bui-icon>
+                <bui-image @click="handlePreview(file)" width="120px" height="120px"
+                           v-if="getImageUrl(file)&&file.url"
+                           :src="file.url"></bui-image>
+                <bui-icon @click="del(file,index)" class="image_del" name="ion-android-delete"
+                          size="40" color="red"></bui-icon>
             </div>
-            <div v-if="!viewMode&&!forceView" class="file_image" @click="showOptionBar = !showOptionBar">
-                <bui-image width="120px" height="120px" src="/image/u85.png" @click="showOptionBar = !showOptionBar">></bui-image>
+            <div v-if="!viewMode&&!forceView" class="file_image"
+                 @click="showOptionBar = !showOptionBar">
+                <bui-image width="120px" height="120px" src="/image/u85.png"
+                           @click="showOptionBar = !showOptionBar">>
+                </bui-image>
             </div>
         </div>
         <div class="wxc-loading" v-if="loadingText">
@@ -46,234 +52,206 @@
 </template>
 
 <script>
-import mixin from './component-mixin.js'
-const linkapi = require("linkapi");
-const FileModule = weex.requireModule('FileModule');
-const FileTransfer = weex.requireModule('FileTransferModule');
-import config from '../../js/config';
-import _ from '../../js/tool/lodash.js';
-import buiweex from "bui-weex";
-var modal = weex.requireModule('modal');
-export default {
-    componentType: 'PictureUpload',
-    extends: mixin,
-    watch:{
-        value(newVal){
-            if(newVal){
-                this.files =  newVal
+    import mixin from './component-mixin.js'
+
+    const linkapi = require("linkapi");
+    const FileModule = weex.requireModule('FileModule');
+    const FileTransfer = weex.requireModule('FileTransferModule');
+    import config from '../../js/config';
+    import _ from '../../js/tool/lodash.js';
+    import buiweex from "bui-weex";
+    import {StorageClient, ConvertClient} from "../../js/ufs/ufs.js";
+
+
+    var modal = weex.requireModule('modal');
+    export default {
+        componentType: 'PictureUpload',
+        extends: mixin,
+        watch: {
+            value(newVal) {
+                if (newVal) {
+                    this.files = newVal;
+                }
             }
-        }
-    },
-    data() {
-        return {
-            valueText: '',
-            files:[],
-            optionItems:["拍照上传","选择图片"],
-            showOptionBar: false,
-            loadingText:false,
-            officeSupport: [
-                "ods",
-                "xls",
-                "xlsb",
-                "xlsm",
-                "xlsx",
-                "one",
-                "onetoc2",
-                "onepkg",
-                "odp",
-                "pot",
-                "potm",
-                "potx",
-                "pps",
-                "ppsm",
-                "ppsx",
-                "ppsx",
-                "ppt",
-                "pptm",
-                "pptx",
-                "doc",
-                "docm",
-                "docx",
-                "dot",
-                "dotm",
-                "dotx",
-                "odt",
-                "pdf"
-            ]
-        }
-    },
-    computed: {
-        inputStyle() {
+        },
+        data() {
             return {
-                color: this.value ? '' : '#BEBCBC'
+                valueText: '',
+                files: [],
+                optionItems: ["拍照上传", "选择图片"],
+                showOptionBar: false,
+                loadingText: false,
+                ufsUrl: "",
+                storageClient: null
             }
-        }
-    },
-    methods: {
-        onSelectOptionType(item){
-            switch (item) {
-                case '拍照上传':
-                    this.inputClicked(0);
-                    break;
-                case '选择图片':
-                    this.inputClicked(1);
-                    break;
-            }
-            this.showOptionBar = false;
         },
-        fileUpload(files,filesIndex){
-            let _this = this;
-            if(!files[filesIndex]) {
-                _this.$emit('input', _this.files)
-                _this.loadingText = false;
-                return false;
+        computed: {
+            inputStyle() {
+                return {
+                    color: this.value ? '' : '#BEBCBC'
+                }
             }
-            let _sourcePath = {
-                sourcePath:files[filesIndex].resourceLocal,
-                savePath:true,
-                quality:70
-            }
-            if(files[filesIndex].resourceSize&&(files[filesIndex].resourceSize.indexOf("KB")==-1)){
-                _sourcePath.targetWidth = 640;
-            }//需要压缩
-            _this.loadingText = true;
-            linkapi.compressImage(_sourcePath,function(file){
-                    FileTransfer.upload(file.filePaths[0],config.serverConfig.engineService + "/stream",{},(progress)=>{
-                        //进度
-                    },(res)=>{
-                        if(res.code==200){
-                            var fileData = JSON.parse(res.response);
-                            _this.files.push({
-                                name:fileData.file.fileName,
-                                url:fileData.file.relativePath,
-                                size:fileData.file.size
-                            }/*fileData.file*/);
+        },
+        methods: {
+            onSelectOptionType(item) {
+                switch (item) {
+                    case '拍照上传':
+                        this.inputClicked(0);
+                        break;
+                    case '选择图片':
+                        this.inputClicked(1);
+                        break;
+                }
+                this.showOptionBar = false;
+            },
+            fileUpload(files, filesIndex) {
+                let _this = this;
+                if (!files[filesIndex]) {
+                    _this.$emit('input', _this.files)
+                    _this.loadingText = false;
+                    return false;
+                }
+                var _file = files[filesIndex]
+
+                let _sourcePath = {
+                    sourcePath: _file.resourceLocal,
+                    savePath: true,
+                    quality: 70
+                }
+
+                if (_file.resourceSize && (_file.resourceSize.indexOf("KB") == -1)) {
+                    _sourcePath.targetWidth = 640;
+                }//需要压缩
+                _this.loadingText = true;
+                linkapi.compressImage(_sourcePath, function (file) {
+                    if (file && file.status == 'success') {
+                        //执行上传文件
+                        _this.storageClient.upload(
+                                {file: file.filePaths[0]},
+                                {baseUrl: _this.ufsUrl})
+                                .then((data, resp) => {
+                            _this.storageClient.urlFor({
+                                fileId: data.id,
+                                responseHeaderOverrides:{
+                                    "Content-Disposition":`attachment; ${_file.resourceDescription}`
+                                }
+                            }).then(res => {
+                                _this.files.push({
+                                id: data.id,
+                                name: _file.resourceDescription,
+                                size: _file.resourceSize,
+                                url:`${_this.ufsUrl}/${res.url}`
+                            });
                             filesIndex++;
-                            _this.fileUpload(files,filesIndex);
-                            //_this.$emit('input', JSON.stringify(_this.files))
-                        }
-                        //this.$alert(res);
-                        //成功回调
-                    },(erro)=>{
-                        //失败回调
-                        //_this.$alert(erro);
-                        filesIndex++;
-                        _this.fileUpload(files,filesIndex)
-                    });
-            });
-        },
-        inputClicked(type) {
-            if(this.readonly){
-                return;
-            }
-            let _this = this;
-
-/*            if(type==1){
-                //选择图片
-                linkapi.selectImage({quality:85,maxSelect:15},function(res){
-                    _this.fileUpload(res.filePaths,0);//执行上传
-                })
-            }else{
-                linkapi.captureImage({quality:85},function(res){
-                    _this.fileUpload(res.filePaths,0);//执行上传
-                });
-            }*/
-            linkapi.selectFiles(type, (result) => {
-                if (result.resource) {
-                    if(_.isString(result.resource)){
-                        result.resource = JSON.parse(result.resource)
-                    }
-                    _this.fileUpload(result.resource,0);//执行上传
-                }
-            }, (err) => {
-            })
-
-
-            /*FileTransfer.upload("","",{},(e)=>{
-                this.$alert(e);
-            },(e)=>{
-                this.$alert(e);
-            },(erro)=>{
-                this.$alert(erro);
-            })*/
-            /*linkapi.selectFiles(1, (result) => {
-                /!*if (result.resource) {
-                    linkapi.uploadFiles(result.resource, (res) => {
-                        this.$alert(res);
-                    }, (err) => {
-                        //this.$alert(err);
-                    })
-                } else {
-                    // No resource selected.
-                }*!/
-                this.$alert(result)
-                // this.$emit('input', result.id)
-                // this.valueText = result.name;
-            }, (err) => {
-                this.$alert(err);
-            })*/
-        },
-        getImageUrl(url){
-            let _url = config.serverConfig.engineService + "/stream?filePath=";
-            if (_.isEmpty(url)) {
-                return "";
-            }
-            let _array = url.split("||");
-            if (Array.isArray(_array)) {
-                if (_array.length > 0) {
-                    return _url + _array[0] +"&width=120&height=120";
-                } else {
-                    return _url + url+"&width=120&height=120";
-                }
-            } else {
-                return _url + url+"&width=120&height=120";
-            }
-        },
-        downloadUrl(url,success) {
-            if (_.startsWith(url, 'http://') || _.startsWith(url, 'https://')) {
-                success(url)
-            }else{
-                success(`${config.serverConfig.engineService}/stream?filePath=${url}`)
-            }
-        },
-        handlePreview(file) {
-            //下载或者预览
-            this.downloadUrl((file.relativePath||file.url),(downloadUrl)=>{
-                let suffix = file.name.split("."),previewUrl;
-                if(file.download){
-                    previewUrl = downloadUrl;
-                    //执行的是下载操作--不是预览
-                    FileTransfer.download(previewUrl,{filename:file.name},function(res){
-                        /*buiweex.alert(res);*/
-                    },function(res){
-                        FileModule.openFile(res.savePath);
-                        /*buiweex.alert(res);*/
-                    },function(erro){
-
-                    });
-                }else{
-                    if (this.officeSupport.indexOf(suffix) != -1) {
-                        previewUrl = `https://officeonline.bingosoft.net/op/view.aspx?src=${encodeURIComponent(downloadUrl)}`;
+                            _this.fileUpload(files, filesIndex);
+                        });
+                    }).catch((resp) => {
+                        });
+                    } else if (!file) {
+                        loadingText = false;
+                        buiweex.alert("压缩失败");
                     } else {
-                        previewUrl = downloadUrl;
+                        loadingText = false;
+                        buiweex.alert(file.message);
                     }
-                    linkapi.openLinkBroswer(file.name?file.name:"预览",previewUrl);
+                });
+            },
+            /**
+             * 点击拍照/选本地图片
+             **/
+            inputClicked(type) {
+                if (this.readonly) {
+                    return;
                 }
+                let _this = this;
+                linkapi.selectFiles(type, (result) => {
+                    if (result) {
+                        if (result.resource) {
+                            if (_.isString(result.resource)) {
+                                result.resource = JSON.parse(result.resource)
+                            }
+                            _this.fileUpload(result.resource, 0);//执行上传
+                        }
+                    }
+                }, (err) => {
+                })
+            },
+            getImageUrl(file) {
+                if(!file.url){
+                    this.storageClient.urlFor({
+                        fileId: file.id
+                    }).then(res => {
+                        file.url = `${this.ufsUrl}/${res.url}`;
+                    this.$forceUpdate();
+                });
+                }
+                return true;
+            },
+            handlePreview(file) {
+                var _this = this
+                //下载并打开
+                if (file.savePath) {
+                    //已经下载过
+                    FileModule.openFile(file.savePath);
+                    return false;
+                }
+                _this.storageClient.urlFor({
+                    fileId: file.id
+                }).then(res => {
+                    // buiweex.alert(`${_this.ufsUrl}/${res.url}` + "\r\n-----------\r\n" + JSON.stringify({filename: file.name}))
+                    file.url = `${_this.ufsUrl}/${res.url}`
+                FileTransfer.download(`${_this.ufsUrl}/${res.url}`, {filename: file.name}, function (res) {
+                }, function (res) {
+                    file.savePath = res.savePath;//记录下载后的路径--再次打开不需要重新下载
+                    FileModule.openFile(res.savePath);
+                }, function (erro) {
+                });
             });
+            },
+            del(file, index) {
+                //移除图片
+                this.files.splice(index, 1);
+                this.$emit('input', this.files)
+            }
         },
-        del(file,index){
-            //移除图片
-            this.files.splice(index,1);
-            this.$emit('input', this.files)
+        mounted() {
+            //设置ufs图片读取
+            let contextPath = this.$getContextPath(), _t = this;
+            config.readRuntimeConfig(contextPath)
+                    .catch(err => {
+            })
+        .then(runtimeConfig => {
+                _t.ufsUrl = runtimeConfig.ufsUrl;
+            if (config.debug) {
+                //调试模式
+                _t.storageClient = new StorageClient(_t.ufsUrl, {
+                    accessToken: config.token
+                });
+            } else {
+                linkapi.getToken(obj => {
+                    _t.storageClient = new StorageClient(_t.ufsUrl, {
+                    accessToken: obj.accessToken
+                });
+            });
+            }
+        });//获取以及设置ufs对象
         }
-    },
-}
+    }
 </script>
 
 <style src="../../styles/common.css" scoped="false"></style>
 <style>
-    .file_image{ margin-bottom: 15px; margin-left: 15px;}
-    .image_del{ position: absolute; right: 5px; bottom:5px;}
+    .file_image {
+        margin-bottom: 15px;
+        margin-left: 15px;
+    }
+
+    .image_del {
+        position: absolute;
+        right: 5px;
+        bottom: 5px;
+    }
+
     .wxc-loading {
         position: fixed;
         left: 287px;
@@ -282,6 +260,7 @@ export default {
         align-items: center;
         justify-content: center;
     }
+
     .loading-box {
         align-items: center;
         justify-content: center;
@@ -291,6 +270,7 @@ export default {
         background-color: #000;
         opacity: .4;
     }
+
     .loading-text {
         padding-top: 30px;
         color: #fff;
