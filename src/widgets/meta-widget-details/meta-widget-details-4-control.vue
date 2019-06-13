@@ -556,7 +556,8 @@
                         } else {
                             //data.value.url = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png'
                             //data.value.sizeConfig = ''
-                            data.value.url = _this.Config.serverConfig.engineService + '/stream?filePath=' + (data.value.relativePath || data.value.url)
+                            /*data.value.url = _this.Config.serverConfig.engineService + '/stream?filePath=' + (data.value.relativePath || data.value.url)*/
+                            _this.setPictureUrl(data.value)
                             data.value.sizeConfig = '';/*'&width=180&height=220'*/
                             data.value.name = data.value.fileName || data.value.name
                         }
@@ -566,10 +567,22 @@
                 return data
             },
             setPictureUrl(item){
-                this.storageClient.urlFor({fileId:item.id}).then((res)=>{
-                    item.url = this.ufsUrl +'/'+ res.url;
+                //图片判断
+                //替换规则
+                if(item.url||item.relativePath){
+                    if(item.relativePath){
+                        item.url = item.relativePath;
+                    }
+                    _.each(config.serverConfig.replaceRules,(val,key)=>{
+                        item.url = item.url.replace(key,val);
+                    });
                     this.$forceUpdate();
-                });
+                }else{
+                    this.storageClient.urlFor({fileId:item.id}).then((res)=>{
+                        item.url = this.ufsUrl +'/'+ res.url;
+                        this.$forceUpdate();
+                    });
+                };
             }
         },
         component: {},
