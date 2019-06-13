@@ -402,7 +402,7 @@
                             var item = value[index]
                             //item.url = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png'
                             //item.sizeConfig = ''
-                            item.url = _this.Config.serverConfig.engineService + '/stream?filePath=' + (item.relativePath || item.url)
+                            item.url = _this.pictureJudgment(item.relativePath || item.url)/*_this.Config.serverConfig.engineService + '/stream?filePath=' + (item.relativePath || item.url)*/
                             item.sizeConfig = '&width=180&height=220'
                             item.type = 'picture'
                             item.title = item.name
@@ -567,14 +567,14 @@
                                 var item = data.value[index]
                                 //item.url = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png'
                                 //item.sizeConfig = ''
-                                item.url = _this.Config.serverConfig.engineService + '/stream?filePath=' + (item.relativePath || item.url)
+                                item.url = _this.pictureJudgment(item.relativePath || item.url)/*_this.Config.serverConfig.engineService + '/stream?filePath=' + (item.relativePath || item.url)*/
                                 item.sizeConfig = '&width=180&height=220'
                                 item.name = item.fileName || item.name
                             }
                         } else {
                             //data.value.url = 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1553158994698&di=22847c957650625069b3114ed6e250e5&imgtype=0&src=http%3A%2F%2Fb-ssl.duitang.com%2Fuploads%2Fitem%2F201508%2F22%2F20150822141911_MWarN.png'
                             //data.value.sizeConfig = ''
-                            data.value.url = _this.Config.serverConfig.engineService + '/stream?filePath=' + (data.value.relativePath || data.value.url)
+                            data.value.url = _this.pictureJudgment(data.value.relativePath || data.value.url)/*_this.Config.serverConfig.engineService + '/stream?filePath=' + (data.value.relativePath || data.value.url)*/
                             data.value.sizeConfig = '&width=180&height=220'
                             data.value.name = data.value.fileName || data.value.name
                         }
@@ -582,6 +582,18 @@
                     default:
                 }
                 return data
+            },
+            pictureJudgment(url){
+                //图片判断
+                //替换规则
+                _.each(config.replaceRules,(val,key)=>{
+                    url = url.replace(key,val);
+                });
+                if(!url.startsWith('http')) {
+                    return this.Config.serverConfig.engineService + '/stream?filePath=' +url;
+                }else{
+                    return url;
+                }
             }
         },
         component: {},
@@ -592,7 +604,6 @@
         },
         mounted() {
             let _this = this;
-
             service.init(config.serverConfig.configServerUrl); //初始化请求地址
             service.getMetaEntity(_this.widgetParams.entityId).then(res => {
                 _this.metaEntit = res;
