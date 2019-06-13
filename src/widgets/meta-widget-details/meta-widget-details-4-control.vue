@@ -586,7 +586,7 @@
             pictureJudgment(url){
                 //图片判断
                 //替换规则
-                _.each(config.replaceRules,(val,key)=>{
+                _.each(config.serverConfig.replaceRules,(val,key)=>{
                     url = url.replace(key,val);
                 });
                 if(!url.startsWith('http')) {
