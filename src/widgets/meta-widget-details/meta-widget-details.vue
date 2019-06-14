@@ -39,17 +39,17 @@
             <div class="pic-con flex-row" style="flex-wrap:wrap; padding-bottom: 15px;">
                 <div class="_picture"  v-if="comparePic.snapPicture" v-for="picture in comparePic.snapPicture" @click="handlePreview(picture)">
                     <image class="_picture_img"
-                           :src="Config.serverConfig.engineService+'/stream?filePath='+(picture.relativePath||picture.url)+'&width=300&height=400'" @click="handlePreview(picture)"></image>
+                           :src="pictureJudgment((picture.relativePath||picture.url))" @click="handlePreview(picture)"></image>
                     <text class="nonal" style="text-align: center; margin-top: 15px;">抓拍图片</text>
                 </div>
                 <div class="_picture" v-if="comparePic.originalPicture" v-for="picture in comparePic.originalPicture" @click="handlePreview(picture)">
                     <image class="_picture_img"
-                           :src="Config.serverConfig.engineService+'/stream?filePath='+(picture.relativePath||picture.url)+'&width=300&height=400'" @click="handlePreview(picture)"></image>
+                           :src="pictureJudgment((picture.relativePath||picture.url))" @click="handlePreview(picture)"></image>
                     <text class="nonal" style="text-align: center; margin-top: 15px;">库中原图</text>
                 </div>
                 <div class="_picture" v-if="comparePic.snapPanorama" v-for="picture in comparePic.snapPanorama" @click="handlePreview(picture)">
                     <image class="_picture_img"
-                           :src="Config.serverConfig.engineService+'/stream?filePath='+(picture.relativePath||picture.url)+'&width=300&height=400'" @click="handlePreview(picture)"></image>
+                           :src="pictureJudgment((picture.relativePath||picture.url))" @click="handlePreview(picture)"></image>
                     <text class="nonal" style="text-align: center; margin-top: 15px;">抓拍全景图</text>
                 </div>
             </div>
@@ -129,7 +129,7 @@
                     <text class="nonal" style="padding-right: 20px;">现场图片</text>
                     <div style="flex-direction:row;flex-wrap:wrap; flex: 1;">
                         <div v-for="picture in result.livePicture" style="margin:3px 0px 0px 3px;" @click="handlePreview(picture)">
-                            <image style="width: 170px;height: 220px;" :src="Config.serverConfig.engineService+'/stream?filePath='+(picture.relativePath||picture.url)+'&width=180&height=220'" @click="handlePreview(picture)"></image>
+                            <image style="width: 170px;height: 220px;" :src="pictureJudgment((picture.relativePath||picture.url))" @click="handlePreview(picture)"></image>
                         </div>
                     </div>
                 </div>
@@ -287,6 +287,18 @@
             handlePreview(file) {
                 //预览
                 linkapi.openLinkBroswer(file.name?file.name:"预览",`${config.serverConfig.engineService}/stream?filePath=${file.relativePath||file.url}`);
+            },
+            pictureJudgment(url){
+                //图片判断
+                //替换规则
+                _.each(config.serverConfig.replaceRules,(val,key)=>{
+                    url = url.replace(key,val);
+                });
+                if(!url.startsWith('http')) {
+                    return config.serverConfig.engineService+'/stream?filePath='+url+'&width=180&height=220';
+                }else{
+                    return url;
+                }
             }
         },
         filters: {
