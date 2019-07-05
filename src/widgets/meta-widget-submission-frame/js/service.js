@@ -8,7 +8,9 @@ const service={
         //获取某实体关联的流程
         return new Promise(function(resolve,reject){
             config.readRuntimeConfig().then(runtimeConfig => {
-                ax.get(`${runtimeConfig["service.metad.api.endpoint"]}/meta_entity_proc_relation`, {filters: `metaEntityId eq ${metaEntityId}`}).then(res=>{
+                let params = {};
+                params.filters = `metaEntityId eq ${metaEntityId}`
+                ax.get(`${runtimeConfig["service.metaservice.endpoint"]}/meta_entity_proc_relation`,params).then(res=>{
                     resolve(res);
                 },(err)=>{
                     reject(err);
@@ -18,11 +20,12 @@ const service={
             })
         });
     },
-    getfirstSteps(procDefKey){
+    getfirstSteps(procDefKey,projectId){
         //没有发起流程时获取下一步信息
         return new Promise(function(resolve,reject){
             config.readRuntimeConfig().then(runtimeConfig => {
-                ax.get(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/process-definitions/${procDefKey}/first_steps`)
+                // ax.get(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/process-definitions/${procDefKey}/first_steps`)
+                ax.get(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/process-definitions/${projectId}/${procDefKey}/first_steps`)
                     .then(function ({data}) {
                         resolve(data);
                     },(err)=>{
@@ -37,6 +40,7 @@ const service={
         //启动流程
         return new Promise(function(resolve,reject){
             config.readRuntimeConfig().then(runtimeConfig => {
+                //ax.post(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/process-instances`, param).then(function(res){
                 ax.post(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/process-instances`, param).then(function(res){
                     resolve(res);
                 },(err)=>{
@@ -51,6 +55,7 @@ const service={
         //完成任务
         return new Promise(function(resolve,reject){
             config.readRuntimeConfig().then(runtimeConfig => {
+                // ax.post(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/tasks/${param.taskId}/complete`, param).then(res=>{
                 ax.post(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/tasks/${param.taskId}/complete`, param).then(res=>{
                     resolve(res.data);
                 },(err)=>{
@@ -61,11 +66,12 @@ const service={
             })
         });
     },
-    getTaskInfo(taskId,businessKey){
+    getTaskInfo(businessKey){
         //获取任务详情
         return new Promise(function(resolve,reject){
             config.readRuntimeConfig().then(runtimeConfig => {
-                ax.get(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/tasks/info`,{taskId:taskId,businessKey:businessKey,getInstance: true}).then(res=>{
+                // ax.get(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/tasks/info`,{businessKey:businessKey}).then(res=>{
+                ax.get(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/tasks/info`,{businessKey:businessKey}).then(res=>{
                     resolve(res.data);
                 },(err)=>{
                     reject(err);
@@ -74,6 +80,19 @@ const service={
                 reject(err);
             })
         });
+        /*return new Promise(function(resolve,reject){
+            config.readRuntimeConfig().then(runtimeConfig => {
+                ax.get(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/tasks/info`,{taskId:taskId,businessKey:businessKey,getInstance: true}).then(res=>{
+                    debugger
+                    resolve(res.data);
+                },(err)=>{
+                    console.log('gogo===>',err);
+                    reject(err);
+                });
+            },(err)=>{
+                reject(err);
+            })
+        });*/
     },
     getProcdefSetting(processDefinitionKey,actId){
         //根据流程定义，及环节名获取合并后的流程配置
