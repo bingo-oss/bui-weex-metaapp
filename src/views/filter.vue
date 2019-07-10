@@ -37,6 +37,7 @@
     import ajax from '../js/ajax.js'
     import service from '../js/service.js'
     import config from '../js/config.js'
+    import _ from '../js/tool/lodash';
 
     const globalEvent = weex.requireModule('globalEvent');
     const stream = weex.requireModule('stream');
@@ -75,9 +76,19 @@
                 let entityResourceUrl;
                 switch (inputType) {
                     case "RadioButton": {
-                        let options = properties['x-options'].items.map(o => {
-                            return {id: o.value + '', text: o.title}
-                        });
+                        let options;
+                        if(properties['x-options'].items){
+                                 options = properties['x-options'].items.map(o => {
+                                        return {id: o.value + '', text: o.title}
+                                    });
+                        }else if(properties['enum']){
+                            options = []
+                            _.each(properties['enum'],(e,index)=>{
+                                options.push({
+                                    id:e,text:e
+                                });
+                            });
+                        }
                         fakeDefinition.componentParams.options = options;
                         break;
                     }
