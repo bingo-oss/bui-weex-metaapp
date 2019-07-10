@@ -50,15 +50,31 @@
             </div>
         </scroller>
 
-        <!--<bui-loading :show="isShowLoading" :loading-text="loadingText==''?'加载中...':loadingText"></bui-loading>-->
+        <bui-loading :show="isShowLoading" :loading-text="loadingText==''?'加载中...':loadingText"></bui-loading>
     </div>
 </template>
 <script>
+    import _service from '../../js/service.js';
     import _ from '../../js/tool/lodash';
     import service from "./js/service"
     import factoryApp from '../libs/factory-app.js';
-
+    import engineservice1 from "../../../src/js/services/engine/engineservice";
+    import config from '../../../src/js/config'
     const picker = weex.requireModule('picker')
+    /**
+     * 实体必须先关联流程，即先用流程编辑器进行流程的
+     * 新建，编辑。然后实体进行关联。
+     *
+     * 初始化需要拿到projectId,entityId,dataId(数据id)
+     *1、通过_businessKey获取任务信息getTaskInfo();
+     * 2、判断任务信息，返回值有id说明已经选择了某个流程
+     * 没有id，则先要去获取流程getMetaEntityProcRelation();
+     * 3没有id时，已获取流程，则要选择某个流程。selectProcRelations(),
+     * 然后是获取流程下一步信息getfirstSteps()，最后是审批startProcessInstanceCmd(),其实就是开启流程。
+     * 4有id时，说明流程已经在流转中了，直接获取流程的信息，taskInfor，procRelation，最后审批taskComplete。
+     * 完成任务。进入到下一环节，直到结束这个流程。
+     *
+     * */
     export default {
         props:{
             widgetParams: {
@@ -124,6 +140,8 @@
         },
         data(){
             return {
+                projectId:"", //系统id
+                entityId:"", //实体id
                 selectNode:{},//所选环节信息
                 taskInfor:{},
                 formDate: {
@@ -143,7 +161,10 @@
                 mustStopRepeatedClick: false,
                 showProcRelation: true,//显示流程
                 procRelations:[],//流程数据
-                procRelation:{}//选择的流程
+                procRelation:{},//选择的流程
+                startProcess:true,//是否开启流程
+                _businessKey:"",
+                processDefinitionId:"",
             };
         },
         methods: {
@@ -169,16 +190,18 @@
                 let _t = this,Process,ProcessType="";
                 if(_t.mustStopRepeatedClick){return}else{_t.mustStopRepeatedClick=true}
 
-                if(this.widgetParams.launch) {
+                if(this.startProcess) {
                     //发起请求
                     var _subParams = {
-                        processDefinitionKey:_t.procRelation.procDefKey,
-                        businessKey:_t.widgetParams.dataId,
+                        id:_t.projectId, //系统id
+                        processDefinitionId:_t.processDefinitionId,
+                        businessKey:_t._businessKey,
                         "variables": {
                             "applyUserId": "e4cfb2ca-7b83-44d5-a32d-1f0c0fc6c94f",
                             "userId": "fulsh",
                         },
-                        "payloadType": "StartProcessPayload"
+                        "payloadType": "StartProcessPayload",
+                        "commandType":"StartProcessInstanceCmd"
                     }
                     _.each(_t.formDate,(val,key)=>{
                         if(_subParams.localVariables)
@@ -189,6 +212,7 @@
                             _subParams.variables[key] = val
                         }
                     });//组装传入值
+                    //启动流程
                     service.startProcessInstanceCmd(_subParams).then((res)=> {
                         _t.isShowLoading = false;
                         _t.$toast('提交成功');
@@ -203,7 +227,7 @@
                     var _subParams = {
                         taskId: _t.procRelation.id,
                         processDefinitionKey:_t.procRelation.procDefKey||_t.procRelation.processDefinitionKey,
-                        businessKey:_t.widgetParams.dataId,
+                        businessKey:_t._businessKey,
                         variables: {
                             hrPass: true
                         },
@@ -221,7 +245,6 @@
                             _subParams.variables[key] = val
                         }
                     });//组装传入值
-                    
                     service.taskComplete(_subParams).then((res) => {
                         _t.isShowLoading = false;
                         _t.$toast('提交成功');
@@ -261,28 +284,29 @@
                 return true;
             },
             selectNext(){
-/*                let _t = this;
-                if(_t.taskInfor.nextNodes.length==0)return false;
-                picker.pick({
-                    value: this.value,
-                    index:_t.nodeId,
-                    items:_t.taskInfor.nextNodes.map((obj)=>{return obj.id})
-                }, event => {
-                    if (event.result === 'success'){
-                        buiweex.alert(event)
-                    }
-                })*/
+                /*                let _t = this;
+                                if(_t.taskInfor.nextNodes.length==0)return false;
+                                picker.pick({
+                                    value: this.value,
+                                    index:_t.nodeId,
+                                    items:_t.taskInfor.nextNodes.map((obj)=>{return obj.id})
+                                }, event => {
+                                    if (event.result === 'success'){
+                                        buiweex.alert(event)
+                                    }
+                                })*/
             },
             selectProcRelations(item){
                 //选择流程
                 let _t = this;
                 this.showProcRelation = false;
                 this.procRelation = item;
-                if(this.widgetParams.launch){
+                if(this.startProcess){
                     //发起
-                    service.getfirstSteps(item.procDefKey).then((res)=>{
+                    service.getfirstSteps(item.procDefKey,_t.projectId).then((res)=>{
                         //获取流程第一步信息
-                        _t.taskInfor = Object.assign({},{nextNodes:res});
+                        _t.processDefinitionId = res.processDefinitionId;
+                        _t.taskInfor = Object.assign({},{nextNodes:res.flowNodes});
                     });
                 }else{
 
@@ -292,31 +316,47 @@
         mounted(){
             let _t = this;
             this.formDate.nodeId = "default";
-            if(this.widgetParams.launch) {
-                //是提交按钮
-                service.getMetaEntityProcRelation(this.widgetParams.entityId).then((res)=>{
-                    _t.procRelations = res.data;
-                });
-            }else{
-                this.showProcRelation = false;
-                //审批按钮
-                service.getTaskInfo("",this.widgetParams.dataId).then((res) => {
+            //初始化需要拿到projectId,entityId,dataId(数据id)
+            config.getProjectId().then(res=>{
+                _t.projectId = res;
+            })
+            //_service.init(config.serverConfig.configServerUrl); //初始化请求地址
+            let async = new Promise((resolve,reject)=>{
+                engineservice1.getEntity(_t.widgetParams.entityName).then((data)=>{
+                    _t.entityId = data.attrs.metaEntityId;
+                    _t._businessKey = data.attrs.metaEntityId+':'+_t.widgetParams.dataId;
+                    resolve(_t._businessKey)
+                })
+            })
+            async.then((businessKey)=>{
+                service.getTaskInfo(businessKey).then((res) => {
                     //任务信息
                     if(res.id){
+                        this.startProcess = false;
+                        _t.showProcRelation = false;
                         _t.taskInfor = res;
-                        _t.procRelation = res.processInstance
+                        _t.procRelation = res;
                         if(res.id){
                             service.isApproval(res.id).then((res)=>{
                                 //获取当前登录用户是否具备审批权限
-                                _t.abstract.isApproval = res;
+                                _t.taskInfor.isApproval = res;
                                 if(!res){
                                     _t.$toast('不具备权限审批');
                                 }
                             },(erro)=>{});
                         }
+                    }else {
+                        this.startProcess = true;
+                        service.getMetaEntityProcRelation(this.entityId).then((res)=>{
+                            if(res){
+                                _t.procRelations = res.data;
+                            }
+                        });
                     }
                 });
-            }
+            })
+
+
         }
     }
 </script>
