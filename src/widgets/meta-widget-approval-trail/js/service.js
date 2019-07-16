@@ -4,10 +4,10 @@ import buiweex from 'bui-weex';
 const linkapi = require('linkapi');
 
 const service= {
-    tasksInfo(id){
+    tasksInfo(businessKey){
         return new Promise(function (resolve, reject) {
             config.readRuntimeConfig().then(runtimeConfig => {
-                ax.get(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/process-instances/${id}/tasksInfo`, {}).then(res=> {
+                ax.get(`${runtimeConfig["service.activiti.runtime.endpoint"]}/v1/tasks/taskInfo`, {businessKey:businessKey}).then(res=> {
                     resolve(res.data);
                 });
             })

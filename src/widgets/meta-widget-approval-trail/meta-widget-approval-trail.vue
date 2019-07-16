@@ -54,6 +54,7 @@ import service from './js/service';
 import utils from '../../js/tool/utils';
 import buiweex from 'bui-weex';
 import factoryApp from '../libs/factory-app.js';
+import engineService from "../../../src/js/services/engine/engineservice";
 
 export default {
     props: {
@@ -73,24 +74,25 @@ export default {
         }
     },
     computed: {
-        procInstId: function() {
+        /*procInstId: function() {
             return this.widgetParams.procInstId;
-        }
+        }*/
     },
     watch: {
-        procInstId: function() {
+        /*procInstId: function() {
             this.getProvalTrail();
-        }
+        }*/
     },
     methods: {
         getProvalTrail() {
             var _this = this;
-            if (_this.procInstId) {
-                service.tasksInfo(_this.procInstId).then(resp => {
+                service.tasksInfo(_this.businessKey).then(data => {
+                    _this.trail = [];//清空下轨迹数据
+            _.each(data.content,(resp)=>{
                     var procInst = resp.processInstance;
                     var variables =  resp.processInstance.variables;
                     var taskList = resp.tasks.content
-                    _this.trail = taskList.map(item => {
+                    Object.assign(_this.trail,taskList.map(item => {
                         if(!item.assigneeName){
                             if(item.currentNode&&item.currentNode.candidateInfo&&item.currentNode.candidateInfo.length){
                                 let processingPerson = [];
@@ -125,7 +127,7 @@ export default {
                                 "background-color":"#DFDFDF"
                             }
                         }
-                    });
+                    }));
                     _this.trail.reverse();//数组执行下倒叙
                     Object.assign(_this.trail[0],{
                         select:true,
@@ -134,13 +136,19 @@ export default {
                         dotStyle:{"background-color":"#5099F4"}
                     })
                     _this.trail[(_this.trail.length-1)].borderLeftWidth = {"border-left-width":0};//不需要显示线条
-
                 })
-            }
+            })
         }
     },
     mounted () {
-        this.getProvalTrail();
+        if(this.widgetParams.entityName){
+            engineService.getEntity(this.widgetParams.entityName).then((data)=>{
+                //通过实体名称获取实体id
+                this.entityId = data.attrs.metaEntityId;
+                this.businessKey = data.attrs.metaEntityId+':'+this.widgetParams.dataId;
+                this.getProvalTrail();
+            })
+        }
     }
 }
 </script>
