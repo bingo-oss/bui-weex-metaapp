@@ -92,7 +92,7 @@ export default {
                     var procInst = resp.processInstance;
                     var variables =  resp.processInstance.variables;
                     var taskList = resp.tasks.content
-                    Object.assign(_this.trail,taskList.map(item => {
+                    _this.trail =_this.trail.concat(taskList.map(item => {
                         if(!item.assigneeName){
                             if(item.currentNode&&item.currentNode.candidateInfo&&item.currentNode.candidateInfo.length){
                                 let processingPerson = [];
@@ -129,14 +129,14 @@ export default {
                         }
                     }));
                     _this.trail.reverse();//数组执行下倒叙
-                    Object.assign(_this.trail[0],{
-                        select:true,
-                        color:"#5099F4",//高亮dot
-                        textColor:"#000",//高亮文字
-                        dotStyle:{"background-color":"#5099F4"}
-                    })
-                    _this.trail[(_this.trail.length-1)].borderLeftWidth = {"border-left-width":0};//不需要显示线条
                 })
+                Object.assign(_this.trail[0],{
+                    select:true,
+                    color:"#5099F4",//高亮dot
+                    textColor:"#000",//高亮文字
+                    dotStyle:{"background-color":"#5099F4"}
+                })
+                _this.trail[(_this.trail.length-1)].borderLeftWidth = {"border-left-width":0};//不需要显示线条
             })
         }
     },
