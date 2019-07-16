@@ -1,5 +1,5 @@
 <template>
-    <div class="full-column">
+    <div>
         <bui-header :leftItem="{icon: 'ion-ios-arrow-left'}" :title="showProcRelation?'选择流程':'审批'" @leftClick="leftClick" :backgroundColor="themeBg">
             <div slot="right" v-if="!showProcRelation" @click="handleSubmit" class="header-right-wrapper">
                 <bui-icon @click="handleSubmit" name="ion-android-done" color="white" size=60></bui-icon>
