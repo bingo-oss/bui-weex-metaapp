@@ -584,6 +584,7 @@
                     "metaEntityId": this.metaEntity?this.metaEntity.metaEntityId:"",
                     "selectedId": this.entityId,
                     "selectedItem": this.result,
+                    "entityName":this.entityName,
                     "widgetParams": this.widgetParams//部件参数
                 }
             }
