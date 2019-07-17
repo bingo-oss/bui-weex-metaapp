@@ -5,7 +5,8 @@ import buiweex from 'bui-weex';
 import ajax from '../js/ajax.js';
 import metaservice from "../js/metadata/metaservice"
 import metabase from "../js/metadata/metabase"
-const configServerUrl = "https://saaslinkdev.projects.bingosoft.net:22283/services";
+//const configServerUrl = "https://link.bingocc.cc:5443/services"
+//const configServerUrl = "https://saaslinkdev.projects.bingosoft.net:22283/services";
 /**
  * 在开发调试时，可以将 debug 设为 true，并设置相应的 token，viewId 和 formId 来调试
  * 发布时记得将 debug 设为 false
@@ -14,7 +15,7 @@ const configServerUrl = "https://saaslinkdev.projects.bingosoft.net:22283/servic
 var configData = null;
 export default {
     debug: false,
-    token: 'bG9jYWw6MDhmMDM0MDgtMTA4YS00NjU0LWJiN2EtYjVkZWNjZjcxODY3',
+    token: 'bG9jYWw6NmJhNTMzYTQtMzQ4MS00NmJkLWEwNDktNjkwMDA4NWUyN2U2',
     configFilename: 'config.json',
     serverConfig: {},
     // 读取与 list.weex.js、form.weex.js 同级的配置文件
@@ -51,10 +52,11 @@ export default {
         })
 
     },
-    getMetaServiceUrl() {
+    getMetaServiceUrl(contextPath) {
         return new Promise((resolve, reject) => {
-            resolve(configServerUrl+"/metaservice")
-           /* contextPath = contextPath.replace('file://', ''); // 消除 file:
+            //resolve(configServerUrl+"/metaservice")
+            contextPath = contextPath || buiweex.getContextPath();
+            contextPath = contextPath.replace('file://', ''); // 消除 file:
             let absPath = `${contextPath}/${this.configFilename}`;
             linkapi.readTextFromFile(absPath, 'utf-8', data => {
                 try {
@@ -67,17 +69,7 @@ export default {
                 }
             }, err => {
                 reject(err);
-            })*/
-            /*this.readRuntimeConfig().then((c) => {
-                var url = c['service.metabase.endpoint'];
-                debugger;
-                if (url) {
-                    resolve(url);
-                } else {
-                    buiweex.toast(i18n.noMetadataConfigUrl);
-                    reject();
-                }
-            });*/
+            });
         });
     },
     getApiBaseUrl() {
