@@ -10,7 +10,7 @@
                 </div>
                 <div class="header-button">
                     <template v-if="mobileHeaderOperations.length===1">
-                        <meta-operation v-if="mobileHeaderOperations[0].icon" btn-type="img" :operation="mobileHeaderOperations[0]" :widget-context="getWidgetContext()"></meta-operation>
+                        <meta-operation v-if="mobileHeaderOperations[0].icon" btn-type="icon" :operation="mobileHeaderOperations[0]" :widget-context="getWidgetContext()"></meta-operation>
                         <meta-operation v-if="!mobileHeaderOperations[0].icon" :operation="mobileHeaderOperations[0]" :widget-context="getWidgetContext()" style="height: 50px; margin-left: -20px;"></meta-operation>
                     </template>
                     <bui-icon v-if="mobileHeaderOperations.length>1" name="ion-ios-more" color="white" @click="titleOperationClicked"></bui-icon>

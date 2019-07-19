@@ -13,7 +13,7 @@
                 </div>
                 <div class="header-button">
                     <template v-if="mobileHeaderOperations.length===1">
-                        <meta-operation v-if="mobileHeaderOperations[0].icon" btn-type="img" :operation="mobileHeaderOperations[0]" :widget-context="getWidgetContext()"></meta-operation>
+                        <meta-operation v-if="mobileHeaderOperations[0].icon" btn-type="icon" :operation="mobileHeaderOperations[0]" :widget-context="getWidgetContext()"></meta-operation>
                         <meta-operation v-if="!mobileHeaderOperations[0].icon" :operation="mobileHeaderOperations[0]" :widget-context="getWidgetContext()" style="height: 50px; margin-left: -20px;"></meta-operation>
                     </template>
                     <bui-icon v-if="mobileHeaderOperations.length>1" name="ion-ios-more" color="white" @click="titleOperationClicked"></bui-icon>
@@ -255,6 +255,7 @@
             },
             // 一些字段的值是 id，通过这个方法将其转换为对应的用于显示的值
             getFieldValue(obj, field) {
+                let _this = this;
                 if (obj._data && obj._data[field]) {
                     // 对于引用实体字段，读取 _data 里的内容
                     // 参考返回的数据结构
@@ -265,6 +266,27 @@
                 } else {
                     // 对于非引用实体字段，针对日期作处理
                     let fieldDef = this.swaggerEntiyDef.properties&&this.swaggerEntiyDef.properties[field];
+
+                    //处理一些字段的存储数据
+                    if(fieldDef){
+                        let inputType = fieldDef['x-input']
+                        switch (inputType) {
+                            case "SingleSelect": {
+                                if(_this.metaEntity.fields[field]){
+                                    let _inputTypeParams = _this.metaEntity.fields[field].inputTypeParams
+                                    if(_inputTypeParams){
+                                        let _textL = _inputTypeParams.options.filter((option)=>{return option.id==obj[field]});
+                                        if(_textL&&_textL.length){
+                                            return _textL[0].text;
+                                        }
+
+                                    }
+                                }
+                            }
+                            default:
+                        }
+                    }
+
                     if (fieldDef&&obj[field]) {
                         //只对格林时间格式处理
                         //undefined
@@ -611,7 +633,6 @@
                                 }
                                 factoryApp.startLoading(this);//显示加载圈
                                 //读取部件参数的设置
-                                var _a = metabase.findMetaEntity(view.entityName);
                                 metabase.findMetaEntity(view.entityName).getPage(view.filterId).then((res)=>{
                                     //读取对应视图配置
                                     view.filterId = res.queryOptions.viewId;//内置条件
