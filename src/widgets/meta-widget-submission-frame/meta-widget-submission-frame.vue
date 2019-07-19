@@ -29,7 +29,7 @@
 
                     <template v-if="taskInfor.formProperties" v-for="(formItem,index) in taskInfor.formProperties" :key="">
                         <!--读取环节上设置的自定义字段-->
-                        <div v-if="defaultFormDate(formItem)&&formItem.type=='enum'" class="form-group form-hrb">
+                        <div v-if="defaultFormDate(formItem)&&formItem.type=='enum'&&formItem.writeable" class="form-group form-hrb">
                             <text class="form-label">{{formItem.name}}</text>
                             <bui-radio v-model="formDate[formItem.id]" :items="formItem.options" direction="horizontal" @change="radioChange" ></bui-radio>
                         </div>
@@ -55,11 +55,13 @@
 </template>
 <script>
     import _service from '../../js/service.js';
+    import ajax from '../../js/ajax.js';
     import _ from '../../js/tool/lodash';
     import service from "./js/service"
     import factoryApp from '../libs/factory-app.js';
     import engineservice1 from "../../../src/js/services/engine/engineservice";
     import config from '../../../src/js/config'
+    import metabase from '../../js/metadata/metabase.js';
     const picker = weex.requireModule('picker')
     /**
      * 实体必须先关联流程，即先用流程编辑器进行流程的
@@ -133,9 +135,23 @@
             },
             "taskInfor"(val){
                 let _nodes = this.taskInfor.nextNodes;
-                if(_nodes&&_nodes.length) {
+                let _array = [];  //_array = ["${pro_type==1}", "${pro_type==2}"]
+                _.each(_nodes,(item)=>{
+                    if(item.conditionExpression){
+                        _array.push(item.conditionExpression);
+                    }
+                });
+                if(_array.length){
+                    _.each(_array,(item,index)=>{
+                        let substr = item.substring(2,item.length-1);
+                        this.funString += 'if('+ substr +')'+'{_t.getProcessId('+index+')}'
+                    });
+                }else {
                     this.formDate.nodeId = this.taskInfor.nextNodes[(_nodes.length-1)].id;//默认选择最后一个
                 }
+                /*if(_nodes&&_nodes.length) {
+                    this.formDate.nodeId = this.taskInfor.nextNodes[(_nodes.length-1)].id;//默认选择最后一个
+                }*/
             }
         },
         data(){
@@ -165,9 +181,24 @@
                 startProcess:true,//是否开启流程
                 _businessKey:"",
                 processDefinitionId:"",
+                dataInfo:"",//表单里的字段信息
+                _DataObj:{}, //存储组装后的数据对象
+                DataString:"",//函数体字符串
+                funString:"",//函数体字符串
             };
         },
         methods: {
+            getProcessId(index){
+                //获取nextNodes下的处理人id
+                this.formDate.nodeId = this.taskInfor.nextNodes[index].id;
+
+            },
+            progressFn(_DataObj,_t){
+                //this.funString = "if(pro_type==1&&sp==0){this.getProcessId(0)}";
+                //this.DataString = "var pro_type = _DataObj.pro_type;var sp = _DataObj.sp;";
+                Function('_DataObj','_t',this.DataString+this.funString)(_DataObj,_t); //Function('参数','字符串方法体')(_DataObj)
+
+            },
             back(){
                 this.$pop()
             },
@@ -281,6 +312,18 @@
                     }
                     default:{}
                 }
+
+                this._DataObj = Object.assign({},this.dataInfo,this.formDate );
+                delete this._DataObj.processingPerson;
+                delete this._DataObj._data;
+                let DataString = '';
+                _.each(this._DataObj,(val,key)=>{
+                    DataString += 'var '+key+'=_DataObj.'+key+';'
+                });
+                this.DataString = DataString;
+
+                this.progressFn(this._DataObj,this);
+
                 return true;
             },
             selectNext(){
@@ -354,6 +397,14 @@
                         });
                     }
                 });
+            })
+
+            config.getMetabase().then(()=>{//初始化
+                //获取数据详情-拿到相应字段的值
+                let _entity = metabase.findMetaEntity(this.widgetParams.entityName);
+                ajax.get(`${_entity.engineUrl}${_entity.entityPath}/${this.widgetParams.dataId}`).then(({data})=>{
+                    _t.dataInfo = data;
+                })
             })
 
 
