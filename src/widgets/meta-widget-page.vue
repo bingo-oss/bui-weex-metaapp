@@ -28,7 +28,7 @@
     import linkapi from "linkapi";
     import EventBus from '../js/bus';
     import factoryApp from './libs/factory-app.js';
-
+    import appCahe from "./libs/app-cache";
     var co = require('co');
     export default {
         props: {
@@ -99,6 +99,22 @@
                     _this.urlParam = EventBus.historyParam[historyTime]
                 }
             });//存储起来需要传递的参数
+
+
+            //注册下监听缓存对象模型变化的事件
+            EventBus.$on('pageChange', (_t) => {
+                if (_this.pageObject && (_this.pageObject.uid == _t.uid)) {
+                    if (!EventBus.historyParam[_t.uid]) {
+                        EventBus.historyParam[_t.uid] = {}
+                    }
+                    let _historyParam = EventBus.historyParam[_t.uid]
+                    _this.setwidgetParams(_t.widgetCode, _t.params)
+                    _.each(_t.params, (val, key) => {
+                        _historyParam[`${_t.widgetCode?_t.widgetCode+".":""}${key}`] = val//为部件设置参数
+                    });
+                }
+            });
+
             this.loadPageConfig();
             this.hookExecution("created")
         },
@@ -134,6 +150,7 @@
                 _this.pageShow = false;
                 if(this.widgetParams&&this.widgetParams.pageId){
                     pageService.get(this.widgetParams.pageId,this.widgetParams.byOperation).then(function(pageConfig){
+                        pageConfig.id = _this.widgetParams.pageId;
                         _this.convert(pageConfig);
                         //_this.pageConfig=_this.convert(pageConfig);
                         _this.isShowLoading=false//关闭加载圈
@@ -141,6 +158,11 @@
                         setTimeout(function(){
                             _this.pageShow = true;
                         },100)
+
+                        //新增记录当前页面缓存处理
+                        appCahe.init(_this, pageConfig)
+                        //end
+
                     },(erro)=>{
                         buiweex.toast("请求失败,请重试");
                         _this.isShowLoading=false//关闭加载圈
@@ -232,10 +254,11 @@
                         onclick(this, factoryApp);
                     }
                 }catch (e){
-                    this.$toast("脚本语法有误");
+                    console.log(e);
+                    //this.$toast("脚本语法有误");
                 }
             },
-            setWidgetParams(widget,toRoute){
+            setWidgetParams(widget,toRoute,pageConfig){
                 //处理配置的部件参数且处理页面参数
                 let _this = this;
                 var props = widget.params, operations = {}
@@ -271,6 +294,13 @@
                     Object.assign(widget.params,_this.widgetParams.widgetSettings[widget.id]);
                 }
 
+                //缓存对象上设置了参数,需要再合并下内存对象模型内的储存数据
+                let historyTime = _this.$getPageParams()['_t']//获取历史参数
+                if (EventBus.historyParam[`${historyTime}_${pageConfig.id}`]) {
+                    if(!_this.urlParam){_this.urlParam = {}}
+                    Object.assign(_this.urlParam, window.eventBus.historyParam[`${historyTime}_${pageConfig.id}`])
+                }
+
                 _.each(_this.urlParam,function(propValue,propKey){
                     if(((propKey.indexOf(".")!=-1)&&(propKey.indexOf(widget.widgetCode)!=-1))||propKey.indexOf(".")==-1){
                         //特定code的组件参数 以及 code.key标符的就直接都传入
@@ -287,13 +317,13 @@
                 this.columnWidgets.push(widget);//添加组装好的部件
                 this.pageConfig = {columnWidgets:this.columnWidgets};//向下兼容下配置脚本-部件显隐
             },
-            getOrSetWidget(layout,toRoute){
+            getOrSetWidget(layout,toRoute,pageConfig){
                 //获取并且设置按钮脚本
                 _.each((layout.layout||layout),(widget)=>{
                     if(_.isArray(widget)){
                         this.getOrSetWidget(widget)
                     }else if(widget&&widget.widgetCode){
-                        this.setWidgetParams(widget,toRoute);
+                        this.setWidgetParams(widget,toRoute,layout);
                     }
                     this.hookExecution("beforeUpdate");
                 });

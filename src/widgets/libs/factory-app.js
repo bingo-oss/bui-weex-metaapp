@@ -12,6 +12,7 @@ import service from '../../js/service.js';
 import metabase from '../../js/metadata/metabase.js';
 import config from '../../js/config';
 import EventBus from '../../js/bus';
+import appCahe from "./app-cache";
 const storage = weex.requireModule('storage');
 
 var _this=this;//用于初始化指向
@@ -391,7 +392,21 @@ var factoryApp = Object.assign({},buiweex,linkapi,{
         storage.getItem(key, function(res){
             callback&&callback(res.data);
         })
-    }
+    },
+    //处理缓存对象模型
+    getPage(id_accessTime){
+        //获取页面对象_传入id或者是页面标识
+        if(!_this)return;
+        if(id_accessTime){
+            return appCahe.pages.filter(obj=>{return (obj.id==id_accessTime||obj.accessTime==id_accessTime)})[0];
+        }else if(_this.pageObject){
+            return _this.pageObject;
+        }else if(_this.$parent){
+            _this = _this.$parent
+            return factoryApp.getPage()
+        }
+
+    },
 });
 
 export default factoryApp

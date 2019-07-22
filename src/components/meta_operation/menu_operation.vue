@@ -41,11 +41,12 @@
             >
               <div style="flex: 1; height: 100px; align-items: center; background-color: #F8F8F8; justify-content: center;"
               >
-                <image
+                <!--<image
                         v-if="button.icon"
                         style="width:40px;height:40px;margin-bottom: 10px; margin-top: 10px;"
                         :src="getImageUrl(button.icon)"
-                />
+                />-->
+                <icon size="40" v-if="button.icon" :name="button.icon"></icon>
                 <text class="flex-row" style="font-size: 20px;">{{button.title}}</text>
               </div>
             </meta-operation>
